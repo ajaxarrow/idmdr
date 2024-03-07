@@ -3,8 +3,6 @@
 </script>
 
 <template>
-  <div class="center">
-    Welcome to IDMDR!
-  </div>
+  <RouterView/>
 </template>
 
