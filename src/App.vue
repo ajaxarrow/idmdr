@@ -1,5 +1,9 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-  <div>
+  <div class="bg-gs20">
     Welcome to IDMDR
   </div>
 </template>
