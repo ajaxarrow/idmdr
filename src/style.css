@@ -11,3 +11,13 @@ body{
     place-items: center;
     height: 100vh;
 }
+
+.text-logo{
+    font-weight: 900 !important;
+    font-size: 24px !important;
+}
+
+.satoshi-md{
+    font-weight: 450 !important;
+    font-size: 16px !important;
+}

@@ -1,13 +1,25 @@
 <script setup lang="ts">
-
+import Navbar from "../components/Landing/Navbar.vue";
 </script>
 
 <template>
-  <div class="center">
-    Welcome to IDMDR!
-  </div>
+  <VLayout class="circle-background">
+    <VContainer>
+      <Navbar/>
+    </VContainer>
+  </VLayout>
 </template>
 
 <style scoped>
-
+.circle-background::before {
+  content: '';
+  position: absolute;
+  top: -365px;
+  left: -247px;
+  width: 590px;
+  height: 561px;
+  border-radius: 50%;
+  background: #DEF1FB;
+  z-index: -1;
+}
 </style>
