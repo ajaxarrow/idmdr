@@ -5,9 +5,22 @@ import 'vuetify/styles'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+
 const vuetify = createVuetify({
     components,
     directives,
+    aliases: {
+        VBtnPrimary: components.VBtn,
+    },
+    defaults: {
+        VBtnPrimary: {
+            color: 'bs50',
+            rounded: true,
+            height: "44",
+            class: 'text-none satoshi-md mx-2',
+            width: '130'
+        }
+    },
     theme: {
         themes: {
             light: {
@@ -31,6 +44,7 @@ const vuetify = createVuetify({
                     sb20: '#EBF4F9',
                     bs10: '#050E14',
                     bs20: '#0A1D28',
+                    bs50: '#23668B'
                 }
             }
         }
