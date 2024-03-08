@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import Navbar from "../components/Landing/Navbar.vue";
+import Hero from "../components/Landing/Hero.vue";
 </script>
 
 <template>
   <VLayout class="circle-background">
     <VContainer fluid>
-      <Navbar/>
+      <Navbar>
+        <Hero/>
+      </Navbar>
     </VContainer>
   </VLayout>
 </template>

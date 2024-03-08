@@ -11,10 +11,17 @@ const vuetify = createVuetify({
     directives,
     aliases: {
         VBtnPrimary: components.VBtn,
+        VBtnPrimaryPlain: components.VBtn,
     },
     defaults: {
         VBtnPrimary: {
             color: 'bs50',
+            rounded: true,
+            height: "44",
+            class: 'text-none satoshi-md mx-2',
+            width: '130'
+        },
+        VBtnPrimaryPlain: {
             rounded: true,
             height: "44",
             class: 'text-none satoshi-md mx-2',

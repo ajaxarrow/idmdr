@@ -119,20 +119,19 @@ import {useScreenStore} from "../../stores/screenSizeStore.ts";
           </VList>
         </div>
         <div v-else>
-          Main Content
+          <slot/>
         </div>
       </VExpandTransition>
-
-
     </VMain>
 
 
 </template>
 
 <style scoped>
-.app-bar-blur {
-  backdrop-filter: blur(5px); /* Adjust the blur value as needed */
-}
+
+  .app-bar-blur {
+    backdrop-filter: blur(5px); /* Adjust the blur value as needed */
+  }
 
   .button-outline{
     border-width: 2px;
