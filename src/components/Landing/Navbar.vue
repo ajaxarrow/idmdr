@@ -42,11 +42,11 @@ import Logo from "../Global/Logo.vue";
       ...baseNavLinks,
       {
         title: 'Login',
-        link: '/auth'
+        link: '/auth?tab=login'
       },
       {
         title: 'Register',
-        link: '/auth'
+        link: '/auth?tab=register'
       }
     ];
   });
@@ -97,7 +97,7 @@ import Logo from "../Global/Logo.vue";
               <VBtnPrimary
                 variant="outlined"
                 class="button-outline"
-                :to="{ path: 'auth', query: { tab: 'signin' } }"
+                :to="{ path: 'auth', query: { tab: 'login' } }"
               >
                 Login
               </VBtnPrimary>

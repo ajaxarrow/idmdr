@@ -6,9 +6,9 @@
   import {LocationQueryValue} from "vue-router";
   const {router, route} = useRouting()
   const register = 'register';
-  const signin = 'signin';
+  const login = 'login';
   const tab = ref('register')
-  const authType = computed(() => tab.value === 'signin' ?  'Sign in' : 'Register')
+  const authType = computed(() => tab.value === 'login' ?  'Login' : 'Register')
 
   const authButtons = [
     {
@@ -23,14 +23,10 @@
 
   watch(() => route.query.tab, (newTab: LocationQueryValue | LocationQueryValue[]) => {
     if (typeof newTab === 'string') {
-      // Handle the case where newTab is a string
       if (newTab !== tab.value) {
         tab.value = newTab;
       }
     } else {
-      // Handle the case where newTab is an array
-      // Adjust the logic based on your requirements
-      // For example, you might want to handle an array of values differently
       console.error("Unexpected type for newTab:", typeof newTab);
     }
   });
@@ -65,7 +61,7 @@
         align-tabs="center"
         v-model="tab"
     >
-      <VTab :value="signin" class="tab-title">Sign In</VTab>
+      <VTab :value="login" class="tab-title">Login</VTab>
       <VTab :value="register" class="tab-title">Register</VTab>
     </VTabs>
   </div>
@@ -80,20 +76,20 @@
     </VRow>
 
 
-    <p class="text-center my-3" v-if="tab === 'signin'">
+    <p class="text-center my-3" v-if="tab === 'login'">
       New to this platform?
       <RouterLink
           :to="{ path: 'auth', query: { tab: 'register' } }"
           class="text-black">
-        <span>Register!</span>
+        <span>Register Here!</span>
       </RouterLink>
     </p>
     <p class="text-center my-3" v-else>
       Already a user?
       <RouterLink
-          :to="{ path: 'auth', query: { tab: 'signin' } }"
+          :to="{ path: 'auth', query: { tab: 'login' } }"
           class="text-black ">
-        <span>Sign in!</span>
+        <span>Login Here!</span>
       </RouterLink>
     </p>
 
