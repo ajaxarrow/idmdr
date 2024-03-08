@@ -3,7 +3,7 @@
   import {computed, onMounted, ref, watch} from "vue";
   import {useRouting} from "../../composables/useRouting.ts";
   import {PhGithubLogo, PhGoogleLogo} from "@phosphor-icons/vue";
-  import Logo from "../Global/Logo.vue";
+  import {LocationQueryValue} from "vue-router";
   const {router, route} = useRouting()
   const register = 'register';
   const signin = 'signin';
@@ -21,11 +21,20 @@
     }
   ]
 
-  watch(() => route.query.tab, (newTab: string) => {
-    if (newTab !== tab.value) {
-      tab.value = newTab;
+  watch(() => route.query.tab, (newTab: LocationQueryValue | LocationQueryValue[]) => {
+    if (typeof newTab === 'string') {
+      // Handle the case where newTab is a string
+      if (newTab !== tab.value) {
+        tab.value = newTab;
+      }
+    } else {
+      // Handle the case where newTab is an array
+      // Adjust the logic based on your requirements
+      // For example, you might want to handle an array of values differently
+      console.error("Unexpected type for newTab:", typeof newTab);
     }
   });
+
 
   watch(() => tab.value, () => {
     if (tab.value !== "") {
