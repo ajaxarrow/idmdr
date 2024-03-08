@@ -4,7 +4,7 @@ import Navbar from "../components/Landing/Navbar.vue";
 
 <template>
   <VLayout class="circle-background">
-    <VContainer>
+    <VContainer fluid>
       <Navbar/>
     </VContainer>
   </VLayout>
@@ -13,7 +13,7 @@ import Navbar from "../components/Landing/Navbar.vue";
 <style scoped>
 .circle-background::before {
   content: '';
-  position: absolute;
+  position: fixed;
   top: -365px;
   left: -247px;
   width: 590px;
