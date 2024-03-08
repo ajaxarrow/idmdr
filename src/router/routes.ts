@@ -1,5 +1,5 @@
 // @ts-ignore
-import LandingView from "../views/LandingView.vue";
+import LandingView from "../views/Public/LandingView.vue";
 
 export const routes = [
     {
