@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import {PhMapTrifold} from "@phosphor-icons/vue";
+  import {PhArrowCircleUpRight, PhMapTrifold} from "@phosphor-icons/vue";
 </script>
 
 <template>
@@ -11,7 +10,7 @@ import {PhMapTrifold} from "@phosphor-icons/vue";
       <PhMapTrifold size="20" class="mr-2"/> Explore our Interactive Map
     </VBtnPrimary>
     <VBtnPrimaryPlain color="gs90" width="200px" :to="{ path: 'auth', query: { tab: 'register' } }">
-      <PhMapTrifold size="20" class="mr-2"/> Get Started
+      <PhArrowCircleUpRight size="20" class="mr-2"/> Get Started
     </VBtnPrimaryPlain>
   </VRow>
 </template>
