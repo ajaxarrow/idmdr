@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Logo from "../Global/Logo.vue";
-import {PhBell, PhCaretUpDown, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
+import {PhBell, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
 </script>
 
 <template>
