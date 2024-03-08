@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {computed, onBeforeUnmount, onMounted, ref} from "vue";
-import {PhHardDrives} from "@phosphor-icons/vue";
 import {IconMenuDeep, IconX} from "@tabler/icons-vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
+import Logo from "../Global/Logo.vue";
 
   const currentElevation = ref(0);
   const isMenuToggled = ref(false);
@@ -67,11 +67,8 @@ import {useScreenStore} from "../../stores/screenSizeStore.ts";
       <VContainer fluid>
         <VRow align="center">
           <VCol cols="4">
-            <VAppBarTitle class="text-logo">
-              <div class="d-flex">
-                <PhHardDrives size="30" weight="duotone" color="#3291C7"/>
-                IDMDR
-              </div>
+            <VAppBarTitle >
+              <Logo/>
             </VAppBarTitle>
           </VCol>
           <VSpacer v-if="isSmall"/>
@@ -97,8 +94,14 @@ import {useScreenStore} from "../../stores/screenSizeStore.ts";
           </VCol>
           <VCol cols="4" v-else>
             <VRow justify="end">
-              <VBtnPrimary variant="outlined" class="button-outline">Login</VBtnPrimary>
-              <VBtnPrimary>Register</VBtnPrimary>
+              <VBtnPrimary
+                variant="outlined"
+                class="button-outline"
+                :to="{ path: 'auth', query: { tab: 'signin' } }"
+              >
+                Login
+              </VBtnPrimary>
+              <VBtnPrimary :to="{ path: 'auth', query: { tab: 'register' } }" >Register</VBtnPrimary>
             </VRow>
           </VCol>
         </VRow>

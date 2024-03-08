@@ -12,6 +12,7 @@ const vuetify = createVuetify({
     aliases: {
         VBtnPrimary: components.VBtn,
         VBtnPrimaryPlain: components.VBtn,
+        VBtnAuth: components.VBtn,
     },
     defaults: {
         VBtnPrimary: {
@@ -26,7 +27,15 @@ const vuetify = createVuetify({
             height: "44",
             class: 'text-none satoshi-md mx-2',
             width: '130'
+        },
+        VBtnAuth: {
+            variant: "outlined",
+            rounded: true,
+            height: "50",
+            class: 'text-none satoshi-md mx-2',
+            width: "280"
         }
+
     },
     theme: {
         themes: {
