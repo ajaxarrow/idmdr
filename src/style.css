@@ -6,6 +6,10 @@ body{
     background-color: #F0F5F9 !important;
 }
 
+.bg-main{
+    background-color: #F0F5F9 !important;
+}
+
 .center{
     display: grid;
     place-items: center;
