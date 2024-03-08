@@ -68,7 +68,7 @@ import {PhBell, PhCaretUpDown, PhList, PhMagnifyingGlass} from "@phosphor-icons/
   }
 
   .user-nav{
-    width: 75vw !important;
+    width: 76vw !important;
     right: 0 !important;
   }
 
