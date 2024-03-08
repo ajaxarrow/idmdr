@@ -1,10 +1,10 @@
 // @ts-ignore
-import LandingVue from "../views/LandingVue.vue";
+import LandingView from "../views/LandingView.vue";
 
 export const routes = [
     {
         path: '/',
         name: 'landing',
-        component: LandingVue
+        component: LandingView
     }
 ]
