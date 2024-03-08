@@ -102,7 +102,7 @@ import {PhHardDrives} from "@phosphor-icons/vue";
     background: none !important;
   }
 
-  ::v-deep .v-list-item__overlay{
+  :deep(.v-list-item__overlay){
     background-color: transparent !important;
     font-weight: 900 !important;
   }
