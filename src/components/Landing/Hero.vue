@@ -10,7 +10,7 @@ import {PhMapTrifold} from "@phosphor-icons/vue";
     <VBtnPrimary width="320px" class="mb-3">
       <PhMapTrifold size="20" class="mr-2"/> Explore our Interactive Map
     </VBtnPrimary>
-    <VBtnPrimaryPlain color="gs90" width="200px">
+    <VBtnPrimaryPlain color="gs90" width="200px" :to="{ path: 'auth', query: { tab: 'register' } }">
       <PhMapTrifold size="20" class="mr-2"/> Get Started
     </VBtnPrimaryPlain>
   </VRow>
