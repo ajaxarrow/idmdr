@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Navbar from "../../components/Landing/Navbar.vue";
 import Hero from "../../components/Landing/Hero.vue";
-import {PhCube, PhIntersectSquare, PhIntersectThree} from "@phosphor-icons/vue";
+import {PhCube} from "@phosphor-icons/vue";
 </script>
 
 <template>

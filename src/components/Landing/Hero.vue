@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {PhArrowCircleUpRight, PhCube, PhMapTrifold} from "@phosphor-icons/vue";
+import {PhArrowCircleUpRight, PhMapTrifold} from "@phosphor-icons/vue";
 </script>
 
 <template>
