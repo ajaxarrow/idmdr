@@ -45,15 +45,25 @@ import {PhCube, PhIntersectSquare, PhIntersectThree} from "@phosphor-icons/vue";
 }
 
 
+/*.icon{*/
+/*  position: absolute;*/
+/*  top: 0;*/
+/*  left: 0;*/
+/*  right: 0;*/
+/*  bottom: 0;*/
+/*  margin: auto;*/
+/*  z-index: -1;*/
+/*  opacity: 5% !important;*/
+/*}*/
+
+
 .icon{
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: -300px;
+  left: -200px;
   margin: auto;
   z-index: -1;
-  opacity: 5% !important;
+  opacity: 20% !important;
 }
 
 </style>
