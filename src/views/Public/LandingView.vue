@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Navbar from "../../components/Landing/Navbar.vue";
 import Hero from "../../components/Landing/Hero.vue";
+import {PhCube, PhIntersectSquare, PhIntersectThree} from "@phosphor-icons/vue";
 </script>
 
 <template>
@@ -9,6 +10,23 @@ import Hero from "../../components/Landing/Hero.vue";
       <Navbar>
         <Hero/>
       </Navbar>
+      <PhCube color="#234261" weight="duotone" size="500" class="icon">
+        <animate
+            attributeName="opacity"
+            values="0;1;0"
+            dur="4s"
+            repeatCount="indefinite"
+        />
+        <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            dur="50s"
+            from="0 0 0"
+            to="360 0 0"
+            repeatCount="indefinite"
+        />
+      </PhCube>
     </VContainer>
   </VLayout>
 </template>
@@ -25,4 +43,17 @@ import Hero from "../../components/Landing/Hero.vue";
   background: #DEF1FB;
   z-index: -1;
 }
+
+
+.icon{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: -1;
+  opacity: 5% !important;
+}
+
 </style>

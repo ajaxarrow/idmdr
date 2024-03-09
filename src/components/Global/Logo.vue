@@ -3,6 +3,8 @@ import { PhHardDrives } from "@phosphor-icons/vue";
 
 const handleHover = (isHovered) => {
   const spanElements = document.querySelectorAll(".text-wrapper span");
+  // const icon = document.querySelector(".icon")
+  //     isHovered ? icon.classList.add("ph-icon") : icon.classList.remove("ph-icon");
   spanElements.forEach((span) => {
     isHovered ? span.classList.add("hovered") : span.classList.remove("hovered");
   });
@@ -37,16 +39,17 @@ const handleHover = (isHovered) => {
   transition: transform 0.5s ease-in-out;
 }
 
-.text-logo:hover .ph-icon {
+.ph-icon:hover {
   transform: rotate(360deg);
 }
 
-span {
-
+.ph-icon:not(:hover) {
+  transition: none;
 }
 
+
 span.hovered {
-  animation: waveAnim 1s infinite;
+  animation: waveAnim 1s ease-in-out;
   animation-delay: calc(.1s * var(--i));
 }
 

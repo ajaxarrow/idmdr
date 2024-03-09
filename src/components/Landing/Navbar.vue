@@ -131,9 +131,8 @@ import Logo from "../Global/Logo.vue";
 </template>
 
 <style scoped>
-
   .app-bar-blur {
-    backdrop-filter: blur(5px); /* Adjust the blur value as needed */
+    /**backdrop-filter: blur(5px);**/
   }
 
   .button-outline{
@@ -190,5 +189,6 @@ import Logo from "../Global/Logo.vue";
   .flip-leave-from {
     transform: rotate(360deg);
   }
+
 
 </style>

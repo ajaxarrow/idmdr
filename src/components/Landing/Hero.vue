@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import {PhArrowCircleUpRight, PhMapTrifold} from "@phosphor-icons/vue";
+import {PhArrowCircleUpRight, PhCube, PhMapTrifold} from "@phosphor-icons/vue";
 </script>
 
 <template>
-  <p class="text-heading font-weight-black text-h1 text-center gradient-text">Interactive Data <br/> Mapping Distribution</p>
+  <p class="text-heading font-weight-black text-h1 text-center gradient-text"> Interactive Data <br/> Mapping Distribution</p>
   <p class="text-center text-subtitle ">Empowering data interaction through <span class="fancy-text">dynamic mapping, and repository solutions.</span></p>
   <VRow class="mt-4" justify="center">
     <VBtnPrimary width="320px" class="mb-3">
