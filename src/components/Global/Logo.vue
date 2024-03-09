@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PhHardDrives } from "@phosphor-icons/vue";
 
-const handleHover = (isHovered) => {
+const handleHover = (isHovered: boolean) => {
   const spanElements = document.querySelectorAll(".text-wrapper span");
   // const icon = document.querySelector(".icon")
   //     isHovered ? icon.classList.add("ph-icon") : icon.classList.remove("ph-icon");
