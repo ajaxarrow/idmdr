@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
 import { PhHardDrives } from "@phosphor-icons/vue";
 
 const props = defineProps({
