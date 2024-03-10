@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import {PhBell, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
+import {useScreenStore} from "../../stores/screenSizeStore.ts";
+import {useToggleMenu} from "../../composables/useToggleMenu.ts";
+const {isSmall} = useScreenStore();
+const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
 </script>
 
 <template>
@@ -16,7 +20,10 @@ import {PhBell, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
         </VCol>
         <VSpacer/>
         <VCol cols="auto">
-          <VRow align="center">
+          <transition name="flip" mode="out-in" v-if="isSmall">
+            <component :is="activeIcon" @click="toggleMenu" class="cursor-pointer" />
+          </transition>
+          <VRow align="center" v-else>
             <p class="text-org d-flex align-center mx-2">
               My Organization
               <PhCaretDown size="18" class="ml-2"/>
@@ -69,6 +76,26 @@ import {PhBell, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
   .user-nav{
     width: 76vw !important;
     right: 0 !important;
+  }
+
+  @keyframes flip {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .flip-enter-active,
+  .flip-leave-active {
+    animation: flip 0.15s;
+  }
+
+  .flip-enter-from,
+  .flip-leave-to {
+    transform: rotate(0deg);
+  }
+
+  .flip-enter-to,
+  .flip-leave-from {
+    transform: rotate(360deg);
   }
 
 

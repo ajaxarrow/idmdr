@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
-import {IconMenuDeep, IconX} from "@tabler/icons-vue";
-import {useScreenStore} from "../../stores/screenSizeStore.ts";
-import Logo from "../Global/Logo.vue";
+  import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+  import {useScreenStore} from "../../stores/screenSizeStore.ts";
+  import Logo from "../Global/Logo.vue";
+  import {useToggleMenu} from "../../composables/useToggleMenu.ts";
 
+  const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
   const currentElevation = ref(0);
-  const isMenuToggled = ref(false);
-
-  const activeIcon = computed(() => (isMenuToggled.value ? IconX : IconMenuDeep));
-
-
-  const toggleMenu = () => {
-    isMenuToggled.value = !isMenuToggled.value
-  }
-
   const {isSmall} = useScreenStore();
 
   const handleScroll = () => {
@@ -90,7 +82,6 @@ import Logo from "../Global/Logo.vue";
             <transition name="flip" mode="out-in">
               <component :is="activeIcon" @click="toggleMenu" class="cursor-pointer" />
             </transition>
-
           </VCol>
           <VCol cols="4" v-else>
             <VRow justify="end">
