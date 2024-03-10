@@ -1,7 +1,7 @@
 // @ts-ignore
 import {computed, ref} from "vue";
 
-export const useToggleMenu = () => {
+export const useToggleMainSidebar = () => {
   const isCollapsed = ref(false);
 
   const toggleMainSidebar = () => {
