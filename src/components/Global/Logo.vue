@@ -3,8 +3,6 @@ import { PhHardDrives } from "@phosphor-icons/vue";
 
 const handleHover = (isHovered: boolean) => {
   const spanElements = document.querySelectorAll(".text-wrapper span");
-  // const icon = document.querySelector(".icon")
-  //     isHovered ? icon.classList.add("ph-icon") : icon.classList.remove("ph-icon");
   spanElements.forEach((span) => {
     isHovered ? span.classList.add("hovered") : span.classList.remove("hovered");
   });
