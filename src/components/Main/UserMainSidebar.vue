@@ -41,7 +41,7 @@
         </div>
         <VSpacer/>
         <VDivider/>
-        <div class="px-6 pt-2">
+        <div class="px-6">
           <VList>
             <VListItem
                 to="/help"
@@ -82,7 +82,7 @@
       </div>
       <VSpacer/>
       <VDivider/>
-      <div class="px-6 pt-2">
+      <div class="px-6">
         <VList>
           <VListItem
               to="/help"
