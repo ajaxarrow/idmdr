@@ -1,21 +1,17 @@
 <script setup lang="ts">
   import Logo from "../Global/Logo.vue";
-  import {PhQuestion, PhX, PhXCircle} from "@phosphor-icons/vue";
+  import {PhQuestion, PhX} from "@phosphor-icons/vue";
   import {useToggleMainSidebar} from "../../composables/useToggleMainSidebar.ts";
   import UserMainSidebarCollapsed from "./UserMainSidebarCollapsed.vue";
   import {navLinks} from "../../data/navlinks.ts"
-  import {watch} from "vue";
-  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile, toggleMainSidebar} = useToggleMainSidebar()
+  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile} = useToggleMainSidebar()
   const props = defineProps({
     useMobileDesign: {
       type: Boolean,
       default: false,
     },
   });
-  const {isSmall} = useToggleMainSidebar();
-  // watch(()=> isSmall.value, ()=>{
-  //   toggleMainSidebarMobile()
-  // })
+
 
 </script>
 
