@@ -2,18 +2,22 @@
 import {PhBell, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
 import {useToggleMenu} from "../../composables/useToggleMenu.ts";
+import {useToggleMainSidebar} from "../../composables/useToggleMainSidebar.ts";
 const {isSmall} = useScreenStore();
-const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
+const {activeIcon, toggleMenu} = useToggleMenu();
+const {toggleMainSidebar} = useToggleMainSidebar();
+
+
 </script>
 
 <template>
-  <VAppBar  border="2" elevation="0" rounded="xl" class="ma-4 user-nav" style="left: unset !important;">
+  <VAppBar elevation="0" rounded="xl" class="ma-4 user-nav" style="left: unset !important;">
     <VContainer fluid class="mx-3">
       <VRow align="center">
         <VCol cols="auto">
           <VAppBarTitle >
             <div class="d-flex align-center">
-              <PhList size="24" weight="bold" class="mr-2"/>
+              <PhList size="24" weight="bold" class="mr-2 cursor-pointer" @click="toggleMainSidebar" />
               <p class="text-nav-title">Dashboard</p>
             </div>
           </VAppBarTitle>
@@ -76,6 +80,7 @@ const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
   .user-nav{
     width: 76vw !important;
     right: 0 !important;
+    box-shadow: 0px 0px 5px 0px #5d6e87 !important;
   }
 
   @keyframes flip {
