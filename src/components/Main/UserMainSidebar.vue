@@ -16,7 +16,7 @@
 </script>
 
 <template>
-  <VSlideXReverseTransition v-if="useMobileDesign">
+  <VSlideXReverseTransition v-if="props.useMobileDesign">
     <VContainer v-if="showMainSidebarMobile">
       <VSheet class="d-flex flex-column justify-start sidebar-mobile">
         <VRow justify="space-between" align="center" class="mt-5 mb-4 px-10">

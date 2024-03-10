@@ -33,7 +33,7 @@ const appBarWidthStyle = computed(() => {
           <VAppBarTitle >
             <div class="d-flex align-center">
               <PhList size="24" weight="bold" class="mr-2 cursor-pointer" @click="toggleSidebar" />
-              <p class="text-nav-title">{{title}}</p>
+              <p class="text-nav-title">{{props.title}}</p>
             </div>
           </VAppBarTitle>
         </VCol>

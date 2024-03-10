@@ -17,10 +17,10 @@ const handleHover = (isHovered: boolean) => {
 </script>
 
 <template>
-  <RouterLink to="/" class="text-decoration-none" :class="useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
-    <div class="d-flex align-center text-wrapper" :class="{ 'flex-column': useAltDesign }" @mouseover="() => handleHover(true)" @mouseout="() => handleHover(false)">
-    <PhHardDrives :size="useAltDesign ? 32 : 30" weight="duotone" color="#3291C7" class="ph-icon" />
-      <template v-if="useAltDesign">
+  <RouterLink to="/" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
+    <div class="d-flex align-center text-wrapper" :class="{ 'flex-column': props.useAltDesign }" @mouseover="() => handleHover(true)" @mouseout="() => handleHover(false)">
+    <PhHardDrives :size="props.useAltDesign ? 32 : 30" weight="duotone" color="#3291C7" class="ph-icon" />
+      <template v-if="props.useAltDesign">
         <div>
           <span style="--i:1">I</span>
           <span style="--i:2">D</span>
