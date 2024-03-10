@@ -1,40 +1,7 @@
 <script setup lang="ts">
-
-import {PhCloud, PhGearSix, PhHouse, PhMapPinLine, PhQuestion, PhSignOut, PhTag} from "@phosphor-icons/vue";
+import {PhQuestion} from "@phosphor-icons/vue";
 import Logo from "../Global/Logo.vue";
-
-const navLinks = [
-  {
-    name: 'Dashboard',
-    link: '/dashboard',
-    icon: PhHouse
-  },
-  {
-    name: 'Repositories',
-    link: '/repositories',
-    icon: PhCloud
-  },
-  {
-    name: 'Tagging',
-    link: '/sectors',
-    icon: PhTag
-  },
-  {
-    name: 'Map',
-    link: '/map',
-    icon: PhMapPinLine
-  },
-  {
-    name: 'Settings',
-    link: '/settings',
-    icon: PhGearSix
-  },
-  {
-    name: 'Signout',
-    link: '/signout',
-    icon: PhSignOut
-  }
-]
+import {navLinks} from "../../data/navlinks.ts";
 </script>
 
 <template>

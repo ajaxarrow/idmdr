@@ -1,56 +1,68 @@
 <script setup lang="ts">
   import Logo from "../Global/Logo.vue";
-  import {
-    PhCloud,
-    PhGearSix,
-    PhHouse,
-    PhMapPinLine,
-    PhQuestion,
-    PhSignOut,
-    PhTag
-  } from "@phosphor-icons/vue";
+  import {PhQuestion, PhX, PhXCircle} from "@phosphor-icons/vue";
   import {useToggleMainSidebar} from "../../composables/useToggleMainSidebar.ts";
   import UserMainSidebarCollapsed from "./UserMainSidebarCollapsed.vue";
+  import {navLinks} from "../../data/navlinks.ts"
+  import {watch} from "vue";
+  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile, toggleMainSidebar} = useToggleMainSidebar()
+  const props = defineProps({
+    useMobileDesign: {
+      type: Boolean,
+      default: false,
+    },
+  });
+  const {isSmall} = useToggleMainSidebar();
+  // watch(()=> isSmall.value, ()=>{
+  //   toggleMainSidebarMobile()
+  // })
 
-  const {isCollapsed} = useToggleMainSidebar();
-
-
-  const navLinks = [
-    {
-      name: 'Dashboard',
-      link: '/dashboard',
-      icon: PhHouse
-    },
-    {
-      name: 'Repositories',
-      link: '/repositories',
-      icon: PhCloud
-    },
-    {
-      name: 'Sector Tagging',
-      link: '/sectors',
-      icon: PhTag
-    },
-    {
-      name: 'Map',
-      link: '/map',
-      icon: PhMapPinLine
-    },
-    {
-      name: 'Settings',
-      link: '/settings',
-      icon: PhGearSix
-    },
-    {
-      name: 'Signout',
-      link: '/signout',
-      icon: PhSignOut
-    }
-  ]
 </script>
 
 <template>
-  <VExpandXTransition>
+  <VSlideXReverseTransition v-if="useMobileDesign">
+    <VContainer v-if="showMainSidebarMobile">
+      <VSheet class="d-flex flex-column justify-start sidebar-mobile">
+        <VRow justify="space-between" align="center" class="mt-5 mb-4 px-10">
+          <Logo/>
+          <PhX size="24" weight="bold" class="cursor-pointer" @click="toggleMainSidebarMobile"/>
+        </VRow>
+        <VDivider/>
+        <div class="px-6 pt-2">
+          <VList>
+            <VListItem
+                v-for="navLink in navLinks"
+                :to="navLink.link"
+                link
+                class="my-2 nav-border nav-item"
+            >
+              <div class="d-flex align-center">
+                <component :is="navLink.icon" size="20" weight="fill" class="mr-2 icon" />
+                {{navLink.name}}
+              </div>
+            </VListItem>
+          </VList>
+        </div>
+        <VSpacer/>
+        <VDivider/>
+        <div class="px-6 pt-2">
+          <VList>
+            <VListItem
+                to="/help"
+                link
+                class="my-1 nav-border nav-item"
+            >
+              <div class="d-flex align-center">
+                <PhQuestion size="20" weight="fill" class="mr-2 icon" />
+                Help Center
+              </div>
+            </VListItem>
+          </VList>
+        </div>
+      </VSheet>
+    </VContainer>
+  </VSlideXReverseTransition>
+  <VExpandXTransition v-else>
     <UserMainSidebarCollapsed v-if="isCollapsed"/>
     <VSheet v-else class="sidebar d-flex flex-column justify-start ma-4" rounded="xl">
       <VRow justify="center" class="mt-5 mb-4">
@@ -103,8 +115,18 @@
     left: 0;
     right: 0;
     width: 300px;
-    box-shadow: 0px 0px 7px 0px #5d6e87;
+    box-shadow: 0px 0px 7px 0px #D5DDECFF;
     height: 95vh;
+  }
+
+  .sidebar-mobile{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 20;
+    width: 100vw;
+
   }
 
 

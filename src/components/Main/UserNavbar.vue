@@ -3,22 +3,37 @@ import {PhBell, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
 import {useToggleMenu} from "../../composables/useToggleMenu.ts";
 import {useToggleMainSidebar} from "../../composables/useToggleMainSidebar.ts";
-const {isSmall} = useScreenStore();
+import {computed} from "vue";
+const {isSmall, isMobile, isLargePhone} = useScreenStore();
 const {activeIcon, toggleMenu} = useToggleMenu();
-const {toggleMainSidebar} = useToggleMainSidebar();
+const {toggleSidebar, isCollapsed} = useToggleMainSidebar();
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'IDMDR',
+  },
+});
+
+const appBarWidthStyle = computed(() => {
+  if(isMobile.value || isLargePhone.value){
+    return {width: '95%', }
+  } else {
+    return isCollapsed.value ? { width: `calc(100vw - 140px)` } : { width: `calc(100vw - 360px)` };
+  }
+});
 
 
 </script>
 
 <template>
-  <VAppBar elevation="0" rounded="xl" class="ma-4 user-nav" style="left: unset !important;">
+  <VAppBar elevation="0" rounded="xl" class="ma-4 user-nav" style="left: unset !important; z-index: 10 !important;" v-bind:style="appBarWidthStyle">
     <VContainer fluid class="mx-3">
       <VRow align="center">
         <VCol cols="auto">
           <VAppBarTitle >
             <div class="d-flex align-center">
-              <PhList size="24" weight="bold" class="mr-2 cursor-pointer" @click="toggleMainSidebar" />
-              <p class="text-nav-title">Dashboard</p>
+              <PhList size="24" weight="bold" class="mr-2 cursor-pointer" @click="toggleSidebar" />
+              <p class="text-nav-title">{{title}}</p>
             </div>
           </VAppBarTitle>
         </VCol>
@@ -78,9 +93,8 @@ const {toggleMainSidebar} = useToggleMainSidebar();
   }
 
   .user-nav{
-    width: 76vw !important;
     right: 0 !important;
-    box-shadow: 0px 0px 5px 0px #5d6e87 !important;
+    box-shadow: 0px 0px 5px 0px #d5ddec !important;
   }
 
   @keyframes flip {
