@@ -29,9 +29,6 @@
 </template>
 
 <style scoped>
-.relative-container{
-  position: relative;
-}
 .circle-quarter::after {
   content: '';
   position: absolute;

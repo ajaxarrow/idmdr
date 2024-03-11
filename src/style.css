@@ -23,4 +23,15 @@ body{
     font-size: 16px !important;
 }
 
+.text-heading{
+    font-size: 20px;
+    font-weight: 900;
+}
 
+.text-subtitle{
+    font-size: 14px;
+}
+
+.relative-container{
+    position: relative;
+}

@@ -35,10 +35,6 @@ const props = defineProps({
     z-index: 1;
   }
 
-  .relative-container{
-    position: relative;
-  }
-
   .dashboard-card-num{
     font-size: 28px;
     font-weight: 900;
