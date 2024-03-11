@@ -5,7 +5,7 @@ import {useScreenStore} from "../stores/screenSizeStore.ts";
 
 const {isMobile, isLargePhone} = useScreenStore();
 
-const isCollapsed = ref(true);
+const isCollapsed = ref(false);
 const showMainSidebarMobile = ref(false);
 
 const toggleMainSidebarMobile = () => {
