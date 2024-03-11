@@ -96,7 +96,7 @@ const dataCards = [
     width: 85px;
     height: 70px;
     background: #DEF1FB;
-    border-radius: 0 20% 0% 300%;
+    border-radius: 0 20% 0 300%;
     z-index: 1;
   }
 
