@@ -7,32 +7,41 @@ const props = defineProps({
 </script>
 
 <template>
-  <VSheet
-      width="174px"
-      height="174px"
-      class="pa-4 my-1 card mx-3 circle relative-container">
-    <component :is="props.data?.icon" weight="bold" size="32" class="mt-7 mb-4"/>
-    <p class="dashboard-card-num">{{props.data?.value}}</p>
-    <p class="dashboard-card-subtitle">{{props.data?.name}}</p>
-  </VSheet>
+  <div class="card-wrapper my-1 mx-3">
+    <VSheet
+        width="174px"
+        height="174px"
+        class="pa-4 card circle relative-container">
+      <component :is="props.data?.icon" weight="bold" size="32" class="mt-7 mb-4"/>
+      <p class="dashboard-card-num">{{props.data?.value}}</p>
+      <p class="dashboard-card-subtitle">{{props.data?.name}}</p>
+    </VSheet>
+  </div>
 </template>
 
 <style scoped>
+  .card-wrapper{
+    position: relative;
+    overflow: hidden;
+  }
   .card{
     border-radius: 10px;
     border: 2px solid #E5ECF6;
   }
 
   .circle::before{
-    top: 0;
-    right: 0;
+    top: -55px;
+    right: -34px;
     content: '';
     position: absolute;
-    width: 85px;
-    height: 70px;
+    width: 126px;
+    height: 126px;
     background: #DEF1FB;
-    border-radius: 0 20% 0 300%;
+    border-radius: 50%;
     z-index: 1;
+  }
+  .circle{
+    overflow: hidden;
   }
 
   .dashboard-card-num{
