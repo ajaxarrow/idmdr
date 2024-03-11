@@ -17,11 +17,11 @@
             cover
             height="40px"
             width="40px"
-            :src="props.repository.image ? props.repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+            :src="props.repository?.image ? props.repository.image! : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
         />
         <div class="ml-2">
-          <p class="repository-title">{{props.repository.title}}</p>
-          <p class="repository-subtitle">{{ props.repository.owner }} · {{props.repository.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}}</p>
+          <p class="repository-title">{{props.repository.title!}}</p>
+          <p class="repository-subtitle">{{ props.repository.owner! }} · {{props.repository.date!.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}}</p>
         </div>
       </div>
       <VBtn class="text-none bg-background view-details-btn" height="35px" width="95px" rounded="xl" >
