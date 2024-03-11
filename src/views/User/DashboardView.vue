@@ -55,14 +55,7 @@ const dataCards = [
 </template>
 
 <style scoped>
-  .text-heading{
-    font-size: 20px;
-    font-weight: 900;
-  }
 
-  .text-subtitle{
-    font-size: 14px;
-  }
 
   .text-title{
     font-size: 18px;
