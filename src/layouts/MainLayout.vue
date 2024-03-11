@@ -58,5 +58,6 @@
     min-height: 85vh;
     border-radius: 24px;
     box-shadow: 0px 0px 7px 0px #D5DDECFF;
+    overflow: hidden;
   }
 </style>
