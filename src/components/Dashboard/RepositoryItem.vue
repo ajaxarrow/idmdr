@@ -45,4 +45,8 @@
     font-size: 14px;
     letter-spacing: 0;
   }
+
+  .v-btn--variant-elevated{
+    box-shadow: 0px 0px 7px 0px #dae5f4;
+  }
 </style>
