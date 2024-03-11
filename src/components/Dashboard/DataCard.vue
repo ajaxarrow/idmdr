@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import {PropType} from "vue";
-import {Repository} from "../../interfaces/repository.interface.ts";
-
 const props = defineProps({
   data: {
     type: Object,
@@ -15,8 +12,8 @@ const props = defineProps({
       height="174px"
       class="pa-4 my-1 card mx-3 circle relative-container">
     <component :is="props.data?.icon" weight="bold" size="32" class="mt-7 mb-4"/>
-    <p class="dashboard-card-num">{{props.data.value}}</p>
-    <p class="dashboard-card-subtitle">{{props.data.name}}</p>
+    <p class="dashboard-card-num">{{props.data?.value}}</p>
+    <p class="dashboard-card-subtitle">{{props.data?.name}}</p>
   </VSheet>
 </template>
 
