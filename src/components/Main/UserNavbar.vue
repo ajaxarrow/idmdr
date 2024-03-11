@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import {PhBell, PhCaretDown, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
-import {useToggleMenu} from "../../composables/useToggleMenu.ts";
+import {IconMenuDeep} from "@tabler/icons-vue";
 import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
 import {computed} from "vue";
 const {isSmall, isMobile, isLargePhone} = useScreenStore();
-const {activeIcon, toggleMenu} = useToggleMenu();
-const {toggleSidebar, isCollapsed} = useToggleSidebar();
+const {toggleSidebar, isCollapsed, toggleProfileSidebar} = useToggleSidebar();
 const props = defineProps({
   title: {
     type: String,
@@ -40,7 +39,7 @@ const appBarWidthStyle = computed(() => {
         <VSpacer/>
         <VCol cols="auto">
           <transition name="flip" mode="out-in" v-if="isSmall">
-            <component :is="activeIcon" @click="toggleMenu" class="cursor-pointer" />
+            <IconMenuDeep @click="toggleProfileSidebar" class="cursor-pointer" />
           </transition>
           <VRow align="center" v-else>
             <p class="text-org d-flex align-center mx-2">

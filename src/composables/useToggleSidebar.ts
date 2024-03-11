@@ -7,6 +7,7 @@ const {isMobile, isLargePhone} = useScreenStore();
 
 const isCollapsed = ref(false);
 const showMainSidebarMobile = ref(false);
+const showProfileSidebar = ref(false);
 
 const toggleMainSidebarMobile = () => {
   showMainSidebarMobile.value = !showMainSidebarMobile.value
@@ -14,6 +15,10 @@ const toggleMainSidebarMobile = () => {
 
 const toggleMainSidebar = () => {
   isCollapsed.value = !isCollapsed.value
+}
+
+const toggleProfileSidebar = () => {
+  showProfileSidebar.value = !showProfileSidebar.value
 }
 
 const toggleSidebar = () => {
@@ -25,4 +30,4 @@ const toggleSidebar = () => {
 }
 
 
-export const useToggleSidebar = createGlobalState(() => ({isCollapsed, toggleMainSidebar, toggleMainSidebarMobile, toggleSidebar, showMainSidebarMobile}))
+export const useToggleSidebar = createGlobalState(() => ({isCollapsed, toggleMainSidebar, toggleMainSidebarMobile, toggleSidebar, showMainSidebarMobile, toggleProfileSidebar, showProfileSidebar}))

@@ -4,6 +4,7 @@
   import {useScreenStore} from "../stores/screenSizeStore.ts";
   import {computed, onMounted, watch} from "vue";
   import {useToggleSidebar} from "../composables/useToggleSidebar.ts";
+  import UserProfileSidebar from "../components/Main/UserProfileSidebar.vue";
   const props = defineProps({
     title: {
       type: String,
@@ -38,6 +39,7 @@
   <VLayout>
     <VContainer fluid class="px-10">
       <UserNavbar :title="props.title"/>
+      <UserProfileSidebar/>
       <UserMainSidebar v-if="isMobile || isLargePhone" :useMobileDesign="true"/>
       <UserMainSidebar v-else/>
       <VMain v-bind:style="mainContentWidthStyle" class="main-content-container ma-4" style="--v-layout-top: 0;">
