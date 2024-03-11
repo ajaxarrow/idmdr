@@ -25,4 +25,4 @@ const toggleSidebar = () => {
 }
 
 
-export const useToggleMainSidebar = createGlobalState(() => ({isCollapsed, toggleMainSidebar, toggleMainSidebarMobile, toggleSidebar, showMainSidebarMobile}))
+export const useToggleSidebar = createGlobalState(() => ({isCollapsed, toggleMainSidebar, toggleMainSidebarMobile, toggleSidebar, showMainSidebarMobile}))

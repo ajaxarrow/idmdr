@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import Logo from "../Global/Logo.vue";
   import {PhQuestion, PhX} from "@phosphor-icons/vue";
-  import {useToggleMainSidebar} from "../../composables/useToggleMainSidebar.ts";
+  import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
   import UserMainSidebarCollapsed from "./UserMainSidebarCollapsed.vue";
   import {navLinks} from "../../data/navlinks.ts"
-  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile} = useToggleMainSidebar()
+  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile} = useToggleSidebar()
   const props = defineProps({
     useMobileDesign: {
       type: Boolean,
@@ -124,7 +124,6 @@
     width: 100vw;
 
   }
-
 
   .nav-border{
     border-radius: 15px;

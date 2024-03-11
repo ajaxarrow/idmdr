@@ -3,7 +3,7 @@
   import UserMainSidebar from "../components/Main/UserMainSidebar.vue";
   import {useScreenStore} from "../stores/screenSizeStore.ts";
   import {computed, onMounted, watch} from "vue";
-  import {useToggleMainSidebar} from "../composables/useToggleMainSidebar.ts";
+  import {useToggleSidebar} from "../composables/useToggleSidebar.ts";
   const props = defineProps({
     title: {
       type: String,
@@ -12,7 +12,7 @@
   });
 
   const {isMobile, isLargePhone, isTablet} = useScreenStore();
-  const {isCollapsed, toggleMainSidebar} = useToggleMainSidebar();
+  const {isCollapsed, toggleMainSidebar} = useToggleSidebar();
   const mainContentWidthStyle = computed(() => {
     if(isMobile.value || isLargePhone.value){
       return {width: '95%', }

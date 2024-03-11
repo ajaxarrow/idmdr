@@ -2,11 +2,11 @@
 import {PhBell, PhCaretDown, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
 import {useToggleMenu} from "../../composables/useToggleMenu.ts";
-import {useToggleMainSidebar} from "../../composables/useToggleMainSidebar.ts";
+import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
 import {computed} from "vue";
 const {isSmall, isMobile, isLargePhone} = useScreenStore();
 const {activeIcon, toggleMenu} = useToggleMenu();
-const {toggleSidebar, isCollapsed} = useToggleMainSidebar();
+const {toggleSidebar, isCollapsed} = useToggleSidebar();
 const props = defineProps({
   title: {
     type: String,
