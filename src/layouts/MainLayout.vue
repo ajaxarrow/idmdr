@@ -2,7 +2,7 @@
   import UserNavbar from "../components/Main/UserNavbar.vue";
   import UserMainSidebar from "../components/Main/UserMainSidebar.vue";
   import {useScreenStore} from "../stores/screenSizeStore.ts";
-  import {computed} from "vue";
+  import {computed, onMounted, watch} from "vue";
   import {useToggleMainSidebar} from "../composables/useToggleMainSidebar.ts";
   const props = defineProps({
     title: {
@@ -11,8 +11,8 @@
     },
   });
 
-  const {isMobile, isLargePhone} = useScreenStore();
-  const {isCollapsed} = useToggleMainSidebar();
+  const {isMobile, isLargePhone, isTablet} = useScreenStore();
+  const {isCollapsed, toggleMainSidebar} = useToggleMainSidebar();
   const mainContentWidthStyle = computed(() => {
     if(isMobile.value || isLargePhone.value){
       return {width: '95%', }
@@ -20,6 +20,18 @@
       return isCollapsed.value ? { width: `calc(100vw - 140px)` } : { width: `calc(100vw - 360px)` };
     }
   });
+
+  watch(() => isTablet.value, () => {
+    if(isTablet.value){
+      toggleMainSidebar()
+    }
+  })
+
+  onMounted(()=>{
+    if(isTablet.value){
+      toggleMainSidebar()
+    }
+  })
 </script>
 
 <template>
