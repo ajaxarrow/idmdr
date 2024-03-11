@@ -1,15 +1,18 @@
 <script setup lang="ts">
   import {Repository} from '../../interfaces/repository.interface.ts'
   import {PropType} from "vue";
+  import {useScreenStore} from "../../stores/screenSizeStore.ts";
   const props = defineProps({
     repository: {
       type: Object as PropType<Repository>,
     }
   });
+
+  const {isDesktop} = useScreenStore();
 </script>
 
 <template>
-  <div class="mb-2">
+  <div class="mb-2 cursor-pointer">
     <VRow justify="space-between" align="center" class="ma-0" >
       <div class="d-flex align-center">
         <VImg
@@ -24,7 +27,7 @@
           <p class="repository-subtitle">{{ props.repository?.owner }} · {{ props.repository?.date?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</p>
         </div>
       </div>
-      <VBtn class="text-none bg-background view-details-btn" height="35px" width="95px" rounded="xl" >
+      <VBtn class="text-none bg-background view-details-btn" height="35px" width="95px" rounded="xl" v-if="isDesktop" >
         View Details
       </VBtn>
     </VRow>
