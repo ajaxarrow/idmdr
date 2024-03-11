@@ -50,6 +50,6 @@
   }
 
   .v-btn--variant-elevated{
-    box-shadow: 0px 0px 7px 0px #dae5f4;
+    box-shadow: 0 0 7px 0 #dae5f4;
   }
 </style>
