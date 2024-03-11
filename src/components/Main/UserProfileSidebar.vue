@@ -62,7 +62,7 @@ const {showProfileSidebar, toggleProfileSidebar} = useToggleSidebar();
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: 20;
+  z-index: 30;
   width: 100vw;
 }
 

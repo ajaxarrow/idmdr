@@ -111,7 +111,7 @@
     left: 0;
     right: 0;
     width: 300px;
-    box-shadow: 0px 0px 7px 0px #D5DDECFF;
+    box-shadow: 0 0 7px 0 #D5DDECFF;
     height: 95vh;
   }
 
@@ -120,7 +120,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    z-index: 20;
+    z-index: 30;
     width: 100vw;
 
   }
