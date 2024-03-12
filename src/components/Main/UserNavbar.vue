@@ -25,7 +25,7 @@ const appBarWidthStyle = computed(() => {
 </script>
 
 <template>
-  <VAppBar elevation="0" rounded="xl" class="ma-4 user-nav" style="left: unset !important; z-index: 10 !important;" v-bind:style="appBarWidthStyle">
+  <VAppBar elevation="0" rounded="xl" class="ma-4 user-nav" style="left: unset !important; z-index: 30 !important;" v-bind:style="appBarWidthStyle">
     <VContainer fluid class="mx-3">
       <VRow align="center">
         <VCol cols="auto">
