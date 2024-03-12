@@ -56,12 +56,6 @@ const dataCards = [
 
 <style scoped>
 
-
-  .text-title{
-    font-size: 18px;
-    font-weight: 600;
-  }
-
   .flip-horizontal{
     transform: scaleX(-1);
   }
