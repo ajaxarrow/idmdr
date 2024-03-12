@@ -26,7 +26,7 @@
   }
 
 
-  const fetchRepositoryData = (slug): Repository | null => {
+  const fetchRepositoryData = (slug: string): Repository | null => {
     const repository = repositories.find(repo => repo.slug === slug);
     if (repository) {
       console.log(repository);
@@ -137,7 +137,7 @@
         <VSheet width="100%"  class="file-container">
           <div class="pa-4">
             <VRow justify="space-between" align="center" class="ma-0">
-              <p><span class="text-data-heading">Data Explorer</span> ({{repository.files.length}} Files)</p>
+              <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>
               <PhDownload size="24"/>
             </VRow>
           </div>
