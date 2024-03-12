@@ -81,7 +81,7 @@ const {showProfileSidebar, toggleProfileSidebar} = useToggleSidebar();
   color: #F0FAFF;
 }
 
-.v-list-item--active >>> .icon {
+.v-list-item--active .icon {
   color: #F0FAFF !important;
 }
 

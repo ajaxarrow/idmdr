@@ -157,7 +157,7 @@
     background: none !important;
   }
 
-  .v-list-item--active >>> .v-list-item-title {
+  :deep(.v-list-item--active .v-list-item-title) {
     font-weight: 500 !important;
   }
 
