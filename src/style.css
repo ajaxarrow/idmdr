@@ -35,3 +35,8 @@ body{
 .relative-container{
     position: relative;
 }
+
+.text-title{
+    font-size: 18px;
+    font-weight: 600;
+}
