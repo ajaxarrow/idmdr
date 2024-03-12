@@ -18,7 +18,7 @@ const vuetify = createVuetify({
     defaults: {
         VBtnPrimaryFilled: {
             color: 'bs50',
-            class: 'text-none satoshi-md'
+            class: 'text-none satoshi-md btn-spacing'
         },
         VBtnPrimary: {
             color: 'bs50',
