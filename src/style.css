@@ -44,3 +44,7 @@ body{
 .btn-spacing{
     letter-spacing: 1px !important;
 }
+
+ul {
+    list-style-position: inside;
+}
