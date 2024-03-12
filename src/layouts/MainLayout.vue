@@ -5,6 +5,7 @@
   import {computed, onMounted, watch} from "vue";
   import {useToggleSidebar} from "../composables/useToggleSidebar.ts";
   import UserProfileSidebar from "../components/Main/UserProfileSidebar.vue";
+  import {useTitle} from '@vueuse/core'
   const props = defineProps({
     title: {
       type: String,
@@ -29,6 +30,7 @@
   })
 
   onMounted(()=>{
+    useTitle(props.title)
     if(isTablet.value){
       toggleMainSidebar()
     }
