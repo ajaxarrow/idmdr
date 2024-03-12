@@ -47,7 +47,7 @@ const dataCards = [
       </VRow>
       <VRow justify="space-between" align="center" class="ma-0 my-6">
         <p class="text-title">Browse Latest Repositories</p>
-        <p>See All</p>
+        <RouterLink class="link" :to="{name: 'repositories'}">See All</RouterLink>
       </VRow>
       <RepositoryItem v-for="repository in repositories.slice(0, 4)" :repository="repository" />
     </div>
@@ -60,4 +60,8 @@ const dataCards = [
     transform: scaleX(-1);
   }
 
+  .link{
+    text-decoration: none !important;
+    color: #191919;
+  }
 </style>
