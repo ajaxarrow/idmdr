@@ -4,13 +4,14 @@
   import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
   import UserMainSidebarCollapsed from "./UserMainSidebarCollapsed.vue";
   import {navLinks} from "../../data/navlinks.ts"
-  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile} = useToggleSidebar()
+  const {isCollapsed, toggleMainSidebarMobile, showMainSidebarMobile, toggleMainSidebar} = useToggleSidebar()
   const props = defineProps({
     useMobileDesign: {
       type: Boolean,
       default: false,
     },
   });
+
 
 
 </script>
@@ -27,6 +28,7 @@
         <div class="px-6 pt-2">
           <VList>
             <VListItem
+                @click="toggleMainSidebarMobile"
                 v-for="navLink in navLinks"
                 :to="navLink.link"
                 link

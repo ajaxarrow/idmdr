@@ -19,6 +19,7 @@ const {showProfileSidebar, toggleProfileSidebar} = useToggleSidebar();
         <div class="px-6 pt-2">
           <VList>
             <VListItem
+                @click="toggleProfileSidebar"
                 v-for="navLink in profileNavlinks"
                 :to="navLink.link"
                 link
