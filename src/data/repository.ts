@@ -6,7 +6,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Exploring the Interconnection of Agriculture and Forestry',
     owner: 'Cabahug, Anie Joseph',
     date: new Date('2022-11-12'),
-    image: 'https://www.shutterstock.com/image-photo/hands-child-holding-tree-butterfly-600nw-1731631453.jpg',
+    image: 'https://media.istockphoto.com/id/1280203624/photo/agroforestry.jpg?s=612x612&w=0&k=20&c=yOHed9ssGPObBvPP9Is7KuVU0_at5o5kT53cAdBbTPo=',
     slug: 'carbon-sequestration-in-agroforestry-global-trends-and-regional-variances',
     tags: ['Climate Solutions', 'Eco-friendly Practices', 'Biodiversity Enhancement', 'Sustainable Agriculture', 'Carbon Capture', 'Environmental Research'],
     about: `
@@ -41,6 +41,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Utilizing Advanced Mapping Strategies',
     owner: 'Tabilla, Jiu Axl',
     date: new Date('2024-02-15'),
+    image: 'https://www.shutterstock.com/image-photo/hands-child-holding-tree-butterfly-600nw-1731631453.jpg',
     slug: 'biodiversity-mapping-forest-flora-and-fauna-records-worldwide',
     tags: ['Mapping Strategies', 'Conservation Efforts', 'Global Fauna Records', 'Ecosystem Diversity', 'Wildlife Preservation', 'Ecological Monitoring'],
     about: `
@@ -103,6 +104,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Analyzing Economic Benefits and Community Empowerment',
     owner: 'Pamisa, Arram',
     date: new Date('2022-11-30'),
+    image: 'https://www.hotelierindia.com/cloud/2023/07/21/image-2.png',
     slug: 'agritourism-impact-on-rural-economies-data-from-various-agricultural-regions',
     tags: ['Economic Benefits', 'Rural Development Insights', 'Agricultural Tourism Trends', 'Community Empowerment', 'Tourism-Driven Economy', 'Socioeconomic Impact'],
     about: `
@@ -165,6 +167,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Analyzing Wildfire Patterns and Geospatial Mapping',
     owner: 'Cabahug, Anie Joseph',
     date: new Date('2023-04-07'),
+    image: 'https://www.treehugger.com/thmb/fKY1PL3MiIKRnvV6RlIye7KDyIA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/elkfire-56af58b45f9b58b7d017af72.jpg',
     slug: 'forest-fire-incident-reports-bukidnon-area',
     tags: ['Wildfire Analysis', 'Incident Reporting', 'Geospatial Mapping', 'Disaster Response Planning', 'Forest Fire Prevention', 'Emergency Management'],
     about: `
@@ -227,6 +230,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Utilizing Precision Farming Techniques',
     owner: 'James, Lebron',
     date: new Date('2023-12-05'),
+    image: 'https://media.istockphoto.com/id/965148388/photo/green-ripening-soybean-field-agricultural-landscape.jpg?s=612x612&w=0&k=20&c=cEVP3uj34-5obt-Jf_WI3O9qfP6tVrFaQIv1rBvvpzc=',
     slug: 'crop-monitoring-and-yield-prediction-in-plantation-at-lampanusan-bukidnon',
     tags: ['Precision Farming', 'Yield Prediction Models', 'Crop Health Monitoring', 'Agricultural Technology', 'Smart Farming', 'Data-Driven Agriculture'],
     about: `
@@ -289,6 +293,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Unveiling the Global Tapestry of Soil Vitality and Agricultural Sustainability',
     owner: 'Tabilla, Jiu Axl',
     date: new Date('2023-11-03'),
+    image: 'https://media.istockphoto.com/id/1183678932/photo/hand-checking-soil-on-ground-at-vegetable-garden.jpg?s=612x612&w=0&k=20&c=6Kdcabjf2LqFiiccr6XZojKKgc4FVgQaPDUjaJ_3AOE=',
     slug: 'soil-health-monitoring-databases-on-agricultural-lands-across-borders',
     tags: ['Soil Health', 'Farming', 'Crops', 'Agricultural Data', 'Crop Management', 'Global', 'Environmental Research' ],
     about: `
@@ -329,6 +334,7 @@ export const repositories: Repository[]  = [
     subtitle: 'Optimizing Yield and Sustainability',
     owner: 'Santos, Maria',
     date: new Date('2023-10-18'),
+    image: 'https://imageio.forbes.com/specials-images/imageserve/64496205204bcfc6b02a02d5/0x0.jpg?format=jpg&height=600&width=1200&fit=bounds',
     slug: 'precision-crop-management-in-bukidnon',
     tags: ['Precision Agriculture', 'Crop Optimization', 'Sustainable Farming', 'Data-Driven Practices', 'Bukidnon', 'Agricultural Analytics'],
     about: `
