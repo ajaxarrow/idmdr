@@ -37,6 +37,7 @@ const {showProfileSidebar, toggleProfileSidebar} = useToggleSidebar();
         <div class="px-6">
           <VList>
             <VListItem
+                @click="toggleProfileSidebar"
                 to="/help"
                 link
                 class="my-1 nav-border nav-item"
