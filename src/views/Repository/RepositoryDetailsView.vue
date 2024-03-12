@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import MainLayout from "../../layouts/MainLayout.vue";
+  import NotFound from "../../assets/images/404.svg"
   import {onMounted, ref} from "vue";
   import {useRouting} from "../../composables/useRouting.ts";
   import {Repository,} from "../../interfaces/repository.interface.ts";
@@ -171,8 +172,14 @@
         </VSheet>
       </div>
     </div>
-    <div v-else>
-      walay data
+    <div v-else style="height: 100%">
+      <div style="height:60vh" class="d-flex flex-column justify-center align-center">
+        <VImg
+            :src="NotFound"
+            width="400px"
+        />
+        <p class="text-h4 font-weight-black">Repository Not Found</p>
+      </div>
     </div>
   </MainLayout>
 </template>
