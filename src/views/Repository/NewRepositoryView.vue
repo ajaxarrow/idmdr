@@ -31,7 +31,7 @@ const visibility = ref("public")
                 </div>
               </template>
             </VRadio>
-            <VRadio value="private" class="my-3">
+            <VRadio color="bs50" value="private" class="my-3">
               <template v-slot:label>
                 <div>
                   <p class="radio-text-heading">Private</p>
