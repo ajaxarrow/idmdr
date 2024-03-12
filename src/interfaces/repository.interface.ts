@@ -7,11 +7,11 @@ interface Repository {
   image?: string;
   tags?: string[];
   about?: string;
-  files?: File[]
+  files?: FileData[]
 }
-interface File {
+interface FileData {
   name: string,
   description: string
 }
 
-export type {Repository};
+export type {Repository, FileData};
