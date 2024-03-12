@@ -73,6 +73,7 @@
           >
             <VChip
               v-for="tag in tags"
+              class="tag"
               :class="{'d-flex align-center mr-2 tag-chips': !selectedTags.includes(tag.name)}"
               variant="outlined"
               :key="tag.name"
@@ -121,7 +122,12 @@
 .tag-chips{
   background-color: #fafafa;
   border: 1px solid #e4e4e4;
+}
+
+.tag{
   font-size: 12px;
 }
+
+
 
 </style>
