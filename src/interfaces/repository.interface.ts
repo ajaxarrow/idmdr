@@ -7,7 +7,7 @@ interface Repository {
   image?: string;
   tags?: string[];
   about?: string;
-  files: File[]
+  files?: File[]
 }
 interface File {
   name: string,
