@@ -29,7 +29,6 @@
   const fetchRepositoryData = (slug: string): Repository | null => {
     const repository = repositories.find(repo => repo.slug === slug);
     if (repository) {
-      console.log(repository);
       return repository;
     } else {
       console.error('no repo')
@@ -76,8 +75,7 @@
 
 
   onMounted(() => {
-    console.log(route.params.slug)
-    repository.value = fetchRepositoryData(route.params.slug)
+    repository.value = fetchRepositoryData(route.params.slug as string)
   })
 
 </script>
