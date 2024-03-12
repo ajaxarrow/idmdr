@@ -7,6 +7,11 @@ interface Repository {
   image?: string;
   tags?: string[];
   about?: string;
+  files: File[]
+}
+interface File {
+  name: string,
+  description: string
 }
 
 export type {Repository};
