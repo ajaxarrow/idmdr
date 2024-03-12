@@ -2,6 +2,7 @@
   import {Repository} from '../../interfaces/repository.interface.ts'
   import {PropType} from "vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
+  import {useRouting} from "../../composables/useRouting.ts";
   const props = defineProps({
     repository: {
       type: Object as PropType<Repository>,
@@ -9,10 +10,18 @@
   });
 
   const {isDesktop} = useScreenStore();
+  const {router} = useRouting()
+
+  const goToRepositoryDetails = () => {
+    router.push({
+      name: 'repository',
+      params: { slug: props.repository?.slug }
+    });
+  }
 </script>
 
 <template>
-  <div class="mb-2 cursor-pointer">
+  <div class="mb-2 cursor-pointer" @click="goToRepositoryDetails()">
     <VRow justify="space-between" align="center" class="ma-0" >
       <div class="d-flex align-center">
         <VImg
@@ -27,7 +36,14 @@
           <p class="repository-subtitle">{{ props.repository?.owner }} · {{ props.repository?.date?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</p>
         </div>
       </div>
-      <VBtn class="text-none bg-background view-details-btn" height="35px" width="95px" rounded="xl" v-if="isDesktop" >
+      <VBtn
+          :to="{ name: 'repository', params: { slug: props.repository?.slug } }"
+          class="text-none bg-background view-details-btn"
+          height="35px"
+          width="95px"
+          rounded="xl"
+          v-if="isDesktop"
+      >
         View Details
       </VBtn>
     </VRow>
