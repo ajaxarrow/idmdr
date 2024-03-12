@@ -10,9 +10,10 @@ export const repositories: Repository[]  = [
     slug: 'carbon-sequestration-in-agroforestry-global-trends-and-regional-variances',
     tags: ['Climate Solutions', 'Eco-friendly Practices', 'Biodiversity Enhancement', 'Sustainable Agriculture', 'Carbon Capture', 'Environmental Research'],
     about: `
-    <h1>About Carbon Sequestration in Agroforestry</h1>
+    <h4>About Carbon Sequestration in Agroforestry</h4>
     <p>This research delves into the critical role of agroforestry in carbon sequestration, exploring global trends and regional variations. By examining the interconnection between agriculture and forestry practices, the study aims to contribute valuable insights to the ongoing efforts in mitigating climate change.</p>
-    <h2>Key Findings:</h2>
+    <br/>
+    <h4>Key Findings:</h4>
     <ul>
         <li>Identification of agroforestry practices with the highest carbon sequestration potential.</li>
         <li>Assessment of the environmental and economic benefits of implementing sustainable agroforestry techniques.</li>
@@ -29,9 +30,10 @@ export const repositories: Repository[]  = [
     slug: 'biodiversity-mapping-forest-flora-and-fauna-records-worldwide',
     tags: ['Mapping Strategies', 'Conservation Efforts', 'Global Fauna Records', 'Ecosystem Diversity', 'Wildlife Preservation', 'Ecological Monitoring'],
     about: `
-    <h1>About Biodiversity Mapping</h1>
+    <h4>About Biodiversity Mapping</h4>
     <p>This project focuses on creating a comprehensive map of forest flora and fauna records worldwide. By employing advanced mapping strategies and data collection techniques, the aim is to contribute to the understanding of global biodiversity patterns, aid conservation efforts, and provide a valuable resource for researchers and policymakers.</p>
-    <h2>Mapping Techniques:</h2>
+    <br/>
+    <h4>Mapping Techniques:</h4>
     <ul>
         <li>Utilization of satellite imagery and remote sensing technologies for accurate mapping.</li>
         <li>Incorporation of citizen science data to enhance the completeness of fauna records.</li>
@@ -48,9 +50,10 @@ export const repositories: Repository[]  = [
     slug: 'agritourism-impact-on-rural-economies-data-from-various-agricultural-regions',
     tags: ['Economic Benefits', 'Rural Development Insights', 'Agricultural Tourism Trends', 'Community Empowerment', 'Tourism-Driven Economy', 'Socioeconomic Impact'],
     about: `
-    <h1>About Agritourism Impact on Rural Economies</h1>
+    <h4>About Agritourism Impact on Rural Economies</h4>
     <p>This study investigates the influence of agritourism on rural economies, providing data from various agricultural regions. By analyzing economic benefits, development insights, and community empowerment aspects, the research aims to shed light on the role of agritourism in fostering sustainable rural development and creating a tourism-driven economy.</p>
-    <h2>Key Metrics:</h2>
+    <br/>
+    <h4>Key Metrics:</h4>
     <ul>
         <li>Economic benefits derived from agritourism activities.</li>
         <li>Insights into the impact of agritourism on rural communities.</li>
@@ -67,9 +70,10 @@ export const repositories: Repository[]  = [
     slug: 'forest-fire-incident-reports-bukidnon-area',
     tags: ['Wildfire Analysis', 'Incident Reporting', 'Geospatial Mapping', 'Disaster Response Planning', 'Forest Fire Prevention', 'Emergency Management'],
     about: `
-    <h1>About Forest Fire Incident Reports in Bukidnon Area</h1>
+    <h4>About Forest Fire Incident Reports in Bukidnon Area</h4>
     <p>This repository compiles detailed incident reports of forest fires in the Bukidnon area. The analysis includes wildfire patterns, geospatial mapping, and strategies for disaster response planning and prevention. By understanding the dynamics of forest fires, this research aims to contribute to effective emergency management and the preservation of forest ecosystems.</p>
-    <h2>Key Components:</h2>
+    <br/>
+    <h4>Key Components:</h4>
     <ul>
         <li>Wildfire analysis highlighting key factors influencing incident occurrences.</li>
         <li>Geospatial mapping providing a visual representation of fire-prone areas.</li>
@@ -86,9 +90,10 @@ export const repositories: Repository[]  = [
     slug: 'crop-monitoring-and-yield-prediction-in-plantation-at-lampanusan-bukidnon',
     tags: ['Precision Farming', 'Yield Prediction Models', 'Crop Health Monitoring', 'Agricultural Technology', 'Smart Farming', 'Data-Driven Agriculture'],
     about: `
-    <h1>About Crop Monitoring and Yield Prediction in Lampanusan, Bukidnon</h1>
+    <h4>About Crop Monitoring and Yield Prediction in Lampanusan, Bukidnon</h4>
     <p>This project focuses on advanced crop monitoring and yield prediction in the Lampanusan plantation in Bukidnon. Utilizing precision farming techniques, yield prediction models, and agricultural technology, the aim is to optimize crop health monitoring and promote data-driven agriculture. The insights gathered contribute to the development of smart farming practices for sustainable and efficient agriculture.</p>
-    <h2>Key Features:</h2>
+    <br/>
+    <h4>Key Features:</h4>
     <ul>
         <li>Implementation of precision farming for enhanced crop monitoring.</li>
         <li>Development and utilization of yield prediction models for informed decision-making.</li>
@@ -105,9 +110,10 @@ export const repositories: Repository[]  = [
     slug: 'soil-health-monitoring-databases-on-agricultural-lands-across-borders',
     tags: ['Soil Health', 'Farming', 'Crops', 'Agricultural Data', 'Crop Management', 'Global', 'Environmental Research' ],
     about: `
-    <h1>Soil Health and Agricultural Landscapes Dataset</h1>
+    <h4>Soil Health and Agricultural Landscapes Dataset</h4>
     <p>This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices. With over 5,000 entries, this dataset serves as a versatile resource for researchers, agriculturists, and policymakers seeking to unravel the dynamic interplay between soil health and agricultural activities.</p>
-    <h2>Attributes:</h2>
+    <br/>
+    <h4>Attributes:</h4>
     <ul>
         <li><strong>Location:</strong> Geographical coordinates providing the precise location of each soil sample.</li>
         <li><strong>Nutrient Levels:</strong> Quantitative data on essential soil nutrients, including nitrogen, phosphorus, and potassium.</li>
