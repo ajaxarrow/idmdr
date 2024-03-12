@@ -320,7 +320,7 @@ export const repositories: Repository[]  = [
         description: "Quantitative data on essential soil nutrients, including nitrogen, phosphorus, and potassium",
       },
       {
-        name: 'climate_conditions.csv',
+        name: 'climate_conditions.json',
         description: "JSON file containing historical climate data, including temperature, precipitation, and humidity.",
       },
       {
