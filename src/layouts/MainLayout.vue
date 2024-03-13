@@ -40,6 +40,7 @@
 <template>
   <VLayout>
     <VContainer fluid class="px-10">
+      <div class="blur"></div>
       <UserNavbar :title="props.title"/>
       <UserProfileSidebar/>
       <UserMainSidebar v-if="isMobile || isLargePhone" :useMobileDesign="true"/>
@@ -61,5 +62,16 @@
     border-radius: 24px;
     box-shadow: 0px 0px 7px 0px #D5DDECFF;
     overflow: hidden;
+  }
+
+  .blur{
+    background: transparent;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    height: 16px;
+    z-index: 40;
+    backdrop-filter: blur(100px);
   }
 </style>
