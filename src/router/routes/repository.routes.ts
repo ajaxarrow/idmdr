@@ -4,6 +4,10 @@ import RepositoriesView from "../../views/Repository/RepositoriesView.vue";
 import NewRepositoryView from "../../views/Repository/NewRepositoryView.vue";
 // @ts-ignore
 import RepositoryDetailsView from "../../views/Repository/RepositoryDetailsView.vue";
+// @ts-ignore
+import RepositoryDetailsDiscussionView from "../../views/Repository/RepositoryDetailsDiscussionView.vue";
+// @ts-ignore
+import RepositoryDetailsSettingsView from "../../views/Repository/RepositoryDetailsSettingsView.vue";
 
 const repositoryRoutes = [
   {
@@ -18,8 +22,18 @@ const repositoryRoutes = [
   },
   {
     path: '/repository/:slug',
-    name: 'repository',
+    name: 'repository-data',
     component: RepositoryDetailsView
+  },
+  {
+    path: '/repository/:slug',
+    name: 'repository-discussions',
+    component: RepositoryDetailsDiscussionView
+  },
+  {
+    path: '/repository/:slug',
+    name: 'repository-settings',
+    component: RepositoryDetailsSettingsView
   }
 ]
 
