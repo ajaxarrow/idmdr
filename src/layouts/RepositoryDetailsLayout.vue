@@ -96,8 +96,30 @@ onMounted(()=>{
 </template>
 
 <style scoped>
-.text-repository-heading{
-  font-weight: 900;
-  font-size: 22px;
-}
+  .text-repository-heading{
+    font-weight: 900;
+    font-size: 22px;
+  }
+
+  .circle::after {
+    content: '';
+    position: absolute;
+    left: -209px;
+    top: -430px;
+    width: 590px;
+    height: 561px;
+    border-radius: 50%;
+    background: #DEF1FB;
+    z-index: 1;
+    opacity: 75%;
+  }
+
+  .v-tab.v-tab.v-btn{
+    min-width: 40px;
+  }
+
+  .v-tab{
+    font-size: 16px;
+    letter-spacing: .7px;
+  }
 </style>

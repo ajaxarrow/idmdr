@@ -155,19 +155,6 @@
     margin-bottom: 5px;
   }
 
-  .circle::after {
-    content: '';
-    position: absolute;
-    left: -209px;
-    top: -430px;
-    width: 590px;
-    height: 561px;
-    border-radius: 50%;
-    background: #DEF1FB;
-    z-index: 1;
-    opacity: 75%;
-  }
-
   .text-subheading{
     font-weight: 800;
   }
@@ -185,14 +172,6 @@
     font-size: 14px;
   }
 
-  .v-tab.v-tab.v-btn{
-    min-width: 40px;
-  }
-
-  .v-tab{
-    font-size: 16px;
-    letter-spacing: .7px;
-  }
 
   .tag-chips{
     background-color: #fafafa;
