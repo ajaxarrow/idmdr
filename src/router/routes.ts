@@ -19,7 +19,7 @@ export const routes = [
     component: DashboardView
   },
   {
-    path: 'settings',
+    path: '/settings',
     name: 'settings',
     component: SettingsView
   },
