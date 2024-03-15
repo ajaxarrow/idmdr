@@ -4,6 +4,8 @@ import authRoutes from "./routes/auth.routes.ts";
 import repositoryRoutes from "./routes/repository.routes.ts";
 // @ts-ignore
 import DashboardView from "../views/User/DashboardView.vue";
+// @ts-ignore
+import SettingsView from "../views/User/SettingsView.vue";
 
 export const routes = [
   {
@@ -15,6 +17,11 @@ export const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: DashboardView
+  },
+  {
+    path: 'settings',
+    name: 'settings',
+    component: SettingsView
   },
   ...authRoutes,
   ...repositoryRoutes
