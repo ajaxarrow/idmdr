@@ -26,12 +26,12 @@ const repositoryRoutes = [
     component: RepositoryDetailsView
   },
   {
-    path: '/repository/:slug',
+    path: '/repository/:slug/discussions',
     name: 'repository-discussions',
     component: RepositoryDetailsDiscussionView
   },
   {
-    path: '/repository/:slug',
+    path: '/repository/:slug/settings',
     name: 'repository-settings',
     component: RepositoryDetailsSettingsView
   }
