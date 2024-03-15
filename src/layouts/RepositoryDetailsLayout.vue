@@ -2,7 +2,7 @@
 import MainLayout from "./MainLayout.vue";
 import {PhDownload} from "@phosphor-icons/vue";
 import NotFound from "../assets/images/404.svg";
-import {PropType} from "vue/dist/vue";
+import {PropType} from "vue";
 import {Repository} from "../interfaces/repository.interface.ts";
 import {onMounted, ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
