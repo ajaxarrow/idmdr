@@ -14,7 +14,7 @@
 
   const goToRepositoryDetails = () => {
     router.push({
-      name: 'repository',
+      name: 'repository-data',
       params: { slug: props.repository?.slug }
     });
   }
@@ -37,7 +37,7 @@
         </div>
       </div>
       <VBtn
-          :to="{ name: 'repository', params: { slug: props.repository?.slug } }"
+          :to="{ name: 'repository-data', params: { slug: props.repository?.slug } }"
           class="text-none bg-background view-details-btn"
           height="35px"
           width="95px"

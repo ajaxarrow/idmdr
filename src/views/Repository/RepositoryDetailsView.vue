@@ -1,10 +1,6 @@
 <script setup lang="ts">
-  import MainLayout from "../../layouts/MainLayout.vue";
-  import NotFound from "../../assets/images/404.svg"
   import {onMounted, ref} from "vue";
   import {useRouting} from "../../composables/useRouting.ts";
-  import {Repository,} from "../../interfaces/repository.interface.ts";
-  import {repositories} from "../../data/repository.ts";
   import {
     PhDownload,
     PhFile, PhFileArchive,
@@ -14,11 +10,11 @@
     PhFilePpt,
     PhFileVideo, PhFileXls, PhInfo,
   } from "@phosphor-icons/vue";
+  import RepositoryDetailsLayout from "../../layouts/RepositoryDetailsLayout.vue";
+  import {useRepositoryStore} from "../../stores/repositoryStore.ts";
   const {route} = useRouting()
+  const {repository, setRepositoryData} = useRepositoryStore();
 
-  const repository = ref<Repository | null>();
-
-  const tab = ref("about");
   const selectedFileDescription = ref('');
 
   const selectFile = (fileDesc: string) => {
@@ -28,17 +24,6 @@
       selectedFileDescription.value = fileDesc
     }
   }
-
-
-  const fetchRepositoryData = (slug: string): Repository | null => {
-    const repository = repositories.find(repo => repo.slug === slug);
-    if (repository) {
-      return repository;
-    } else {
-      console.error('no repo')
-      return null;
-    }
-  };
 
   const getFileExtension = (filename: String): string | null => {
     const lastDotIndex = filename.lastIndexOf('.');
@@ -77,41 +62,15 @@
     }
   }
 
-
   onMounted(() => {
-    repository.value = fetchRepositoryData(route.params.slug as string)
+    setRepositoryData(route.params.slug as string);
   })
 
 </script>
 
 <template>
-  <MainLayout title="Repository Details">
-    <div v-if="repository" style="height: 100%" class="relative-container circle">
-      <div class="pa-6 relative-container" style="z-index: 20;">
-        <VRow justify="space-between" align="center" class="ma-0">
-          <div>
-            <p class="text-repository-heading d-flex align-center">
-              {{repository.title}}
-            </p>
-            <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>
-            <p class="text-subtitle">{{ repository.owner }} | {{ repository.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</p>
-          </div>
-          <VBtnPrimaryFilled width="151px" height="45px" rounded="lg" class="satoshi-md">
-            <PhDownload size="20" class="mr-2"/>
-            Download
-          </VBtnPrimaryFilled>
-        </VRow>
-      </div>
-      <VTabs
-          class="mx-6"
-          color="primary"
-          v-model="tab"
-      >
-        <VTab value="data" class="tab-title text-none mx-2">Data</VTab>
-        <VTab value="discussions" class="tab-title text-none mx-2">Discussions</VTab>
-        <VTab value="settings" class="tab-title text-none mx-2">Settings</VTab>
-      </VTabs>
-      <VDivider/>
+  <RepositoryDetailsLayout :repository="repository" activeTab="data">
+    <div v-if="repository">
       <div class="px-6 py-2">
         <VRow class="ma-0">
           <VCol cols="9" sm="12" md="8">
@@ -122,14 +81,14 @@
             <p class="text-subheading">Last Updated</p>
             <p>3 days ago</p>
             <p class="text-subheading mt-3">Tags</p>
-              <VChip
+            <VChip
                 v-for="tag in repository.tags"
                 class="tag-chips my-1 mr-1"
                 variant="outlined"
                 :key="tag"
                 :value="tag">
-                {{tag}}
-              </VChip>
+              {{tag}}
+            </VChip>
           </VCol>
         </VRow>
       </div>
@@ -154,17 +113,17 @@
           <VDivider/>
           <div class="pa-2">
             <VListItem
-              v-for="file in repository.files"
-              @click="selectFile(file.description)">
+                v-for="file in repository.files"
+                @click="selectFile(file.description)">
               <div
-                class="my-2 pa-1 d-flex align-center "
-                :class="{'selected-file': selectedFileDescription === file.description}"
+                  class="my-2 pa-1 d-flex align-center "
+                  :class="{'selected-file': selectedFileDescription === file.description}"
               >
                 <component
-                  :is="getIcon(file.name).icon"
-                  class="mr-2"
-                  size="24"
-                  :color="getIcon(file.name).color"
+                    :is="getIcon(file.name).icon"
+                    class="mr-2"
+                    size="24"
+                    :color="getIcon(file.name).color"
                 />
                 {{file.name}}
               </div>
@@ -174,16 +133,8 @@
         </VSheet>
       </div>
     </div>
-    <div v-else style="height: 100%">
-      <div style="height:60vh" class="d-flex flex-column justify-center align-center">
-        <VImg
-            :src="NotFound"
-            width="400px"
-        />
-        <p class="text-h4 font-weight-black">Repository Not Found</p>
-      </div>
-    </div>
-  </MainLayout>
+  </RepositoryDetailsLayout>
+
 </template>
 
 <style scoped>
@@ -196,10 +147,7 @@
     border: 1.5px solid #E5ECF6;
     border-radius: 20px;
   }
-  .text-repository-heading{
-    font-weight: 900;
-    font-size: 22px;
-  }
+
 
   .text-about-heading{
     font-weight: 800;

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-
 import MainLayout from "./MainLayout.vue";
 import {PhDownload} from "@phosphor-icons/vue";
 import NotFound from "../assets/images/404.svg";
 import {PropType} from "vue/dist/vue";
 import {Repository} from "../interfaces/repository.interface.ts";
 import {onMounted, ref} from "vue";
+import {useRouting} from "../composables/useRouting.ts";
 
 const tab = ref("discussions");
-
+const {router} = useRouting()
 const props = defineProps({
   repository: {
     type: Object as PropType<Repository>,
@@ -17,6 +17,27 @@ const props = defineProps({
     type: String
   }
 });
+
+const tabs = [
+  {
+    name: "Data",
+    linkName: "repository-data"
+  },
+  {
+    name: "Discussions",
+    linkName: "repository-discussions"
+  },
+  {
+    name: "Settings",
+    linkName: "repository-settings"
+  }
+]
+
+const navigateTo = (linkName: string) => {
+  router.push({
+    name: linkName,
+  });
+}
 
 onMounted(()=>{
   if(props.activeTab){
@@ -50,9 +71,14 @@ onMounted(()=>{
           color="primary"
           v-model="tab"
       >
-        <VTab value="data" class="tab-title text-none mx-2">Data</VTab>
-        <VTab value="discussions" class="tab-title text-none mx-2">Discussions</VTab>
-        <VTab value="settings" class="tab-title text-none mx-2">Settings</VTab>
+        <VTab
+          v-for="tab in tabs"
+          class="tab-title text-none mx-2"
+          :value="tab.name.toLowerCase()"
+          @click="navigateTo(tab.linkName)"
+        >
+          {{tab.name}}
+        </VTab>
       </VTabs>
       <VDivider/>
       <slot/>
