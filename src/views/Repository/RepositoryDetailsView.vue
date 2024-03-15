@@ -22,7 +22,11 @@
   const selectedFileDescription = ref('');
 
   const selectFile = (fileDesc: string) => {
+    if(selectedFileDescription.value === fileDesc){
+      selectedFileDescription.value = ''
+    } else {
       selectedFileDescription.value = fileDesc
+    }
   }
 
 
