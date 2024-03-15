@@ -38,10 +38,10 @@
             </p>
             <p class="text-subtitle">Create and manage repositories within your organization!</p>
           </div>
-          <VBtnPrimaryFilled v-if="isSmall || isTablet" icon >
+          <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-if="isSmall || isTablet" icon >
             <PhPlus size="20"/>
           </VBtnPrimaryFilled>
-          <VBtnPrimaryFilled v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
+          <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
             <PhPlus size="20" class="mr-2"/>
             Add Repository
           </VBtnPrimaryFilled>
