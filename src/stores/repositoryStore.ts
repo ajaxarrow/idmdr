@@ -3,7 +3,7 @@ import {Repository} from "../interfaces/repository.interface.ts";
 import {repositories} from "../data/repository.ts";
 import {createGlobalState} from "@vueuse/core";
 
-const repository = ref<Repository | null>();
+const repository = ref<Repository | null | undefined>();
 
 const fetchRepositoryData = (slug: string): Repository | null => {
   const repository = repositories.find(repo => repo.slug === slug);

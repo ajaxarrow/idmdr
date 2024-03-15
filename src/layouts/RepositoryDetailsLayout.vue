@@ -11,7 +11,7 @@ const tab = ref("discussions");
 const {router} = useRouting()
 const props = defineProps({
   repository: {
-    type: Object as PropType<Repository> || undefined,
+    type: Object as PropType<Repository>,
   },
   activeTab: {
     type: String
