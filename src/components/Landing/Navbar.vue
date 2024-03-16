@@ -148,6 +148,10 @@
     background: none !important;
   }
 
+  .v-btn--variant-outlined{
+    background: #fff !important;
+  }
+
   :deep(.v-list-item__overlay){
     background-color: transparent !important;
     font-weight: 900 !important;
