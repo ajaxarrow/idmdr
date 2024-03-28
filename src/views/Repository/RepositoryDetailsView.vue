@@ -35,19 +35,24 @@
   }
 
   const getIcon = (name: String) => {
-    const iconMap = {
-      'json': {icon: PhFileJs, color: '#C43ED0'},
-      'csv': {icon: PhFileCsv, color: '#3291C7'},
-      'pdf': {icon: PhFilePdf, color: '#C83246'},
-      'docx': {icon: PhFileDoc, color: '#3291C7'},
-      'zip': {icon: PhFileArchive, color: '#3291C7'},
-      'xlsx': {icon: PhFileXls, color: '#033512'},
-      'jpg': {icon: PhFileJpg, color: '#97411c'},
-      'png': {icon: PhFilePng, color: '#1c7e97'},
-      'ppt': {icon: PhFilePpt, color: '#971c1c'},
-      'mp4': {icon: PhFileVideo, color: '#591c17'},
-    };
-    return iconMap[getFileExtension(name)] || {icon: PhFile, color: '#32C8B4'};
+    const extension = getFileExtension(name);
+    if (extension) {
+      const iconMap = {
+        'json': {icon: PhFileJs, color: '#C43ED0'},
+        'csv': {icon: PhFileCsv, color: '#3291C7'},
+        'pdf': {icon: PhFilePdf, color: '#C83246'},
+        'docx': {icon: PhFileDoc, color: '#3291C7'},
+        'zip': {icon: PhFileArchive, color: '#3291C7'},
+        'xlsx': {icon: PhFileXls, color: '#033512'},
+        'jpg': {icon: PhFileJpg, color: '#97411c'},
+        'png': {icon: PhFilePng, color: '#1c7e97'},
+        'ppt': {icon: PhFilePpt, color: '#971c1c'},
+        'mp4': {icon: PhFileVideo, color: '#591c17'},
+      };
+      return iconMap[extension] || {icon: PhFile, color: '#32C8B4'};
+    } else {
+      return {icon: PhFile, color: '#32C8B4'};
+    }
   }
 
   onMounted(() => {
