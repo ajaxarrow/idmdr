@@ -34,14 +34,14 @@
     return extension.toLowerCase();
   }
 
-  interface IconMapping {
+  interface FileIcon {
     [key: string]: { icon: any, color: string };
   }
 
   const getIcon = (name: String) => {
     const extension = getFileExtension(name);
     if (extension) {
-      const iconMap: IconMapping = {
+      const iconMap: FileIcon = {
         'json': {icon: PhFileJs, color: '#C43ED0'},
         'csv': {icon: PhFileCsv, color: '#3291C7'},
         'pdf': {icon: PhFilePdf, color: '#C83246'},
