@@ -35,31 +35,19 @@
   }
 
   const getIcon = (name: String) => {
-    switch (getFileExtension(name)) {
-      case 'json':
-        return {icon: PhFileJs, color: '#C43ED0'}
-      case 'csv':
-        return {icon: PhFileCsv, color: '#3291C7'}
-      case 'pdf':
-        return {icon: PhFilePdf, color: '#C83246'}
-      case 'docx':
-        return {icon: PhFileDoc, color: '#3291C7'}
-      case 'zip':
-        return {icon: PhFileArchive, color: '#3291C7'}
-      case 'xlsx':
-        return {icon: PhFileXls, color: '#033512'}
-      case 'jpg':
-        return {icon: PhFileJpg, color: '#97411c'}
-      case 'png':
-        return {icon: PhFilePng,color: '#1c7e97'}
-      case 'ppt':
-        return {icon: PhFilePpt, color: '#971c1c'}
-      case 'mp4':
-        return {icon: PhFileVideo, color: '#591c17'}
-      default:
-        return {icon: PhFile, color: '#32C8B4'}
-
-    }
+    const iconMap = {
+      'json': {icon: PhFileJs, color: '#C43ED0'},
+      'csv': {icon: PhFileCsv, color: '#3291C7'},
+      'pdf': {icon: PhFilePdf, color: '#C83246'},
+      'docx': {icon: PhFileDoc, color: '#3291C7'},
+      'zip': {icon: PhFileArchive, color: '#3291C7'},
+      'xlsx': {icon: PhFileXls, color: '#033512'},
+      'jpg': {icon: PhFileJpg, color: '#97411c'},
+      'png': {icon: PhFilePng, color: '#1c7e97'},
+      'ppt': {icon: PhFilePpt, color: '#971c1c'},
+      'mp4': {icon: PhFileVideo, color: '#591c17'},
+    };
+    return iconMap[getFileExtension(name)] || {icon: PhFile, color: '#32C8B4'};
   }
 
   onMounted(() => {
