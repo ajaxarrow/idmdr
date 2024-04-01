@@ -1,5 +1,6 @@
-import { createApp } from 'vue'
 import './style.css'
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { createApp } from 'vue'
 import vuetify from "./plugins/vuetify.ts";
 import PhosphorIcons from "@phosphor-icons/vue";
 import router from './router'
