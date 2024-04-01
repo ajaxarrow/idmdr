@@ -1,11 +1,13 @@
 // @ts-ignore
 import LandingView from "../views/Public/LandingView.vue";
+// @ts-ignore
 import authRoutes from "./routes/auth.routes.ts";
+// @ts-ignore
 import repositoryRoutes from "./routes/repository.routes.ts";
 // @ts-ignore
 import DashboardView from "../views/User/DashboardView.vue";
-// @ts-ignore
 import SettingsView from "../views/User/SettingsView.vue";
+import MapView from "../views/Map/MapView.vue";
 
 export const routes = [
   {
@@ -22,6 +24,11 @@ export const routes = [
     path: '/settings',
     name: 'settings',
     component: SettingsView
+  },
+  {
+    path: '/map',
+    name: 'map',
+    component: MapView
   },
   ...authRoutes,
   ...repositoryRoutes
