@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import {PhMagnifyingGlass} from "@phosphor-icons/vue";
+import {ref, watch} from "vue";
+import {useProvincesStore} from "../../../stores/provincesStore.ts";
+const searchedProvince = ref("");
+
+const {filterProvinces} = useProvincesStore();
+
+watch(() => searchedProvince.value, () => {
+  filterProvinces(searchedProvince.value)
+})
 </script>
 
 <template>
   <VTextField
-    placeholder="Search Province"
+    v-model="searchedProvince"
+    placeholder="Search Provinces"
     hide-details
     rounded="lg"
     density="comfortable"

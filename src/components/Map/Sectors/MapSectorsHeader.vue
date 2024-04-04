@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import {PhMagnifyingGlass} from "@phosphor-icons/vue";
+import {ref, watch} from "vue";
+import {useSectorsStore} from "../../../stores/sectorsStore.ts";
+
+const searchedSector = ref("");
+const {filterSectors} = useSectorsStore();
+
+watch(() => searchedSector.value, () => {
+  filterSectors(searchedSector.value)
+})
+
 </script>
 
 <template>
   <VTextField
-      placeholder="Search Provinces"
+      v-model="searchedSector"
+      placeholder="Search Sectors"
       hide-details
       rounded="lg"
       density="comfortable"

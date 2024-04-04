@@ -9,6 +9,8 @@
   import {ref, computed, defineComponent, markRaw} from 'vue';
   import MapProvincesHeader from "./Provinces/MapProvincesHeader.vue";
   import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
+  import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
+  import MapSectorsMainContent from "./Sectors/MapSectorsMainContent.vue";
 
   type HeaderComponent = ReturnType<typeof defineComponent>;
   type MainContentComponent = ReturnType<typeof defineComponent>;
@@ -30,13 +32,13 @@
       name: 'Provinces',
       icon: markRaw(PhGlobe),
       header: markRaw(MapProvincesHeader),
-      mainContent: markRaw(PhGlobe)
+      mainContent: markRaw(MapProvincesMainContent)
     },
     {
       name: 'Sectors',
       icon: markRaw(PhFactory),
       header: markRaw(MapSectorsHeader),
-      mainContent: markRaw(PhFactory)
+      mainContent: markRaw(MapSectorsMainContent)
     },
     {
       name: 'Production',
@@ -118,7 +120,7 @@
          <component :is="header"/>
        </div>
        <VDivider/>
-       <div>
+       <div class="pa-5">
          <component :is="mainContent"/>
        </div>
      </div>
