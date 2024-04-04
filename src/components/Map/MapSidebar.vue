@@ -7,6 +7,8 @@
 
   import Logo from "../Global/Logo.vue";
   import {ref, computed, defineComponent, markRaw} from 'vue';
+  import MapProvincesHeader from "./Provinces/MapProvincesHeader.vue";
+  import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
 
   type HeaderComponent = ReturnType<typeof defineComponent>;
   type MainContentComponent = ReturnType<typeof defineComponent>;
@@ -27,13 +29,13 @@
     {
       name: 'Provinces',
       icon: markRaw(PhGlobe),
-      header: markRaw(PhGlobe),
+      header: markRaw(MapProvincesHeader),
       mainContent: markRaw(PhGlobe)
     },
     {
       name: 'Sectors',
       icon: markRaw(PhFactory),
-      header: markRaw(PhFactory),
+      header: markRaw(MapSectorsHeader),
       mainContent: markRaw(PhFactory)
     },
     {
@@ -112,7 +114,7 @@
      </div>
      <VDivider v-if="showAdditionalContent" :vertical="true" />
      <div v-if="showAdditionalContent" class="sidebar-additional-content">
-       <div class="sidebar-header">
+       <div class="sidebar-header pa-5">
          <component :is="header"/>
        </div>
        <VDivider/>
