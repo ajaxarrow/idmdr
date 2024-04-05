@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {markRaw, onMounted, shallowRef} from "vue";
 import {LngLatLike, Map, NavigationControl} from "maplibre-gl";
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapSidebar from "../Map/MapSidebar.vue";
 
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
@@ -11,6 +13,14 @@ const bounds: [number, number, number, number] = [
   102.43621431035973, 3.982590021377476,
   141.1117856896347, 21.472305228005112
 ];
+
+const draw = new MapboxDraw({
+  displayControlsDefault: false,
+  controls: {
+    polygon: true,
+    trash: true,
+  },
+})
 
 
 const initMap = () => {
@@ -30,8 +40,17 @@ const initMap = () => {
 };
 
 onMounted(() => {
+  MapboxDraw.constants.classes.CONTROL_BASE = "maplibregl-ctrl";
+  MapboxDraw.constants.classes.CONTROL_PREFIX = "maplibregl-ctrl-";
+  MapboxDraw.constants.classes.CONTROL_GROUP = "maplibregl-ctrl-group";
   initMap();
-  map.value?.addControl(new NavigationControl(), 'top-right');
+  map.value?.addControl(new NavigationControl(), 'bottom-right');
+  map.value?.addControl(draw);
+  ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
+    map.value?.on(eventName, () => {
+      console.log(eventName);
+    });
+  });
 })
 
 
