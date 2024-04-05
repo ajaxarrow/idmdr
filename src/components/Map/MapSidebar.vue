@@ -206,7 +206,6 @@ import {
   left: 0;
   right: 0;
   height: 95vh;
-  box-shadow: 0px 0px 7px 0px #5d6e87;
   transition: width 0.2s;
 }
 

@@ -4,6 +4,7 @@ interface Repository {
   slug: string;
   owner: string;
   date: Date;
+  sector?: string;
   image?: string;
   tags?: string[];
   about?: string;

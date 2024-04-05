@@ -5,6 +5,7 @@ export const repositories: Repository[]  = [
     title: 'Carbon Sequestration in Agroforestry: Global Trends and Regional Variances',
     subtitle: 'Exploring the Interconnection of Agriculture and Forestry',
     owner: 'Cabahug, Anie Joseph',
+    sector: 'corn-plantation-in-musuan',
     date: new Date('2022-11-12'),
     image: 'https://media.istockphoto.com/id/1280203624/photo/agroforestry.jpg?s=612x612&w=0&k=20&c=yOHed9ssGPObBvPP9Is7KuVU0_at5o5kT53cAdBbTPo=',
     slug: 'carbon-sequestration-in-agroforestry-global-trends-and-regional-variances',
@@ -38,6 +39,7 @@ export const repositories: Repository[]  = [
   },
   {
     title: 'Biodiversity Mapping: Forest Flora and Fauna Records Worldwide',
+    sector: 'corn-plantation-in-musuan',
     subtitle: 'Utilizing Advanced Mapping Strategies',
     owner: 'Tabilla, Jiu Axl',
     date: new Date('2024-02-15'),
@@ -332,6 +334,7 @@ export const repositories: Repository[]  = [
   {
     title: 'Precision Crop Management in Bukidnon: A Data-Driven Approach',
     subtitle: 'Optimizing Yield and Sustainability',
+    sector: 'corn-plantation-in-musuan',
     owner: 'Santos, Maria',
     date: new Date('2023-10-18'),
     image: 'https://imageio.forbes.com/specials-images/imageserve/64496205204bcfc6b02a02d5/0x0.jpg?format=jpg&height=600&width=1200&fit=bounds',

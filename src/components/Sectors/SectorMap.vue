@@ -4,6 +4,7 @@ import {LngLatLike, Map, NavigationControl} from "maplibre-gl";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapSidebar from "../Map/MapSidebar.vue";
+import SectorDetailsSidebar from "./SectorDetailsSidebar.vue";
 
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const map = shallowRef<null | Map>(null);
@@ -61,6 +62,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <SectorDetailsSidebar/>
   <MapSidebar :useSectorDesign="true"/>
   <div class="map-wrap">
     <a href="https://www.maptiler.com" class="watermark"><img
