@@ -40,14 +40,16 @@ const initMap = () => {
 };
 
 onMounted(() => {
-  MapboxDraw.constants.classes.CONTROL_BASE = "maplibregl-ctrl";
-  MapboxDraw.constants.classes.CONTROL_PREFIX = "maplibregl-ctrl-";
-  MapboxDraw.constants.classes.CONTROL_GROUP = "maplibregl-ctrl-group";
+  (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
+  (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
+  (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
 
   initMap();
   map.value?.addControl(new NavigationControl(), 'bottom-right');
+  // @ts-ignore
   map.value?.addControl(draw);
   ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
+    // @ts-ignore
     map.value?.on(eventName, () => {
       console.log(eventName);
     });
