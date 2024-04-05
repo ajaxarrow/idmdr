@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import {markRaw, onMounted, shallowRef} from "vue";
   import {LngLatLike, Map, NavigationControl} from "maplibre-gl";
+  import MapSidebar from "./MapSidebar.vue";
 
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
   const map = shallowRef<null | Map>(null);
@@ -38,6 +39,7 @@
 </script>
 
 <template>
+  <MapSidebar/>
   <div class="map-wrap">
     <a href="https://www.maptiler.com" class="watermark"><img
         src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"/></a>
