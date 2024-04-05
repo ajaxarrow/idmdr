@@ -1,16 +1,9 @@
 <script setup lang="ts">
-  import {
-    PhFactory,
-    PhGlobe, PhGrains, PhPlusCircle,
-    PhQuestion, PhSliders,
-  } from "@phosphor-icons/vue";
-
-  const props = defineProps({
-    useSectorDesign: {
-      type: Boolean,
-      default: false,
-    },
-  });
+import {
+  PhFactory, PhFileArrowUp,
+  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhPolygon,
+  PhQuestion, PhSliders,
+} from "@phosphor-icons/vue";
 
   import Logo from "../Global/Logo.vue";
   import {ref, computed, defineComponent, markRaw} from 'vue';
@@ -19,12 +12,20 @@
   import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
   import MapSectorsMainContent from "./Sectors/MapSectorsMainContent.vue";
 
-  type HeaderComponent = ReturnType<typeof defineComponent>;
-  type MainContentComponent = ReturnType<typeof defineComponent>;
+  type CustomComponent = ReturnType<typeof defineComponent>;
+
+  const props = defineProps({
+    useSectorDesign: {
+      type: Boolean,
+      default: false,
+    },
+  });
+
+  const addSectorDialogMenu = ref(false);
 
   const showAdditionalContent = ref(false);
-  const header = ref<HeaderComponent | null>(null);
-  const mainContent = ref<MainContentComponent | null>(null);
+  const header = ref<CustomComponent | null>(null);
+  const mainContent = ref<CustomComponent | null>(null);
   const activeNav = ref('');
 
   const sidebarStyle = computed(() => {
@@ -70,7 +71,7 @@
   });
 
 
-  const assignContent = (headerComponent: HeaderComponent, mainContentComponent: MainContentComponent, activeNavTitle: string) => {
+  const assignContent = (headerComponent: CustomComponent, mainContentComponent: CustomComponent, activeNavTitle: string) => {
     if (activeNav.value === activeNavTitle) {
       console.log('same')
       showAdditionalContent.value = false;
@@ -100,9 +101,38 @@
        <div class="mt-2">
          <VList>
            <VRow v-if="props.useSectorDesign" class="ma-0 justify-center mt-2 mb-4">
-             <PhPlusCircle
-                 class="cursor-pointer"
-                 weight="fill" size="62" color="#3291C7" />
+             <VMenu>
+               <template #activator="{ props }">
+                 <PhPlusCircle
+                     class="cursor-pointer"
+                     v-bind="props" weight="fill" size="62" color="#3291C7" />
+               </template>
+               <VSheet width="175" height="120" class="add-sector-menu">
+                 <p class="text-center font-weight-bold pa-2 add-sector-menu-title">Add New Sector</p>
+                 <VDivider/>
+                 <div class="pa-2">
+                   <p class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
+                     <PhFileArrowUp
+                       class="mb-1 mr-1"
+                       color="#3291C7"
+                       weight="fill"
+                       size="14"
+                     />
+                     Import GeoJson
+                   </p>
+                   <p class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
+                   <PhPolygon
+                       class="mr-1"
+                       color="#3291C7"
+                       weight="fill"
+                       size="14"
+                     />
+                     Draw Boundary from Map
+                   </p>
+                 </div>
+               </VSheet>
+             </VMenu>
+
            </VRow>
            <VListItem
                :class="{'active-nav': activeNav === navLink.name}"
@@ -123,13 +153,13 @@
        <div class="">
          <VList class="bottom-nav">
            <VListItem
-               to="/help"
+               to="/dashboard"
                link
                class="nav-item"
            >
              <div class="d-flex flex-column align-center">
-               <PhQuestion size="24" class="icon" />
-               Help Center
+               <PhHouse size="24" class="icon" />
+               Dashboard
              </div>
            </VListItem>
          </VList>
@@ -151,10 +181,21 @@
 
 <style scoped>
 
-.add-new-sector-button:hover {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+.add-sector-menu{
+  border-radius: 15px !important;
+  box-shadow: 0px 4px 10px 0px #5d6e87;
 }
 
+.add-sector-menu-title{
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.add-sector-menu-item{
+  font-size: 12px;
+  font-weight: 500;
+  color: #000000;
+}
 
 .v-row{
   flex: unset;
