@@ -43,6 +43,7 @@ onMounted(() => {
   MapboxDraw.constants.classes.CONTROL_BASE = "maplibregl-ctrl";
   MapboxDraw.constants.classes.CONTROL_PREFIX = "maplibregl-ctrl-";
   MapboxDraw.constants.classes.CONTROL_GROUP = "maplibregl-ctrl-group";
+
   initMap();
   map.value?.addControl(new NavigationControl(), 'bottom-right');
   map.value?.addControl(draw);

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {
   PhFactory, PhFileArrowUp,
-  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhPolygon,
-  PhQuestion, PhSliders,
+  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhPolygon, PhSliders,
 } from "@phosphor-icons/vue";
 
   import Logo from "../Global/Logo.vue";
@@ -101,7 +100,7 @@ import {
        <div class="mt-2">
          <VList>
            <VRow v-if="props.useSectorDesign" class="ma-0 justify-center mt-2 mb-4">
-             <VMenu>
+             <VMenu v-model="addSectorDialogMenu">
                <template #activator="{ props }">
                  <PhPlusCircle
                      class="cursor-pointer"
