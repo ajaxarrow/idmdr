@@ -14,8 +14,6 @@ interface FileData {
   description: string
 }
 
-interface Sectors {
-  title: string
-}
 
-export type {Repository, FileData, Sectors};
+
+export type {Repository, FileData};
