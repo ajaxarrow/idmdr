@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import {useProvincesStore} from "../../../stores/provincesStore.ts";
-import {PhPlant} from "@phosphor-icons/vue";
+import {PhInfo, PhPlant} from "@phosphor-icons/vue";
 
 const {provinces} = useProvincesStore();
 </script>
 
 <template>
+  <div v-if="provinces.length === 0">
+    <p class="justify-center d-flex align-center">
+      No Provinces Found <PhInfo size="19" class="ml-1"/>
+    </p>
+  </div>
   <VList
+      v-else
       density="compact"
       nav
   >

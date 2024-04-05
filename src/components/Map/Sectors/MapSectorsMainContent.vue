@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import {PhPlant} from "@phosphor-icons/vue";
+import {PhInfo, PhPlant} from "@phosphor-icons/vue";
 import {useSectorsStore} from "../../../stores/sectorsStore.ts";
 
 const {sectors} = useSectorsStore();
 </script>
 
 <template>
+  <div v-if="sectors.length === 0">
+    <p class="justify-center d-flex align-center">
+      No Sectors Found <PhInfo size="19" class="ml-1"/>
+    </p>
+  </div>
   <VList
+      v-else
       density="compact"
       nav
   >
-    <VListItem  v-for="sector in sectors">
+    <VListItem v-for="sector in sectors">
       <VListItemTitle>
         <div class="d-flex align-center">
           <PhPlant size="18" color="#3E454D" weight="fill"/>
