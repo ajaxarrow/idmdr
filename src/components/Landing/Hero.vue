@@ -6,7 +6,7 @@ import {PhArrowCircleUpRight, PhMapTrifold} from "@phosphor-icons/vue";
   <p class="text-heading font-weight-black text-h1 text-center gradient-text"> Interactive Data <br/> Mapping Distribution</p>
   <p class="text-center text-subtitle ">Empowering data interaction through <span class="fancy-text">dynamic mapping, and repository solutions.</span></p>
   <VRow class="mt-4" justify="center">
-    <VBtnPrimary width="320px" class="mb-3">
+    <VBtnPrimary width="320px" class="mb-3" :to="{name: 'map'}">
       <PhMapTrifold size="20" class="mr-2"/> Explore our Interactive Map
     </VBtnPrimary>
     <VBtnPrimaryPlain color="gs90" width="200px" :to="{ path: 'auth', query: { tab: 'register' } }">
