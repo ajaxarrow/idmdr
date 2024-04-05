@@ -3,9 +3,7 @@
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
   import {Repository} from "../../interfaces/repository.interface.ts";
   import {PhInfo, PhX} from "@phosphor-icons/vue";
-  import {useRouting} from "../../composables/useRouting.ts";
   const {selectedSector, removeSelectedSector} = useSectorsStore();
-  const {router} = useRouting()
 
   const getRepositoriesBySector = (sector: string): Repository[] | null => {
     const foundRepositories = repositories.filter(repository => repository.sector === sector);
@@ -28,7 +26,6 @@
           :cover="true"
           height="174"
           width="328"
-          cover
           :src="selectedSector.image ? selectedSector.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
       />
       <div class="pa-4 scrollable-container">
