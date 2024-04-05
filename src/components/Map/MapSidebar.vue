@@ -1,9 +1,16 @@
 <script setup lang="ts">
   import {
     PhFactory,
-    PhGlobe, PhGrains,
-    PhQuestion,PhSliders,
+    PhGlobe, PhGrains, PhPlusCircle,
+    PhQuestion, PhSliders,
   } from "@phosphor-icons/vue";
+
+  const props = defineProps({
+    useSectorDesign: {
+      type: Boolean,
+      default: false,
+    },
+  });
 
   import Logo from "../Global/Logo.vue";
   import {ref, computed, defineComponent, markRaw} from 'vue';
@@ -54,6 +61,15 @@
     },
   ];
 
+  const filteredNavLinks = computed(() => {
+    if (props.useSectorDesign) {
+      return navLinks.filter(link => link.name !== 'Provinces');
+    } else {
+      return navLinks;
+    }
+  });
+
+
   const assignContent = (headerComponent: HeaderComponent, mainContentComponent: MainContentComponent, activeNavTitle: string) => {
     if (activeNav.value === activeNavTitle) {
       console.log('same')
@@ -83,9 +99,14 @@
        <VDivider/>
        <div class="mt-2">
          <VList>
+           <VRow v-if="props.useSectorDesign" class="ma-0 justify-center mt-2 mb-4">
+             <PhPlusCircle
+                 class="cursor-pointer"
+                 weight="fill" size="62" color="#3291C7" />
+           </VRow>
            <VListItem
                :class="{'active-nav': activeNav === navLink.name}"
-               v-for="navLink in navLinks"
+               v-for="navLink in filteredNavLinks"
                variant="plain"
                class="nav-item cursor-pointer"
                @click="assignContent(navLink.header, navLink.mainContent, navLink.name)"
@@ -129,6 +150,12 @@
 </template>
 
 <style scoped>
+
+.add-new-sector-button:hover {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+
 .v-row{
   flex: unset;
 }
