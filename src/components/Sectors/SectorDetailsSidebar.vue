@@ -78,7 +78,7 @@
 
 <style scoped>
   .sector-details-sidebar{
-    border-radius: 15px;
+    border-radius: 24px;
     z-index: 5;
     position: fixed;
     top: 0;
