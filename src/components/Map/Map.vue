@@ -5,7 +5,6 @@
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
   import boundaries from "../../data/boundaries.ts";
   import {Sector} from "../../interfaces/sector.interface.ts";
-  import {useSectorsStore} from "../../stores/sectorsStore.ts";
   import {useMapStore} from "../../stores/mapStore.ts";
 
   const {map, clickProvince, clickedBoundary, lnglat, color} = useMapStore();
@@ -19,8 +18,6 @@
     120.5, 4.0,
     128.5, 10.0
   ];
-
-  const {selectSector, removeSelectedSector} = useSectorsStore();
 
 
   const initMap = () => {
