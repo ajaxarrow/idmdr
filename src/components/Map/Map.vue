@@ -115,8 +115,7 @@
 
         // @ts-ignore
         map.value?.on('click', `id-${boundary.title}`, (e) => {
-
-
+          // @ts-ignore
           if (map.value?.getZoom() < 6.25){
             // @ts-ignore
             map.value?.easeTo({
