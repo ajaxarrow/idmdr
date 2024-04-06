@@ -41,6 +41,9 @@ const clickProvince = (boundary: Sector) => {
 
   } else {
     removeSelectedSector()
+    if (clickedBoundary.value) {
+      map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
+    }
     clickedBoundary.value = '';
     // @ts-ignore
     map.value?.easeTo({

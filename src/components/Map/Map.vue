@@ -123,7 +123,9 @@
 </script>
 
 <template>
-  <SectorDetailsSidebar/>
+  <transition name="fade">
+    <SectorDetailsSidebar/>
+  </transition>
   <MapSidebar/>
   <div class="map-wrap">
     <a href="https://www.maptiler.com" class="watermark"><img
@@ -134,6 +136,12 @@
 </template>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 .map-wrap {
   position: relative;
   width: 100%;
