@@ -7,7 +7,7 @@ import {markRaw, onBeforeMount, onMounted, shallowRef} from "vue";
   import {useMapStore} from "../../stores/mapStore.ts";
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
 
-  const {map, lnglat, color, setupBoundaries} = useMapStore();
+  const {map, lnglat, setupBoundaries} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
 

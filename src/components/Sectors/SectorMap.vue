@@ -8,7 +8,7 @@ import SectorDetailsSidebar from "./SectorDetailsSidebar.vue";
 import {useMapStore} from "../../stores/mapStore.ts";
 import sectors from "../../data/sectors.ts";
 
-const {map, lnglat, color, setupBoundaries} = useMapStore();
+const {map, lnglat, setupBoundaries} = useMapStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
 
