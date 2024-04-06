@@ -86,7 +86,7 @@
     height: 95vh !important;
     width: 355px !important;
     box-shadow: 0px 0px 7px 0px #5d6e87;
-    transition: 0.3s ease;
+    transition: opacity 1s ease;
   }
 
   .scrollable-container{
