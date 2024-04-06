@@ -1,13 +1,15 @@
 <script setup lang="ts">
-  import {markRaw, onMounted, ref, shallowRef} from "vue";
+import {markRaw, onBeforeMount, onMounted, ref, shallowRef} from "vue";
   import {Map, NavigationControl, Popup} from "maplibre-gl";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
   import boundaries from "../../data/boundaries.ts";
   import {Sector} from "../../interfaces/sector.interface.ts";
   import {useMapStore} from "../../stores/mapStore.ts";
+  import {useSectorsStore} from "../../stores/sectorsStore.ts";
 
   const {map, clickProvince, clickedBoundary, lnglat, color} = useMapStore();
+  const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
   const popup = ref<Popup | null>(new Popup({
     closeButton: false,
@@ -113,6 +115,10 @@
       });
 
     })
+  });
+
+  onBeforeMount(() => {
+    removeSelectedSector()
   })
 
 
