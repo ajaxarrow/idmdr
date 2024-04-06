@@ -11,8 +11,8 @@ const map = shallowRef<null | Map>(null);
 const lnglat: LngLatLike = [124.6, 7.858930800481815];
 
 const bounds: [number, number, number, number] = [
-  102.43621431035973, 3.982590021377476,
-  141.1117856896347, 21.472305228005112
+  120.5, 4.0,
+  128.5, 10.0
 ];
 
 const draw = new MapboxDraw({
