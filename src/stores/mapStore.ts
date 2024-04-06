@@ -10,6 +10,11 @@ const map = shallowRef<null | Map>(null);
 const clickedBoundary = ref('');
 const color = ref('#00ACC1');
 const lnglat: LngLatLike = [124.6, 7.858930800481815];
+const getCenter = (bbox: [number, number, number, number]) => {
+  return [
+    bbox[0] + (bbox[2] - bbox[0]) / 2, bbox[1] + (bbox[3] - bbox[1]) / 2
+  ]
+}
 
 const clickProvince = (boundary: Sector) => {
   if (boundary.title !== clickedBoundary.value) {
@@ -17,6 +22,18 @@ const clickProvince = (boundary: Sector) => {
     if (clickedBoundary.value) {
       map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
     }
+
+    // @ts-ignore
+    const center = getCenter(boundary.bbox);
+
+
+    map.value?.easeTo({
+      zoom: 8,
+      // @ts-ignore
+      center: center,
+      duration: 1000
+    });
+
     map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
     map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
 
@@ -25,7 +42,6 @@ const clickProvince = (boundary: Sector) => {
   } else {
     removeSelectedSector()
     clickedBoundary.value = '';
-    map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
     // @ts-ignore
     map.value?.easeTo({
       zoom: 7,

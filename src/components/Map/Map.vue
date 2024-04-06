@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {markRaw, onMounted, ref, shallowRef} from "vue";
-  import {LngLatLike, Map, NavigationControl, Popup} from "maplibre-gl";
+  import {Map, NavigationControl, Popup} from "maplibre-gl";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
   import boundaries from "../../data/boundaries.ts";

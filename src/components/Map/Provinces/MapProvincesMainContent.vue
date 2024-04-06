@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {useProvincesStore} from "../../../stores/provincesStore.ts";
 import {PhInfo, PhPlant} from "@phosphor-icons/vue";
-import {useSectorsStore} from "../../../stores/sectorsStore.ts";
+import {useMapStore} from "../../../stores/mapStore.ts";
 
 const {provinces} = useProvincesStore();
-const {selectSector} = useSectorsStore();
+const {clickProvince} = useMapStore();
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const {selectSector} = useSectorsStore();
       nav
   >
     <VListItem  v-for="province in provinces">
-      <VListItemTitle @click="selectSector(province, 'Province')" class="cursor-pointer">
+      <VListItemTitle @click="clickProvince(province)" class="cursor-pointer">
         <div class="d-flex align-center">
           <PhPlant size="18" color="#3E454D" weight="fill"/>
           <span class="mx-2 me-1 province-title">{{province.title}}</span>

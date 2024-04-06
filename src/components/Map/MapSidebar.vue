@@ -72,7 +72,6 @@ import {
 
   const assignContent = (headerComponent: CustomComponent, mainContentComponent: CustomComponent, activeNavTitle: string) => {
     if (activeNav.value === activeNavTitle) {
-      console.log('same')
       showAdditionalContent.value = false;
       activeNav.value = '';
       header.value = null;
