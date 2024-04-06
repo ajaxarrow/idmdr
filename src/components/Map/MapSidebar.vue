@@ -207,6 +207,7 @@ import {
   right: 0;
   height: 95vh;
   transition: width 0.2s;
+  box-shadow: 0px 0px 7px 0px #5d6e87;
 }
 
 .sidebar-main-container{
