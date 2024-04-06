@@ -1,17 +1,27 @@
 <script setup lang="ts">
-  import {markRaw, onMounted, shallowRef} from "vue";
-  import {LngLatLike, Map, NavigationControl} from "maplibre-gl";
+  import {markRaw, onMounted, ref, shallowRef} from "vue";
+  import {LngLatLike, Map, NavigationControl, Popup} from "maplibre-gl";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
+  import boundaries from "../../data/boundaries.ts";
+  import {Sector} from "../../interfaces/sector.interface.ts";
+  import {useSectorsStore} from "../../stores/sectorsStore.ts";
 
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
   const map = shallowRef<null | Map>(null);
   const lnglat: LngLatLike = [124.6, 7.858930800481815];
-
+  const color = ref('#00ACC1');
+  const popup = ref<Popup | null>(new Popup({
+    closeButton: false,
+    closeOnClick: false,
+  }));
+  const clickedBoundary = ref('');
   const bounds: [number, number, number, number] = [
     120.5, 4.0,
     128.5, 10.0
   ];
+
+  const {selectSector, removeSelectedSector} = useSectorsStore();
 
 
   const initMap = () => {
@@ -30,9 +40,106 @@
     }
   };
 
+  const clickProvince = (boundary: Sector) => {
+    if (boundary.title !== clickedBoundary.value) {
+      selectSector(boundary, 'Province')
+      if (clickedBoundary.value) {
+        map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
+      }
+      map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
+      map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
+
+      clickedBoundary.value = boundary.title;
+
+    } else {
+      removeSelectedSector()
+      clickedBoundary.value = '';
+      map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
+      // @ts-ignore
+      map.value?.easeTo({
+        zoom: 7,
+        center: lnglat,
+        duration: 1000
+      });
+    }
+  }
+
+
   onMounted(() => {
     initMap();
     map.value?.addControl(new NavigationControl(), 'top-right');
+
+    // @ts-ignore
+    map.value?.on('style.load', () => {
+      boundaries.forEach((boundary: Sector) => {
+        // @ts-ignore
+        map.value?.addSource(boundary.title, {
+          type: 'geojson',
+          data: boundary.geo_json,
+        });
+        map.value?.addLayer({
+          id: `id-${boundary.title}`,
+          type: 'fill',
+          source: boundary.title,
+          layout: {},
+          paint: {
+            'fill-opacity': 0,
+            'fill-color': 'transparent',
+          },
+        });
+
+        // @ts-ignore
+        map.value?.on('mouseover', `id-${boundary.title}`, (e) => {
+          if (boundary.title !== clickedBoundary.value) {
+            map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
+            map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
+          }
+
+          const popupContent = `<h4>${boundary.title}</h4>
+                              <p>${boundary.description}</p>`
+          popup.value?.setHTML(popupContent);
+          // @ts-ignore
+          popup.value?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
+          // @ts-ignore
+          popup.value?.addTo(map.value);
+        });
+
+        // @ts-ignore
+        map.value?.on('mouseleave', `id-${boundary.title}`, () => {
+          if (boundary.title !== clickedBoundary.value) {
+            map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', 0);
+          }
+          popup.value?.remove();
+        });
+
+
+        // @ts-ignore
+        map.value?.on('click', `id-${boundary.title}`, (e) => {
+
+
+          if (map.value?.getZoom() < 6.25){
+            // @ts-ignore
+            map.value?.easeTo({
+              zoom: 6,
+              center: [e.lngLat.lng, e.lngLat.lat],
+              duration: 1000
+            });
+          }
+          else{
+            // @ts-ignore
+            map.value?.easeTo({
+              zoom: 8,
+              center: [e.lngLat.lng, e.lngLat.lat],
+              duration: 1000
+            });
+          }
+          clickProvince(boundary)
+
+        });
+
+      });
+
+    })
   })
 
 
