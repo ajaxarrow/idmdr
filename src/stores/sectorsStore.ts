@@ -5,12 +5,14 @@ import {Sector} from "../interfaces/sector.interface.ts";
 
 const sectors = ref(sectorData);
 const selectedSector = ref<Sector | null>(null);
+const title = ref('');
 
-const selectSector = (sector: Sector) => {
+const selectSector = (sector: Sector, name: string) => {
   if(selectedSector.value === sector) {
     selectedSector.value = null;
     return;
   }
+  title.value = name;
   selectedSector.value = sector;
 }
 
@@ -22,4 +24,4 @@ const removeSelectedSector = () => {
   selectedSector.value = null;
 }
 
-export const useSectorsStore = createGlobalState(() => ({sectors, filterSectors, selectedSector, selectSector, removeSelectedSector}));
+export const useSectorsStore = createGlobalState(() => ({sectors, filterSectors, selectedSector, selectSector, removeSelectedSector, title}));

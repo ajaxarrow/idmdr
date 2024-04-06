@@ -3,7 +3,7 @@
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
   import {Repository} from "../../interfaces/repository.interface.ts";
   import {PhInfo, PhX} from "@phosphor-icons/vue";
-  const {selectedSector, removeSelectedSector} = useSectorsStore();
+  const {selectedSector, removeSelectedSector, title} = useSectorsStore();
 
   const getRepositoriesBySector = (sector: string): Repository[] | null => {
     const foundRepositories = repositories.filter(repository => repository.sector === sector);
@@ -16,7 +16,7 @@
 <template>
   <VSheet class="sector-details-sidebar ma-4" v-if="selectedSector">
     <VRow justify="space-between" align="center" class="ma-0 pa-4">
-      <p class="sidebar-title">Sector</p>
+      <p class="sidebar-title">{{title}}</p>
       <PhX color="#C83246" size="24" weight="bold" class="cursor-pointer" @click="removeSelectedSector"/>
     </VRow>
     <div class="">
