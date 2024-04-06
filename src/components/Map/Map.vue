@@ -6,16 +6,15 @@
   import boundaries from "../../data/boundaries.ts";
   import {Sector} from "../../interfaces/sector.interface.ts";
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
+  import {useMapStore} from "../../stores/mapStore.ts";
 
+  const {map, clickProvince, clickedBoundary, lnglat, color} = useMapStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
-  const map = shallowRef<null | Map>(null);
-  const lnglat: LngLatLike = [124.6, 7.858930800481815];
-  const color = ref('#00ACC1');
   const popup = ref<Popup | null>(new Popup({
     closeButton: false,
     closeOnClick: false,
   }));
-  const clickedBoundary = ref('');
+
   const bounds: [number, number, number, number] = [
     120.5, 4.0,
     128.5, 10.0
@@ -40,29 +39,7 @@
     }
   };
 
-  const clickProvince = (boundary: Sector) => {
-    if (boundary.title !== clickedBoundary.value) {
-      selectSector(boundary, 'Province')
-      if (clickedBoundary.value) {
-        map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
-      }
-      map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
-      map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
 
-      clickedBoundary.value = boundary.title;
-
-    } else {
-      removeSelectedSector()
-      clickedBoundary.value = '';
-      map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
-      // @ts-ignore
-      map.value?.easeTo({
-        zoom: 7,
-        center: lnglat,
-        duration: 1000
-      });
-    }
-  }
 
 
   onMounted(() => {
