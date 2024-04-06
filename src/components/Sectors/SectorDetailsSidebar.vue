@@ -3,12 +3,17 @@
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
   import {Repository} from "../../interfaces/repository.interface.ts";
   import {PhInfo, PhX} from "@phosphor-icons/vue";
+  import {onMounted} from "vue";
   const {selectedSector, removeSelectedSector, title} = useSectorsStore();
 
   const getRepositoriesBySector = (sector: string): Repository[] | null => {
     const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
     return foundRepositories.length > 0 ? foundRepositories : null;
   }
+
+  onMounted(() => {
+    removeSelectedSector()
+  })
 
 
 
