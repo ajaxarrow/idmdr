@@ -69,6 +69,7 @@
   <div class=" pt-6 pb-8 px-8 ">
     <VRow justify="center" class="mt-5">
       <VBtnAuth
+          :to="{name: 'dashboard'}"
           class="text-auth mb-5"
           v-for="authButton in authButtons">
         <component size="20" class="mr-2" weight="fill" :is="authButton.icon" /> {{authType}} with {{authButton.title}}
