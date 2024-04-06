@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import {markRaw, onMounted, shallowRef} from "vue";
-import {LngLatLike, Map, NavigationControl} from "maplibre-gl";
+import {Map, NavigationControl} from "maplibre-gl";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapSidebar from "../Map/MapSidebar.vue";
 import SectorDetailsSidebar from "./SectorDetailsSidebar.vue";
+import {useMapStore} from "../../stores/mapStore.ts";
+import sectors from "../../data/sectors.ts";
 
+const {map, lnglat, color, setupBoundaries} = useMapStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
-const map = shallowRef<null | Map>(null);
-const lnglat: LngLatLike = [124.6, 7.858930800481815];
+
 
 const bounds: [number, number, number, number] = [
   120.5, 4.0,
@@ -55,6 +57,11 @@ onMounted(() => {
       console.log(eventName);
     });
   });
+
+  // @ts-ignore
+  map.value?.on('style.load', () => {
+    setupBoundaries(sectors, 'Sector');
+  })
 })
 
 

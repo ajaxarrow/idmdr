@@ -1,6 +1,7 @@
 interface Sector {
   title: string
   description?: string
+  geojson?: any
   tags: string[]
   image?: string
   slug: string
