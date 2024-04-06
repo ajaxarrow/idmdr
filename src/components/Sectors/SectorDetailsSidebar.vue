@@ -6,9 +6,10 @@
   const {selectedSector, removeSelectedSector, title} = useSectorsStore();
 
   const getRepositoriesBySector = (sector: string): Repository[] | null => {
-    const foundRepositories = repositories.filter(repository => repository.sector === sector);
+    const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
     return foundRepositories.length > 0 ? foundRepositories : null;
   }
+
 
 
 </script>

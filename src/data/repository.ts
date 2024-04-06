@@ -5,7 +5,9 @@ export const repositories: Repository[]  = [
     title: 'Carbon Sequestration in Agroforestry: Global Trends and Regional Variances',
     subtitle: 'Exploring the Interconnection of Agriculture and Forestry',
     owner: 'Cabahug, Anie Joseph',
-    sector: 'corn-plantation-in-musuan',
+    sectors: [
+      'camiguin'
+    ],
     date: new Date('2022-11-12'),
     image: 'https://media.istockphoto.com/id/1280203624/photo/agroforestry.jpg?s=612x612&w=0&k=20&c=yOHed9ssGPObBvPP9Is7KuVU0_at5o5kT53cAdBbTPo=',
     slug: 'carbon-sequestration-in-agroforestry-global-trends-and-regional-variances',
@@ -39,7 +41,7 @@ export const repositories: Repository[]  = [
   },
   {
     title: 'Biodiversity Mapping: Forest Flora and Fauna Records Worldwide',
-    sector: 'corn-plantation-in-musuan',
+    sectors: ['misamis-occidental'],
     subtitle: 'Utilizing Advanced Mapping Strategies',
     owner: 'Tabilla, Jiu Axl',
     date: new Date('2024-02-15'),
@@ -103,6 +105,7 @@ export const repositories: Repository[]  = [
   },
   {
     title: 'Agritourism Impact on Rural Economies: Data from Various Agricultural Regions',
+    sectors: ['misamis-oriental', 'misamis-occidental', 'camiguin', 'bukidnon', 'lanao-del-norte'],
     subtitle: 'Analyzing Economic Benefits and Community Empowerment',
     owner: 'Pamisa, Arram',
     date: new Date('2022-11-30'),
@@ -167,6 +170,7 @@ export const repositories: Repository[]  = [
   {
     title: 'Forest Fire Incident Reports: Bukidnon Area',
     subtitle: 'Analyzing Wildfire Patterns and Geospatial Mapping',
+    sectors: ['bukidnon'],
     owner: 'Cabahug, Anie Joseph',
     date: new Date('2023-04-07'),
     image: 'https://www.treehugger.com/thmb/fKY1PL3MiIKRnvV6RlIye7KDyIA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/elkfire-56af58b45f9b58b7d017af72.jpg',
@@ -230,6 +234,7 @@ export const repositories: Repository[]  = [
   {
     title: 'Crop Monitoring and Yield Prediction in Plantation at Lampanusan, Bukidnon',
     subtitle: 'Utilizing Precision Farming Techniques',
+    sectors: ['bukidnon', 'kalilangan-rice'],
     owner: 'James, Lebron',
     date: new Date('2023-12-05'),
     image: 'https://media.istockphoto.com/id/965148388/photo/green-ripening-soybean-field-agricultural-landscape.jpg?s=612x612&w=0&k=20&c=cEVP3uj34-5obt-Jf_WI3O9qfP6tVrFaQIv1rBvvpzc=',
@@ -293,6 +298,7 @@ export const repositories: Repository[]  = [
   {
     title: 'Soil Health Monitoring: Databases on Agricultural Lands Across Borders',
     subtitle: 'Unveiling the Global Tapestry of Soil Vitality and Agricultural Sustainability',
+    sectors: ['lanao-del-norte'],
     owner: 'Tabilla, Jiu Axl',
     date: new Date('2023-11-03'),
     image: 'https://media.istockphoto.com/id/1183678932/photo/hand-checking-soil-on-ground-at-vegetable-garden.jpg?s=612x612&w=0&k=20&c=6Kdcabjf2LqFiiccr6XZojKKgc4FVgQaPDUjaJ_3AOE=',
@@ -334,7 +340,7 @@ export const repositories: Repository[]  = [
   {
     title: 'Precision Crop Management in Bukidnon: A Data-Driven Approach',
     subtitle: 'Optimizing Yield and Sustainability',
-    sector: 'corn-plantation-in-musuan',
+    sectors: ['corn-plantation-in-musuan', 'bukidnon'],
     owner: 'Santos, Maria',
     date: new Date('2023-10-18'),
     image: 'https://imageio.forbes.com/specials-images/imageserve/64496205204bcfc6b02a02d5/0x0.jpg?format=jpg&height=600&width=1200&fit=bounds',
