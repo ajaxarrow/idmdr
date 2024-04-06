@@ -36,7 +36,7 @@ const clickProvince = (boundary: Sector, type: string) => {
         zoom: 15,
         // @ts-ignore
         center: center,
-        duration: 1000
+        duration: 2000
       });
     } else {
       map.value?.easeTo({
