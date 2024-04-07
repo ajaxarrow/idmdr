@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {markRaw, onBeforeMount, onMounted, shallowRef} from "vue";
+import {markRaw, onBeforeMount, onMounted, shallowRef, watch} from "vue";
   import {Map, NavigationControl} from "maplibre-gl";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
   import boundaries from "../../data/boundaries.ts";
   import {useMapStore} from "../../stores/mapStore.ts";
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
+import MapProductionDetails from "./Production/MapProductionDetails.vue";
 
-  const {map, lnglat, setupBoundaries} = useMapStore();
+  const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
@@ -34,7 +35,13 @@ import {markRaw, onBeforeMount, onMounted, shallowRef} from "vue";
     }
   };
 
-
+  watch(dotDensityLayer, (newValue) => {
+    if (newValue) {
+      loadDotDensityLayer();
+    } else {
+      removeDotDensityLayer();
+    }
+  });
 
 
   onMounted(() => {
@@ -44,6 +51,7 @@ import {markRaw, onBeforeMount, onMounted, shallowRef} from "vue";
     // @ts-ignore
     map.value?.on('style.load', () => {
       setupBoundaries(boundaries, 'Province');
+      loadRandomCoordinates(boundaries);
     })
   });
 
@@ -53,11 +61,15 @@ import {markRaw, onBeforeMount, onMounted, shallowRef} from "vue";
 
 
 
+
 </script>
 
 <template>
   <transition name="fade">
     <SectorDetailsSidebar/>
+  </transition>
+  <transition name="fade">
+    <MapProductionDetails/>
   </transition>
   <MapSidebar/>
   <div class="map-wrap">

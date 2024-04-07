@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {markRaw, onMounted, shallowRef} from "vue";
+import {markRaw, onMounted, shallowRef, watch} from "vue";
 import {Map, NavigationControl} from "maplibre-gl";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -7,8 +7,11 @@ import MapSidebar from "../Map/MapSidebar.vue";
 import SectorDetailsSidebar from "./SectorDetailsSidebar.vue";
 import {useMapStore} from "../../stores/mapStore.ts";
 import sectors from "../../data/sectors.ts";
+import boundaries from "../../data/boundaries.ts";
+import MapProductionDetails from "../Map/Production/MapProductionDetails.vue";
+import {Sector} from "../../interfaces/sector.interface.ts";
 
-const {map, lnglat, setupBoundaries} = useMapStore();
+const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useMapStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
 
@@ -16,6 +19,7 @@ const bounds: [number, number, number, number] = [
   120.5, 4.0,
   128.5, 10.0
 ];
+
 
 const draw = new MapboxDraw({
   displayControlsDefault: false,
@@ -33,7 +37,7 @@ const initMap = () => {
           container: mapContainer.value,
           style: `https://api.maptiler.com/maps/topo-v2/style.json?key=slSuwEtNY8loqQWUZ9IO`,
           center: lnglat,
-          zoom: 7,
+          zoom: 7.5,
           maxBounds: bounds
         })
     );
@@ -42,7 +46,16 @@ const initMap = () => {
   }
 };
 
+watch(dotDensityLayer, (newValue) => {
+  if (newValue) {
+    loadDotDensityLayer();
+  } else {
+    removeDotDensityLayer();
+  }
+});
+
 onMounted(() => {
+  (MapboxDraw as any).constants = MapboxDraw.constants || {};
   (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
   (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
   (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
@@ -61,15 +74,25 @@ onMounted(() => {
   // @ts-ignore
   map.value?.on('style.load', () => {
     setupBoundaries(sectors, 'Sector');
+
+    loadRandomCoordinates(boundaries)
+
   })
 })
+
+
 
 
 
 </script>
 
 <template>
-  <SectorDetailsSidebar/>
+  <transition name="fade">
+    <SectorDetailsSidebar/>
+  </transition>
+  <transition name="fade">
+    <MapProductionDetails/>
+  </transition>
   <MapSidebar :useSectorDesign="true"/>
   <div class="map-wrap">
     <a href="https://www.maptiler.com" class="watermark"><img
@@ -80,6 +103,12 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 .map-wrap {
   position: relative;
   width: 100%;

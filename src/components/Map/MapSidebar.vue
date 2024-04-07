@@ -10,6 +10,10 @@ import {
   import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
   import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
   import MapSectorsMainContent from "./Sectors/MapSectorsMainContent.vue";
+import MapProductionHeader from "./Production/MapProductionHeader.vue";
+import MapProductionMainContent from "./Production/MapProductionMainContent.vue";
+import MapFiltersHeader from "./Filters/MapFiltersHeader.vue";
+import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -50,14 +54,14 @@ import {
     {
       name: 'Production',
       icon: markRaw(PhGrains),
-      header: markRaw(PhGrains),
-      mainContent: markRaw(PhGrains)
+      header: markRaw(MapProductionHeader),
+      mainContent: markRaw(MapProductionMainContent)
     },
     {
       name: 'Filters',
       icon: markRaw(PhSliders),
-      header: markRaw(PhSliders),
-      mainContent: markRaw(PhSliders)
+      header: markRaw(MapFiltersHeader),
+      mainContent: markRaw(MapFiltersMainContent)
     },
   ];
 
@@ -164,7 +168,7 @@ import {
        </div>
      </div>
      <VDivider v-if="showAdditionalContent" :vertical="true" />
-     <div v-if="showAdditionalContent" class="sidebar-additional-content">
+     <div v-if="showAdditionalContent" class="sidebar-additional-content overflow-hidden">
        <div class="sidebar-header pa-5">
          <component :is="header"/>
        </div>
@@ -199,6 +203,7 @@ import {
   flex: unset;
 }
 .sidebar{
+  overflow: hidden;
   z-index: 1;
   position: fixed;
   top: 0;
