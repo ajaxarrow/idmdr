@@ -1,3 +1,5 @@
+<script setup lang="ts">
+</script>
 <template>
   <div class="relative-container circle-quarter">
     <p class="header-title">Filters</p>
