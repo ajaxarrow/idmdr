@@ -9,7 +9,6 @@ import {useMapStore} from "../../stores/mapStore.ts";
 import sectors from "../../data/sectors.ts";
 import boundaries from "../../data/boundaries.ts";
 import MapProductionDetails from "../Map/Production/MapProductionDetails.vue";
-import {Sector} from "../../interfaces/sector.interface.ts";
 
 const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useMapStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
@@ -74,7 +73,6 @@ onMounted(() => {
   // @ts-ignore
   map.value?.on('style.load', () => {
     setupBoundaries(sectors, 'Sector');
-
     loadRandomCoordinates(boundaries)
 
   })
