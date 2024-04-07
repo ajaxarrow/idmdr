@@ -89,7 +89,7 @@
             Browse Latest Repositories
           </p>
           <p class="d-flex align-center">
-            See All
+            Latest
             <PhCaretDown weight="fill" class="ml-1"/>
           </p>
         </VRow>
