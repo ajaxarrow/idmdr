@@ -14,6 +14,7 @@ import MapProductionHeader from "./Production/MapProductionHeader.vue";
 import MapProductionMainContent from "./Production/MapProductionMainContent.vue";
 import MapFiltersHeader from "./Filters/MapFiltersHeader.vue";
 import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
+import SectorTaggingDialog from "../SectorTagging/SectorTaggingDialog.vue";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -103,13 +104,13 @@ import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
        <div class="mt-2">
          <VList>
            <VRow v-if="props.useSectorDesign" class="ma-0 justify-center mt-2 mb-4">
-             <VMenu v-model="addSectorDialogMenu">
+             <VMenu v-model="addSectorDialogMenu" :close-on-content-click="false">
                <template #activator="{ props }">
                  <PhPlusCircle
                      class="cursor-pointer"
                      v-bind="props" weight="fill" size="62" color="#3291C7" />
                </template>
-               <VSheet width="175" height="120" class="add-sector-menu">
+               <VSheet width="200" height="120" class="add-sector-menu">
                  <p class="text-center font-weight-bold pa-2 add-sector-menu-title">Add New Sector</p>
                  <VDivider/>
                  <div class="pa-2">
@@ -122,15 +123,7 @@ import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
                      />
                      Import GeoJson
                    </p>
-                   <p class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
-                   <PhPolygon
-                       class="mr-1"
-                       color="#3291C7"
-                       weight="fill"
-                       size="14"
-                     />
-                     Draw Boundary from Map
-                   </p>
+                   <SectorTaggingDialog/>
                  </div>
                </VSheet>
              </VMenu>

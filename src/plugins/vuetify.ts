@@ -13,7 +13,8 @@ const vuetify = createVuetify({
         VBtnPrimary: components.VBtn,
         VBtnPrimaryPlain: components.VBtn,
         VBtnAuth: components.VBtn,
-        VBtnPrimaryFilled: components.VBtn
+        VBtnPrimaryFilled: components.VBtn,
+        VBtnPrimaryAlt: components.VBtn
     },
     defaults: {
         VBtnPrimaryFilled: {
@@ -33,6 +34,12 @@ const vuetify = createVuetify({
             class: 'text-none satoshi-md mx-2',
             width: '130'
         },
+        VBtnPrimaryAlt: {
+            color: 'bs50',
+            height: "44",
+            class: 'text-none satoshi-md mx-1',
+        },
+
         VBtnAuth: {
             variant: "outlined",
             rounded: true,
