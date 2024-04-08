@@ -17,11 +17,11 @@ const popup = ref<Popup | null>(new Popup({
 const clickedBoundary = ref('');
 const color = ref('#00ACC1');
 const lnglat: LngLatLike = [124.6, 7.858930800481815];
-const getCenter = (bbox: [number, number, number, number]) => {
-  return [
-    bbox[0] + (bbox[2] - bbox[0]) / 2, bbox[1] + (bbox[3] - bbox[1]) / 2
-  ]
-}
+// const getCenter = (bbox: [number, number, number, number]) => {
+//   return [
+//     bbox[0] + (bbox[2] - bbox[0]) / 2, bbox[1] + (bbox[3] - bbox[1]) / 2
+//   ]
+// }
 
 const clickProvince = (boundary: Sector, type: string) => {
   if (boundary.title !== clickedBoundary.value) {
@@ -31,24 +31,30 @@ const clickProvince = (boundary: Sector, type: string) => {
     }
 
     // @ts-ignore
-    const center = getCenter(boundary.bbox);
+    // const center = getCenter(boundary.bbox);
 
+    console.log(calculatePolygonSize(boundary.geojson));
 
-    if(type === 'Sector'){
-      map.value?.easeTo({
-        zoom: 15,
-        // @ts-ignore
-        center: center,
-        duration: 2000
-      });
-    } else {
-      map.value?.easeTo({
-        zoom: 8,
-        // @ts-ignore
-        center: center,
-        duration: 1000
-      });
-    }
+    map.value?.fitBounds(
+      // @ts-ignore
+      boundary.bbox ? boundary.bbox : turf.bbox(boundary.geojson["geometry"]),
+      {padding: 30, duration: 2000}
+    )
+    // if(type === 'Sector'){
+    //   map.value?.easeTo({
+    //     zoom: 18,
+    //     // @ts-ignore
+    //     center: center,
+    //     duration: 2000
+    //   });
+    // } else {
+    //   map.value?.easeTo({
+    //     zoom: 8,
+    //     // @ts-ignore
+    //     center: center,
+    //     duration: 1000
+    //   });
+    // }
 
     map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
     map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
@@ -210,9 +216,7 @@ const loadDotDensityLayer = () => {
 }
 
 const removeDotDensityLayer = () => {
-  //@ts-ignore
   map.value?.removeLayer('random-dots');
-  //@ts-ignore
   map.value?.removeSource('random-dots');
 };
 
@@ -224,6 +228,23 @@ const loadRandomCoordinates = (boundaries: Sector[]) => {
     })
   })
 }
+
+const calculatePolygonSize = (geojson: any): number => {
+  if(geojson["type"] == 'FeatureCollection'){
+    let totalArea = 0;
+    geojson["features"].forEach((feature: any) => {
+      totalArea += turf.area(feature["geometry"]);
+    })
+    return totalArea
+  } else if (geojson["type"] == 'Feature') {
+    return turf.area(geojson["geometry"])
+  } else {
+    console.error('Unsupported geometry type:', geojson["type"]);
+    return 0
+  }
+}
+
+
 
 
 

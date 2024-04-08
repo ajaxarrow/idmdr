@@ -7,6 +7,7 @@ import {markRaw, onBeforeMount, onMounted, shallowRef, watch} from "vue";
   import {useMapStore} from "../../stores/mapStore.ts";
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
 import MapProductionDetails from "./Production/MapProductionDetails.vue";
+import sectors from "../../data/sectors.ts";
 
   const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
@@ -51,6 +52,7 @@ import MapProductionDetails from "./Production/MapProductionDetails.vue";
     // @ts-ignore
     map.value?.on('style.load', () => {
       setupBoundaries(boundaries, 'Province');
+      setupBoundaries(sectors, 'Sector');
       loadRandomCoordinates(boundaries);
     })
   });

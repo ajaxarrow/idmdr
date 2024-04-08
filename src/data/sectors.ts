@@ -105,7 +105,7 @@ const sectors: Sector[] = [
       "Community Development",
       "Sustainable Agriculture"
     ],
-    bbox: [124.76174470883751, 7.654181388794996, 124.76238432987753, 7.6549809942480636],
+    // bbox: [124.76174470883751, 7.654181388794996, 124.76238432987753, 7.6549809942480636],
     geojson: {
       type: 'Feature',
       geometry: {
