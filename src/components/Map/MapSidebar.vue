@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   PhFactory, PhFileArrowUp,
-  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhPolygon, PhSliders,
+  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhSliders,
 } from "@phosphor-icons/vue";
 
   import Logo from "../Global/Logo.vue";
