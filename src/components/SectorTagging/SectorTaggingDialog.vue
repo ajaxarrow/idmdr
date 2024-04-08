@@ -17,7 +17,7 @@ const sectorTaggingDialog = ref(false);
     />
     Draw Boundary from Map
   </p>
-  <VDialog v-model="sectorTaggingDialog">
+  <VDialog v-model="sectorTaggingDialog" class="center">
     <VSheet class="sector-tagging-dialog-container" @click.stop>
       <p class="dialog-title pa-5">Tag a Sector</p>
       <VDivider/>
@@ -165,6 +165,11 @@ const sectorTaggingDialog = ref(false);
   letter-spacing: 0;
   border-width: 3px;
   border-radius: 10px;
+}
+
+:deep .v-overlay__content {
+  display: grid !important;
+  place-items: center !important;
 }
 
 </style>
