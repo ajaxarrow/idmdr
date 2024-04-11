@@ -126,6 +126,7 @@
     /**backdrop-filter: blur(5px);**/
   }
 
+
   .button-outline{
     border-width: 2px;
   }

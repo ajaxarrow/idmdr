@@ -1,32 +1,66 @@
 <script setup lang="ts">
-import {PhArrowCircleUpRight, PhMapTrifold} from "@phosphor-icons/vue";
+import {PhMapTrifold} from "@phosphor-icons/vue";
+import Arrow from "../../assets/images/circlearrow.svg";
+import Welcome from "../../assets/images/welcome.svg";
 </script>
 
 <template>
-  <p class="text-heading font-weight-black text-h1 text-center gradient-text"> Interactive Data <br/> Mapping Distribution</p>
-  <p class="text-center text-subtitle ">Empowering data interaction through <span class="fancy-text">dynamic mapping, and repository solutions.</span></p>
+    <VRow class="ma-0 text-highlight-container" justify="center">
+   <span class="text-highlight">Repository</span> +
+    <span class="text-highlight">Research and Development</span> +
+    <span class="text-highlight">Mapping</span> +
+    <span class="text-highlight">Data</span>
+    </VRow>
+  <p class="text-heading  text-h1 text-center gradient-text"> NOMCAARRD Interactive Data <br/> Mapping Distribution <br/> and Repository</p>
+  <p class="text-center text-subtitle ">
+    Experience enhanced data interaction with <span class="fancy-text">NOMCAARRD's dynamic <br/>  mapping and repository solutions, empowering users.</span></p>
   <VRow class="mt-4" justify="center">
-    <VBtnPrimary width="320px" class="mb-3" :to="{name: 'map'}">
-      <PhMapTrifold size="20" class="mr-2"/> Explore our Interactive Map
-    </VBtnPrimary>
-    <VBtnPrimaryPlain color="gs90" width="200px" :to="{ path: 'auth', query: { tab: 'register' } }">
-      <PhArrowCircleUpRight size="20" class="mr-2"/> Get Started
-    </VBtnPrimaryPlain>
+    <div style="position: relative;">
+      <VBtnPrimary  width="320px" height="60" class="mb-3 explore-button" :to="{name: 'map'}">
+        <PhMapTrifold size="20" class="mr-2"/> Explore our Interactive Map
+      </VBtnPrimary>
+      <VImg
+          :src="Arrow"
+          class="mt-5"
+          alt="Hero Image"
+          width="100%"
+          height=30px
+          style="position: absolute; right: -185px; top: -5px; transform: rotate(-120deg);"
+      />
+
+    </div>
+<!--    <VBtnPrimaryPlain color="gs90" width="200px" :to="{ path: 'auth', query: { tab: 'register' } }">-->
+<!--      <PhArrowCircleUpRight size="20" class="mr-2"/> Get Started-->
+<!--    </VBtnPrimaryPlain>-->
   </VRow>
 </template>
 
 <style scoped>
+.text-highlight-container{
+  margin-top: 50px !important;
+}
+.text-highlight{
+  font-size: 14px;
+  margin: 0 3px;
+  background-color: #d9f3ff;
+  padding: 2px 10px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+.explore-button{
+  border-radius: 50px !important;
+}
 .text-heading{
-  font-family: 'Inter', sans-serif !important;
-  font-size: 76px !important;
+  font-weight: 900;
+  font-size: 74px !important;
   line-height: 90px;
-  margin-top: 70px;
+  margin-top: 20px;
 }
 
 .text-subtitle{
-  font-size: 24px;
-  color: #5F6061;
-  margin: 30px 0;
+  font-size: 21px;
+  color: #0c0c0c;
+  margin: 25px 0;
 }
 
 @media (max-width: 960px) {
@@ -69,13 +103,14 @@ import {PhArrowCircleUpRight, PhMapTrifold} from "@phosphor-icons/vue";
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #5db6c1, #15284c);
+  background-color: #062b3e;
+  //background: linear-gradient(to right, #5db6c1, #15284c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .fancy-text{
-  font-weight: 600 !important;
+  //font-weight: 600 !important;
   background-image: linear-gradient(90deg, #3edef1, #124fc3);
   background-size: 0% 2.5px;
   background-repeat: no-repeat;
