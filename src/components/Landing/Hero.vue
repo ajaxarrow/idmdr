@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {PhMapTrifold} from "@phosphor-icons/vue";
 import Arrow from "../../assets/images/circlearrow.svg";
-import Welcome from "../../assets/images/welcome.svg";
 </script>
 
 <template>
