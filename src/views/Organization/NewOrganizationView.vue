@@ -179,7 +179,7 @@ const clusters: string[] = Object.values(ClusterType);
           </div>
         </div>
         <div class="mb-5">
-          <label class="input-label">Image</label>
+          <label class="input-label">Organization Image</label>
           <div class="my-2 file-upload-container">
             <PhFileDashed size="50"/>
             <p class="text-dropzone">Drag and drop image file here or <label class="file-label" for="dropzoneFile">Choose file</label></p>
