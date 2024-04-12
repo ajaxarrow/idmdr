@@ -1,7 +1,9 @@
 <script setup lang="ts">
-
 import MainLayout from "../../layouts/MainLayout.vue";
-import {PhCaretDown, PhHardDrives, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
+import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
+import {useScreenStore} from "../../stores/screenSizeStore.ts";
+
+const {isSmall, isTablet} = useScreenStore();
 </script>
 
 <template>
