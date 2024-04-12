@@ -58,7 +58,7 @@ import {PhCube} from "@phosphor-icons/vue";
 
 
 .icon{
-  position: absolute;
+  position: fixed;
   top: -300px;
   left: -200px;
   margin: auto;
