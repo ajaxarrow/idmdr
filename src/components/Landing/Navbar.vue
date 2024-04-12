@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+  import {computed} from "vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
   import Logo from "../Global/Logo.vue";
   import {useToggleMenu} from "../../composables/useToggleMenu.ts";
