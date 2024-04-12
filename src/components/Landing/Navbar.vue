@@ -5,12 +5,8 @@
   import {useToggleMenu} from "../../composables/useToggleMenu.ts";
 
   const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
-  const currentElevation = ref(0);
   const {isSmall} = useScreenStore();
 
-  const handleScroll = () => {
-    currentElevation.value = window.scrollY > 0 ? 5 : 0;
-  };
 
   const baseNavLinks = [
     {
@@ -43,19 +39,13 @@
     ];
   });
 
-  onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
-  });
 
-  onBeforeUnmount(() => {
-    window.removeEventListener('scroll', handleScroll);
-  });
 
 
 </script>
 
 <template>
-    <VAppBar class="bg-transparent px-lg-10 pt-2 app-bar-blur" :elevation="currentElevation">
+    <VAppBar class="bg-transparent px-lg-10 pt-2 app-bar-blur" elevation="0">
       <VContainer fluid>
         <VRow align="center">
           <VCol cols="4">
@@ -86,6 +76,7 @@
           <VCol cols="4" v-else>
             <VRow justify="end">
               <VBtnPrimary
+                style="background: none !important;"
                 variant="outlined"
                 class="button-outline"
                 :to="{ path: 'auth', query: { tab: 'login' } }"
