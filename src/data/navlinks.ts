@@ -1,4 +1,4 @@
-import {PhCloud, PhGearSix, PhHouse, PhMapPinLine, PhSignOut, PhTag} from "@phosphor-icons/vue";
+import {PhCloud, PhGearSix, PhHouse, PhMapPinLine, PhSignOut, PhTag, PhUsersThree} from "@phosphor-icons/vue";
 
 export const navLinks = [
   {
@@ -20,6 +20,11 @@ export const navLinks = [
     name: 'Map',
     link: '/map',
     icon: PhMapPinLine
+  },
+  {
+    name: 'Organizations',
+    link: '/organizations',
+    icon: PhUsersThree
   },
   {
     name: 'Settings',
