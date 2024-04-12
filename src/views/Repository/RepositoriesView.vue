@@ -43,7 +43,7 @@
           </VBtnPrimaryFilled>
           <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
             <PhPlus size="20" class="mr-2"/>
-            Add Repository
+            New Repository
           </VBtnPrimaryFilled>
         </VRow>
       </div>
