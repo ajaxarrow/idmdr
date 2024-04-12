@@ -12,6 +12,7 @@ import SettingsView from "../views/User/SettingsView.vue";
 import MapView from "../views/Map/MapView.vue";
 // @ts-ignore
 import SectorView from "../views/Sector/SectorView.vue";
+import organizationRoutes from "./routes/organization.routes.ts";
 
 export const routes = [
   {
@@ -40,5 +41,6 @@ export const routes = [
     component: SectorView
   },
   ...authRoutes,
-  ...repositoryRoutes
+  ...repositoryRoutes,
+  ...organizationRoutes
 ]
