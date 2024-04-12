@@ -2,6 +2,14 @@ enum OrganizationType{
   Agency, Institution
 }
 
+enum ClusterType{
+  ResearchAndDevelopment = 'Research & Development',
+  TechnologyTransfer = 'Technology Transfer',
+  InformationCommunication = 'Information Communication',
+  ScienceCommunication = 'Science Communication'
+}
+
+
 interface Organization {
   name: string,
   acronym?: string,
@@ -18,9 +26,9 @@ interface Organization {
 }
 
 interface ClusterRepresentative{
-  type: string,
+  type: ClusterType,
   name: string,
   email: string
 }
 
-export type {Organization, OrganizationType, ClusterRepresentative}
+export type {Organization, OrganizationType, ClusterRepresentative, ClusterType}
