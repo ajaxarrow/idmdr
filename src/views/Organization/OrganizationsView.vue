@@ -2,6 +2,8 @@
 import MainLayout from "../../layouts/MainLayout.vue";
 import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
+import OrganizationItem from "../../components/Organization/OrganizationItem.vue";
+import organizations from "../../data/organizations.ts";
 
 const {isSmall, isTablet} = useScreenStore();
 </script>
@@ -56,6 +58,7 @@ const {isSmall, isTablet} = useScreenStore();
             15 Organizations Available
           </p>
         </VRow>
+        <OrganizationItem v-for="organization in organizations" :organization="organization"/>
       </div>
     </div>
   </MainLayout>
