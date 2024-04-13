@@ -62,20 +62,23 @@ const clickProvince = (boundary: Sector, type: string) => {
     clickedBoundary.value = boundary.title;
 
   } else {
-    removeSelectedSector()
-    if (clickedBoundary.value) {
-      map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
-    }
-    clickedBoundary.value = '';
-    // @ts-ignore
-    map.value?.easeTo({
-      zoom: 7,
-      center: lnglat,
-      duration: 1000
-    });
+    resetToDefault()
   }
 }
 
+const resetToDefault = () => {
+  removeSelectedSector()
+  if (clickedBoundary.value) {
+    map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
+  }
+  clickedBoundary.value = '';
+  // @ts-ignore
+  map.value?.easeTo({
+    zoom: 7,
+    center: lnglat,
+    duration: 1000
+  });
+}
 
 
 
@@ -248,4 +251,4 @@ const calculatePolygonSize = (geojson: any): number => {
 
 
 
-export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates}))
+export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, resetToDefault}))
