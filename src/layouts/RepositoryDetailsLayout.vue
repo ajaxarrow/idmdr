@@ -7,7 +7,7 @@ import {Repository} from "../interfaces/repository.interface.ts";
 import {onMounted, ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 
-const tab = ref("discussions");
+const tab = ref("data");
 const {router} = useRouting()
 const props = defineProps({
   repository: {
