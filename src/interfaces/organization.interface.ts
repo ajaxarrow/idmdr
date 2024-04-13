@@ -19,7 +19,7 @@ interface Organization {
 interface ClusterRepresentative{
   type: ClusterType,
   name: string,
-  email: string
+  email?: string
 }
 
 export type {Organization, ClusterRepresentative}
