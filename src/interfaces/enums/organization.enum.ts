@@ -1,5 +1,5 @@
 enum OrganizationType{
-  Agency, Institution
+  Agency = 'Agency', Institution = 'Institution'
 }
 
 enum ClusterType{
