@@ -59,13 +59,15 @@ onMounted(()=>{
             </div>
           </VCol>
           <VCol md="3" class="pa-0" v-if="!isSmall">
-            <VImg
-                style="border-radius: 15px"
-                cover
-                height="125px"
-                width="250px"
-                :src="organization?.image ? organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
-            />
+            <VRow class="ma-0" justify="end">
+              <VImg
+                  style="border-radius: 15px"
+                  cover
+                  height="125px"
+                  width="250px"
+                  :src="organization?.image ? organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+              />
+            </VRow>
           </VCol>
         </VRow>
       </div>
