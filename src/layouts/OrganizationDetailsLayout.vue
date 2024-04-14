@@ -6,9 +6,11 @@ import {PropType} from "vue";
 import {Organization} from "../interfaces/organization.interface.ts";
 import {onMounted} from "vue";
 import NotFound from "../assets/images/404.svg";
+import {useScreenStore} from "../stores/screenSizeStore.ts";
 
 const tab = ref("about");
-const {router} = useRouting()
+const {router} = useRouting();
+const {isSmall} = useScreenStore();
 const props = defineProps({
   organization: {
     type: Object as PropType<Organization | null | undefined>,
@@ -56,7 +58,7 @@ onMounted(()=>{
               <p class="text-subtitle text-gs20">{{organization.tel}} | {{organization.phone}} | {{organization.email}}</p>
             </div>
           </VCol>
-          <VCol md="3" class="pa-0">
+          <VCol md="3" class="pa-0" v-if="!isSmall">
             <VImg
                 style="border-radius: 15px"
                 cover
