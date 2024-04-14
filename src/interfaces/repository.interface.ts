@@ -2,6 +2,7 @@ interface Repository {
   title: string;
   subtitle: string;
   slug: string;
+  organization: string;
   owner: string;
   date: Date;
   sectors?: string[];
