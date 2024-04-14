@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MainLayout from "./MainLayout.vue";
 import {ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
@@ -55,7 +56,7 @@ onMounted(()=>{
               <p class="text-subtitle text-gs20">{{organization.tel}} | {{organization.phone}} | {{organization.email}}</p>
             </div>
           </VCol>
-          <VCol md="9" class="pa-0">
+          <VCol md="3" class="pa-0">
             <VImg
                 style="border-radius: 15px"
                 cover
@@ -104,10 +105,10 @@ onMounted(()=>{
 .circle::after {
   content: '';
   position: absolute;
-  left: -209px;
-  top: -430px;
-  width: 590px;
-  height: 561px;
+  left: -212px;
+  top: -453px;
+  width: 730px;
+  height: 618px;
   border-radius: 50%;
   background: #DEF1FB;
   z-index: 1;
