@@ -3,7 +3,7 @@ import {PhBell, PhMagnifyingGlass, PhUser, PhUsersThree} from "@phosphor-icons/v
 export const profileNavlinks = [
   {
     name: 'Organization',
-    link: '/organization',
+    link: '/organizations',
     icon: PhUsersThree
   },
   {
