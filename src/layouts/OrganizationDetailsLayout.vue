@@ -127,4 +127,11 @@ onMounted(()=>{
   font-size: 16px;
   letter-spacing: .7px;
 }
+
+@media (max-width: 960px) {
+  .circle::after {
+    top: -490px;
+  }
+  
+}
 </style>
