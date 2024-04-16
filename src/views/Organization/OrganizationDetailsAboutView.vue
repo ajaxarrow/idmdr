@@ -37,7 +37,7 @@
        <VRow class="ma-0">
          <VCol v-for="rep in organization.clusterRepresentatives" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">{{rep.type}}</p>
-           <p class="text-subtitle">{{ rep.name }} | {{rep.email}}</p>
+           <p class="text-subtitle">{{ rep.name }} <span v-if="rep.email">|</span> {{rep.email}}</p>
          </VCol>
        </VRow>
      </div>
