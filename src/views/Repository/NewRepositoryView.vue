@@ -3,6 +3,14 @@ import MainLayout from "../../layouts/MainLayout.vue";
 import {ref} from "vue";
 import {PhFileDashed} from "@phosphor-icons/vue";
 const visibility = ref("public")
+
+const commodities = [
+  'Abaca', 'Banana', 'Cacao', 'Cashew', 'Cement/Concrete', 'Citrus', 'Coconut', 'Coffee', 'Corn', 'Grains', 'Legume - Mungbean', 'Legume - Peanut', 'Legume - Soybean', 'Mango', 'Medicinal Plants', 'Natural Sources of Dye', 'Oil Palm', 'Ornamental - Cutflowers', 'Ornamental - Foliages', 'Pili', 'Rice', 'Rubber', 'Rootcrops - Sweet Potato', 'Rootcrops - Cassava', 'Sericulture and Apiculture', 'Sugarcane', 'Tropical Fruits - Durian', 'Tropical Fruits - Papaya', 'Tropical Fruits - Pineapple', 'Tropical Fruits - Pomelo', 'Tropical Fruits - Jackfruit', 'Tropical Fruits - Citrus', 'Vegetables', 'Crops (Others)',
+]
+
+const industries = [
+    'Crops', 'Livestock', 'Marine and Inland Aquatic', 'Forestry', 'Environmental Services / Climate Change Adaptation and Disaster Risk Reduction', 'Agriculture', 'Information Technology', 'Food Processing', 'Mining', 'Biotechnology / Molecular Technology', 'Construction', 'Others'
+]
 </script>
 
 <template>
@@ -14,7 +22,7 @@ const visibility = ref("public")
               Create New Repository
             </p>
             <p class="text-subtitle">
-              A repository contain all project files and any related data.
+              A repository contain all related project of a certain project of the organization
             </p>
           </div>
       </div>
@@ -31,11 +39,19 @@ const visibility = ref("public")
                 </div>
               </template>
             </VRadio>
-            <VRadio color="bs50" value="private" class="my-3">
+            <VRadio color="bs50" value="withinorg" class="my-3">
               <template v-slot:label>
                 <div>
-                  <p class="radio-text-heading">Private</p>
+                  <p class="radio-text-heading">Within Organization</p>
                   <p class="radio-text-subtitle">The repository's content is exclusively visible to members within the organization.</p>
+                </div>
+              </template>
+            </VRadio>
+            <VRadio color="bs50" value="withinall" class="my-3">
+              <template v-slot:label>
+                <div>
+                  <p class="radio-text-heading">Within All Organization</p>
+                  <p class="radio-text-subtitle">The repository's content is visible to all members of any organization</p>
                 </div>
               </template>
             </VRadio>
@@ -70,9 +86,102 @@ const visibility = ref("public")
           />
         </div>
         <div class="mb-5">
-          <label class="input-label">Description</label>
+          <label class="input-label">Project Component</label>
+          <VTextField
+              placeholder="E.g. Project Component 1"
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">Location</label>
+          <VTextField
+              placeholder="E.g. Musuan, Bukidnon"
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">Abstract</label>
           <VTextarea
               placeholder="E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices."
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">Commodity</label>
+          <VAutocomplete
+              placeholder="Select Commodity"
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="commodities"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">Industry</label>
+          <VAutocomplete
+              placeholder="Select Industry"
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="industries"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">Start Date</label>
+          <VTextField
+              type="date"
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">End Date</label>
+          <VTextField
+              type="date"
+              class="my-2"
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
+        <div class="mb-5">
+          <label class="input-label">Affiliation</label>
+          <VTextField
+              placeholder="E.g. College of Forestry and Environmental Science"
               class="my-2"
               hide-details
               rounded="lg"
