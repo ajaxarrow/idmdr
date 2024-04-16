@@ -45,7 +45,7 @@ onMounted(()=>{
 </script>
 
 <template>
-  <MainLayout title="Repository Details">
+  <MainLayout title="Organization Details">
     <div v-if="organization" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
