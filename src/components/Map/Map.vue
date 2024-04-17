@@ -9,6 +9,7 @@ import {markRaw, onBeforeMount, onMounted, shallowRef, watch} from "vue";
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
 import MapProductionDetails from "./Filters/MapFiltersDetails.vue";
 import sectors from "../../data/sectors.ts";
+import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSidebar.vue";
 
   const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
@@ -71,6 +72,9 @@ import sectors from "../../data/sectors.ts";
 <template>
   <transition name="fade">
     <SectorDetailsSidebar/>
+  </transition>
+  <transition name="fade">
+    <OrganizationDetailsSidebar/>
   </transition>
   <transition name="fade">
     <MapProductionDetails/>

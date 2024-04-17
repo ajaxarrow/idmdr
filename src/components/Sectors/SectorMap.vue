@@ -10,6 +10,7 @@ import sectors from "../../data/sectors.ts";
 import boundaries from "../../data/boundaries.ts";
 import MapProductionDetails from "../Map/Filters/MapFiltersDetails.vue";
 import organizations from "../../data/organizations.ts";
+import OrganizationDetailsSidebar from "../Map/Organizations/OrganizationDetailsSidebar.vue";
 
 const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization} = useMapStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
@@ -87,6 +88,9 @@ onMounted(() => {
 </script>
 
 <template>
+  <transition name="fade">
+    <OrganizationDetailsSidebar/>
+  </transition>
   <transition name="fade">
     <SectorDetailsSidebar/>
   </transition>
