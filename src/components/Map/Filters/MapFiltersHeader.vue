@@ -2,7 +2,7 @@
 </script>
 <template>
   <div class="relative-container circle-quarter">
-    <p class="header-title">Production</p>
+    <p class="header-title">Filters</p>
   </div>
 </template>
 

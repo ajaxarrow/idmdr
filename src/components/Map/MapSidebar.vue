@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   PhFactory, PhFileArrowUp,
-  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhSliders, PhUsersThree,
+  PhGlobe, PhHouse, PhPlusCircle, PhSliders, PhUsersThree,
 } from "@phosphor-icons/vue";
 
   import Logo from "../Global/Logo.vue";
@@ -10,8 +10,6 @@ import {
   import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
   import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
   import MapSectorsMainContent from "./Sectors/MapSectorsMainContent.vue";
-import MapProductionHeader from "./Production/MapProductionHeader.vue";
-import MapProductionMainContent from "./Production/MapProductionMainContent.vue";
 import MapFiltersHeader from "./Filters/MapFiltersHeader.vue";
 import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
 import SectorTaggingDialog from "../SectorTagging/SectorTaggingDialog.vue";
@@ -63,8 +61,8 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
     {
       name: 'Filters',
       icon: markRaw(PhSliders),
-      header: markRaw(MapProductionHeader),
-      mainContent: markRaw(MapProductionMainContent)
+      header: markRaw(MapFiltersHeader),
+      mainContent: markRaw(MapFiltersMainContent)
     },
   ];
 
