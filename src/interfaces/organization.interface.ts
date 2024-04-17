@@ -6,6 +6,7 @@ interface Organization {
   acronym?: string,
   slug: string,
   description: string,
+  geojson?: any,
   image?: string,
   type: OrganizationType,
   address?: string,
