@@ -5,7 +5,7 @@ import {useMemberStore} from "../../../stores/memberStore.ts";
 import {membersData} from "../../../data/members.ts";
 
 const addMembersDialog = ref(false);
-const {members, addMember} = useMemberStore();
+const {addMember} = useMemberStore();
 const accesslevels: string[] = Object.values(AccessLevel);
 const selectedMember = ref<string | null>(null);
 const selectedAccessLevel = ref(null);
@@ -33,9 +33,9 @@ const saveMember = () => {
       access: accesslevel
     });
   }
-  console.log(members.value)
+  selectedMember.value = null;
+  selectedAccessLevel.value = null;
   addMembersDialog.value = false
-
 }
 </script>
 
