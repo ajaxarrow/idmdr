@@ -7,12 +7,14 @@ import repositoryRoutes from "./routes/repository.routes.ts";
 // @ts-ignore
 import DashboardView from "../views/User/DashboardView.vue";
 // @ts-ignore
-import SettingsView from "../views/User/SettingsView.vue";
-// @ts-ignore
 import MapView from "../views/Map/MapView.vue";
 // @ts-ignore
 import SectorView from "../views/Sector/SectorView.vue";
 import organizationRoutes from "./routes/organization.routes.ts";
+// @ts-ignore
+import SettingsOrganizationView from "../views/User/SettingsOrganizationView.vue";
+// @ts-ignore
+import SettingsAccountView from "../views/User/SettingsAccountView.vue";
 
 export const routes = [
   {
@@ -28,7 +30,17 @@ export const routes = [
   {
     path: '/settings',
     name: 'settings',
-    component: SettingsView
+    component: SettingsOrganizationView
+  },
+  {
+    path: '/settings/account',
+    name: 'settings-account',
+    component: SettingsAccountView
+  },
+  {
+    path: '/settings/organization',
+    name: 'settings-organization',
+    component: SettingsOrganizationView
   },
   {
     path: '/map',

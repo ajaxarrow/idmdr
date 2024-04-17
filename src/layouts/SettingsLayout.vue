@@ -1,7 +1,42 @@
 <script setup lang="ts">
-import MainLayout from "../../layouts/MainLayout.vue";
+import MainLayout from "./MainLayout.vue";
 import {ref} from "vue";
-const tab = ref("account")
+import {onMounted} from "vue";
+import {useRouting} from "../composables/useRouting.ts";
+
+
+const {router} = useRouting();
+const props = defineProps({
+  activeTab: {
+    type: String
+  }
+});
+
+const tab = ref("organization")
+
+const tabs = [
+  {
+    name: "Account",
+    linkName: "settings-account"
+  },
+  {
+    name: "Organization",
+    linkName: "settings-organization"
+  },
+]
+
+const navigateTo = (linkName: string) => {
+  router.push({
+    name: linkName,
+  });
+}
+
+onMounted(()=>{
+  if(props.activeTab){
+    tab.value = props.activeTab
+  }
+})
+
 </script>
 
 <template>
@@ -22,10 +57,17 @@ const tab = ref("account")
           color="primary"
           v-model="tab"
       >
-        <VTab value="account" class="tab-title text-none mx-2">Account</VTab>
-        <VTab value="organization" class="tab-title text-none mx-2">Organization</VTab>
+        <VTab
+            v-for="tab in tabs"
+            class="tab-title text-none mx-2"
+            :value="tab.name.toLowerCase()"
+            @click="navigateTo(tab.linkName)"
+        >
+          {{tab.name}}
+        </VTab>
       </VTabs>
       <VDivider/>
+      <slot/>
     </div>
   </MainLayout>
 </template>
