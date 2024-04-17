@@ -9,8 +9,9 @@ import {useMapStore} from "../../stores/mapStore.ts";
 import sectors from "../../data/sectors.ts";
 import boundaries from "../../data/boundaries.ts";
 import MapProductionDetails from "../Map/Production/MapProductionDetails.vue";
+import organizations from "../../data/organizations.ts";
 
-const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useMapStore();
+const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization} = useMapStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
 
@@ -72,6 +73,7 @@ onMounted(() => {
 
   // @ts-ignore
   map.value?.on('style.load', () => {
+    setupBoundariesforOrganization(organizations);
     setupBoundaries(sectors, 'Sector');
     loadRandomCoordinates(boundaries)
 

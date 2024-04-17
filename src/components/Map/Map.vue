@@ -4,12 +4,13 @@ import {markRaw, onBeforeMount, onMounted, shallowRef, watch} from "vue";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
   import boundaries from "../../data/boundaries.ts";
+  import organizations from "../../data/organizations.ts";
   import {useMapStore} from "../../stores/mapStore.ts";
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
 import MapProductionDetails from "./Production/MapProductionDetails.vue";
 import sectors from "../../data/sectors.ts";
 
-  const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useMapStore();
+  const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
@@ -51,6 +52,7 @@ import sectors from "../../data/sectors.ts";
 
     // @ts-ignore
     map.value?.on('style.load', () => {
+      setupBoundariesforOrganization(organizations);
       setupBoundaries(boundaries, 'Province');
       setupBoundaries(sectors, 'Sector');
       loadRandomCoordinates(boundaries);

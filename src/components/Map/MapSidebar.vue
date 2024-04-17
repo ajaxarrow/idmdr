@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   PhFactory, PhFileArrowUp,
-  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhSliders,
+  PhGlobe, PhGrains, PhHouse, PhPlusCircle, PhSliders, PhUsersThree,
 } from "@phosphor-icons/vue";
 
   import Logo from "../Global/Logo.vue";
@@ -15,6 +15,8 @@ import MapProductionMainContent from "./Production/MapProductionMainContent.vue"
 import MapFiltersHeader from "./Filters/MapFiltersHeader.vue";
 import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
 import SectorTaggingDialog from "../SectorTagging/SectorTaggingDialog.vue";
+import MapOrganizationsHeader from "./Organizations/MapOrganizationsHeader.vue";
+import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainContent.vue";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -53,16 +55,16 @@ import SectorTaggingDialog from "../SectorTagging/SectorTaggingDialog.vue";
       mainContent: markRaw(MapSectorsMainContent)
     },
     {
-      name: 'Production',
-      icon: markRaw(PhGrains),
-      header: markRaw(MapProductionHeader),
-      mainContent: markRaw(MapProductionMainContent)
+      name: 'Organizations',
+      icon: markRaw(PhUsersThree),
+      header: markRaw(MapOrganizationsHeader),
+      mainContent: markRaw(MapOrganizationsMainContent)
     },
     {
       name: 'Filters',
       icon: markRaw(PhSliders),
-      header: markRaw(MapFiltersHeader),
-      mainContent: markRaw(MapFiltersMainContent)
+      header: markRaw(MapProductionHeader),
+      mainContent: markRaw(MapProductionMainContent)
     },
   ];
 
