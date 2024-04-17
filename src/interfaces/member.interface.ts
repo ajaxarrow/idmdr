@@ -4,7 +4,7 @@ interface Member{
   name: string,
   avatar: string,
   email: string,
-  access: AccessLevel
+  access?: AccessLevel
 }
 
 export type {Member}
