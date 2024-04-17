@@ -13,13 +13,16 @@ const selectedAccessLevel = ref(null);
 const getAccessLevelByValue = (value: any): AccessLevel => {
   switch (value) {
     case 'Read Only':
-      return AccessLevel.readonly
+      return AccessLevel.readonly;
     case 'Moderate Access':
-      return AccessLevel.moderate
+      return AccessLevel.moderate;
     case 'Full Control':
-      return AccessLevel.full
+      return AccessLevel.full;
+    default:
+      throw new Error(`Unknown access level: ${value}`);
   }
 };
+
 
 const saveMember = () => {
   const member = membersData.find(member => member.email === selectedMember.value);
