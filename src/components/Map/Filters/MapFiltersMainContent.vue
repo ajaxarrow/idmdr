@@ -31,14 +31,14 @@ const {dotDensityLayer} = useMapStore();
       value: false
     },
     {
-      title: 'Sugarcane Height',
-      color: "#32c76e",
+      title: 'Commodities',
+      color: "#00FFA6",
       value: false
     },
   ])
 
 watch(
-    () => productionData.value.find(data => data.title === 'Sugarcane Height'),
+    () => productionData.value.find(data => data.title === 'Commodities'),
     (newVal) => {
       if (newVal) {
         dotDensityLayer.value = newVal.value
