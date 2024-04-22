@@ -25,7 +25,7 @@ onMounted(() => {
   <VSheet class="sector-details-sidebar ma-4" v-if="selectedOrganization">
     <VRow justify="space-between" align="center" class="ma-0 pa-4">
       <p class="sidebar-title">Organization</p>
-      <PhX color="#C83246" size="24" weight="bold" class="cursor-pointer" @click="resetToDefault"/>
+      <PhX color="#C83246" size="24" weight="bold" class="cursor-pointer" @click="resetToDefault('Organization')"/>
     </VRow>
     <div class="">
       <VImg
