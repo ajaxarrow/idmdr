@@ -69,7 +69,7 @@ watch(() => searchQuery.value, () => {
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">
             <PhUsersThree size="24" class="mr-1"/>
-            {{organizationData.length}} Organizations Available
+            <p>{{organizationData.length}} Organization<span v-if="organizationData.length > 1">s</span> Available</p>
           </p>
         </VRow>
         <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
