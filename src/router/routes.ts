@@ -15,6 +15,8 @@ import organizationRoutes from "./routes/organization.routes.ts";
 import SettingsOrganizationView from "../views/User/SettingsOrganizationView.vue";
 // @ts-ignore
 import SettingsAccountView from "../views/User/SettingsAccountView.vue";
+// @ts-ignore
+import Error404View from "../views/Public/Error404View.vue";
 
 export const routes = [
   {
@@ -51,6 +53,11 @@ export const routes = [
     path: '/sectors',
     name: 'sectors',
     component: SectorView
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'error404',
+    component: Error404View
   },
   ...authRoutes,
   ...repositoryRoutes,
