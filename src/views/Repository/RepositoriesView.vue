@@ -11,7 +11,7 @@
 
   const searchQuery = ref('');
   const {isSmall, isTablet} = useScreenStore();
-  const selectedTags = ref([]);
+  const selectedTags = ref<string[]>([]);
   const tags = ref(['Agriculture', 'Plantation', 'Forestry', 'Agrifishery']);
 
   const filterRepositoriesBySearchQuery = () => {
