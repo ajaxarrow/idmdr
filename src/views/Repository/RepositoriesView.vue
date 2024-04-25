@@ -2,32 +2,85 @@
   import MainLayout from "../../layouts/MainLayout.vue";
   import {PhCaretDown, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
-  import {ref} from "vue";
+  import {onMounted, ref, watch} from "vue";
   import {repositories} from "../../data/repository.ts";
   import RepositoryItem from "../../components/Dashboard/RepositoryItem.vue";
 
+  const repositoryData = ref(repositories);
+  const searchedRepositories = ref(repositories);
+
+  const searchQuery = ref('');
   const {isSmall, isTablet} = useScreenStore();
-  const selectedTags = ref(['All Repositories']);
-  const tags = [
-    {
-      name: 'All Repositories'
-    },
-    {
-      name: 'Agriculture',
-    },
-    {
-      name: 'Plantation',
-    },
-    {
-      name: 'Forestry',
-    },
-    {
-      name: 'Agrifishery',
-    },
-  ]
+  const selectedTags = ref([]);
+  const tags = ref(['Agriculture', 'Plantation', 'Forestry', 'Agrifishery']);
+
+  const filterRepositoriesBySearchQuery = () => {
+    if (searchQuery.value) {
+      searchedRepositories.value = repositoryData.value.filter(repository => repository.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    } else {
+      // searchedRepositories.value = repositories;
+    }
+  }
+
+  const filterRepositoriesbyTags = () => {
+    if(selectedTags.value.length > 0){
+      repositoryData.value = repositories.filter(repo => repo.tags?.some(tag => selectedTags.value.includes(tag)));
+      searchedRepositories.value = repositoryData.value
+    } else {
+      repositoryData.value = repositories
+      searchedRepositories.value = repositoryData.value
+    }
+  }
+
+  const fetchTags = () => {
+    repositories.forEach(repo => {
+      repo.tags?.forEach(tag => {
+        if (!tags.value.includes(tag)){
+          tags.value.push(tag);
+        }
+      })
+    })
+
+    sortTags();
+  }
+
+  const sortTags = () => {
+    tags.value.sort((a, b) => {
+
+      const titleA = a.toLowerCase();
+      const titleB = b.toLowerCase();
+
+      if (titleA < titleB) {
+        return -1;
+      } else if (titleA > titleB) {
+        return 1;
+      }
+      return 0;
+    });
+  };
+
+
+  watch(() => searchQuery.value, () => {
+    filterRepositoriesBySearchQuery()
+  });
+
+  watch(() => selectedTags.value, () => {
+    filterRepositoriesbyTags();
+  })
+
+  watch(() => selectedTags.value, (newVal) => {
+    if (newVal.includes('All Repositories')){
+      selectedTags.value = [];
+    }
+  })
+
+  onMounted(() => {
+    fetchTags();
+  })
+
 </script>
 
-<template>
+<template>s
   <MainLayout title="Repositories">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
@@ -50,6 +103,7 @@
       <VDivider/>
       <div class="pa-6">
         <VTextField
+          v-model="searchQuery"
           hide-details
           variant="outlined"
           rounded="xl"
@@ -72,14 +126,27 @@
             column
           >
             <VChip
+              :class="{
+                'text-primary' : selectedTags.length === 0
+              }"
+              class="tag d-flex align-center mr-2 tag-chips"
+              variant="outlined"
+              key="All Repositories"
+              value="All Repositories">
+              All Repositories
+              <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
+            </VChip>
+            <VChip
               v-for="tag in tags"
               class="tag"
-              :class="{'d-flex align-center mr-2 tag-chips': !selectedTags.includes(tag.name)}"
+              :class="{
+                'd-flex align-center mr-2 tag-chips' : !selectedTags.includes(tag)
+              }"
               variant="outlined"
-              :key="tag.name"
-              :value="tag.name">
-                {{tag.name}}
-              <PhX v-if="selectedTags.includes(tag.name)" size="12" class="ml-1"/>
+              :key="tag"
+              :value="tag">
+                {{tag}}
+              <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
             </VChip>
           </VChipGroup>
         </VRow>
@@ -93,7 +160,7 @@
             <PhCaretDown weight="fill" class="ml-1"/>
           </p>
         </VRow>
-        <RepositoryItem v-for="repository in repositories" :repository="repository" />
+        <RepositoryItem v-for="repository in searchedRepositories" :repository="repository" />
       </div>
     </div>
   </MainLayout>
