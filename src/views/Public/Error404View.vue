@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
   import {Vue3Lottie} from "vue3-lottie";
   import Container from "../../components/Global/Container.vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
