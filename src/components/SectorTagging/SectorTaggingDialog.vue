@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import {ref} from "vue";
+import {repositories} from "../../data/repository.ts";
 
 const sectorTaggingDialog = ref(false);
 </script>
@@ -54,7 +55,10 @@ const sectorTaggingDialog = ref(false);
         </div>
         <div>
           <p class="dialog-label mb-2">Repository</p>
-          <VTextField
+          <VAutocomplete
+              :item-value="repository => `${repository.slug}`"
+              :item-title="repository => `${repository.title}`"
+              :items="repositories"
               placeholder="Choose Repository..."
               class="my-2"
               hide-details
