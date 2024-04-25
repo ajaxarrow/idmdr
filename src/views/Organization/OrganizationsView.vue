@@ -4,8 +4,21 @@ import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screenSizeStore.ts";
 import OrganizationItem from "../../components/Organization/OrganizationItem.vue";
 import organizations from "../../data/organizations.ts";
+import {ref, watch} from "vue";
 
 const {isSmall, isTablet} = useScreenStore();
+const searchQuery = ref('');
+const organizationData = ref(organizations);
+
+const filterOrganizationsBySearchQuery = () => {
+  if(searchQuery.value) {
+    organizationData.value = organizations.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  }
+}
+
+watch(() => searchQuery.value, () => {
+  filterOrganizationsBySearchQuery()
+});
 </script>
 
 <template>
@@ -38,6 +51,7 @@ const {isSmall, isTablet} = useScreenStore();
       <VDivider/>
       <div class="pa-6">
         <VTextField
+            v-model="searchQuery"
             hide-details
             variant="outlined"
             rounded="xl"
@@ -55,10 +69,10 @@ const {isSmall, isTablet} = useScreenStore();
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">
             <PhUsersThree size="24" class="mr-1"/>
-            15 Organizations Available
+            {{organizationData.length}} Organizations Available
           </p>
         </VRow>
-        <OrganizationItem v-for="organization in organizations" :organization="organization"/>
+        <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
       </div>
     </div>
   </MainLayout>
