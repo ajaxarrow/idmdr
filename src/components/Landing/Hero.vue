@@ -15,8 +15,8 @@ import Arrow from "../../assets/images/circlearrow.svg";
     Experience enhanced data interaction with <span class="fancy-text">NOMCAARRD's dynamic <br/>  mapping and repository solutions, empowering users.</span></p>
   <VRow class="mt-4" justify="center">
     <div style="position: relative;">
-      <VBtnPrimary  width="320px" height="60" class="mb-3 explore-button" :to="{name: 'map'}">
-        <PhMapTrifold size="20" class="mr-2"/> Explore our Interactive Map
+      <VBtnPrimary  width="320px" height="60" class="mb-3 hvr-icon-spin explore-button" :to="{name: 'map'}">
+        <PhMapTrifold size="20" class="mr-2 hvr-icon"/> <span class="animate-underline">Explore our Interactive Map</span>
       </VBtnPrimary>
       <VImg
           :src="Arrow"
@@ -117,8 +117,18 @@ import Arrow from "../../assets/images/circlearrow.svg";
   transition: background-size 300ms ease;
 }
 
-.fancy-text:hover{
+.fancy-text:hover, .animate-underline:hover{
   background-size: 100% 2.5px;
-
 }
+
+.animate-underline{
+  background-image: linear-gradient(90deg, #fff, #fff);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  transition: background-size 300ms ease;
+}
+
+
+
 </style>
