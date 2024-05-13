@@ -13,7 +13,7 @@ const {organization, setOrganizationData} = useOrganizationStore();
 const {repositoryItems, setRepositoryItems} = useRepositoryStore();
 
 const {tags, selectedTags, fetchTags} = useTagsStore();
-const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, repositoryData, setRepositoryData} = useRepositoriesStore();
+const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, setRepositoryData} = useRepositoriesStore();
 
 const showMoreChips = ref(false);
 
