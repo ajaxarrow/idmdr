@@ -1,4 +1,4 @@
-import './style.css'
+import './styles/style.css'
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { createApp } from 'vue'
 import vuetify from "./plugins/vuetify.ts";
