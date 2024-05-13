@@ -123,7 +123,7 @@
             <p class="text-gs20">Search repositories by title, keyword, tags.</p>
           </template>
         </VTextField>
-        <VRow class="ma-0 mt-2">
+        <VRow class="ma-0 mt-2" align="center">
           <VChipGroup
             selected-class="text-primary"
             v-model="selectedTags"
@@ -153,17 +153,16 @@
                 {{tag}}
               <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
             </VChip>
-            <VChip
-                @click="toggleShowMoreChips"
-                class="tag d-flex align-center mr-2 show-chip "
-                variant="outlined"
-                key="All Repositories"
-                value="All Repositories">
-              {{showMoreChips ? 'Show Less' : 'Show More'}}
-              <PhCaretUp v-if="showMoreChips" size="12" class="ml-1"/>
-              <PhCaretDown v-else size="12" class="ml-1"/>
-            </VChip>
           </VChipGroup>
+          <VChip
+              @click="toggleShowMoreChips"
+              class="tag d-flex align-center mr-2 show-chip "
+              variant="outlined"
+              key="Toggle Chips">
+            {{showMoreChips ? 'Show Less' : 'Show More'}}
+            <PhCaretUp v-if="showMoreChips" size="12" class="ml-1"/>
+            <PhCaretDown v-else size="12" class="ml-1"/>
+          </VChip>
         </VRow>
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">
