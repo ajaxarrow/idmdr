@@ -15,13 +15,61 @@
   const {route} = useRouting()
   const {repository, setRepositoryData} = useRepositoryStore();
 
+  const selectedFileName = ref('');
   const selectedFileDescription = ref('');
 
-  const selectFile = (fileDesc: string) => {
+  const downloadFiles = () => {
+    let fileContent = '';
+    if (repository.value) {
+      fileContent += `Repository Name: ${repository.value?.title}\n\n`;
+      if ("files" in repository.value) {
+        repository.value.files.forEach((file, index) => {
+          fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+        });
+      }
+    }
+
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${repository.value?.slug}.txt`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  const downloadFile = (filename: string, description: string): void => {
+    let fileContent = '';
+    fileContent += `Name: ${filename}\nDescription: ${description}\n\n`;
+
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${filename}.txt`);
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }
+
+  const selectFile = (fileDesc: string, filename: string) => {
     if(selectedFileDescription.value === fileDesc){
       selectedFileDescription.value = ''
+      selectedFileName.value = ''
     } else {
       selectedFileDescription.value = fileDesc
+      selectedFileName.value = filename
     }
   }
 
@@ -96,22 +144,35 @@
           <div class="pa-4">
             <VRow justify="space-between" align="center" class="ma-0">
               <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>
-              <PhDownload size="24"/>
+              <PhDownload size="24" class="cursor-pointer download-icon" @click="downloadFiles">
+                <VTooltip
+                    activator="parent"
+                    location="bottom"
+                >Download Repository Files</VTooltip>
+              </PhDownload>
             </VRow>
           </div>
           <VDivider v-if="selectedFileDescription" />
           <div class="px-6 py-4" v-if="selectedFileDescription">
-            <p class="text-data-subheading d-flex align-center">
-              <PhInfo size="20" class="mr-2"/>
-              About the selected file
-            </p>
-            <p class="text-data-description">{{selectedFileDescription}}</p>
+            <VRow class="ma-0" justify="space-between">
+              <div>
+                <p class="text-data-subheading d-flex align-center">
+                  <PhInfo size="20" class="mr-2"/>
+                  About the selected file
+                </p>
+                <p class="text-data-description">{{selectedFileDescription}}</p>
+              </div>
+              <p class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileName, selectedFileDescription)">
+                <PhDownload size="20" class="mr-2"/>
+                Download File
+              </p>
+            </VRow>
           </div>
           <VDivider/>
           <div class="pa-2">
             <VListItem
                 v-for="file in repository.files"
-                @click="selectFile(file.description)">
+                @click="selectFile(file.description, file.name)">
               <div
                   class="my-2 pa-1 d-flex align-center "
                   :class="{'selected-file': selectedFileDescription === file.description}"
@@ -135,6 +196,13 @@
 </template>
 
 <style scoped>
+  .download-icon{
+    padding: 4px;
+    border-radius: 10px;
+  }
+  .download-icon:hover{
+    background-color: #e3e4ef;
+  }
   .selected-file{
     background-color: #EEEEEE;
     border-radius: 5px;
