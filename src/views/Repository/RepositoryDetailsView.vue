@@ -22,7 +22,7 @@
     let fileContent = '';
     if (repository.value) {
       fileContent += `Repository Name: ${repository.value?.title}\n\n`;
-      if ("files" in repository.value) {
+      if (repository.value?.files) {
         repository.value?.files.forEach((file, index) => {
           fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
         });
