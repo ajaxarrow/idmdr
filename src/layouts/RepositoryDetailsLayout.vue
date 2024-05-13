@@ -20,13 +20,13 @@ const props = defineProps({
 
 const downloadFiles = () => {
   let fileContent = '';
-  if ("files" in props.repository) {
-    if (props.repository.files) {
-      props.repository.files.forEach((file, index) => {
-        fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-      });
+    if (props.repository) {
+      if (props.repository.files) {
+        props.repository.files.forEach((file, index) => {
+          fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+        });
+      }
     }
-  }
 
   const blob = new Blob([fileContent], { type: 'text/plain' });
 
