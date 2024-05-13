@@ -5,65 +5,19 @@
   import {onMounted, ref, watch} from "vue";
   import {repositories} from "../../data/repository.ts";
   import RepositoryItem from "../../components/Dashboard/RepositoryItem.vue";
+  import {useTagsStore} from "../../stores/tagsStore.ts";
+  import {useRepositoriesStore} from "../../stores/repositoriesStore.ts";
 
-  const repositoryData = ref(repositories);
-  const searchedRepositories = ref(repositories);
+  const {tags, selectedTags, fetchTags} = useTagsStore();
+  const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, repositoryData} = useRepositoriesStore();
 
-  const searchQuery = ref('');
   const {isSmall, isTablet} = useScreenStore();
-  const selectedTags = ref<string[]>([]);
-  const tags = ref(['Agriculture', 'Plantation', 'Forestry', 'Agrifishery']);
+
   const showMoreChips = ref(false);
 
   const toggleShowMoreChips = () => {
     showMoreChips.value =!showMoreChips.value;
   }
-
-  const filterRepositoriesBySearchQuery = () => {
-    if (searchQuery.value) {
-      searchedRepositories.value = repositoryData.value.filter(repository => repository.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
-    } else {
-      // searchedRepositories.value = repositories;
-    }
-  }
-
-  const filterRepositoriesbyTags = () => {
-    if(selectedTags.value.length > 0){
-      repositoryData.value = repositories.filter(repo => repo.tags?.some(tag => selectedTags.value.includes(tag)));
-      searchedRepositories.value = repositoryData.value
-    } else {
-      repositoryData.value = repositories
-      searchedRepositories.value = repositoryData.value
-    }
-  }
-
-  const fetchTags = () => {
-    repositories.forEach(repo => {
-      repo.tags?.forEach(tag => {
-        if (!tags.value.includes(tag)){
-          tags.value.push(tag);
-        }
-      })
-    })
-
-    sortTags();
-  }
-
-  const sortTags = () => {
-    tags.value.sort((a, b) => {
-
-      const titleA = a.toLowerCase();
-      const titleB = b.toLowerCase();
-
-      if (titleA < titleB) {
-        return -1;
-      } else if (titleA > titleB) {
-        return 1;
-      }
-      return 0;
-    });
-  };
-
 
   watch(() => searchQuery.value, () => {
     filterRepositoriesBySearchQuery()
