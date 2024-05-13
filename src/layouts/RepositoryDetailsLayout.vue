@@ -18,6 +18,30 @@ const props = defineProps({
   }
 });
 
+const downloadFiles = () => {
+  let fileContent = '';
+  if ("files" in props.repository) {
+    if (props.repository.files) {
+      props.repository.files.forEach((file, index) => {
+        fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+      });
+    }
+  }
+
+  const blob = new Blob([fileContent], { type: 'text/plain' });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${props.repository?.slug}.txt`;
+
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+
 const tabs = [
   {
     name: "Data",
@@ -60,7 +84,7 @@ onMounted(()=>{
             <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>
             <p class="text-subtitle">{{ repository.owner }} | {{ repository.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</p>
           </div>
-          <VBtnPrimaryFilled width="151px" height="45px" rounded="lg" class="satoshi-md">
+          <VBtnPrimaryFilled width="151px" height="45px" rounded="lg" class="satoshi-md" @click="downloadFiles">
             <PhDownload size="20" class="mr-2"/>
             Download
           </VBtnPrimaryFilled>
