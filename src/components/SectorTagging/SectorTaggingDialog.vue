@@ -95,9 +95,15 @@ const sectorTaggingDialog = ref(false);
 
 <style scoped>
 .add-sector-menu-item{
+  border-radius: 8px;
+  padding: 4px;
   font-size: 12px;
   font-weight: 500;
   color: #000000;
+}
+
+.add-sector-menu-item:hover{
+  background-color: #e0e3e3;
 }
 
 .sector-tagging-dialog-container{

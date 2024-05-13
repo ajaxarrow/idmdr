@@ -110,7 +110,7 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
                      class="cursor-pointer"
                      v-bind="props" weight="fill" size="62" color="#3291C7" />
                </template>
-               <VSheet width="200" height="120" class="add-sector-menu">
+               <VSheet width="220" height="140" class="add-sector-menu">
                  <p class="text-center font-weight-bold pa-2 add-sector-menu-title">Add New Sector</p>
                  <VDivider/>
                  <div class="pa-2">
@@ -187,9 +187,15 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
 }
 
 .add-sector-menu-item{
+  border-radius: 8px;
+  padding: 4px;
   font-size: 12px;
   font-weight: 500;
   color: #000000;
+}
+
+.add-sector-menu-item:hover{
+  background-color: #e0e3e3;
 }
 
 .v-row{
