@@ -17,7 +17,7 @@ import {navLinks} from "../../data/navlinks.ts";
             :to="navLink.link"
             link
             variant="plain"
-            class="nav-item"
+            class="nav-item navigation-item"
         >
           <div class="d-flex flex-column justify-center align-center">
             <component :is="navLink.icon" size="24" class="icon" />
@@ -33,7 +33,7 @@ import {navLinks} from "../../data/navlinks.ts";
         <VListItem
             to="/help"
             link
-            class="nav-item"
+            class="nav-item navigation-item"
         >
           <div class="d-flex flex-column align-center">
             <PhQuestion size="24" class="icon" />

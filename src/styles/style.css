@@ -50,3 +50,7 @@ body{
 ul {
     list-style-position: inside;
 }
+
+.navigation-item:hover{
+    background-color: #F0F5F9;
+}

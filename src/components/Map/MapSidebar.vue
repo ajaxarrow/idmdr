@@ -133,7 +133,7 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
                :class="{'active-nav': activeNav === navLink.name}"
                v-for="navLink in filteredNavLinks"
                variant="plain"
-               class="nav-item cursor-pointer"
+               class="nav-item cursor-pointer navigation-item "
                @click="assignContent(navLink.header, navLink.mainContent, navLink.name)"
            >
              <div class="d-flex flex-column justify-center align-center">
@@ -150,7 +150,7 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
            <VListItem
                to="/dashboard"
                link
-               class="nav-item"
+               class="nav-item navigation-item"
            >
              <div class="d-flex flex-column align-center">
                <PhHouse size="24" class="icon" />
