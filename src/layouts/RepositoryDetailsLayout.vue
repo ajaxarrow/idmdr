@@ -21,6 +21,7 @@ const props = defineProps({
 const downloadFiles = () => {
   let fileContent = '';
     if (props.repository) {
+      fileContent += `Repository Name: ${props.repository.title}\n\n`;
       if (props.repository.files) {
         props.repository.files.forEach((file, index) => {
           fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
