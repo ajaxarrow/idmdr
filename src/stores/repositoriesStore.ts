@@ -2,11 +2,17 @@ import {ref} from "vue";
 import {repositories} from "../data/repository.ts";
 import {useTagsStore} from "./tagsStore.ts";
 import {createGlobalState} from "@vueuse/core";
+import {Repository} from "../interfaces/repository.interface.ts";
 
 const {selectedTags} = useTagsStore();
 const repositoryData = ref(repositories);
 const searchedRepositories = ref(repositories);
 const searchQuery = ref('');
+
+const setRepositoryData = (repositoryItem: Repository[]) => {
+  repositoryData.value = repositoryItem
+  searchedRepositories.value = repositoryItem
+}
 
 const filterRepositoriesBySearchQuery = () => {
   if (searchQuery.value) {
@@ -16,14 +22,15 @@ const filterRepositoriesBySearchQuery = () => {
   }
 };
 
-const filterRepositoriesbyTags = () => {
+const filterRepositoriesbyTags = (repositoryList: Repository[] = repositories) => {
+  console.log(searchedRepositories.value);
   if(selectedTags.value.length > 0){
-    repositoryData.value = repositories.filter(repo => repo.tags?.some(tag => selectedTags.value.includes(tag)));
+    repositoryData.value = repositoryList.filter(repo => repo.tags?.some(tag => selectedTags.value.includes(tag)));
     searchedRepositories.value = repositoryData.value
   } else {
-    repositoryData.value = repositories
+    repositoryData.value = repositoryList
     searchedRepositories.value = repositoryData.value
   }
 }
 
-export const useRepositoriesStore = createGlobalState(() => ({repositoryData, searchedRepositories, searchQuery, filterRepositoriesBySearchQuery, filterRepositoriesbyTags}));
+export const useRepositoriesStore = createGlobalState(() => ({repositoryData, searchedRepositories, searchQuery, filterRepositoriesBySearchQuery, filterRepositoriesbyTags, setRepositoryData}));

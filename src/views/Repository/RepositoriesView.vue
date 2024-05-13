@@ -3,13 +3,12 @@
   import {PhCaretDown, PhCaretUp, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
   import {onMounted, ref, watch} from "vue";
-  import {repositories} from "../../data/repository.ts";
   import RepositoryItem from "../../components/Dashboard/RepositoryItem.vue";
   import {useTagsStore} from "../../stores/tagsStore.ts";
   import {useRepositoriesStore} from "../../stores/repositoriesStore.ts";
 
   const {tags, selectedTags, fetchTags} = useTagsStore();
-  const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, repositoryData} = useRepositoriesStore();
+  const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories} = useRepositoriesStore();
 
   const {isSmall, isTablet} = useScreenStore();
 
@@ -171,7 +170,6 @@
   background-color: #f4fbfd;
   border: 1px solid #e4e4e4;
 }
-
 
 
 </style>
