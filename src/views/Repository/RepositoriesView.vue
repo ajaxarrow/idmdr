@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import MainLayout from "../../layouts/MainLayout.vue";
-  import {PhCaretDown, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
+  import {PhCaretDown, PhCaretUp, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
   import {onMounted, ref, watch} from "vue";
   import {repositories} from "../../data/repository.ts";
@@ -13,6 +13,11 @@
   const {isSmall, isTablet} = useScreenStore();
   const selectedTags = ref<string[]>([]);
   const tags = ref(['Agriculture', 'Plantation', 'Forestry', 'Agrifishery']);
+  const showMoreChips = ref(false);
+
+  const toggleShowMoreChips = () => {
+    showMoreChips.value =!showMoreChips.value;
+  }
 
   const filterRepositoriesBySearchQuery = () => {
     if (searchQuery.value) {
@@ -127,9 +132,9 @@
           >
             <VChip
               :class="{
-                'text-primary' : selectedTags.length === 0
+                'text-primary outlined-chip' : selectedTags.length === 0
               }"
-              class="tag d-flex align-center mr-2 tag-chips"
+              class="tag d-flex align-center mr-2 tag-chips "
               variant="outlined"
               key="All Repositories"
               value="All Repositories">
@@ -137,16 +142,26 @@
               <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
             </VChip>
             <VChip
-              v-for="tag in tags"
+                v-for="(tag, index) in tags.slice(0, showMoreChips? tags.length : 5)"
               class="tag"
               :class="{
                 'd-flex align-center mr-2 tag-chips' : !selectedTags.includes(tag)
               }"
               variant="outlined"
-              :key="tag"
+              :key="index"
               :value="tag">
                 {{tag}}
               <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
+            </VChip>
+            <VChip
+                @click="toggleShowMoreChips"
+                class="tag d-flex align-center mr-2 show-chip "
+                variant="outlined"
+                key="All Repositories"
+                value="All Repositories">
+              {{showMoreChips ? 'Show Less' : 'Show More'}}
+              <PhCaretUp v-if="showMoreChips" size="12" class="ml-1"/>
+              <PhCaretDown v-else size="12" class="ml-1"/>
             </VChip>
           </VChipGroup>
         </VRow>
@@ -193,6 +208,15 @@
 
 .tag{
   font-size: 12px;
+}
+
+.outlined-chip{
+  border: 1px solid #3291c7;
+}
+
+.show-chip{
+  background-color: #f4fbfd;
+  border: 1px solid #e4e4e4;
 }
 
 
