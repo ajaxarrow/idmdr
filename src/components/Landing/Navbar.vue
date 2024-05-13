@@ -58,6 +58,7 @@
             <VRow justify="space-around">
               <VCol v-for="(navLink, index) in navLinks" :key="index" cols="auto">
                 <VListItem
+                    class="nav-item"
                     active-class="active-nav active-text"
                     :to="navLink.link"
                     :title="navLink.title"
@@ -94,6 +95,7 @@
         <div v-if="isMenuToggled">
           <VList rounded="lg" class="bg-background border">
             <VListItem
+                class="nav-item"
                 v-for="(navLink, index) in navLinks" :key="index"
                 active-class="active-nav active-text"
                 :to="navLink.link"
@@ -117,6 +119,9 @@
     /**backdrop-filter: blur(5px);**/
   }
 
+  .nav-item:hover{
+    color: black !important;
+  }
 
   .button-outline{
     border-width: 2px;
@@ -153,7 +158,12 @@
     background: none !important;
   }
 
+
   :deep(.v-list-item--active .v-list-item-title) {
+    font-weight: 500 !important;
+  }
+
+  :deep(.v-list-item-title):hover {
     font-weight: 500 !important;
   }
 
