@@ -23,7 +23,6 @@ const filterRepositoriesBySearchQuery = () => {
 };
 
 const filterRepositoriesbyTags = (repositoryList: Repository[] = repositories) => {
-  console.log(searchedRepositories.value);
   if(selectedTags.value.length > 0){
     repositoryData.value = repositoryList.filter(repo => repo.tags?.some(tag => selectedTags.value.includes(tag)));
     searchedRepositories.value = repositoryData.value
