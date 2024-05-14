@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {markRaw, onBeforeMount, onMounted, shallowRef, watch} from "vue";
+import {markRaw, onBeforeMount, onMounted, onUnmounted, shallowRef, watch} from "vue";
   import {Map, NavigationControl} from "maplibre-gl";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../Sectors/SectorDetailsSidebar.vue";
@@ -11,7 +11,7 @@ import MapProductionDetails from "./Filters/MapFiltersDetails.vue";
 import sectors from "../../data/sectors.ts";
 import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSidebar.vue";
 
-  const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization} = useMapStore();
+  const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
@@ -61,7 +61,12 @@ import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSideb
   });
 
   onBeforeMount(() => {
-    removeSelectedSector()
+    removeSelectedSector();
+  })
+
+  onUnmounted(()=> {
+    removeSelectedSector();
+    clickedBoundary.value = '';
   })
 
 

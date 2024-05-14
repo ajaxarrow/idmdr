@@ -2,7 +2,7 @@
 import {repositories} from "../../../data/repository.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {PhInfo, PhX} from "@phosphor-icons/vue";
-import {onMounted} from "vue";
+import {onMounted, onUnmounted} from "vue";
 import {useOrganizationStore} from "../../../stores/organizationStore.ts";
 import {useMapStore} from "../../../stores/mapStore.ts";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
@@ -14,6 +14,10 @@ const getRepositoriesByOrganizations = (organization: string): Repository[] | nu
 }
 
 onMounted(() => {
+  removeSelectedOrganization()
+})
+
+onUnmounted(() => {
   removeSelectedOrganization()
 })
 

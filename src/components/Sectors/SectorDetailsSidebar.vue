@@ -3,7 +3,7 @@
   import {useSectorsStore} from "../../stores/sectorsStore.ts";
   import {Repository} from "../../interfaces/repository.interface.ts";
   import {PhInfo, PhX} from "@phosphor-icons/vue";
-  import {onMounted} from "vue";
+  import {onMounted, onUnmounted} from "vue";
   import {useMapStore} from "../../stores/mapStore.ts";
   const {selectedSector, removeSelectedSector, title} = useSectorsStore();
   const {resetToDefault} = useMapStore();
@@ -14,7 +14,11 @@
   }
 
   onMounted(() => {
-    removeSelectedSector()
+    removeSelectedSector();
+  })
+
+  onUnmounted(() => {
+    removeSelectedSector();
   })
 
 

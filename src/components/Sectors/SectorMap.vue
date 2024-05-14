@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {markRaw, onMounted, shallowRef, watch} from "vue";
+import {markRaw, onMounted, onUnmounted, shallowRef, watch} from "vue";
 import {Map, NavigationControl} from "maplibre-gl";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -11,8 +11,10 @@ import boundaries from "../../data/boundaries.ts";
 import MapProductionDetails from "../Map/Filters/MapFiltersDetails.vue";
 import organizations from "../../data/organizations.ts";
 import OrganizationDetailsSidebar from "../Map/Organizations/OrganizationDetailsSidebar.vue";
+import {useSectorsStore} from "../../stores/sectorsStore.ts";
 
-const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization} = useMapStore();
+const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
+const {removeSelectedSector} = useSectorsStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
 
@@ -79,8 +81,13 @@ onMounted(() => {
     loadRandomCoordinates(boundaries)
   })
 
-
 })
+
+onUnmounted(()=> {
+  removeSelectedSector();
+  clickedBoundary.value = '';
+})
+
 
 
 
