@@ -36,7 +36,7 @@ const clickProvince = (boundary: Sector, type: string) => {
     // @ts-ignore
     // const center = getCenter(boundary.bbox);
 
-    console.log(calculatePolygonSize(boundary.geojson));
+    // console.log(calculatePolygonSize(boundary.geojson));
 
     map.value?.fitBounds(
       // @ts-ignore
@@ -64,7 +64,7 @@ const clickOrganization = (boundary: Organization) => {
     // @ts-ignore
     // const center = getCenter(boundary.bbox);
 
-    console.log(calculatePolygonSize(boundary.geojson));
+    // console.log(calculatePolygonSize(boundary.geojson));
 
     map.value?.fitBounds(
       // @ts-ignore
@@ -328,20 +328,20 @@ const loadRandomCoordinates = (boundaries: Sector[]) => {
   })
 }
 
-const calculatePolygonSize = (geojson: any): number => {
-  if(geojson["type"] == 'FeatureCollection'){
-    let totalArea = 0;
-    geojson["features"].forEach((feature: any) => {
-      totalArea += turf.area(feature["geometry"]);
-    })
-    return totalArea
-  } else if (geojson["type"] == 'Feature') {
-    return turf.area(geojson["geometry"])
-  } else {
-    console.error('Unsupported geometry type:', geojson["type"]);
-    return 0
-  }
-}
+// const calculatePolygonSize = (geojson: any): number => {
+//   if(geojson["type"] == 'FeatureCollection'){
+//     let totalArea = 0;
+//     geojson["features"].forEach((feature: any) => {
+//       totalArea += turf.area(feature["geometry"]);
+//     })
+//     return totalArea
+//   } else if (geojson["type"] == 'Feature') {
+//     return turf.area(geojson["geometry"])
+//   } else {
+//     console.error('Unsupported geometry type:', geojson["type"]);
+//     return 0
+//   }
+// }
 
 
 
