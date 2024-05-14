@@ -30,7 +30,7 @@
   })
 
   onMounted(()=>{
-    useTitle(props.title)
+    useTitle(<string>props.title)
     if(isTablet.value){
       toggleMainSidebar()
     }

@@ -5,7 +5,7 @@ import {
 } from "@phosphor-icons/vue";
 
   import Logo from "../Global/Logo.vue";
-  import {ref, computed, defineComponent, markRaw} from 'vue';
+import {ref, computed, defineComponent, markRaw, onMounted} from 'vue';
   import MapProvincesHeader from "./Provinces/MapProvincesHeader.vue";
   import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
   import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
@@ -15,6 +15,7 @@ import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
 import SectorTaggingDialog from "../SectorTagging/SectorTaggingDialog.vue";
 import MapOrganizationsHeader from "./Organizations/MapOrganizationsHeader.vue";
 import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainContent.vue";
+import {useRouting} from "../../composables/useRouting.ts";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -25,12 +26,13 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
     },
   });
 
+  const {route} = useRouting();
   const addSectorDialogMenu = ref(false);
-
   const showAdditionalContent = ref(false);
   const header = ref<CustomComponent | null>(null);
   const mainContent = ref<CustomComponent | null>(null);
   const activeNav = ref('');
+  const showDialog = ref(false);
 
   const sidebarStyle = computed(() => {
     if(showAdditionalContent.value){
@@ -89,6 +91,15 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
     mainContent.value = mainContentComponent;
   };
 
+  onMounted(() => {
+    if(route.query.dialog){
+      if(<string>route.query.dialog == 'true'){
+        addSectorDialogMenu.value = true;
+        showDialog.value = true
+      }
+    }
+  })
+
 </script>
 
 <template>
@@ -107,7 +118,7 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
              <VMenu v-model="addSectorDialogMenu" :close-on-content-click="false">
                <template #activator="{ props }">
                  <PhPlusCircle
-                     class="cursor-pointer"
+                     class="cursor-pointer add-sector-button"
                      v-bind="props" weight="fill" size="62" color="#3291C7" />
                </template>
                <VSheet width="220" height="140" class="add-sector-menu">
@@ -123,7 +134,7 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
                      />
                      Import GeoJson
                    </p>
-                   <SectorTaggingDialog/>
+                   <SectorTaggingDialog :show-dialog="true"/>
                  </div>
                </VSheet>
              </VMenu>
@@ -179,6 +190,10 @@ import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainCon
 .add-sector-menu{
   border-radius: 15px !important;
   box-shadow: 0px 4px 10px 0px #5d6e87;
+}
+
+.add-sector-button:hover{
+  border-radius: 50% !important;
 }
 
 .add-sector-menu-title{

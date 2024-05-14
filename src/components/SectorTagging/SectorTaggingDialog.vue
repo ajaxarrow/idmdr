@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import {PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {repositories} from "../../data/repository.ts";
 
-const sectorTaggingDialog = ref(false);
+const props = defineProps({
+  showDialog: {
+    type: Boolean,
+    default: false
+
+  }
+})
+
+const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
+
 </script>
 
 <template>

@@ -77,8 +77,9 @@ onMounted(() => {
     setupBoundariesforOrganization(organizations);
     setupBoundaries(sectors, 'Sector');
     loadRandomCoordinates(boundaries)
-
   })
+
+
 })
 
 
