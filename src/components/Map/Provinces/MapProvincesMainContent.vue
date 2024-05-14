@@ -4,7 +4,7 @@ import {PhInfo, PhPlant} from "@phosphor-icons/vue";
 import {useMapStore} from "../../../stores/mapStore.ts";
 
 const {provinces} = useProvincesStore();
-const {clickProvince} = useMapStore();
+const {clickProvince, clickedBoundary} = useMapStore();
 </script>
 
 <template>
@@ -18,8 +18,15 @@ const {clickProvince} = useMapStore();
       density="compact"
       nav
   >
-    <VListItem  v-for="province in provinces">
-      <VListItemTitle @click="clickProvince(province, 'Province')" class="cursor-pointer">
+    <VListItem
+      v-for="province in provinces"
+      @click="clickProvince(province, 'Province')"
+      class="map-item"
+      :class="{
+        'active-map-item': province.title === clickedBoundary
+      }"
+    >
+      <VListItemTitle class="cursor-pointer">
         <div class="d-flex align-center">
           <PhPlant size="18" color="#3E454D" weight="fill"/>
           <span class="mx-2 me-1 province-title">{{province.title}}</span>

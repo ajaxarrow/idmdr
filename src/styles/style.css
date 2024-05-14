@@ -81,3 +81,16 @@ ul {
 .chip:hover {
     border: 1px solid #3291c7 !important;
 }
+
+.map-item{
+    border-radius: 10px !important;
+}
+
+.map-item:hover{
+    background-color: #F0F5F9;
+}
+
+.active-map-item{
+    background-color: #F0F5F9 !important;
+    border-radius: 10px !important;
+}
