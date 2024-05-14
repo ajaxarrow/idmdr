@@ -45,8 +45,6 @@ onMounted(() => {
       toolbar: toolbarOptions
     },
     placeholder: 'E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices.',
-    height: 500,
-
   });
 })
 </script>
@@ -269,6 +267,7 @@ onMounted(() => {
 
 <style scoped>
 :deep .ql-toolbar{
+  margin-top: 8px;
   border: 1.75px solid rgba(140, 140, 140, 0.2) !important;
   border-radius: 10px 10px 0 0 !important;
 }
