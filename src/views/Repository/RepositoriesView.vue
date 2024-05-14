@@ -2,13 +2,14 @@
   import MainLayout from "../../layouts/MainLayout.vue";
   import {PhCaretDown, PhCaretUp, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
-  import {onMounted, ref, watch} from "vue";
+  import {onMounted, onUnmounted, ref, watch} from "vue";
   import RepositoryItem from "../../components/Dashboard/RepositoryItem.vue";
   import {useTagsStore} from "../../stores/tagsStore.ts";
   import {useRepositoriesStore} from "../../stores/repositoriesStore.ts";
+  import {repositories} from "../../data/repository.ts";
 
   const {tags, selectedTags, fetchTags} = useTagsStore();
-  const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories} = useRepositoriesStore();
+  const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, setRepositoryData} = useRepositoriesStore();
 
   const {isSmall, isTablet} = useScreenStore();
 
@@ -34,6 +35,11 @@
 
   onMounted(() => {
     fetchTags();
+    setRepositoryData(repositories);
+  })
+
+  onUnmounted(() => {
+    searchQuery.value = '';
   })
 
 </script>

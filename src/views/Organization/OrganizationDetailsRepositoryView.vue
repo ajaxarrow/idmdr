@@ -2,7 +2,7 @@
 import OrganizationDetailsLayout from "../../layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../composables/useRouting.ts";
 import {useOrganizationStore} from "../../stores/organizationStore.ts";
-import {onMounted, ref, watch} from "vue";
+import {onBeforeMount, onMounted, onUnmounted, ref, watch} from "vue";
 import {useRepositoryStore} from "../../stores/repositoryStore.ts";
 import {PhCaretDown, PhCaretUp, PhHardDrives, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../components/Dashboard/RepositoryItem.vue";
@@ -42,6 +42,11 @@ onMounted(() => {
   fetchTags();
   setRepositoryData(repositoryItems.value)
 })
+
+onUnmounted(() => {
+  searchQuery.value = '';
+})
+
 </script>
 
 <template>
