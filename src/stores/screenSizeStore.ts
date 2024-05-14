@@ -1,5 +1,6 @@
 import { createGlobalState } from '@vueuse/core';
 import { useBreakpoints } from '@vueuse/core';
+import {ref} from "vue";
 
 const breakpoints = useBreakpoints({
     mobile: 476,
@@ -9,11 +10,11 @@ const breakpoints = useBreakpoints({
     desktop: 1280,
 });
 
-const isMobile = breakpoints.smaller('mobile');
-const isSmall = breakpoints.smaller('largeTablet')
-const isLargePhone = breakpoints.between('mobile', 'tablet')
-const isTablet = breakpoints.between('tablet', 'laptop');
-const isLaptop = breakpoints.between('laptop', 'desktop');
-const isDesktop = breakpoints.greater('desktop');
+const isMobile = ref(breakpoints.smaller('mobile'));
+const isSmall = ref(breakpoints.smaller('largeTablet'));
+const isLargePhone = ref(breakpoints.between('mobile', 'tablet'));
+const isTablet = ref(breakpoints.between('tablet', 'laptop'));
+const isLaptop = ref(breakpoints.between('laptop', 'desktop'));
+const isDesktop = ref(breakpoints.greater('desktop'));
 
 export const useScreenStore = createGlobalState(() => ({ isMobile, isLargePhone, isTablet, isLaptop, isDesktop, isSmall }));
