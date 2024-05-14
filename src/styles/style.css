@@ -58,6 +58,7 @@ ul {
 .tag-chips{
     background-color: #fafafa !important;
     border: 1px solid #e4e4e4 !important;
+    color: black !important;
 }
 
 .tag{
