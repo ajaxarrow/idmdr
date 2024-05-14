@@ -118,11 +118,11 @@
     <div v-if="repository">
       <div class="px-6 py-2">
         <VRow class="ma-0">
-          <VCol cols="9" sm="12" md="8">
+          <VCol cols="12" sm="12" md="8" lg="9" xxl="9" xl="9">
             <p class="text-about-heading">About Repository</p>
             <div v-html="repository.about"></div>
           </VCol>
-          <VCol cols="3" sm="12" md="4">
+          <VCol cols="12" sm="12" md="4" lg="3" xxl="3" xl="9">
             <p class="text-subheading">Last Updated</p>
             <p>3 days ago</p>
             <p class="text-subheading mt-3">Tags</p>
