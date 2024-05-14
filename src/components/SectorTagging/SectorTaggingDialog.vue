@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {repositories} from "../../data/repository.ts";
 
 const props = defineProps({
