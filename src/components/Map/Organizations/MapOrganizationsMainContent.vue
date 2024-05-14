@@ -2,9 +2,15 @@
 import {PhInfo, PhUsersThree} from "@phosphor-icons/vue";
 import {useMapStore} from "../../../stores/mapStore.ts";
 import {useOrganizationStore} from "../../../stores/organizationStore.ts";
+import {onMounted, onUnmounted} from "vue";
 
 const {organizations} = useOrganizationStore();
-const {clickOrganization, clickedBoundary} = useMapStore();
+const {clickOrganization, clickedBoundary, resetToDefault} = useMapStore();
+
+onUnmounted(() => {
+  resetToDefault('Organization');
+})
+
 </script>
 
 <template>

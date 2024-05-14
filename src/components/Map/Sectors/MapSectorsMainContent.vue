@@ -2,9 +2,15 @@
 import {PhInfo, PhPlant} from "@phosphor-icons/vue";
 import {useSectorsStore} from "../../../stores/sectorsStore.ts";
 import {useMapStore} from "../../../stores/mapStore.ts";
+import {onUnmounted} from "vue";
 
 const {sectors} = useSectorsStore();
-const {clickProvince, clickedBoundary} = useMapStore();
+const {clickProvince, clickedBoundary, resetToDefault} = useMapStore();
+
+onUnmounted(() => {
+  resetToDefault('Sector')
+})
+
 </script>
 
 <template>
