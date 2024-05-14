@@ -5,9 +5,11 @@ import {PhFileDashed} from "@phosphor-icons/vue";
 import Quill from "quill";
 import "quill/dist/quill.snow.css"
 import "quill/dist/quill.core.css"
+import {useQuill} from "../../composables/useQuill.ts";
 const visibility = ref("public");
 const quill = ref<null | Quill>(null);
 
+const {toolbarOptions} = useQuill();
 
 const commodities = [
   'Abaca', 'Banana', 'Cacao', 'Cashew', 'Cement/Concrete', 'Citrus', 'Coconut', 'Coffee', 'Corn', 'Grains', 'Legume - Mungbean', 'Legume - Peanut', 'Legume - Soybean', 'Mango', 'Medicinal Plants', 'Natural Sources of Dye', 'Oil Palm', 'Ornamental - Cutflowers', 'Ornamental - Foliages', 'Pili', 'Rice', 'Rubber', 'Rootcrops - Sweet Potato', 'Rootcrops - Cassava', 'Sericulture and Apiculture', 'Sugarcane', 'Tropical Fruits - Durian', 'Tropical Fruits - Papaya', 'Tropical Fruits - Pineapple', 'Tropical Fruits - Pomelo', 'Tropical Fruits - Jackfruit', 'Tropical Fruits - Citrus', 'Vegetables', 'Crops (Others)',
@@ -17,26 +19,7 @@ const industries = [
     'Crops', 'Livestock', 'Marine and Inland Aquatic', 'Forestry', 'Environmental Services / Climate Change Adaptation and Disaster Risk Reduction', 'Agriculture', 'Information Technology', 'Food Processing', 'Mining', 'Biotechnology / Molecular Technology', 'Construction', 'Others'
 ]
 
-const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-  ['blockquote', 'code-block'],
-  ['link', 'image', 'video', 'formula'],
 
-  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-  [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-  [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-  [{ 'direction': 'rtl' }],                         // text direction
-
-  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-  [{ 'font': [] }],
-  [{ 'align': [] }],
-
-  ['clean']                                         // remove formatting button
-];
 
 onMounted(() => {
   quill.value = new Quill('#editor', {

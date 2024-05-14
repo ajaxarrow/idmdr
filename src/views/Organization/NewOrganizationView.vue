@@ -1,11 +1,27 @@
 <script setup lang="ts">
 import MainLayout from "../../layouts/MainLayout.vue";
 import {ClusterType} from "../../interfaces/enums/organization.enum.ts"
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {PhFileDashed} from "@phosphor-icons/vue";
+import Quill from "quill";
+import "quill/dist/quill.snow.css"
+import "quill/dist/quill.core.css"
+import {useQuill} from "../../composables/useQuill.ts";
 const type = ref("institution")
 
 const clusters: string[] = Object.values(ClusterType);
+const quill = ref<null | Quill>(null);
+const {toolbarOptions} = useQuill();
+
+onMounted(() => {
+  quill.value = new Quill('#editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: toolbarOptions
+    },
+    placeholder: 'E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines.',
+  });
+})
 </script>
 
 <template>
@@ -74,16 +90,18 @@ const clusters: string[] = Object.values(ClusterType);
         </div>
         <div class="mb-5">
           <label class="input-label">Description<span class="text-pink">*</span></label>
-          <VTextarea
-              placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."
-              class="my-2"
-              hide-details
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
+          <div id="editor">
+          </div>
+<!--          <VTextarea-->
+<!--              placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."-->
+<!--              class="my-2"-->
+<!--              hide-details-->
+<!--              rounded="lg"-->
+<!--              density="comfortable"-->
+<!--              variant="outlined"-->
+<!--              color="primary"-->
+<!--              base-color="gs60"-->
+<!--          />-->
         </div>
         <div class="mb-5">
           <label class="input-label">Address<span class="text-pink">*</span></label>
@@ -210,6 +228,32 @@ const clusters: string[] = Object.values(ClusterType);
 </template>
 
 <style scoped>
+:deep .ql-toolbar{
+  margin-top: 8px;
+  border: 1.75px solid rgba(140, 140, 140, 0.2) !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+
+:deep .ql-editor.ql-blank::before {
+  content: none;
+}
+
+:deep .ql-editor.ql-blank::after {
+  color: #5F6061;
+  opacity: 90%;
+  content: attr(data-placeholder);
+  font-style: normal;
+  pointer-events: none;
+  display: block;
+  margin-top: -1.42rem;
+}
+#editor{
+  border: 1.75px solid rgba(140, 140, 140, 0.2);
+  border-radius: 0 0 10px 10px ;
+  height: 200px;
+  font-size: 16px;
+}
+
 .circle::after {
   content: '';
   position: absolute;
