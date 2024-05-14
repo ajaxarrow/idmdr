@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import MainLayout from "../../layouts/MainLayout.vue";
-  import {PhCaretDown, PhCaretUp, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
+  import {PhCaretDown, PhCaretUp, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
   import {useScreenStore} from "../../stores/screenSizeStore.ts";
   import {onMounted, onUnmounted, ref, watch} from "vue";
   import RepositoryItem from "../../components/Dashboard/RepositoryItem.vue";
@@ -134,7 +134,12 @@
             <PhCaretDown weight="fill" class="ml-1"/>
           </p>
         </VRow>
-        <RepositoryItem v-for="repository in searchedRepositories" :repository="repository" />
+        <RepositoryItem
+          v-if="searchedRepositories.length > 0"
+          v-for="repository in searchedRepositories"
+          :repository="repository"
+        />
+        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
       </div>
     </div>
   </MainLayout>
