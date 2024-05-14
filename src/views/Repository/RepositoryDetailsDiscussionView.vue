@@ -26,6 +26,8 @@ import {onMounted, ref, watch} from "vue";
     if (searchQuery.value) {
       return topicList.value.filter(topic =>  topic.title.toLowerCase().includes(searchQuery.value.toLowerCase())
       )
+    } else {
+      return topicList.value
     }
   }
 
