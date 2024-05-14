@@ -134,7 +134,7 @@ import {useRouting} from "../../composables/useRouting.ts";
                      />
                      Import GeoJson
                    </p>
-                   <SectorTaggingDialog :show-dialog="true"/>
+                   <SectorTaggingDialog :show-dialog="showDialog"/>
                  </div>
                </VSheet>
              </VMenu>
