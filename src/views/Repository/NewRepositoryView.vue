@@ -17,16 +17,36 @@ const industries = [
     'Crops', 'Livestock', 'Marine and Inland Aquatic', 'Forestry', 'Environmental Services / Climate Change Adaptation and Disaster Risk Reduction', 'Agriculture', 'Information Technology', 'Food Processing', 'Mining', 'Biotechnology / Molecular Technology', 'Construction', 'Others'
 ]
 
-const toolbarOptions = [['bold', 'italic'], ['link', 'image']];
+const toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+  ['link', 'image', 'video', 'formula'],
+
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+  [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  [{ 'direction': 'rtl' }],                         // text direction
+
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+
+  ['clean']                                         // remove formatting button
+];
 
 onMounted(() => {
   quill.value = new Quill('#editor', {
     theme: 'snow',
     modules: {
-      toolbar: {
-        container: '#toolbar',
-      }
-    }
+      toolbar: toolbarOptions
+    },
+    placeholder: 'E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices.',
+    height: 500,
+
   });
 })
 </script>
@@ -131,8 +151,6 @@ onMounted(() => {
         </div>
         <div class="mb-5">
           <label class="input-label">Abstract</label>
-          <div id="toolbar">
-          </div>
           <div id="editor">
           </div>
 <!--          <VTextarea-->
@@ -250,13 +268,29 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#toolbar{
-  border: 1.75px solid rgba(140, 140, 140, 0.2);
-  border-radius: 10px 10px 0 0;
+:deep .ql-toolbar{
+  border: 1.75px solid rgba(140, 140, 140, 0.2) !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+
+:deep .ql-editor.ql-blank::before {
+  content: none;
+}
+
+:deep .ql-editor.ql-blank::after {
+  color: #5F6061;
+  opacity: 90%;
+  content: attr(data-placeholder);
+  font-style: normal;
+  pointer-events: none;
+  display: block;
+  margin-top: -1.42rem;
 }
 #editor{
   border: 1.75px solid rgba(140, 140, 140, 0.2);
   border-radius: 0 0 10px 10px ;
+  height: 200px;
+  font-size: 16px;
 }
 
 .circle::after {
