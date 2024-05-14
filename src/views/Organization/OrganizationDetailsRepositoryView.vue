@@ -128,12 +128,14 @@ onUnmounted(() => {
           <PhInfo size="20" class="mb-0 mx-1"/>
           <p class="text-h6">No Repositories Found</p>
       </VRow>
-      <RepositoryItem
-          v-if="searchedRepositories.length > 0"
-          v-for="repository in searchedRepositories"
-          :repository="repository"
-      />
-      <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+      <div v-else>
+        <RepositoryItem
+            v-if="searchedRepositories.length > 0"
+            v-for="repository in searchedRepositories"
+            :repository="repository"
+        />
+        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+      </div>
     </div>
   </OrganizationDetailsLayout>
 </template>
