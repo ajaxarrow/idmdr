@@ -94,7 +94,7 @@
               :class="{
                 'text-primary outlined-chip' : selectedTags.length === 0
               }"
-              class="tag d-flex align-center mr-2 tag-chips "
+              class="tag d-flex align-center mr-2 tag-chips chip"
               variant="outlined"
               key="All Repositories"
               value="All Repositories">
@@ -103,7 +103,7 @@
             </VChip>
             <VChip
                 v-for="(tag, index) in tags.slice(0, showMoreChips? tags.length : 5)"
-              class="tag"
+              class="tag chip"
               :class="{
                 'd-flex align-center mr-2 tag-chips' : !selectedTags.includes(tag)
               }"
@@ -116,7 +116,7 @@
           </VChipGroup>
           <VChip
               @click="toggleShowMoreChips"
-              class="tag d-flex align-center mr-2 show-chip "
+              class="tag d-flex align-center mr-2 show-chip chip"
               variant="outlined"
               key="Toggle Chips">
             {{showMoreChips ? 'Show Less' : 'Show More'}}
@@ -159,24 +159,5 @@
   color: #8C8C8C;
   --v-field-border-width: 1px !important;
 }
-
-.tag-chips{
-  background-color: #fafafa;
-  border: 1px solid #e4e4e4;
-}
-
-.tag{
-  font-size: 12px;
-}
-
-.outlined-chip{
-  border: 1px solid #3291c7;
-}
-
-.show-chip{
-  background-color: #f4fbfd;
-  border: 1px solid #e4e4e4;
-}
-
 
 </style>

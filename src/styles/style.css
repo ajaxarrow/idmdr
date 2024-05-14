@@ -54,3 +54,29 @@ ul {
 .navigation-item:hover{
     background-color: #F0F5F9;
 }
+
+.tag-chips{
+    background-color: #fafafa !important;
+    border: 1px solid #e4e4e4 !important;
+}
+
+.tag{
+    font-size: 12px !important;
+}
+
+.outlined-chip{
+    border: 1px solid #3291c7 !important;
+}
+
+.show-chip{
+    background-color: #f4fbfd !important;
+    border: 1px solid #e4e4e4 !important;
+}
+
+.chip {
+    transition: border 0.3s ease !important;
+}
+
+.chip:hover {
+    border: 1px solid #3291c7 !important;
+}
