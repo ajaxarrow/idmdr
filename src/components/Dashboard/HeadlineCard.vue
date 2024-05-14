@@ -12,7 +12,18 @@ import Sector from "../../assets/images/sector-img.jpg";
       <div style="width: 220px">
         <p style="font-weight: 600">Tag a Sector Now</p>
         <p class="text-subtitle">Create a sector and tag it in your existing repository!</p>
-        <VBtnPrimaryFilled class="my-2" height="38" width="193" rounded="lg">
+        <VBtnPrimaryFilled
+          class="my-2"
+          height="38"
+          width="193"
+          rounded="lg"
+          :to="{
+            name: 'sectors',
+            query: {
+              dialog: true
+            }
+          }"
+        >
           Tag a Sector Now!
         </VBtnPrimaryFilled>
       </div>
