@@ -1,0 +1,80 @@
+<script setup lang="ts">
+import {PropType} from "vue";
+import {Topic} from "../../../interfaces/dicussion.interface.ts";
+import {useScreenStore} from "../../../stores/screenSizeStore.ts";
+import {useRouting} from "../../../composables/useRouting.ts";
+const props = defineProps({
+  topic: {
+    type: Object as PropType<Topic>,
+  }
+});
+
+const {isDesktop} = useScreenStore();
+const {router, route} = useRouting()
+
+const goToTopicDetails = () => {
+  router.push({
+    name: 'repository-discussions-topic',
+    params: {
+      slug: <string>route.params.slug,
+      topic: props.topic?.id
+    }
+  });
+}
+</script>
+
+<template>
+  <div class="mb-2 cursor-pointer" @click="goToTopicDetails()">
+    <VRow justify="space-between" align="center" class="ma-0" >
+      <div class="d-flex align-center">
+        <VImg
+            style="border-radius: 50%"
+            cover
+            height="40px"
+            width="40px"
+            :src="props.topic?.ownerImage ? props.topic.ownerImage : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+        />
+        <div class="ml-2">
+          <p class="topic-title">{{ props.topic?.title }}</p>
+          <p class="topic-subtitle">{{ props.topic?.owner }} · 5 comments</p>
+        </div>
+      </div>
+      <VBtn
+          :to="{
+            name: 'repository-discussions-topic',
+            params: {
+              slug: <string>route.params.slug,
+              topic: props.topic?.id
+            }
+          }"
+          class="text-none bg-background view-details-btn"
+          height="35px"
+          width="95px"
+          rounded="xl"
+          v-if="isDesktop"
+      >
+        View Details
+      </VBtn>
+    </VRow>
+    <VDivider class="mt-2"/>
+  </div>
+</template>
+
+<style scoped>
+.topic-title{
+  font-weight: 600;
+}
+
+.topic-subtitle{
+  font-size: 14px;
+}
+
+.view-details-btn{
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.v-btn--variant-elevated{
+  box-shadow: 0 0 7px 0 #dae5f4;
+}
+</style>
