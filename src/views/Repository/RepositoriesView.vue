@@ -40,6 +40,7 @@
 
   onUnmounted(() => {
     searchQuery.value = '';
+    selectedTags.value = [];
   })
 
 </script>
