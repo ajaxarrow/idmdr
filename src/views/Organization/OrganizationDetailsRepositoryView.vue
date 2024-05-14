@@ -41,6 +41,10 @@ onMounted(() => {
   setRepositoryItems(route.params.slug as string);
   fetchTags();
   setRepositoryData(repositoryItems.value)
+  if(route.query.tag){
+    selectedTags.value.push(<string>route.query.tag);
+    filterRepositoriesbyTags(repositoryItems.value);
+  }
 })
 
 onUnmounted(() => {

@@ -126,14 +126,22 @@
             <p class="text-subheading">Last Updated</p>
             <p>3 days ago</p>
             <p class="text-subheading mt-3">Tags</p>
-            <VChip
+            <RouterLink
                 v-for="tag in repository.tags"
-                class="tag-chips my-1 mr-1"
-                variant="outlined"
                 :key="tag"
-                :value="tag">
-              {{tag}}
-            </VChip>
+                :to="{
+                  name: 'repositories',
+                  query: { tag: tag }
+                }">
+              <VChip
+
+                  class="tag-chips my-1 mr-1 chip"
+                  variant="outlined"
+
+                  :value="tag">
+                {{tag}}
+              </VChip>
+            </RouterLink>
           </VCol>
         </VRow>
       </div>
@@ -237,11 +245,6 @@
     font-size: 14px;
   }
 
-
-  .tag-chips{
-    background-color: #fafafa;
-    border: 1px solid #e4e4e4;
-  }
 
 
 </style>

@@ -7,6 +7,7 @@
   import {useTagsStore} from "../../stores/tagsStore.ts";
   import {useRepositoriesStore} from "../../stores/repositoriesStore.ts";
   import {repositories} from "../../data/repository.ts";
+  import {useRouting} from "../../composables/useRouting.ts";
 
   const {tags, selectedTags, fetchTags} = useTagsStore();
   const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, setRepositoryData} = useRepositoriesStore();
@@ -14,6 +15,7 @@
   const {isSmall, isTablet} = useScreenStore();
 
   const showMoreChips = ref(false);
+  const {route} = useRouting();
 
   const toggleShowMoreChips = () => {
     showMoreChips.value =!showMoreChips.value;
@@ -36,6 +38,11 @@
   onMounted(() => {
     fetchTags();
     setRepositoryData(repositories);
+    if(route.query.tag){
+      selectedTags.value.push(<string>route.query.tag);
+      filterRepositoriesbyTags();
+    }
+
   })
 
   onUnmounted(() => {
