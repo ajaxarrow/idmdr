@@ -8,6 +8,8 @@ import RepositoryDetailsView from "../../views/Repository/RepositoryDetailsView.
 import RepositoryDetailsDiscussionView from "../../views/Repository/RepositoryDetailsDiscussionView.vue";
 // @ts-ignore
 import RepositoryDetailsSettingsView from "../../views/Repository/RepositoryDetailsSettingsView.vue";
+// @ts-ignore
+import RepositoryDetailsDiscussionTopicView from "../../views/Repository/RepositoryDetailsDiscussionTopicView.vue";
 
 const repositoryRoutes = [
   {
@@ -29,6 +31,11 @@ const repositoryRoutes = [
     path: '/repository/:slug/discussions',
     name: 'repository-discussions',
     component: RepositoryDetailsDiscussionView
+  },
+  {
+    path: '/repository/:slug/discussions/:topic',
+    name: 'repository-discussions-topic',
+    component: RepositoryDetailsDiscussionTopicView
   },
   {
     path: '/repository/:slug/settings',
