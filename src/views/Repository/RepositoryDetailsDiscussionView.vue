@@ -7,6 +7,7 @@ import {onMounted, ref, watch} from "vue";
   import TopicItem from "../../components/Repository/Discussion/TopicItem.vue";
   import {Topic} from "../../interfaces/dicussion.interface.ts";
   import {useDiscussion} from "../../composables/useDiscussion.ts";
+  import TopicFormDialog from "../../components/Repository/Discussion/TopicFormDialog.vue";
   const {repository, setRepositoryData} = useRepositoryStore()
   const topicData = ref<Topic[]>([]);
   const topicList = ref<Topic[]>([]);
@@ -58,9 +59,7 @@ import {onMounted, ref, watch} from "vue";
           <PhChatCircleDots size="24" class="mr-1"/>
           Discussions
         </p>
-        <VBtnPrimaryFilled rounded="lg" class="satoshi-md" height="30px" width="110px" style="font-size: 14px !important;">
-          New Topic
-        </VBtnPrimaryFilled>
+        <TopicFormDialog/>
       </VRow>
       <TopicItem
         v-if="topicData.length > 0"
