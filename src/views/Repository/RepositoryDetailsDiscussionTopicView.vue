@@ -39,11 +39,11 @@ import {useDiscussion} from "../../composables/useDiscussion.ts";
       <div v-if="topic">
         Topic
       </div>
-      <div v-else style="height: 80%">
-        <div style="height:60vh" class="d-flex flex-column justify-center align-center">
+      <div v-else style="height: 100%">
+        <div style="height:45vh" class="d-flex flex-column justify-center align-center">
           <VImg
               :src="NotFound"
-              width="400px"
+              width="300px"
           />
           <p class="text-h4 font-weight-black">Topic Not Found</p>
         </div>
