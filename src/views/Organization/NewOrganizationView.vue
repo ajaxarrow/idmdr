@@ -1,27 +1,14 @@
 <script setup lang="ts">
 import MainLayout from "../../layouts/MainLayout.vue";
 import {ClusterType} from "../../interfaces/enums/organization.enum.ts"
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {PhFileDashed} from "@phosphor-icons/vue";
-import Quill from "quill";
-import "quill/dist/quill.snow.css"
-import "quill/dist/quill.core.css"
-import {useQuill} from "../../composables/useQuill.ts";
+import QuillRichTextEditor from "../../components/Global/QuillRichTextEditor.vue";
 const type = ref("institution")
 
 const clusters: string[] = Object.values(ClusterType);
-const quill = ref<null | Quill>(null);
-const {toolbarOptions} = useQuill();
 
-onMounted(() => {
-  quill.value = new Quill('#editor', {
-    theme: 'snow',
-    modules: {
-      toolbar: toolbarOptions
-    },
-    placeholder: 'E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines.',
-  });
-})
+
 </script>
 
 <template>
@@ -90,8 +77,9 @@ onMounted(() => {
         </div>
         <div class="mb-5">
           <label class="input-label">Description<span class="text-pink">*</span></label>
-          <div id="editor">
-          </div>
+          <QuillRichTextEditor
+            placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."
+          />
 <!--          <VTextarea-->
 <!--              placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."-->
 <!--              class="my-2"-->
@@ -246,12 +234,6 @@ onMounted(() => {
   pointer-events: none;
   display: block;
   margin-top: -1.42rem;
-}
-#editor{
-  border: 1.75px solid rgba(140, 140, 140, 0.2);
-  border-radius: 0 0 10px 10px ;
-  height: 200px;
-  font-size: 16px;
 }
 
 .circle::after {

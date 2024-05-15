@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import MainLayout from "../../layouts/MainLayout.vue";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {PhFileDashed} from "@phosphor-icons/vue";
-import Quill from "quill";
-import "quill/dist/quill.snow.css"
-import "quill/dist/quill.core.css"
-import {useQuill} from "../../composables/useQuill.ts";
+import QuillRichTextEditor from "../../components/Global/QuillRichTextEditor.vue";
 const visibility = ref("public");
-const quill = ref<null | Quill>(null);
-
-const {toolbarOptions} = useQuill();
 
 const commodities = [
   'Abaca', 'Banana', 'Cacao', 'Cashew', 'Cement/Concrete', 'Citrus', 'Coconut', 'Coffee', 'Corn', 'Grains', 'Legume - Mungbean', 'Legume - Peanut', 'Legume - Soybean', 'Mango', 'Medicinal Plants', 'Natural Sources of Dye', 'Oil Palm', 'Ornamental - Cutflowers', 'Ornamental - Foliages', 'Pili', 'Rice', 'Rubber', 'Rootcrops - Sweet Potato', 'Rootcrops - Cassava', 'Sericulture and Apiculture', 'Sugarcane', 'Tropical Fruits - Durian', 'Tropical Fruits - Papaya', 'Tropical Fruits - Pineapple', 'Tropical Fruits - Pomelo', 'Tropical Fruits - Jackfruit', 'Tropical Fruits - Citrus', 'Vegetables', 'Crops (Others)',
@@ -19,17 +13,6 @@ const industries = [
     'Crops', 'Livestock', 'Marine and Inland Aquatic', 'Forestry', 'Environmental Services / Climate Change Adaptation and Disaster Risk Reduction', 'Agriculture', 'Information Technology', 'Food Processing', 'Mining', 'Biotechnology / Molecular Technology', 'Construction', 'Others'
 ]
 
-
-
-onMounted(() => {
-  quill.value = new Quill('#editor', {
-    theme: 'snow',
-    modules: {
-      toolbar: toolbarOptions
-    },
-    placeholder: 'E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices.',
-  });
-})
 </script>
 
 <template>
@@ -132,8 +115,9 @@ onMounted(() => {
         </div>
         <div class="mb-5">
           <label class="input-label">Abstract</label>
-          <div id="editor">
-          </div>
+          <QuillRichTextEditor
+            placeholder="E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices."
+          />
 <!--          <VTextarea-->
 <!--              placeholder="E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices."-->
 <!--              class="my-2"-->
@@ -258,7 +242,6 @@ onMounted(() => {
 :deep .ql-editor.ql-blank::before {
   content: none;
 }
-
 :deep .ql-editor.ql-blank::after {
   color: #5F6061;
   opacity: 90%;
@@ -268,13 +251,6 @@ onMounted(() => {
   display: block;
   margin-top: -1.42rem;
 }
-#editor{
-  border: 1.75px solid rgba(140, 140, 140, 0.2);
-  border-radius: 0 0 10px 10px ;
-  height: 200px;
-  font-size: 16px;
-}
-
 .circle::after {
   content: '';
   position: absolute;
