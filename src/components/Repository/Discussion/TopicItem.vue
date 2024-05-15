@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import {PropType} from "vue";
-import {Topic} from "../../../interfaces/dicussion.interface.ts";
+import {onMounted, PropType, ref} from "vue";
+import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
 import {useScreenStore} from "../../../stores/screenSizeStore.ts";
 import {useRouting} from "../../../composables/useRouting.ts";
+import comments from "../../../data/comment.ts";
+import {useDiscussion} from "../../../composables/useDiscussion.ts";
 const props = defineProps({
   topic: {
     type: Object as PropType<Topic>,
@@ -10,7 +12,11 @@ const props = defineProps({
 });
 
 const {isDesktop} = useScreenStore();
-const {router, route} = useRouting()
+const {router, route} = useRouting();
+const totalComments = ref(0);
+
+const {fetchCommentsByTopic} = useDiscussion();
+
 
 const goToTopicDetails = () => {
   router.push({
@@ -21,6 +27,10 @@ const goToTopicDetails = () => {
     }
   });
 }
+
+onMounted(() => {
+  totalComments.value = fetchCommentsByTopic(<string>props.topic?.id).length
+})
 </script>
 
 <template>
@@ -36,7 +46,7 @@ const goToTopicDetails = () => {
         />
         <div class="ml-2">
           <p class="topic-title">{{ props.topic?.title }}</p>
-          <p class="topic-subtitle">{{ props.topic?.owner }} · 5 comments</p>
+          <p class="topic-subtitle">{{ props.topic?.owner }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
         </div>
       </div>
       <VBtn

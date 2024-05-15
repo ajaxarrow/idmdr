@@ -7,20 +7,13 @@ import {onMounted, ref, watch} from "vue";
   import TopicItem from "../../components/Repository/Discussion/TopicItem.vue";
   import {Topic} from "../../interfaces/dicussion.interface.ts";
   import topics from "../../data/topics.ts";
+import {useDiscussion} from "../../composables/useDiscussion.ts";
   const {repository, setRepositoryData} = useRepositoryStore()
   const topicData = ref<Topic[]>([]);
   const topicList = ref<Topic[]>([]);
   const {route} = useRouting()
   const searchQuery = ref('');
-  const fetchTopicsByRepositories = (slug: string): Topic[] => {
-    const topicList = topics.filter(topic => topic.repository === slug);
-    if (topicList) {
-      return topicList;
-    } else {
-      console.error('no topic')
-      return [];
-    }
-  }
+  const {fetchTopicsByRepositories} = useDiscussion();
 
   const filterTopicsBySearchQuery = (): Topic[] => {
     if (searchQuery.value) {
