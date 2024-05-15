@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import {onMounted, PropType, ref} from "vue";
-import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
+import {Topic} from "../../../interfaces/dicussion.interface.ts";
 import {useScreenStore} from "../../../stores/screenSizeStore.ts";
 import {useRouting} from "../../../composables/useRouting.ts";
-import comments from "../../../data/comment.ts";
 import {useDiscussion} from "../../../composables/useDiscussion.ts";
 const props = defineProps({
   topic: {
