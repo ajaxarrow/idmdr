@@ -9,8 +9,14 @@
     placeholder: {
       type: String,
       default: 'Enter Here'
+    },
+    modelValue: {
+      type: String,
+      default: ``
     }
   })
+
+  const emits = defineEmits(['update:modelValue']);
 
   const {toolbarOptions} = useQuill();
   const quill = ref<null | Quill>(null);
@@ -21,8 +27,12 @@
       modules: {
         toolbar: toolbarOptions
       },
-      placeholder: <string> props.placeholder
+      placeholder: <string> props.placeholder,
     });
+
+    quill.value?.on('text-change', () => {
+      emits('update:modelValue', quill.value?.root.innerHTML);
+    })
   })
 </script>
 

@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {reactive, ref} from "vue";
 import QuillRichTextEditor from "../../Global/QuillRichTextEditor.vue";
 
 const topicDialog = ref(false);
+const topic = reactive({
+  title: '',
+  description: ``
+})
 
 </script>
 
@@ -25,6 +29,7 @@ const topicDialog = ref(false);
         <div class="mb-5">
           <p class="dialog-label mb-2">Topic Title</p>
           <VTextField
+              v-model="topic.title"
               placeholder="E.g. New Topic"
               class="my-2"
               hide-details
@@ -38,7 +43,9 @@ const topicDialog = ref(false);
         <div class="mb-5">
           <label class="dialog-label mb-2">Topic Description</label>
           <QuillRichTextEditor
+              :modelValue="topic.description"
               placeholder="Enter topic description here"
+              @update:modelValue="$event => (topic.description = $event)"
           />
         </div>
 
