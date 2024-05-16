@@ -124,10 +124,7 @@ onUnmounted(() => {
           <PhCaretDown weight="fill" class="ml-1"/>
         </p>
       </VRow>
-      <VRow v-if="repositoryItems.length == 0" class="ma-0 mb-10" justify="center" align="center">
-          <PhInfo size="20" class="mb-0 mx-1"/>
-          <p class="text-h6">No Repositories Found</p>
-      </VRow>
+      <p v-if="repositoryItems.length == 0" class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
       <div v-else>
         <RepositoryItem
             v-if="searchedRepositories.length > 0"
