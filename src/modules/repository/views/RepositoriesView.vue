@@ -8,12 +8,13 @@
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import {useRepositoryServices} from "../services/repository.services.ts";
   import {useTags} from "../composables/useTags.ts";
+  import {Repository} from "../../../interfaces/repository.interface.ts";
 
   const {tags, selectedTags, fetchTags} = useTags();
   const {fetchRepositories, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
   const searchQuery = ref('');
-  const repositoryData = ref([]);
-  const searchedRepositories = ref([]);
+  const repositoryData = ref<Repository[]>([]);
+  const searchedRepositories = ref<Repository[]>([]);
   const {isSmall, isTablet} = useScreenStore();
   const showMoreChips = ref(false);
   const {route} = useRouting();

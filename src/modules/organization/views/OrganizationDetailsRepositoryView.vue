@@ -7,6 +7,7 @@ import {PhCaretDown, PhCaretUp, PhHardDrives, PhInfo, PhMagnifyingGlass, PhX} fr
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
+import {Repository} from "../../../interfaces/repository.interface.ts";
 const {route} = useRouting()
 const {organization, setOrganizationData} = useOrganizationStore();
 
@@ -14,8 +15,8 @@ const {organization, setOrganizationData} = useOrganizationStore();
 const {tags, selectedTags, fetchTags} = useTags();
 const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
 const searchQuery = ref('');
-const repositoryData = ref([]);
-const repositoryItems = ref([]);
+const repositoryData = ref<Repository[]>([]);
+const repositoryItems = ref<Repository[]>([]);
 const searchedRepositories = ref([]);
 
 const showMoreChips = ref(false);
