@@ -28,7 +28,7 @@
   });
 
   watch(() => selectedTags.value, () => {
-   searchedRepositories.value = filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
+    searchedRepositories.value = filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
   })
 
   watch(() => selectedTags.value, (newVal) => {
@@ -78,13 +78,13 @@
       <VDivider/>
       <div class="pa-6">
         <VTextField
-          v-model="searchQuery"
-          hide-details
-          variant="outlined"
-          rounded="xl"
-          density="comfortable"
-          color="primary"
-          base-color="gs60"
+            v-model="searchQuery"
+            hide-details
+            variant="outlined"
+            rounded="xl"
+            density="comfortable"
+            color="primary"
+            base-color="gs60"
         >
           <template v-slot:prepend-inner>
             <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
@@ -95,32 +95,32 @@
         </VTextField>
         <VRow class="ma-0 mt-2" align="center">
           <VChipGroup
-            selected-class="text-primary"
-            v-model="selectedTags"
-            multiple
-            column
+              selected-class="text-primary"
+              v-model="selectedTags"
+              multiple
+              column
           >
             <VChip
-              :class="{
+                :class="{
                 'text-primary outlined-chip' : selectedTags.length === 0
               }"
-              class="tag d-flex align-center mr-2 tag-chips chip"
-              variant="outlined"
-              key="All Repositories"
-              value="All Repositories">
+                class="tag d-flex align-center mr-2 tag-chips chip"
+                variant="outlined"
+                key="All Repositories"
+                value="All Repositories">
               All Repositories
               <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
             </VChip>
             <VChip
                 v-for="(tag, index) in tags.slice(0, showMoreChips? tags.length : 5)"
-              class="tag chip"
-              :class="{
+                class="tag chip"
+                :class="{
                 'd-flex align-center mr-2 tag-chips' : !selectedTags.includes(tag)
               }"
-              variant="outlined"
-              :key="index"
-              :value="tag">
-                {{tag}}
+                variant="outlined"
+                :key="index"
+                :value="tag">
+              {{tag}}
               <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
             </VChip>
           </VChipGroup>
@@ -145,9 +145,9 @@
           </p>
         </VRow>
         <RepositoryItem
-          v-if="searchedRepositories.length > 0"
-          v-for="repository in searchedRepositories"
-          :repository="repository"
+            v-if="searchedRepositories.length > 0"
+            v-for="repository in searchedRepositories"
+            :repository="repository"
         />
         <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
       </div>

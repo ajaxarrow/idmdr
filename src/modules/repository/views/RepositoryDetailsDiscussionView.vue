@@ -7,13 +7,13 @@
   import TopicItem from "../components/Discussion/TopicItem.vue";
   import {Topic} from "../../../interfaces/dicussion.interface.ts";
   import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
-  import {useRepositoryDiscussionServices} from "../services/repository-discussion.services.ts";
+  import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
   const {repository, setRepositoryData} = useRepositoryStore()
   const topicData = ref<Topic[]>([]);
   const topicList = ref<Topic[]>([]);
   const {route} = useRouting()
   const searchQuery = ref('');
-  const {fetchTopicsByRepositories} = useRepositoryDiscussionServices();
+  const {fetchTopicsByRepositories} = useRepositoryDiscussionTopicServices();
 
   const filterTopicsBySearchQuery = (): Topic[] => {
     if (searchQuery.value) {

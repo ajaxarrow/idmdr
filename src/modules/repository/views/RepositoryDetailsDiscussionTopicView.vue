@@ -9,7 +9,7 @@
     PhDotsThreeOutlineVertical, PhPencil,  PhTrash
   } from "@phosphor-icons/vue";
   import NotFound from "../../../assets/images/404.svg";
-  import {useRepositoryDiscussionServices} from "../services/repository-discussion.services.ts";
+  import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
   import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
   const {repository, setRepositoryData} = useRepositoryStore();
   const {route} = useRouting();
@@ -17,7 +17,7 @@
   const totalComment = ref(0);
   const commentData = ref<Comment[]>([]);
   const topicActionMenu = ref(false);
-  const {fetchCommentsByTopic, fetchTopicByTopicID} = useRepositoryDiscussionServices();
+  const {fetchCommentsByTopic, fetchTopicByTopicID} = useRepositoryDiscussionTopicServices();
   onMounted(() => {
     setRepositoryData(route.params.slug as string);
     commentData.value = fetchCommentsByTopic(<string>route.params.topic);
