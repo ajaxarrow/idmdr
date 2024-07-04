@@ -17,7 +17,7 @@ const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchReposito
 const searchQuery = ref('');
 const repositoryData = ref<Repository[]>([]);
 const repositoryItems = ref<Repository[]>([]);
-const searchedRepositories = ref([]);
+const searchedRepositories = ref<Repository[]>([]);
 
 const showMoreChips = ref(false);
 
