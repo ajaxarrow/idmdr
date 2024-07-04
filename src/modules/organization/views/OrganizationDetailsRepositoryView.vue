@@ -3,17 +3,20 @@ import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetails
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {useRepositoryStore} from "../../repository/stores/repository.store.ts";
 import {PhCaretDown, PhCaretUp, PhHardDrives, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
-import {useTagsStore} from "../../repository/stores/tags.store.ts";
-import {useRepositoriesStore} from "../../repository/stores/repositories.store.ts";
+import {useTags} from "../../repository/composables/useTags.ts";
+import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 const {route} = useRouting()
 const {organization, setOrganizationData} = useOrganizationStore();
-const {repositoryItems, setRepositoryItems} = useRepositoryStore();
 
-const {tags, selectedTags, fetchTags} = useTagsStore();
-const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, setRepositoryData} = useRepositoriesStore();
+
+const {tags, selectedTags, fetchTags} = useTags();
+const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
+const searchQuery = ref('');
+const repositoryData = ref([]);
+const repositoryItems = ref([]);
+const searchedRepositories = ref([]);
 
 const showMoreChips = ref(false);
 
@@ -21,12 +24,12 @@ const toggleShowMoreChips = () => {
   showMoreChips.value =!showMoreChips.value;
 }
 
-watch(() => searchQuery.value, () => {
-  filterRepositoriesBySearchQuery()
+watch(() => searchQuery.value, async () => {
+  searchedRepositories.value = await filterRepositoriesBySearchQuery(searchQuery.value, repositoryData.value);
 });
 
 watch(() => selectedTags.value, () => {
-  filterRepositoriesbyTags(repositoryItems.value);
+  searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
 })
 
 watch(() => selectedTags.value, (newVal) => {
@@ -36,14 +39,16 @@ watch(() => selectedTags.value, (newVal) => {
 })
 
 
-onMounted(() => {
+onMounted(async () => {
   setOrganizationData(route.params.slug as string);
-  setRepositoryItems(route.params.slug as string);
+  repositoryItems.value = fetchRepositoriesByOrganization(route.params.slug as string);
   fetchTags();
-  setRepositoryData(repositoryItems.value)
+  repositoryData.value = fetchRepositoriesByOrganization(route.params.slug as string);
+  fetchTags();
+  searchedRepositories.value = repositoryData.value;
   if(route.query.tag){
     selectedTags.value.push(<string>route.query.tag);
-    filterRepositoriesbyTags(repositoryItems.value);
+    searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
   }
 })
 

@@ -4,16 +4,17 @@
   import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
   import {onMounted, onUnmounted, ref, watch} from "vue";
   import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
-  import {useTagsStore} from "../stores/tags.store.ts";
-  import {useRepositoriesStore} from "../stores/repositories.store.ts";
   import {repositories} from "../../../data/repository.ts";
   import {useRouting} from "../../../core/composables/useRouting.ts";
+  import {useRepositoryServices} from "../services/repository.services.ts";
+  import {useTags} from "../composables/useTags.ts";
 
-  const {tags, selectedTags, fetchTags} = useTagsStore();
-  const {filterRepositoriesbyTags, filterRepositoriesBySearchQuery, searchQuery, searchedRepositories, setRepositoryData} = useRepositoriesStore();
-
+  const {tags, selectedTags, fetchTags} = useTags();
+  const {fetchRepositories, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
+  const searchQuery = ref('');
+  const repositoryData = ref([]);
+  const searchedRepositories = ref([]);
   const {isSmall, isTablet} = useScreenStore();
-
   const showMoreChips = ref(false);
   const {route} = useRouting();
 
@@ -21,12 +22,12 @@
     showMoreChips.value =!showMoreChips.value;
   }
 
-  watch(() => searchQuery.value, () => {
-    filterRepositoriesBySearchQuery()
+  watch(() => searchQuery.value, async () => {
+    searchedRepositories.value = await filterRepositoriesBySearchQuery(searchQuery.value, repositoryData.value);
   });
 
   watch(() => selectedTags.value, () => {
-    filterRepositoriesbyTags();
+   searchedRepositories.value = filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
   })
 
   watch(() => selectedTags.value, (newVal) => {
@@ -35,12 +36,13 @@
     }
   })
 
-  onMounted(() => {
+  onMounted(async () => {
     fetchTags();
-    setRepositoryData(repositories);
+    repositoryData.value = await fetchRepositories();
+    searchedRepositories.value = repositoryData.value;
     if(route.query.tag){
       selectedTags.value.push(<string>route.query.tag);
-      filterRepositoriesbyTags();
+      filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
     }
 
   })
