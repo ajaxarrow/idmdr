@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {ref} from "vue";
-import {PhFileDashed} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhFileDashed} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 const visibility = ref("public");
 
@@ -19,6 +19,16 @@ const industries = [
   <MainLayout title="New Repository">
     <div style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
+        <RouterLink
+            :to="{
+          name: 'repositories'
+        }"
+            class="text-decoration-none text-none">
+          <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+            <PhArrowLeft size="14" class="mr-1"/>
+            Back To Repositories
+          </p>
+        </RouterLink>
           <div>
             <p class="text-heading d-flex align-center">
               Create New Repository
@@ -256,8 +266,8 @@ const industries = [
   position: absolute;
   right: -168px;
   top: -460px;
-  width: 590px;
-  height: 561px;
+  width: 640px;
+  height: 591px;
   border-radius: 50%;
   background: #DEF1FB;
   z-index: 1;
@@ -336,4 +346,12 @@ const industries = [
   opacity: 90%;
 }
 
+.back-button{
+  width: 175px;
+  font-size: 14px;
+}
+.back-button:hover{
+  border-radius: 8px;
+  background-color: #f2f7fa;
+}
 </style>

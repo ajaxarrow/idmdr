@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "./MainLayout.vue";
-import {PhDownload} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhDownload} from "@phosphor-icons/vue";
 import NotFound from "../../assets/images/404.svg";
 import {PropType} from "vue";
 import {Repository} from "../../interfaces/repository.interface.ts";
@@ -77,6 +77,16 @@ onMounted(()=>{
   <MainLayout title="Repository Details">
     <div v-if="repository" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
+        <RouterLink
+          :to="{
+          name: 'repositories'
+        }"
+            class="text-decoration-none text-none">
+          <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+            <PhArrowLeft size="14" class="mr-1"/>
+            Back To Repositories
+          </p>
+        </RouterLink>
         <VRow justify="space-between" align="center" class="ma-0">
           <div>
             <p class="text-repository-heading d-flex align-center">
@@ -131,8 +141,8 @@ onMounted(()=>{
     position: absolute;
     left: -209px;
     top: -430px;
-    width: 590px;
-    height: 561px;
+    width: 700px;
+    height: 591px;
     border-radius: 50%;
     background: #DEF1FB;
     z-index: 1;
@@ -146,5 +156,14 @@ onMounted(()=>{
   .v-tab{
     font-size: 16px;
     letter-spacing: .7px;
+  }
+
+  .back-button{
+    width: 175px;
+    font-size: 14px;
+  }
+  .back-button:hover{
+    border-radius: 8px;
+    background-color: #d3e6ef;
   }
 </style>

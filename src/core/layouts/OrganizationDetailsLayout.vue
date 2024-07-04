@@ -7,6 +7,7 @@ import {Organization} from "../../interfaces/organization.interface.ts";
 import {onMounted} from "vue";
 import NotFound from "../../assets/images/404.svg";
 import {useScreenStore} from "../stores/screen-size.store.ts";
+import {PhArrowLeft} from "@phosphor-icons/vue";
 
 const tab = ref("about");
 const {router} = useRouting();
@@ -48,6 +49,16 @@ onMounted(()=>{
   <MainLayout title="Organization Details">
     <div v-if="organization" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
+        <RouterLink
+            :to="{
+          name: 'organizations'
+        }"
+            class="text-decoration-none text-none">
+          <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+            <PhArrowLeft size="14" class="mr-1"/>
+            Back To Organizations
+          </p>
+        </RouterLink>
         <VRow justify="space-between" align="center" class="ma-0">
           <VCol md="9" class="pa-0">
             <div>
@@ -72,15 +83,15 @@ onMounted(()=>{
         </VRow>
       </div>
       <VTabs
-          class="mx-6"
-          color="primary"
-          v-model="tab"
+        class="mx-6"
+        color="primary"
+        v-model="tab"
       >
         <VTab
-            v-for="tab in tabs"
-            class="tab-title text-none mx-2"
-            :value="tab.name.toLowerCase()"
-            @click="navigateTo(tab.linkName)"
+          v-for="tab in tabs"
+          class="tab-title text-none mx-2"
+          :value="tab.name.toLowerCase()"
+          @click="navigateTo(tab.linkName)"
         >
           {{tab.name}}
         </VTab>
@@ -111,8 +122,8 @@ onMounted(()=>{
   position: absolute;
   left: -212px;
   top: -453px;
-  width: 730px;
-  height: 618px;
+  width: 810px;
+  height: 660px;
   border-radius: 50%;
   background: #DEF1FB;
   z-index: 1;
@@ -132,6 +143,14 @@ onMounted(()=>{
   .circle::after {
     top: -490px;
   }
-  
+}
+
+.back-button{
+  width: 175px;
+  font-size: 14px;
+}
+.back-button:hover{
+  border-radius: 8px;
+  background-color: #d3e6ef;
 }
 </style>

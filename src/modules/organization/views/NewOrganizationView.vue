@@ -2,7 +2,7 @@
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {ClusterType} from "../../../interfaces/enums/organization.enum.ts"
 import {ref} from "vue";
-import {PhFileDashed} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhFileDashed} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 const type = ref("institution")
 
@@ -16,6 +16,12 @@ const clusters: string[] = Object.values(ClusterType);
     <div style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
+          <RouterLink :to="{ name: 'organizations'}"  class="text-decoration-none text-none">
+            <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+              <PhArrowLeft size="14" class="mr-1"/>
+              Back To Organizations
+            </p>
+          </RouterLink>
           <p class="text-heading d-flex align-center">
             Create New Organization
           </p>
@@ -241,8 +247,8 @@ const clusters: string[] = Object.values(ClusterType);
   position: absolute;
   right: -168px;
   top: -460px;
-  width: 590px;
-  height: 561px;
+  width: 640px;
+  height: 591px;
   border-radius: 50%;
   background: #DEF1FB;
   z-index: 1;
@@ -321,4 +327,12 @@ const clusters: string[] = Object.values(ClusterType);
   opacity: 90%;
 }
 
+.back-button{
+  width: 175px;
+  font-size: 14px;
+}
+.back-button:hover{
+  border-radius: 8px;
+  background-color: #f2f7fa;
+}
 </style>
