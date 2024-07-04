@@ -15,8 +15,8 @@ const topic = reactive({
     @click="topicDialog = true"
     rounded="lg"
     class="satoshi-md"
-    height="30px"
-    width="110px"
+    width="130px"
+    height="40px"
     style="font-size: 14px !important;"
   >
     New Topic
