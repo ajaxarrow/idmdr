@@ -7,6 +7,12 @@ const commentActionMenu = ref(false)
 const props = defineProps({
   comment: {
     type: Object as PropType<Comment>
+  },
+  editComment: {
+    type: Function as PropType<(comment: Comment) => void>,
+  },
+  deleteComment: {
+    type: Function as PropType<(comment: Comment) => void>,
   }
 })
 </script>
@@ -34,11 +40,11 @@ const props = defineProps({
           <PhDotsThreeOutlineVertical v-bind="props" weight="fill" class="cursor-pointer action-icon"/>
         </template>
         <VSheet width="200" class="rounded-b-lg py-2">
-          <p class="cursor-pointer action-menu-item">
+          <p @click="props.editComment?.(<Comment>comment)" class="cursor-pointer action-menu-item">
             <PhPencil/>
             Edit
           </p>
-          <p class="cursor-pointer action-menu-item">
+          <p @click="props.deleteComment?.(<Comment>comment)" class="cursor-pointer action-menu-item">
             <PhTrash/>
             Delete
           </p>

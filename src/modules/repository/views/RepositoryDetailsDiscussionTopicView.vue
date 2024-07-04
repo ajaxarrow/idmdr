@@ -1,30 +1,84 @@
 <script setup lang="ts">
-  import {onMounted, ref} from "vue";
-  import {useRepositoryStore} from "../stores/repository.store.ts";
-  import {useRouting} from "../../../core/composables/useRouting.ts";
-  import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-  import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
-  import {
-    PhArrowLeft,PhChat,
-    PhDotsThreeOutlineVertical, PhPencil,  PhTrash
-  } from "@phosphor-icons/vue";
-  import NotFound from "../../../assets/images/404.svg";
-  import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
-  import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
-  import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
+import {onMounted, ref} from "vue";
+import {useRepositoryStore} from "../stores/repository.store.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
+import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
+import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
+import {PhArrowLeft, PhChat, PhDotsThreeOutlineVertical, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import NotFound from "../../../assets/images/404.svg";
+import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
+import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
+import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
+
   const {repository, setRepositoryData} = useRepositoryStore();
-  const {route} = useRouting();
-  const topic = ref<Topic | null>(null);
-  const totalComment = ref(0);
-  const commentData = ref<Comment[]>([]);
-  const topicActionMenu = ref(false);
   const {fetchTopicByTopicID} = useRepositoryDiscussionTopicServices();
-  const {fetchCommentsByTopic} = useRepositoryDiscussionCommentServices();
+  const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
+  const {route} = useRouting();
+  const selectedCommentID = ref('');
+
+  const topic = ref<Topic | null>(null);
+  const commentList = ref<Comment[]>([]);
+  const totalComment = ref(0);
+  const topicActionMenu = ref(false);
+  const commentContent = ref('');
+  const commentContentEdit = ref('');
+  const generateRandom10DigitNumber = () => {
+    return Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
+  }
+
+  const fetchCommentList = () => {
+    commentList.value = fetchCommentsByTopic(<string>route.params.topic);
+    totalComment.value = commentList.value.length
+  }
+
+  const handleComment = async () => {
+    const newComment: Comment = {
+      owner: 'Tabilla, Jiu Axl',
+      ownerImage: 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
+      content: commentContent.value,
+      id: generateRandom10DigitNumber().toString(),
+      topicID: <string>topic.value?.id
+    }
+    await addComment(newComment);
+    commentList.value.push(newComment);
+    commentContent.value = '';
+  }
+
+  const removeEditedComment = () => {
+    selectedCommentID.value = ''
+    commentContentEdit.value = ''
+  }
+
+  const editComment = (comment: Comment) => {
+    selectedCommentID.value = comment.id
+    commentContentEdit.value = comment.content
+  }
+
+  const updateCommentData = async (comment: Comment) => {
+    await updateComment({
+      owner: comment.owner,
+      ownerImage: comment.ownerImage,
+      content: commentContentEdit.value,
+      id: comment.id,
+      topicID: comment.topicID
+    });
+    removeEditedComment();
+    fetchCommentList()
+  }
+
+const deleteCommentData = async (comment: Comment) => {
+  await deleteComment(comment);
+  fetchCommentList()
+}
+
+
+
   onMounted(() => {
+    console.log('mounted')
     setRepositoryData(route.params.slug as string);
-    commentData.value = fetchCommentsByTopic(<string>route.params.topic);
+    fetchCommentList()
     topic.value = fetchTopicByTopicID(<string>route.params.topic);
-    totalComment.value = commentData.value.length
+    totalComment.value = commentList.value.length
   })
 </script>
 
@@ -90,11 +144,57 @@
         <p class="mb-3" style="font-weight: 600; font-size: 18px">
           Comment<span v-if="totalComment != 0"><span v-if="totalComment > 1">s</span> ({{totalComment}})</span>
         </p>
-        <TopicCommentItem
+        <div
+          v-for="comment in commentList"
           v-if="totalComment > 0"
-          v-for="comment in commentData"
-          :comment="comment"
-        />
+        >
+          <div v-if="selectedCommentID == comment.id">
+            <VRow class="ma-0 mt-3">
+              <VAvatar
+                  class="mr-2 mt-2"
+                  size="40"
+              >
+                <VImg :src="comment.ownerImage"></VImg>
+              </VAvatar>
+              <VTextField
+                  autofocus
+                  @keydown.enter="updateCommentData(comment)"
+                  v-model="commentContentEdit"
+                  placeholder="Write a comment..."
+                  class="my-2"
+                  hide-details
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+              />
+            </VRow>
+            <VRow class="ma-0" justify="end">
+              <VBtnPrimaryAlt
+                  variant="outlined"
+                  @click="removeEditedComment"
+                  rounded="lg"
+                  height="44px"
+              >
+                Cancel
+              </VBtnPrimaryAlt>
+              <VBtnPrimaryFilled
+                  @click="updateCommentData(comment)"
+                  rounded="lg"
+                  height="44px"
+              >
+                Update
+              </VBtnPrimaryFilled>
+            </VRow>
+          </div>
+          <TopicCommentItem
+            v-else
+            :comment="comment"
+            :edit-comment="editComment"
+            :delete-comment="deleteCommentData"
+          />
+        </div>
        <VRow class="ma-0 mt-3">
          <VAvatar
              class="mr-2 mt-2"
@@ -102,25 +202,29 @@
          >
            <VImg src="https://mighty.tools/mockmind-api/content/abstract/46.jpg"></VImg>
          </VAvatar>
-         <VTextarea
+         <VTextField
+             autofocus
+             @keydown.enter="handleComment"
+             v-model="commentContent"
              placeholder="Write a comment..."
-             class="my-2"
-             hide-details
              rounded="lg"
              density="comfortable"
              variant="outlined"
              color="primary"
              base-color="gs60"
+             hide-details
+
          />
        </VRow>
-        <VRow class="ma-0" justify="end">
-          <VBtnPrimaryFilled
-              rounded="lg"
-              height="44px"
-          >
-            Submit
-          </VBtnPrimaryFilled>
-        </VRow>
+      <VRow class="ma-0 my-2" justify="end">
+        <VBtnPrimaryFilled
+            @click="handleComment"
+            rounded="lg"
+            height="44px"
+        >
+          Submit
+        </VBtnPrimaryFilled>
+      </VRow>
       </div>
       <div v-else style="height: 100%">
         <div style="height:45vh" class="d-flex flex-column justify-center align-center">
@@ -186,6 +290,10 @@
   :deep textarea::placeholder {
     color: #5F6061;
     opacity: 90%;
+  }
+
+  :deep .v-input__control{
+    height: 70px;
   }
 
 </style>
