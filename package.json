@@ -15,6 +15,7 @@
     "@tabler/icons-vue": "^2.47.0",
     "@turf/turf": "^6.5.0",
     "@vueuse/core": "^10.9.0",
+    "lodash": "^4.17.21",
     "maplibre-gl": "^4.1.2",
     "progress-tracker": "^2.0.7",
     "quill": "^2.0.2",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@types/events": "^3.0.3",
+    "@types/lodash": "^4.17.6",
     "@types/mapbox__mapbox-gl-draw": "^1.4.6",
     "@types/node": "^20.12.2",
     "@vitejs/plugin-vue": "^5.0.4",
