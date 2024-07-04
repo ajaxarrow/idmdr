@@ -3,7 +3,7 @@ import {onMounted, PropType, ref} from "vue";
 import {Topic} from "../../../../interfaces/dicussion.interface.ts";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
 import {useRouting} from "../../../../core/composables/useRouting.ts";
-import {useRepositoryDiscussionTopicServices} from "../../services/repository-discussion-topic.services.ts";
+import {useRepositoryDiscussionCommentServices} from "../../services/repository-discussion-comment.services.ts";
 const props = defineProps({
   topic: {
     type: Object as PropType<Topic>,
@@ -14,7 +14,7 @@ const {isDesktop} = useScreenStore();
 const {router, route} = useRouting();
 const totalComments = ref(0);
 
-const {fetchCommentsByTopic} = useRepositoryDiscussionTopicServices();
+const {fetchCommentsByTopic} = useRepositoryDiscussionCommentServices();
 
 
 const goToTopicDetails = () => {

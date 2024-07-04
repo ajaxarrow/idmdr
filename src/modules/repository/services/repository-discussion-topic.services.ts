@@ -1,6 +1,5 @@
-import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
+import {Topic} from "../../../interfaces/dicussion.interface.ts";
 import topics from "../../../data/topics.ts";
-import comments from "../../../data/comment.ts";
 
 export const useRepositoryDiscussionTopicServices = () => {
   const fetchTopicsByRepositories = (slug: string): Topic[] => {
@@ -22,19 +21,8 @@ export const useRepositoryDiscussionTopicServices = () => {
     }
   }
 
-  const fetchCommentsByTopic = (id: string): Comment[] => {
-    const commentList = comments.filter(comment => comment.topicID === id);
-    if (commentList) {
-      return commentList;
-    } else {
-      console.error('no comment')
-      return [];
-    }
-  }
-
   return {
     fetchTopicsByRepositories,
-    fetchCommentsByTopic,
     fetchTopicByTopicID
   }
 }

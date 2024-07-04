@@ -11,13 +11,15 @@
   import NotFound from "../../../assets/images/404.svg";
   import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
   import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
+  import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
   const {repository, setRepositoryData} = useRepositoryStore();
   const {route} = useRouting();
   const topic = ref<Topic | null>(null);
   const totalComment = ref(0);
   const commentData = ref<Comment[]>([]);
   const topicActionMenu = ref(false);
-  const {fetchCommentsByTopic, fetchTopicByTopicID} = useRepositoryDiscussionTopicServices();
+  const {fetchTopicByTopicID} = useRepositoryDiscussionTopicServices();
+  const {fetchCommentsByTopic} = useRepositoryDiscussionCommentServices();
   onMounted(() => {
     setRepositoryData(route.params.slug as string);
     commentData.value = fetchCommentsByTopic(<string>route.params.topic);
