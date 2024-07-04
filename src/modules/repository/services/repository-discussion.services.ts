@@ -2,7 +2,7 @@ import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
 import topics from "../../../data/topics.ts";
 import comments from "../../../data/comment.ts";
 
-export const useDiscussion = () => {
+export const useRepositoryDiscussionServices = () => {
   const fetchTopicsByRepositories = (slug: string): Topic[] => {
     const topicList = topics.filter(topic => topic.repository === slug);
     if (topicList) {

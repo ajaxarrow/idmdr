@@ -5,13 +5,13 @@
   import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
   import {PhArrowLeft} from "@phosphor-icons/vue";
-import {useDiscussion} from "../composables/useDiscussion.ts";
+import {repositoryDiscussionServices} from "../services/repository-discussion.services.ts";
   import NotFound from "../../../assets/images/404.svg";
   const {repository, setRepositoryData} = useRepositoryStore();
   const {route} = useRouting();
   const topic = ref<Topic | null>(null);
   const commentData = ref<Comment[]>([]);
-  const {fetchCommentsByTopic, fetchTopicByTopicID} = useDiscussion();
+  const {fetchCommentsByTopic, fetchTopicByTopicID} = repositoryDiscussionServices();
   onMounted(() => {
     setRepositoryData(route.params.slug as string);
     commentData.value = fetchCommentsByTopic(<string>route.params.topic);

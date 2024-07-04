@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+  import {onMounted, ref, watch} from "vue";
   import {useRepositoryStore} from "../stores/repository.store.ts";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
   import {PhChatCircleDots, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
   import TopicItem from "../components/Discussion/TopicItem.vue";
   import {Topic} from "../../../interfaces/dicussion.interface.ts";
-  import {useDiscussion} from "../composables/useDiscussion.ts";
   import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
+  import {useRepositoryDiscussionServices} from "../services/repository-discussion.services.ts";
   const {repository, setRepositoryData} = useRepositoryStore()
   const topicData = ref<Topic[]>([]);
   const topicList = ref<Topic[]>([]);
   const {route} = useRouting()
   const searchQuery = ref('');
-  const {fetchTopicsByRepositories} = useDiscussion();
+  const {fetchTopicsByRepositories} = useRepositoryDiscussionServices();
 
   const filterTopicsBySearchQuery = (): Topic[] => {
     if (searchQuery.value) {
