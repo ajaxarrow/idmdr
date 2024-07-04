@@ -1,68 +1,10 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from "vue";
-import $eventHub from '../utils/eventHub.ts'
-import {random} from 'lodash'
-
-const defaultDuration = 8000
-// How frequently to update
-const defaultInterval = 1000
-// 0 - 1. Add some variation to how much the bar will grow at each interval
-const variation = 0.5
-// 0 - 100. Where the progress bar should start from.
-const startingPoint = 0
-// Limiting how far the progress bar will get to before loading is complete
-const endingPoint = 90
-
-const isLoading = ref(true);
-const isVisible = ref(false);
-const progress = ref(startingPoint);
-let timeoutId;
-
-const start = () => {
-  isLoading.value = true;
-  isVisible.value = true;
-  progress.value = startingPoint;
-  loop();
-};
-
-const loop = () => {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-  }
-  if (progress.value >= endingPoint) {
-    return;
-  }
-  const size = (endingPoint - startingPoint) / (defaultDuration / defaultInterval);
-  const p = Math.round(progress.value + random(size * (1 - variation), size * (1 + variation)));
-  progress.value = Math.min(p, endingPoint);
-  timeoutId = setTimeout(loop, random(defaultInterval * (1 - variation), defaultInterval * (1 + variation)));
-};
-
-const stop = () => {
-  isLoading.value = false;
-  progress.value = 100;
-  clearTimeout(timeoutId);
-  setTimeout(() => {
-    if (!isLoading.value) {
-      isVisible.value = false;
-    }
-  }, 200);
-};
-
-// Assuming $eventHub is globally available or imported properly
-onMounted(() => {
-  $eventHub.$on('asyncComponentLoading', start);
-  $eventHub.$on('asyncComponentLoaded', stop);
-});
-
-onUnmounted(() => {
-  $eventHub.$off('asyncComponentLoading', start);
-  $eventHub.$off('asyncComponentLoaded', stop);
-});
+import {useLoadingStore} from "../stores/progress-bar.store.ts";
+const {isLoading, progress} = useLoadingStore();
 </script>
 
 <template>
-  <div :class="{'loading-container': true, loading: isLoading, visible: isVisible}">
+  <div :class="{'loading-container': true, loading: isLoading, visible: isLoading}">
     <div class="loader" :style="{ width: progress + '%' }">
       <div class="light"></div>
     </div>
@@ -72,7 +14,7 @@ onUnmounted(() => {
 
 <style scoped>
 .loading-container {
-  font-size: 0; /* remove space */
+  font-size: 0;
   position: fixed;
   top: 0;
   left: 0;
@@ -80,8 +22,8 @@ onUnmounted(() => {
   width: 100%;
   opacity: 0;
   display: none;
-  z-index: 5000;
-  transition: opacity 200;
+  z-index: 100;
+  transition: opacity 500ms;
 }
 
 .loading-container.visible {
@@ -98,7 +40,7 @@ onUnmounted(() => {
   width: 50%;
   overflow: hidden;
   border-radius: 0 0 5px 0;
-  transition: 200 width ease-out;
+  transition: 3s width ease-out;
 }
 
 .loader > .light {
@@ -106,7 +48,7 @@ onUnmounted(() => {
   height: 100%;
   width: 20%;
   background-image: linear-gradient(to right, #23d6d6, #29ffff, #23d6d6);
-  animation: loading-animation 2s ease-in infinite;
+  animation: loading-animation 3s ease-in infinite;
 }
 
 .glow {
