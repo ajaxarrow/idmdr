@@ -15,6 +15,11 @@ const props = defineProps({
     type: Function as PropType<(comment: Comment) => void>,
   }
 })
+
+const handleDelete = (comment: Comment) => {
+  props.deleteComment?.(comment)
+  commentActionMenu.value = false
+}
 </script>
 
 <template>
@@ -44,7 +49,7 @@ const props = defineProps({
             <PhPencil/>
             Edit
           </p>
-          <p @click="props.deleteComment?.(<Comment>comment)" class="cursor-pointer action-menu-item">
+          <p @click="handleDelete(<Comment>comment)" class="cursor-pointer action-menu-item">
             <PhTrash/>
             Delete
           </p>

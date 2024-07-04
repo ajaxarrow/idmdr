@@ -40,7 +40,7 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
       topicID: <string>topic.value?.id
     }
     await addComment(newComment);
-    commentList.value.push(newComment);
+    fetchCommentList()
     commentContent.value = '';
   }
 
@@ -66,11 +66,10 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
     fetchCommentList()
   }
 
-const deleteCommentData = async (comment: Comment) => {
-  await deleteComment(comment);
-  fetchCommentList()
-}
-
+  const deleteCommentData = async (comment: Comment) => {
+    await deleteComment(comment);
+    fetchCommentList()
+  }
 
 
   onMounted(() => {
