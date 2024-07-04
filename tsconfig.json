@@ -21,6 +21,13 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": [
+    "src/*.vue",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/core/**/*.vue",
+    "src/modules/**/**/*.vue"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

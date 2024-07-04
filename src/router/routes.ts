@@ -1,63 +1,55 @@
-// @ts-ignore
-import LandingView from "../views/Public/LandingView.vue";
-// @ts-ignore
 import authRoutes from "./routes/auth.routes.ts";
-// @ts-ignore
 import repositoryRoutes from "./routes/repository.routes.ts";
-// @ts-ignore
-import DashboardView from "../views/User/DashboardView.vue";
-// @ts-ignore
-import MapView from "../views/Map/MapView.vue";
-// @ts-ignore
-import SectorView from "../views/Sector/SectorView.vue";
 import organizationRoutes from "./routes/organization.routes.ts";
-// @ts-ignore
-import SettingsOrganizationView from "../views/User/SettingsOrganizationView.vue";
-// @ts-ignore
-import SettingsAccountView from "../views/User/SettingsAccountView.vue";
-// @ts-ignore
-import Error404View from "../views/Public/Error404View.vue";
 
 export const routes = [
   {
     path: '/',
     name: 'landing',
-    component: LandingView
+    // @ts-ignore
+    component: () => import('../modules/public/views/LandingView.vue')
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: DashboardView
+    // @ts-ignore
+    component: () => import('../modules/user/views/DashboardView.vue')
   },
   {
     path: '/settings',
     name: 'settings',
-    component: SettingsOrganizationView
+    // @ts-ignore
+    component: () => import('../modules/user/views/SettingsOrganizationView.vue')
   },
   {
     path: '/settings/account',
     name: 'settings-account',
-    component: SettingsAccountView
+    // @ts-ignore
+    component: () => import('../modules/user/views/SettingsAccountView.vue')
   },
   {
     path: '/settings/organization',
     name: 'settings-organization',
-    component: SettingsOrganizationView
+    // @ts-ignore
+    component: () => import('../modules/user/views/SettingsOrganizationView.vue')
   },
   {
     path: '/map',
     name: 'map',
-    component: MapView
+    // @ts-ignore
+    component: () => import('../modules/map/views/MapView.vue')
   },
   {
     path: '/sectors',
     name: 'sectors',
-    component: SectorView
+    // @ts-ignore
+    component: () => import('../modules/sector/views/SectorView.vue')
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'error404',
-    component: Error404View
+    // @ts-ignore
+    component: () => import('../core/views/Error404View.vue')
   },
   ...authRoutes,
   ...repositoryRoutes,

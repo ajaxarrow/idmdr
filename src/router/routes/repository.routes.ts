@@ -1,46 +1,39 @@
-// @ts-ignore
-import RepositoriesView from "../../views/Repository/RepositoriesView.vue";
-// @ts-ignore
-import NewRepositoryView from "../../views/Repository/NewRepositoryView.vue";
-// @ts-ignore
-import RepositoryDetailsView from "../../views/Repository/RepositoryDetailsView.vue";
-// @ts-ignore
-import RepositoryDetailsDiscussionView from "../../views/Repository/RepositoryDetailsDiscussionView.vue";
-// @ts-ignore
-import RepositoryDetailsSettingsView from "../../views/Repository/RepositoryDetailsSettingsView.vue";
-// @ts-ignore
-import RepositoryDetailsDiscussionTopicView from "../../views/Repository/RepositoryDetailsDiscussionTopicView.vue";
-
 const repositoryRoutes = [
   {
     path: '/repositories',
     name: 'repositories',
-    component: RepositoriesView
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoriesView.vue')
   },
   {
     path: '/repository/new',
     name: 'new-repository',
-    component: NewRepositoryView
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/NewRepositoryView.vue')
   },
   {
     path: '/repository/:slug',
     name: 'repository-data',
-    component: RepositoryDetailsView
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsView.vue')
   },
   {
     path: '/repository/:slug/discussions',
     name: 'repository-discussions',
-    component: RepositoryDetailsDiscussionView
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionView.vue')
   },
   {
     path: '/repository/:slug/discussions/:topic',
     name: 'repository-discussions-topic',
-    component: RepositoryDetailsDiscussionTopicView
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionTopicView.vue')
   },
   {
     path: '/repository/:slug/settings',
     name: 'repository-settings',
-    component: RepositoryDetailsSettingsView
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsSettingsView.vue')
   }
 ]
 
