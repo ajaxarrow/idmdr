@@ -10,6 +10,7 @@ const router = createRouter({
 router.beforeEach(() => {
     const {isLoading} = useLoadingStore();
     isLoading.value = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 })
 
 router.beforeResolve(() => {
