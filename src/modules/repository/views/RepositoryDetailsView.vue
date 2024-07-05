@@ -73,7 +73,7 @@
     }
   }
 
-  const getFileExtension = (filename: String): string | null => {
+  const getFileExtension = (filename: string): string | null => {
     const lastDotIndex = filename.lastIndexOf('.');
     if (lastDotIndex === -1) {
       return null;
@@ -86,7 +86,7 @@
     [key: string]: { icon: any, color: string };
   }
 
-  const getIcon = (name: String) => {
+  const getIcon = (name: string) => {
     const extension = getFileExtension(name);
     if (extension) {
       const iconMap: FileIcon = {
