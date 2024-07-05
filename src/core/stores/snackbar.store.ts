@@ -1,0 +1,20 @@
+import {ref} from "vue";
+import {Status} from "../../interfaces/enums/status.enum.ts";
+import {createGlobalState} from "@vueuse/core";
+
+const showSnackbar = ref(false);
+const snackbarMessage = ref("");
+const snackbarStatus = ref<Status>(Status.information);
+
+const showSnackbarMessage = (message: string, status: Status) => {
+  snackbarStatus.value = status;
+  snackbarMessage.value = message;
+  showSnackbar.value = true;
+};
+
+export const useSnackbarStore = createGlobalState(() => ({
+  showSnackbar,
+  snackbarMessage,
+  snackbarStatus,
+  showSnackbarMessage
+}))

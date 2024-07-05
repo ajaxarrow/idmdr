@@ -4,33 +4,24 @@ import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
-import {
-  PhArrowLeft,
-  PhChat,
-  PhCheckCircle,
-  PhDotsThreeOutlineVertical,
-  PhPencil,
-  PhTrash,
-  PhX
-} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhChat, PhDotsThreeOutlineVertical, PhPencil, PhTrash,} from "@phosphor-icons/vue";
 import NotFound from "../../../assets/images/404.svg";
 import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
 import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
 import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
 
-const {isMobile} = useScreenStore();
+const {showSnackbarMessage} = useSnackbarStore();
   const {repository, setRepositoryData} = useRepositoryStore();
   const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
   const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
   const {route, router} = useRouting();
 
   const topicActionMenu = ref(false);
-  const snackbar = ref(false);
-  const snackbarMessage = ref('');
 
   const topic = ref<Topic | null>(null);
   const commentList = ref<Comment[]>([]);
@@ -59,7 +50,7 @@ const {isMobile} = useScreenStore();
     await addComment(newComment);
     fetchCommentList()
     commentContent.value = '';
-    showSnackbar('Comment Added')
+    showSnackbarMessage('Comment Added', Status.success)
   }
 
   const removeEditedComment = () => {
@@ -82,23 +73,23 @@ const {isMobile} = useScreenStore();
     });
     removeEditedComment();
     fetchCommentList()
-    showSnackbar('Comment Updated')
+    showSnackbarMessage('Comment Updated', Status.success)
   }
 
   const deleteCommentData = async (comment: Comment) => {
     await deleteComment(comment);
     fetchCommentList()
-    showSnackbar('Comment Deleted')
+    showSnackbarMessage('Comment Deleted', Status.success)
   }
 
   const editTopicCallback = () => {
-    showSnackbar('Topic Edited Successfully')
+    showSnackbarMessage('Topic Edited Successfully', Status.success)
     topic.value = fetchTopicByTopicID(<string>route.params.topic);
     topicActionMenu.value = false
   }
 
   const deleteTopicCallback = () => {
-    showSnackbar('Topic Deleted Successfully')
+    showSnackbarMessage('Topic Deleted Successfully', Status.success)
     deleteTopic(<Topic>topic.value);
     topicActionMenu.value = false
     router.push({
@@ -111,11 +102,6 @@ const {isMobile} = useScreenStore();
     if(commentInput){
       commentInput.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
-  }
-
-  const showSnackbar = (message: string) => {
-    snackbarMessage.value = message;
-    snackbar.value = true
   }
 
   onMounted(() => {
@@ -290,38 +276,6 @@ const {isMobile} = useScreenStore();
       </div>
     </div>
   </RepositoryDetailsLayout>
-  <div >
-    <VSnackbar
-        style="z-index: 10000 !important;"
-        v-model="snackbar"
-        :timeout="3000"
-        :location="isMobile ? 'top left' : 'bottom left'"
-        variant="flat"
-    >
-<!--      <VAlert-->
-<!--          theme="dark"-->
-<!--          color="#050E14"-->
-<!--          border-->
-<!--      >-->
-<!--        <p class="d-flex align-center ga-2">-->
-<!--          <PhCheckCircle color="#32C8B4" weight="fill" size="20"/>-->
-<!--          {{ snackbarMessage }}-->
-<!--        </p>-->
-<!--      </VAlert>-->
-      <p class="d-flex align-center ga-2">
-        <PhCheckCircle color="#32C8B4" weight="fill" size="20"/>
-        {{ snackbarMessage }}
-      </p>
-      <template v-slot:actions>
-        <VBtn
-            color="white"
-            @click="snackbar = false"
-        >
-          <PhX weight="bold"/>
-        </VBtn>
-      </template>
-    </VSnackbar>
-  </div>
 </template>
 
 <style scoped>

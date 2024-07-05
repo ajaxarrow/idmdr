@@ -3,28 +3,22 @@ import {onMounted, ref, watch} from "vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-import {PhChatCircleDots, PhCheckCircle, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
+import {PhChatCircleDots, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import TopicItem from "../components/Discussion/TopicItem.vue";
 import {Topic} from "../../../interfaces/dicussion.interface.ts";
 import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
 
-const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
-  const {isMobile} = useScreenStore();
+  const {showSnackbarMessage} = useSnackbarStore();
+  const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
   const {repository, setRepositoryData} = useRepositoryStore()
   const searchedTopics = ref<Topic[]>([]);
   const topicList = ref<Topic[]>([]);
   const {route} = useRouting()
   const searchQuery = ref('');
-  const snackbar = ref(false);
-  const snackbarMessage = ref('');
-
-  const showSnackbar = (message: string) => {
-    snackbarMessage.value = message;
-    snackbar.value = true
-  }
 
   const fetchTopicList = () => {
     topicList.value = fetchTopicsByRepository(<string>route.params.slug)
@@ -32,7 +26,7 @@ const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
   }
 
   const addTopicCallback = () => {
-    showSnackbar('Topic Added Successfully!');
+    showSnackbarMessage('Topic Added Successfully', Status.success)
     fetchTopicList();
   }
 
@@ -102,40 +96,7 @@ const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
         :key="topic.id"
       />
       <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Discussions Found</p>
-      <div >
-        <VSnackbar
-            style="z-index: 10000 !important;"
-            v-model="snackbar"
-            :timeout="3000"
-            :location="isMobile ? 'top left' : 'bottom left'"
-            variant="flat"
-        >
-          <!--      <VAlert-->
-          <!--          theme="dark"-->
-          <!--          color="#050E14"-->
-          <!--          border-->
-          <!--      >-->
-          <!--        <p class="d-flex align-center ga-2">-->
-          <!--          <PhCheckCircle color="#32C8B4" weight="fill" size="20"/>-->
-          <!--          {{ snackbarMessage }}-->
-          <!--        </p>-->
-          <!--      </VAlert>-->
-          <p class="d-flex align-center ga-2">
-            <PhCheckCircle color="#32C8B4" weight="fill" size="20"/>
-            {{ snackbarMessage }}
-          </p>
-          <template v-slot:actions>
-            <VBtn
-                color="white"
-                @click="snackbar = false"
-            >
-              <PhX weight="bold"/>
-            </VBtn>
-          </template>
-        </VSnackbar>
-      </div>
     </div>
-
   </RepositoryDetailsLayout>
 </template>
 
