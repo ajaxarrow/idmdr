@@ -2,6 +2,7 @@
 import {PropType, ref} from "vue";
 import {Comment} from "../../../../interfaces/dicussion.interface.ts";
 import {PhDotsThreeOutlineVertical, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import DeleteDialog from "../../../../core/components/DeleteDialog.vue";
 
 const commentActionMenu = ref(false)
 const props = defineProps({
@@ -49,10 +50,12 @@ const handleDelete = (comment: Comment) => {
             <PhPencil/>
             Edit
           </p>
-          <p @click="handleDelete(<Comment>comment)" class="cursor-pointer action-menu-item">
-            <PhTrash/>
-            Delete
-          </p>
+          <DeleteDialog @callback="handleDelete(<Comment>comment)">
+            <p  class="cursor-pointer action-menu-item">
+              <PhTrash/>
+              Delete
+            </p>
+          </DeleteDialog>
         </VSheet>
       </VMenu>
     </div>

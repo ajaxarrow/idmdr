@@ -4,24 +4,40 @@ import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
-import {PhArrowLeft, PhChat, PhDotsThreeOutlineVertical, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhArrowLeft,
+  PhChat,
+  PhCheckCircle,
+  PhDotsThreeOutlineVertical,
+  PhPencil,
+  PhTrash,
+  PhX
+} from "@phosphor-icons/vue";
 import NotFound from "../../../assets/images/404.svg";
 import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
 import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
 import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
+import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 
+  const {isMobile} = useScreenStore();
   const {repository, setRepositoryData} = useRepositoryStore();
   const {fetchTopicByTopicID} = useRepositoryDiscussionTopicServices();
   const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
   const {route} = useRouting();
-  const selectedCommentID = ref('');
+
+  const topicActionMenu = ref(false);
+  const snackbar = ref(false);
+  const snackbarMessage = ref('');
 
   const topic = ref<Topic | null>(null);
   const commentList = ref<Comment[]>([]);
   const totalComment = ref(0);
-  const topicActionMenu = ref(false);
+
   const commentContent = ref('');
   const commentContentEdit = ref('');
+  const selectedCommentID = ref('');
   const generateRandom10DigitNumber = () => {
     return Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
   }
@@ -42,6 +58,7 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
     await addComment(newComment);
     fetchCommentList()
     commentContent.value = '';
+    showSnackbar('Comment Added')
   }
 
   const removeEditedComment = () => {
@@ -64,11 +81,13 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
     });
     removeEditedComment();
     fetchCommentList()
+    showSnackbar('Comment Updated')
   }
 
   const deleteCommentData = async (comment: Comment) => {
     await deleteComment(comment);
     fetchCommentList()
+    showSnackbar('Comment Deleted')
   }
 
   const scrollToCommentInput = () => {
@@ -76,6 +95,14 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
     if(commentInput){
       commentInput.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
+  }
+
+  const showSnackbar = (message: String) => {
+    snackbarMessage.value = message;
+    snackbar.value = true
+    // setTimeout(() => {
+    //   snackbar.value = false
+    // }, 3000)
   }
 
   onMounted(() => {
@@ -132,10 +159,12 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
                 <PhPencil/>
                 Edit
               </p>
-              <p class="cursor-pointer action-menu-item">
-                <PhTrash/>
-                Delete
-              </p>
+              <DeleteDialog :callback="deleteCommentData">
+                <p class="cursor-pointer action-menu-item">
+                  <PhTrash/>
+                  Delete
+                </p>
+              </DeleteDialog>
               <p @click="scrollToCommentInput" class="cursor-pointer action-menu-item">
                 <PhChat/>
                 Comment on Topic
@@ -242,11 +271,43 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
         </div>
       </div>
     </div>
-
   </RepositoryDetailsLayout>
+  <div >
+    <VSnackbar
+        style="z-index: 10000 !important;"
+        v-model="snackbar"
+        :timeout="3000"
+        :location="isMobile ? 'top left' : 'bottom left'"
+        variant="flat"
+    >
+<!--      <VAlert-->
+<!--          theme="dark"-->
+<!--          color="#050E14"-->
+<!--          border-->
+<!--      >-->
+<!--        <p class="d-flex align-center ga-2">-->
+<!--          <PhCheckCircle color="#32C8B4" weight="fill" size="20"/>-->
+<!--          {{ snackbarMessage }}-->
+<!--        </p>-->
+<!--      </VAlert>-->
+      <p class="d-flex align-center ga-2">
+        <PhCheckCircle color="#32C8B4" weight="fill" size="20"/>
+        {{ snackbarMessage }}
+      </p>
+      <template v-slot:actions>
+        <VBtn
+            color="white"
+            @click="snackbar = false"
+        >
+          <PhX weight="bold"/>
+        </VBtn>
+      </template>
+    </VSnackbar>
+  </div>
 </template>
 
 <style scoped>
+
   .back-button{
     width: 225px;
     font-size: 14px;
@@ -302,6 +363,10 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
 
   :deep .v-input__control{
     height: 70px;
+  }
+
+  :deep .v-snackbar__content{
+
   }
 
 </style>
