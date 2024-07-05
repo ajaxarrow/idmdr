@@ -1,16 +1,17 @@
 <script setup lang="ts">
-  import {onMounted, ref, watch} from "vue";
-  import {useRepositoryStore} from "../stores/repository.store.ts";
-  import {useRouting} from "../../../core/composables/useRouting.ts";
-  import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-  import {PhChatCircleDots, PhCheckCircle, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
-  import TopicItem from "../components/Discussion/TopicItem.vue";
-  import {Topic} from "../../../interfaces/dicussion.interface.ts";
-  import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
-  import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
-  import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import {onMounted, ref, watch} from "vue";
+import {useRepositoryStore} from "../stores/repository.store.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
+import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
+import {PhChatCircleDots, PhCheckCircle, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
+import TopicItem from "../components/Discussion/TopicItem.vue";
+import {Topic} from "../../../interfaces/dicussion.interface.ts";
+import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
+import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
+import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 
-  const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
+const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
   const {isMobile} = useScreenStore();
   const {repository, setRepositoryData} = useRepositoryStore()
   const searchedTopics = ref<Topic[]>([]);
@@ -80,7 +81,7 @@
           Discussions
         </p>
         <TopicFormDialog
-          form-type="add"
+          :form-type="FormType.create"
           @callback="addTopicCallback"
         >
           <VBtnPrimaryFilled

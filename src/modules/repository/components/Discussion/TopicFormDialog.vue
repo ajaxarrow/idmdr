@@ -6,7 +6,7 @@ import {Topic} from "../../../../interfaces/dicussion.interface.ts";
 import {useRouting} from "../../../../core/composables/useRouting.ts";
 import {useRepositoryDiscussionTopicServices} from "../../services/repository-discussion-topic.services.ts";
 
-  const {addTopic, updateTopic, deleteTopic} = useRepositoryDiscussionTopicServices();
+  const {addTopic, updateTopic} = useRepositoryDiscussionTopicServices();
   const {route} = useRouting();
   const emits = defineEmits(['callback']);
   const action = computed(() => props.formType === FormType.edit ? 'Update' : 'Add');

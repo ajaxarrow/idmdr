@@ -20,8 +20,9 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
+import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 
-  const {isMobile} = useScreenStore();
+const {isMobile} = useScreenStore();
   const {repository, setRepositoryData} = useRepositoryStore();
   const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
   const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
@@ -167,7 +168,7 @@ import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
             </template>
             <VSheet width="200" class="rounded-b-lg py-2">
               <TopicFormDialog
-                form-type="edit"
+                :form-type="FormType.edit"
                 :topic="topic"
                 @callback="editTopicCallback"
               >
