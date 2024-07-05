@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
-import QuillRichTextEditor from "../../../../core/components/QuillRichTextEditor.vue";
-
-const topicDialog = ref(false);
-const topic = reactive({
-  title: '',
-  description: ``
-})
+  import {reactive, ref} from "vue";
+  import QuillRichTextEditor from "../../../../core/components/QuillRichTextEditor.vue";
+  const topicDialog = ref(false);
+  const topic = reactive({
+    title: '',
+    description: ``
+  })
 
 </script>
 
@@ -64,7 +63,7 @@ const topic = reactive({
         <VBtnPrimaryAlt
             @click="topicDialog = false"
             width="86"
-            class="button-outline"
+            class="submit-button"
         >
           Save
         </VBtnPrimaryAlt>
@@ -134,7 +133,13 @@ const topic = reactive({
   font-weight: 500 !important;
   letter-spacing: 0;
   border-width: 3px;
-  border-radius: 10px;
+  border-radius: 8px;
+}
+
+.submit-button{
+  font-weight: 500 !important;
+  letter-spacing: 0;
+  border-radius: 8px;
 }
 
 :deep .v-overlay__content {
