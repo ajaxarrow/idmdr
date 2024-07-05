@@ -18,7 +18,7 @@
       link: '/about'
     },
     {
-      title: 'Partners',
+      title: 'Stakeholders',
       link: '/about'
     },
     {
@@ -57,7 +57,7 @@
 </script>
 
 <template>
-    <VAppBar class="bg-transparent app-bar-blur px-2 px-lg-5" elevation="0">
+    <VAppBar class="bg-transparent app-bar-blur px-2 px-lg-10" elevation="0">
       <VContainer fluid>
         <VRow align="center" class="ma-0">
           <VRow align="center" class="ma-0">
