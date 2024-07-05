@@ -43,9 +43,8 @@
     searchedRepositories.value = repositoryData.value;
     if(route.query.tag){
       selectedTags.value.push(<string>route.query.tag);
-      filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
+      searchedRepositories.value = filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
     }
-
   })
 
   onUnmounted(() => {
