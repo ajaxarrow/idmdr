@@ -71,6 +71,12 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
     fetchCommentList()
   }
 
+  const scrollToCommentInput = () => {
+    const commentInput = document.getElementById('comment-input');
+    if(commentInput){
+      commentInput.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }
 
   onMounted(() => {
     console.log('mounted')
@@ -130,7 +136,7 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
                 <PhTrash/>
                 Delete
               </p>
-              <p class="cursor-pointer action-menu-item">
+              <p @click="scrollToCommentInput" class="cursor-pointer action-menu-item">
                 <PhChat/>
                 Comment on Topic
               </p>
@@ -202,6 +208,7 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
            <VImg src="https://mighty.tools/mockmind-api/content/abstract/46.jpg"></VImg>
          </VAvatar>
          <VTextField
+             id="comment-input"
              autofocus
              @keydown.enter="handleComment"
              v-model="commentContent"
