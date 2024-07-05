@@ -260,8 +260,9 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
   }
 
   .action-button{
+    font-size: 14px;
     border-radius: 8px;
-    padding: 6px;
+    padding: 10px;
     border: 2px solid #e6e6e6;
   }
 
@@ -270,10 +271,11 @@ import {useRepositoryDiscussionCommentServices} from "../services/repository-dis
   }
 
   .action-menu-item{
-    padding: 15px;
+    padding: 10px 15px !important;
+    font-size: 14px;
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: center !important;
+    gap: 10px !important;
   }
 
   .action-menu-item:hover{

@@ -44,7 +44,7 @@ const handleDelete = (comment: Comment) => {
         <template #activator="{ props }">
           <PhDotsThreeOutlineVertical v-bind="props" weight="fill" class="cursor-pointer action-icon"/>
         </template>
-        <VSheet width="200" class="rounded-b-lg py-2">
+        <VSheet width="150" class="rounded-b-lg py-2">
           <p @click="props.editComment?.(<Comment>comment)" class="cursor-pointer action-menu-item">
             <PhPencil/>
             Edit
@@ -89,10 +89,11 @@ const handleDelete = (comment: Comment) => {
   grid-area: action;
 }
 .action-menu-item{
-  padding: 15px;
+  padding: 10px 15px !important;
+  font-size: 14px;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center !important;
+  gap: 10px !important;
 }
 
 .action-button:hover, .action-icon:hover{
