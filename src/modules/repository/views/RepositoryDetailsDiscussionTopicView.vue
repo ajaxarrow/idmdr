@@ -19,12 +19,13 @@ import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
 import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 
   const {isMobile} = useScreenStore();
   const {repository, setRepositoryData} = useRepositoryStore();
-  const {fetchTopicByTopicID} = useRepositoryDiscussionTopicServices();
+  const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
   const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
-  const {route} = useRouting();
+  const {route, router} = useRouting();
 
   const topicActionMenu = ref(false);
   const snackbar = ref(false);
@@ -89,6 +90,21 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
     showSnackbar('Comment Deleted')
   }
 
+  const editTopicCallback = () => {
+    showSnackbar('Topic Edited Successfully')
+    topic.value = fetchTopicByTopicID(<string>route.params.topic);
+    topicActionMenu.value = false
+  }
+
+  const deleteTopicCallback = () => {
+    showSnackbar('Topic Deleted Successfully')
+    deleteTopic(<Topic>topic.value);
+    topicActionMenu.value = false
+    router.push({
+      name: 'repository-discussions',
+    });
+  }
+
   const scrollToCommentInput = () => {
     const commentInput = document.getElementById('comment-input');
     if(commentInput){
@@ -99,13 +115,9 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
   const showSnackbar = (message: string) => {
     snackbarMessage.value = message;
     snackbar.value = true
-    // setTimeout(() => {
-    //   snackbar.value = false
-    // }, 3000)
   }
 
   onMounted(() => {
-    console.log('mounted')
     setRepositoryData(route.params.slug as string);
     fetchCommentList()
     topic.value = fetchTopicByTopicID(<string>route.params.topic);
@@ -154,11 +166,17 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
               </p>
             </template>
             <VSheet width="200" class="rounded-b-lg py-2">
-              <p class="cursor-pointer action-menu-item">
-                <PhPencil/>
-                Edit
-              </p>
-              <DeleteDialog :callback="deleteCommentData">
+              <TopicFormDialog
+                form-type="edit"
+                :topic="topic"
+                @callback="editTopicCallback"
+              >
+                <p class="cursor-pointer action-menu-item">
+                  <PhPencil/>
+                  Edit
+                </p>
+              </TopicFormDialog>
+              <DeleteDialog @callback="deleteTopicCallback">
                 <p class="cursor-pointer action-menu-item">
                   <PhTrash/>
                   Delete

@@ -2,7 +2,6 @@
   import {ref} from "vue";
   import {PhWarning} from "@phosphor-icons/vue";
 
-
   const emit = defineEmits(['callback'])
   const deleteDialog = ref(false)
 

@@ -1,8 +1,12 @@
 import {Topic} from "../../../interfaces/dicussion.interface.ts";
 import topics from "../../../data/topics.ts";
+import {ref} from "vue";
 
 export const useRepositoryDiscussionTopicServices = () => {
-  const fetchTopicsByRepositories = (slug: string): Topic[] => {
+  
+  const topicsList = ref(topics);
+  
+  const fetchTopicsByRepository = (slug: string): Topic[] => {
     const topicList = topics.filter(topic => topic.repository === slug);
     if (topicList) {
       return topicList;
@@ -21,8 +25,29 @@ export const useRepositoryDiscussionTopicServices = () => {
     }
   }
 
+  const addTopic = async (topic: Topic) => {
+    topicsList.value.push(topic);
+  }
+
+  const updateTopic = async (topic: Topic) => {
+    const index = topicsList.value.findIndex(c => c.id === topic.id);
+    if (index !== -1) {
+      topicsList.value[index] = topic;
+    }
+  }
+
+  const deleteTopic = async (topic: Topic) => {
+    const index = topicsList.value.findIndex(c => c.id === topic.id);
+    if (index !== -1) {
+      topicsList.value.splice(index, 1);
+    }
+  }
+
   return {
-    fetchTopicsByRepositories,
-    fetchTopicByTopicID
+    fetchTopicsByRepository,
+    fetchTopicByTopicID,
+    addTopic,
+    updateTopic,
+    deleteTopic
   }
 }

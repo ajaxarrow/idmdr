@@ -29,7 +29,10 @@
       },
       placeholder: <string> props.placeholder,
     });
-
+    if (quill.value) {
+      // @ts-ignore
+      quill.value.root.innerHTML = <string>props.modelValue
+    }
     quill.value?.on('text-change', () => {
       emits('update:modelValue', quill.value?.root.innerHTML);
     })
