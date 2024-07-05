@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Navbar from "../components/Landing/Navbar.vue";
 import Hero from "../components/Landing/Hero.vue";
-import {PhCube} from "@phosphor-icons/vue";
 import {onMounted, ref} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
