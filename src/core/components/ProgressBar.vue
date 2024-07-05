@@ -22,7 +22,7 @@ const {isLoading, progress} = useLoadingStore();
   width: 100%;
   opacity: 0;
   display: none;
-  z-index: 100;
+  z-index: 1000000;
   transition: opacity 500ms;
 }
 

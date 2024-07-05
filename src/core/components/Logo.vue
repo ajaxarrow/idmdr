@@ -19,7 +19,7 @@ const handleHover = (isHovered: boolean) => {
 <template>
   <RouterLink to="/" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
     <div class="d-flex align-center text-wrapper" :class="{ 'flex-column': props.useAltDesign }" @mouseover="() => handleHover(true)" @mouseout="() => handleHover(false)">
-    <PhHardDrives :size="props.useAltDesign ? 32 : 30" weight="duotone" color="#3291C7" class="ph-icon" />
+    <PhHardDrives :size="props.useAltDesign ? 32 : 24" weight="duotone" color="#3291C7" class="ph-icon" />
       <template v-if="props.useAltDesign">
         <div>
           <span style="--i:1">I</span>
@@ -44,7 +44,7 @@ const handleHover = (isHovered: boolean) => {
 .text-logo, .text-logo-alt-design {
   color: black;
   font-weight: 900 !important;
-  font-size: 24px !important;
+  font-size: 20px !important;
 }
 
 .text-logo-alt-design {

@@ -37,54 +37,29 @@ onMounted(() => {
         <Navbar>
           <Hero/>
         </Navbar>
-        <PhCube color="#234261" weight="duotone" size="500" class="icon">
-          <animate
-              attributeName="opacity"
-              values="0;1;0"
-              dur="4s"
-              repeatCount="indefinite"
-          />
-          <animateTransform
-              attributeName="transform"
-              attributeType="XML"
-              type="rotate"
-              dur="50s"
-              from="0 0 0"
-              to="360 0 0"
-              repeatCount="indefinite"
-          />
-        </PhCube>
+<!--        <PhCube color="#234261" weight="duotone" size="500" class="icon">-->
+<!--          <animate-->
+<!--              attributeName="opacity"-->
+<!--              values="0;1;0"-->
+<!--              dur="4s"-->
+<!--              repeatCount="indefinite"-->
+<!--          />-->
+<!--          <animateTransform-->
+<!--              attributeName="transform"-->
+<!--              attributeType="XML"-->
+<!--              type="rotate"-->
+<!--              dur="50s"-->
+<!--              from="0 0 0"-->
+<!--              to="360 0 0"-->
+<!--              repeatCount="indefinite"-->
+<!--          />-->
+<!--        </PhCube>-->
       </VContainer>
     </transition>
   </VLayout>
 </template>
 
 <style scoped>
-.circle-background::before {
-  content: '';
-  position: fixed;
-  top: -365px;
-  left: -247px;
-  width: 590px;
-  height: 561px;
-  border-radius: 50%;
-  background: #DEF1FB;
-  z-index: -1;
-}
-
-
-/*.icon{*/
-/*  position: absolute;*/
-/*  top: 0;*/
-/*  left: 0;*/
-/*  right: 0;*/
-/*  bottom: 0;*/
-/*  margin: auto;*/
-/*  z-index: -1;*/
-/*  opacity: 5% !important;*/
-/*}*/
-
-
 .icon{
   position: fixed;
   top: -300px;

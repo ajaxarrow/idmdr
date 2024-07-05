@@ -9,18 +9,30 @@
 
 
   const baseNavLinks = [
-    {
-      title: 'Home',
-      link: '/'
-    },
+    // {
+    //   title: 'Home',
+    //   link: '/'
+    // },
     {
       title: 'About',
       link: '/about'
     },
     {
+      title: 'Partners',
+      link: '/about'
+    },
+    {
+      title: 'News & Updates',
+      link: '/news-updates',
+    },
+    {
+      title: 'Help Center',
+      link: '/contact'
+    },
+    {
       title: 'Contact',
       link: '/contact'
-    }
+    },
   ];
 
   const navLinks = computed(() => {
@@ -45,48 +57,56 @@
 </script>
 
 <template>
-    <VAppBar class="bg-transparent px-lg-10 pt-2 app-bar-blur" elevation="0">
+    <VAppBar class="bg-transparent app-bar-blur px-2 px-lg-5" elevation="0">
       <VContainer fluid>
-        <VRow align="center">
-          <VCol cols="4">
-            <VAppBarTitle >
-              <Logo/>
-            </VAppBarTitle>
-          </VCol>
-          <VSpacer v-if="isSmall"/>
-          <VCol cols="4" class="mx-auto" v-if="!isSmall">
-            <VRow justify="space-around">
-              <VCol v-for="(navLink, index) in navLinks" :key="index" cols="auto">
-                <VListItem
-                    class="nav-item"
-                    active-class="active-nav active-text"
-                    :to="navLink.link"
-                    :title="navLink.title"
-                    color="primary"
-                    link
-                    rounded="lg"
-                />
-              </VCol>
+        <VRow align="center" class="ma-0">
+          <VRow align="center" class="ma-0">
+            <Logo/>
+            <VRow class="ma-0 mx-5"  v-if="!isSmall">
+              <VListItem
+                  v-for="(navLink, index) in navLinks" :key="index"
+                  class="nav-item"
+                  active-class="active-nav active-text"
+                  :to="navLink.link"
+                  :title="navLink.title"
+                  color="primary"
+                  link
+                  rounded="lg"
+              />
             </VRow>
-          </VCol>
+          </VRow>
+          <VSpacer v-if="isSmall"/>
           <VCol cols="auto" v-if="isSmall">
             <transition name="flip" mode="out-in">
               <component :is="activeIcon" @click="toggleMenu" class="cursor-pointer" />
             </transition>
           </VCol>
-          <VCol cols="4" v-else>
-            <VRow justify="end">
-              <VBtnPrimary
-                style="background: none !important;"
-                variant="outlined"
-                class="button-outline"
+          <VRow v-else class="ma-0" justify="end">
+<!--            <VBtnPrimary-->
+<!--                style="background: none !important;"-->
+<!--                variant="outlined"-->
+<!--                class="button-outline"-->
+<!--                :to="{ path: 'auth', query: { tab: 'login' } }"-->
+<!--            >-->
+<!--              Login-->
+<!--            </VBtnPrimary>-->
+<!--            <VBtnPrimary :to="{ path: 'auth', query: { tab: 'register' } }" >Register</VBtnPrimary>-->
+            <VBtn
+                variant="text"
+                class="text-none mx-1 font-weight-medium"
                 :to="{ path: 'auth', query: { tab: 'login' } }"
-              >
-                Login
-              </VBtnPrimary>
-              <VBtnPrimary :to="{ path: 'auth', query: { tab: 'register' } }" >Register</VBtnPrimary>
-            </VRow>
-          </VCol>
+            >
+              Login
+            </VBtn>
+            <VBtn
+                variant="elevated"
+                color="bs50"
+                class="text-none mx-1 font-weight-medium"
+                :to="{ path: 'auth', query: { tab: 'register' } }"
+            >
+              Register
+            </VBtn>
+          </VRow>
         </VRow>
       </VContainer>
     </VAppBar>
@@ -116,7 +136,8 @@
 
 <style scoped>
   .app-bar-blur {
-    /**backdrop-filter: blur(5px);**/
+    backdrop-filter: blur(1000px);
+    border-bottom: 1px solid #E4E4E4;
   }
 
   .nav-item:hover{
@@ -154,17 +175,21 @@
     font-weight: 900 !important;
   }
 
+  :deep(.v-list-item-title){
+    font-size: 14px;
+  }
+
   .v-list-item--variant-text .v-list-item__overlay{
     background: none !important;
   }
 
 
   :deep(.v-list-item--active .v-list-item-title) {
-    font-weight: 500 !important;
+    font-weight: 400 !important;
   }
 
   :deep(.v-list-item-title):hover {
-    font-weight: 500 !important;
+    font-weight: 400 !important;
   }
 
   @keyframes flip {
