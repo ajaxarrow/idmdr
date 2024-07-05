@@ -153,6 +153,10 @@ const {showSnackbarMessage} = useSnackbarStore();
               </p>
             </template>
             <VSheet width="200" class="rounded-b-lg py-2">
+              <p @click="scrollToCommentInput" class="cursor-pointer action-menu-item">
+                <PhChat/>
+                Comment on Topic
+              </p>
               <TopicFormDialog
                 :form-type="FormType.edit"
                 :topic="topic"
@@ -169,10 +173,6 @@ const {showSnackbarMessage} = useSnackbarStore();
                   Delete
                 </p>
               </DeleteDialog>
-              <p @click="scrollToCommentInput" class="cursor-pointer action-menu-item">
-                <PhChat/>
-                Comment on Topic
-              </p>
             </VSheet>
           </VMenu>
         </VRow>
