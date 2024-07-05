@@ -19,7 +19,6 @@ import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
 import {useRepositoryDiscussionCommentServices} from "../services/repository-discussion-comment.services.ts";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
-import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 
   const {isMobile} = useScreenStore();
   const {repository, setRepositoryData} = useRepositoryStore();
@@ -97,7 +96,7 @@ import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
     }
   }
 
-  const showSnackbar = (message: String) => {
+  const showSnackbar = (message: string) => {
     snackbarMessage.value = message;
     snackbar.value = true
     // setTimeout(() => {
