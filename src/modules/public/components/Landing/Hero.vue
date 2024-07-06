@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import {PhMapTrifold} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
-
+import HeroMainImage from "../../../../assets/landing-page/hero-main-image.svg"
 const {isMobile, isSmall} = useScreenStore();
 </script>
 
 <template>
-    <VRow class="ma-0 text-highlight-container" justify="center">
-    <span class="text-highlight">Repository</span> +
-    <span class="text-highlight">Research and Development</span> +
-    <span class="text-highlight">Mapping</span> +
-    <span class="text-highlight">Data</span>
-    </VRow>
+  <VRow class="ma-0 text-highlight-container" justify="center">
+  <span class="text-highlight">Repository</span> +
+  <span class="text-highlight">Research and Development</span> +
+  <span class="text-highlight">Mapping</span> +
+  <span class="text-highlight">Data</span>
+  </VRow>
   <p class="text-heading text-h1 text-center gradient-text position-relative">
 <!--    NOMCAARRD Interactive Data <br/> Mapping Distribution <br/> and Repository-->
-    Interact, Map, Distribute, <br/> <em class="heading-font">Collaborate</em>
+    Interact, Map, Visualize, <br/> <em class="heading-font">Collaborate</em>
   </p>
-  <p class="text-center text-subtitle ">
+  <p class="text-center text-subtitle px-5">
     Experience enhanced data interaction and collaboration by unlocking the potential <br v-if=" !isSmall && !isMobile "/> of your data through <span class="fancy-text">IDMDR's interactive mapping and repository solutions.</span></p>
   <VRow class="mt-4" justify="center">
     <div style="position: relative;">
@@ -35,9 +35,13 @@ const {isMobile, isSmall} = useScreenStore();
         :to="{name: 'map'}">
         <PhMapTrifold size="20" class="mr-2 hvr-icon"/> <span class="animate-underline">Browse Map</span>
       </VBtn>
-
-
     </div>
+  </VRow>
+  <VRow class="ma-0 mt-10" justify="center">
+    <VImg
+        :src="HeroMainImage"
+        alt="Hero Image"
+    />
   </VRow>
 </template>
 
@@ -64,9 +68,16 @@ const {isMobile, isSmall} = useScreenStore();
 .text-heading{
   font-family: 'Gambetta', serif !important;
   font-weight: 500;
-  font-size: 54px !important;
+  font-size: 56px !important;
   line-height: 60px;
   margin-top: 30px;
+}
+
+.blockquote-question{
+  font-family: 'Satoshi', serif !important;
+  font-weight: 800;
+  font-size: 46px !important;
+  line-height: 60px;
 }
 
 .heading-font{
@@ -120,10 +131,7 @@ const {isMobile, isSmall} = useScreenStore();
 }
 
 .gradient-text {
-  background-color: #062b3e;
-  //background: linear-gradient(to right, #5db6c1, #15284c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #062b3e;
 }
 
 .fancy-text{

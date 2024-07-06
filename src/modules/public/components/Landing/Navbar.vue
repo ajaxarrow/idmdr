@@ -56,7 +56,7 @@
 </script>
 
 <template>
-    <VAppBar class="bg-transparent landing-container app-bar-blur px-2 px-lg-10" elevation="0">
+    <VAppBar class="app-bar-blur px-2 px-lg-10" elevation="0">
       <VContainer fluid>
         <VRow align="center" class="ma-0">
           <VRow align="center" class="ma-0">
@@ -81,15 +81,6 @@
             </transition>
           </VCol>
           <VRow v-else class="ma-0" justify="end">
-<!--            <VBtnPrimary-->
-<!--                style="background: none !important;"-->
-<!--                variant="outlined"-->
-<!--                class="button-outline"-->
-<!--                :to="{ path: 'auth', query: { tab: 'login' } }"-->
-<!--            >-->
-<!--              Login-->
-<!--            </VBtnPrimary>-->
-<!--            <VBtnPrimary :to="{ path: 'auth', query: { tab: 'register' } }" >Register</VBtnPrimary>-->
             <VBtn
                 variant="text"
                 class="text-none mx-1 font-weight-medium"
@@ -109,15 +100,15 @@
         </VRow>
       </VContainer>
     </VAppBar>
-    <VMain class="mx-lg-10 mx-xl-10 mx-2 ">
+    <VMain>
       <VExpandTransition>
-        <div v-if="isMenuToggled">
+        <div v-if="isMenuToggled" class="px-lg-10 px-xl-10 mx-5 pt-5">
           <RouterLink
             :to="baseNavLink.link"
             class="text-decoration-none"
             v-for="baseNavLink in baseNavLinks"
             :key="baseNavLink.title">
-            <div class="mx-1 my-0">
+            <div class="mx-1 my-3">
               <p :class="{'menu-link-active': route.path === baseNavLink.link}" class="menu-link">{{ baseNavLink.title }}</p>
               <VDivider class="my-2"/>
             </div>
@@ -137,15 +128,12 @@
           >
             Login
           </VBtnPrimaryAlt>
-
         </div>
         <div v-else>
           <slot/>
         </div>
       </VExpandTransition>
     </VMain>
-
-
 </template>
 
 <style scoped>
@@ -160,7 +148,7 @@
   }
 
   .app-bar-blur {
-    backdrop-filter: blur(1000px);
+    backdrop-filter: blur(100px);
     border-bottom: 1px solid #E4E4E4;
   }
 
