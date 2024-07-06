@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import {computed} from "vue";
   import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
   import Logo from "../../../../core/components/Logo.vue";
   import {useToggleMenu} from "../../../../core/composables/useToggleMenu.ts";
