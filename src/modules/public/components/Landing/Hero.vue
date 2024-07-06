@@ -1,65 +1,83 @@
 <script setup lang="ts">
 import {PhMapTrifold} from "@phosphor-icons/vue";
-import Arrow from "../../../../assets/images/circlearrow.svg";
+import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
+
+const {isMobile, isSmall} = useScreenStore();
 </script>
 
 <template>
     <VRow class="ma-0 text-highlight-container" justify="center">
-   <span class="text-highlight">Repository</span> +
+    <span class="text-highlight">Repository</span> +
     <span class="text-highlight">Research and Development</span> +
     <span class="text-highlight">Mapping</span> +
     <span class="text-highlight">Data</span>
     </VRow>
-  <p class="text-heading  text-h1 text-center gradient-text"> NOMCAARRD Interactive Data <br/> Mapping Distribution <br/> and Repository</p>
+  <p class="text-heading text-h1 text-center gradient-text position-relative">
+<!--    NOMCAARRD Interactive Data <br/> Mapping Distribution <br/> and Repository-->
+    Interact, Map, Distribute, <br/> <em class="heading-font">Collaborate</em>
+  </p>
   <p class="text-center text-subtitle ">
-    Experience enhanced data interaction with <span class="fancy-text">NOMCAARRD's dynamic <br/>  mapping and repository solutions, empowering users.</span></p>
+    Experience enhanced data interaction and collaboration by unlocking the potential <br v-if=" !isSmall && !isMobile "/> of your data through <span class="fancy-text">IDMDR's interactive mapping and repository solutions.</span></p>
   <VRow class="mt-4" justify="center">
     <div style="position: relative;">
-      <VBtnPrimary  width="320px" height="60" class="mb-3 hvr-icon-spin explore-button" :to="{name: 'map'}">
-        <PhMapTrifold size="20" class="mr-2 hvr-icon"/> <span class="animate-underline">Explore our Interactive Map</span>
-      </VBtnPrimary>
-      <VImg
-          :src="Arrow"
-          class="mt-5"
-          alt="Hero Image"
-          width="100%"
-          height=30px
-          style="position: absolute; right: -185px; top: -5px; transform: rotate(-120deg);"
-      />
+      <VBtn
+          variant="elevated"
+          color="bs50"
+          height="45px"
+          class="text-none hvr-icon-spin explore-button mx-1"
+          :to="{name: 'map'}">
+        Get Started
+      </VBtn>
+      <VBtn
+        variant="elevated"
+        height="47px"
+        class="text-none hvr-icon-spin explore-button browse-map-button mx-1"
+        :to="{name: 'map'}">
+        <PhMapTrifold size="20" class="mr-2 hvr-icon"/> <span class="animate-underline">Browse Map</span>
+      </VBtn>
+
 
     </div>
-<!--    <VBtnPrimaryPlain color="gs90" width="200px" :to="{ path: 'auth', query: { tab: 'register' } }">-->
-<!--      <PhArrowCircleUpRight size="20" class="mr-2"/> Get Started-->
-<!--    </VBtnPrimaryPlain>-->
   </VRow>
 </template>
 
 <style scoped>
+.browse-map-button{
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
 .text-highlight-container{
   margin-top: 50px !important;
 }
 .text-highlight{
   font-size: 14px;
-  margin: 0 3px;
+  margin: 2px 3px;
   background-color: #d9f3ff;
   padding: 2px 10px;
   font-weight: 600;
   border-radius: 10px;
 }
 .explore-button{
-  border-radius: 50px !important;
+  border-radius: 10px !important;
 }
 .text-heading{
-  font-weight: 900;
-  font-size: 74px !important;
-  line-height: 90px;
-  margin-top: 20px;
+  font-family: 'Gambetta', serif !important;
+  font-weight: 500;
+  font-size: 54px !important;
+  line-height: 60px;
+  margin-top: 30px;
+}
+
+.heading-font{
+  font-family: 'Gambetta', serif !important;
 }
 
 .text-subtitle{
   font-size: 21px;
   color: #0c0c0c;
-  margin: 25px 0;
+  margin: 15px 0;
+  padding: 0 5px;
 }
 
 @media (max-width: 960px) {
@@ -76,22 +94,22 @@ import Arrow from "../../../../assets/images/circlearrow.svg";
 }
 
 @media (max-width: 768px) {
-  .text-heading{
-    font-size: 46px !important;
-    line-height: 52px;
+  .text-heading, .heading-font{
+    font-size: 40px !important;
+    line-height: 46px;
     margin-top: 40px;
   }
 
   .text-subtitle{
     margin: 20px 0;
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 
 @media (max-width: 476px) {
-  .text-heading{
-    font-size: 40px !important;
-    line-height: 42px;
+  .text-heading, .heading-font{
+    font-size: 28px !important;
+    line-height: 33px;
     margin-top: 25px;
   }
 

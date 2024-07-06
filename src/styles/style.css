@@ -8,6 +8,11 @@ body{
     /*background-color: #F0F5F9 !important;*/
 }
 
+.landing-container{
+    background-image: url('../assets/background/bg-dot.svg') !important;
+    background-repeat: repeat;
+}
+
 .bg-main{
     background-color: #F0F5F9 !important;
 }

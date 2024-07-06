@@ -32,33 +32,19 @@ onMounted(() => {
           :width="isMobile || isLargePhone ? '300' : '500'" />
     </Container>
     <transition name="fade" v-show="!loading">
-      <VContainer fluid>
-        <Navbar>
-          <Hero/>
-        </Navbar>
-<!--        <PhCube color="#234261" weight="duotone" size="500" class="icon">-->
-<!--          <animate-->
-<!--              attributeName="opacity"-->
-<!--              values="0;1;0"-->
-<!--              dur="4s"-->
-<!--              repeatCount="indefinite"-->
-<!--          />-->
-<!--          <animateTransform-->
-<!--              attributeName="transform"-->
-<!--              attributeType="XML"-->
-<!--              type="rotate"-->
-<!--              dur="50s"-->
-<!--              from="0 0 0"-->
-<!--              to="360 0 0"-->
-<!--              repeatCount="indefinite"-->
-<!--          />-->
-<!--        </PhCube>-->
+      <VContainer fluid class="landing-container">
+        <div>
+          <Navbar>
+            <Hero />
+          </Navbar>
+        </div>
       </VContainer>
     </transition>
   </VLayout>
 </template>
 
 <style scoped>
+
 .icon{
   position: fixed;
   top: -300px;
