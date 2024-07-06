@@ -12,11 +12,10 @@ const {isMobile, isSmall} = useScreenStore();
   <span class="text-highlight">Mapping</span> +
   <span class="text-highlight">Data</span>
   </VRow>
-  <p class="text-heading text-h1 text-center gradient-text position-relative">
-<!--    NOMCAARRD Interactive Data <br/> Mapping Distribution <br/> and Repository-->
+  <p class="text-heading text-center gradient-text">
     Interact, Map, Visualize, <br/> <em class="heading-font">Collaborate</em>
   </p>
-  <p class="text-center text-subtitle px-5">
+  <p class="text-center text-subtitle px-sm-10 px-xs-5">
     Experience enhanced data interaction and collaboration by unlocking the potential <br v-if=" !isSmall && !isMobile "/> of your data through <span class="fancy-text">IDMDR's interactive mapping and repository solutions.</span></p>
   <VRow class="mt-4" justify="center">
     <div style="position: relative;">

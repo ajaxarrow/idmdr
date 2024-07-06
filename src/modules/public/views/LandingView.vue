@@ -114,7 +114,7 @@ onMounted(() => {
             <blockquote class="blockquote-question text-center pt-5">
               Why IDMDR?
             </blockquote>
-            <VRow justify="center" class="ma-0 py-5 px-15">
+            <VRow justify="center" class="ma-0 py-5 px-5 px-xl-15 px-xxl-15 px-lg-15">
               <VCol v-for="text in highlights" cols="12" lg="4" xl="4" xxl="4">
                 <div>
                   <p class="text-highlight-title">{{text.adjective}}</p>
@@ -182,13 +182,13 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .blockquote-question{
-    font-size: 36px;
+    font-size: 32px;
   }
 }
 
 @media (max-width: 476px) {
   .blockquote-question{
-    font-size: 32px;
+    font-size: 28px;
   }
 }
 
