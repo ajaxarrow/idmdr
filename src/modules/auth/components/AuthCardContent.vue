@@ -75,8 +75,6 @@
         <component size="20" class="mr-2 hvr-icon" weight="fill" :is="authButton.icon" /> {{authType}} with {{authButton.title}}
       </VBtnAuth>
     </VRow>
-
-
     <p class="text-center my-3" v-if="tab === 'login'">
       New to this platform?
       <RouterLink
