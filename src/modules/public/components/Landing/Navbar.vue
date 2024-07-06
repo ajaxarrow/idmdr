@@ -3,16 +3,13 @@
   import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
   import Logo from "../../../../core/components/Logo.vue";
   import {useToggleMenu} from "../../../../core/composables/useToggleMenu.ts";
+  import {useRouting} from "../../../../core/composables/useRouting.ts";
 
   const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
   const {isSmall} = useScreenStore();
-
+  const {route} = useRouting();
 
   const baseNavLinks = [
-    // {
-    //   title: 'Home',
-    //   link: '/'
-    // },
     {
       title: 'About',
       link: '/about'
@@ -35,21 +32,24 @@
     },
   ];
 
-  const navLinks = computed(() => {
-    if (!isSmall.value) return baseNavLinks;
-
-    return [
-      ...baseNavLinks,
-      {
-        title: 'Login',
-        link: '/auth?tab=login'
-      },
-      {
-        title: 'Register',
-        link: '/auth?tab=register'
-      }
-    ];
-  });
+  // const navLinks = computed(() => {
+  //   if (!isSmall.value) return baseNavLinks;
+  //   return [
+  //     ...baseNavLinks,
+  //
+  //   ];
+  // });
+  //
+  // const authLinks = [
+  //   {
+  //     title: 'Login',
+  //     link: '/auth?tab=login'
+  //   },
+  //   {
+  //     title: 'Register',
+  //     link: '/auth?tab=register'
+  //   }
+  // ]
 
 
 
@@ -64,7 +64,7 @@
             <Logo/>
             <VRow class="ma-0 mx-5"  v-if="!isSmall">
               <VListItem
-                  v-for="(navLink, index) in navLinks" :key="index"
+                  v-for="(navLink, index) in baseNavLinks" :key="index"
                   class="nav-item"
                   active-class="active-nav active-text"
                   :to="navLink.link"
@@ -110,20 +110,35 @@
         </VRow>
       </VContainer>
     </VAppBar>
-    <VMain class="mx-lg-10 mx-xl-10">
+    <VMain class="mx-lg-10 mx-xl-10 mx-2 ">
       <VExpandTransition>
         <div v-if="isMenuToggled">
-          <VList rounded="lg" class="bg-background border">
-            <VListItem
-                class="nav-item"
-                v-for="(navLink, index) in navLinks" :key="index"
-                active-class="active-nav active-text"
-                :to="navLink.link"
-                :title="navLink.title"
-                color="primary"
-                link
-            />
-          </VList>
+          <RouterLink
+            :to="baseNavLink.link"
+            class="text-decoration-none"
+            v-for="baseNavLink in baseNavLinks"
+            :key="baseNavLink.title">
+            <div class="mx-1 my-0">
+              <p :class="{'menu-link-active': route.path === baseNavLink.link}" class="menu-link">{{ baseNavLink.title }}</p>
+              <VDivider class="my-2"/>
+            </div>
+          </RouterLink>
+          <VBtnPrimaryAlt
+              color="bs50"
+              width="98%"
+              class="submit-button my-1 mt-5"
+          >
+            Register
+          </VBtnPrimaryAlt>
+          <VBtnPrimaryAlt
+              color="bs50"
+              width="98%"
+              variant="outlined"
+              class="button-outline my-1"
+          >
+            Login
+          </VBtnPrimaryAlt>
+
         </div>
         <div v-else>
           <slot/>
@@ -135,6 +150,16 @@
 </template>
 
 <style scoped>
+  .menu-link{
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .menu-link-active{
+    color: #23668b;
+  }
+
   .app-bar-blur {
     backdrop-filter: blur(1000px);
     border-bottom: 1px solid #E4E4E4;
