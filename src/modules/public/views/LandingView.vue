@@ -179,8 +179,8 @@ onMounted(() => {
               </VRow>
             </VContainer>
           </div>
+          <Footer/>
         </Navbar>
-        <Footer/>
       </div>
     </transition>
   </VLayout>
