@@ -123,7 +123,7 @@ onMounted(() => {
               <Hero/>
             </VContainer>
           </div>
-          <div class="bg-sb20">
+          <div class="bg-sb10">
             <VContainer>
               <blockquote class="blockquote-question text-center pt-5">
                 Why IDMDR?
@@ -138,7 +138,7 @@ onMounted(() => {
               </VRow>
             </VContainer>
           </div>
-          <div class="bg-sb10">
+          <div class="">
             <VContainer>
               <VRow class="ma-0 mt-5"  justify="center" align="center" v-if="isSmall">
                 <component
@@ -191,7 +191,7 @@ onMounted(() => {
             </VContainer>
             <div class="mt-10">
               <p class="text-h5 text-sm-h4 text-md-h3 text-lg-h4 text-xl-h3 text-xxl-h3 font-weight-bold text-center my-2 mx-5">Get Started Now!</p>
-              <p class="text-center font-weight-medium text-gs30 my-2 mx-5 ">Explore IDMDR now as a guest by browsing the interactive map and discover new features today</p>
+              <p class="text-center font-weight-medium text-gs30 my-5 mx-5 ">Explore IDMDR now as a guest by browsing the interactive map and discover new features today</p>
               <VRow class="ma-0 mb-15" justify="center">
                 <VBtn
                     color="bs50"
