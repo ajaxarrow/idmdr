@@ -117,6 +117,7 @@
               color="bs50"
               width="98%"
               class="submit-button my-1 mt-5"
+              :to="{ path: 'auth', query: { tab: 'register' } }"
           >
             Register
           </VBtnPrimaryAlt>
@@ -125,6 +126,7 @@
               width="98%"
               variant="outlined"
               class="button-outline my-1"
+              :to="{ path: 'auth', query: { tab: 'login' } }"
           >
             Login
           </VBtnPrimaryAlt>

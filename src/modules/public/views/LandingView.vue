@@ -16,16 +16,16 @@ const loading = ref(true)
 
 const highlights = [
   {
-    adjective: 'Approachable',
-    description: 'Builds on top of standard HTML, CSS and JavaScript with intuitive API and world-class documentation.'
+    adjective: 'Efficient Data Storage',
+    description: 'Digitize and centralize NOMCAARRD\'s gathered information with a user-friendly repository system for streamlined data management and collaboration, ensuring all data is organized and easily retrievable.'
   },
   {
-    adjective: 'Performant',
-    description: 'Truly reactive, compiler-optimized rendering system that rarely requires manual optimization.'
+    adjective: 'Secure Data Access',
+    description: 'Ensure data accessibility and transparency while protecting against unauthorized access through robust user access controls and secure data handling, providing peace of mind for all stakeholders.'
   },
   {
-    adjective: 'Versatile',
-    description: 'A rich, incrementally adoptable ecosystem that scales between a library and a full-featured framework.'
+    adjective: 'Advanced Visualization',
+    description: 'Precisely tag projects and commodities to their corresponding source areas, and utilize sophisticated mapping and historical analysis tools for comprehensive visualization and effective monitoring.'
   }
 ]
 
@@ -103,62 +103,63 @@ onMounted(() => {
           :width="isMobile || isLargePhone ? '300' : '500'" />
     </Container>
     <transition name="fade" v-show="!loading">
-      <Navbar>
-        <div class="landing-container">
-          <VContainer>
-            <Hero/>
-          </VContainer>
-        </div>
-        <div class="bg-white">
-          <VContainer>
-            <blockquote class="blockquote-question text-center pt-5">
-              Why IDMDR?
-            </blockquote>
-            <VRow justify="center" class="ma-0 py-5 px-5 px-xl-15 px-xxl-15 px-lg-15">
-              <VCol v-for="text in highlights" cols="12" lg="4" xl="4" xxl="4">
-                <div>
-                  <p class="text-highlight-title">{{text.adjective}}</p>
-                  <p>{{text.description}}</p>
-                </div>
-              </VCol>
-            </VRow>
-            <VRow class="ma-0 mx-15" justify="space-around">
-              <div
-                  v-for="(feature, i) in features"
-                  class="d-flex flex-column align-center"
-              >
-                <component
-                    :is="feature.icon"
-                    size="40"
-                    :color="feature.title == selectedFeature.title ? feature.color : '#8C8C8C'"
-                />
-                <p class="text-gs40 font-weight-bold text-h6">{{feature.title}}</p>
-              </div>
-            </VRow>
-            <VRow class="ma-0" justify="center">
-              <VCarousel
-                  v-model="selectedFeature"
-                  class="rounded-lg mx-15"
-                  show-arrows="hover"
-              >
-                <VCarouselItem
-                    class="bg-white w-100"
+      <div style="width: 100%">
+        <Navbar>
+          <div class="landing-container">
+            <VContainer>
+              <Hero/>
+            </VContainer>
+          </div>
+          <div class="bg-white">
+            <VContainer>
+              <blockquote class="blockquote-question text-center pt-5">
+                Why IDMDR?
+              </blockquote>
+              <VRow justify="center" class="ma-0 py-5 px-5 px-xl-15 px-xxl-15 px-lg-15">
+                <VCol v-for="text in highlights" cols="12" lg="4" xl="4" xxl="4">
+                  <div>
+                    <p class="text-highlight-title">{{text.adjective}}</p>
+                    <p>{{text.description}}</p>
+                  </div>
+                </VCol>
+              </VRow>
+              <VRow class="ma-0 mx-15" justify="space-around">
+                <div
                     v-for="(feature, i) in features"
-                    :key="i"
-                    :value="feature"
+                    class="d-flex flex-column align-center"
                 >
-                  <VSheet :color="feature.color" height="100%">
+                  <component
+                      :is="feature.icon"
+                      size="40"
+                      :color="feature.title == selectedFeature.title ? feature.color : '#8C8C8C'"
+                  />
+                  <p :style="{color: feature.title == selectedFeature.title ? feature.color : '#8C8C8C'}" class="font-weight-bold text-h6">{{feature.title}}</p>
+                </div>
+              </VRow>
+              <VRow class="ma-0" justify="center">
+                <VCarousel
+                    style="width: 100%; height :100%;"
+                    v-model="selectedFeature"
+                    class="rounded-lg"
+                    show-arrows="hover"
+                >
+                  <VCarouselItem
+                      class="bg-white w-100"
+                      v-for="(feature, i) in features"
+                      :key="i"
+                      :value="feature"
+                  >
                     <VImg
                         :src="feature.image"
                         alt="Hero Image"
                     />
-                  </VSheet>
-                </VCarouselItem>
-              </VCarousel>
-            </VRow>
-          </VContainer>
-        </div>
-      </Navbar>
+                  </VCarouselItem>
+                </VCarousel>
+              </VRow>
+            </VContainer>
+          </div>
+        </Navbar>
+      </div>
     </transition>
 
   </VLayout>>
@@ -211,6 +212,11 @@ onMounted(() => {
   opacity: 0;
   height: 0;
   overflow: hidden;
+}
+
+:deep(.v-window__container){
+  width: 100% !important;
+  height: 100% !important;
 }
 
 </style>
