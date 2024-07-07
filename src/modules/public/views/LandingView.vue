@@ -92,10 +92,6 @@ const selectFeature = (feature: Feature) => {
   selectedFeature.value = feature;
 }
 
-watch(() => selectedFeature.value, () => {
-  console.log(selectedFeature.value)
-})
-
 const startPage = () => {
   setTimeout(() => {
     loading.value = false;
