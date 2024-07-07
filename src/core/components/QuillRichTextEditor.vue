@@ -45,17 +45,17 @@
 </template>
 
 <style scoped>
-  :deep .ql-toolbar{
+  :deep(.ql-toolbar){
     margin-top: 8px;
     border: 1.75px solid rgba(140, 140, 140, 0.2) !important;
     border-radius: 10px 10px 0 0 !important;
   }
 
-  :deep .ql-editor.ql-blank::before {
+  :deep(.ql-editor.ql-blank::before){
     content: none;
   }
 
-  :deep .ql-editor.ql-blank::after {
+  :deep(.ql-editor.ql-blank::after){
     color: #5F6061;
     opacity: 90%;
     content: attr(data-placeholder);
@@ -64,6 +64,7 @@
     display: block;
     margin-top: -1.42rem;
   }
+
   #editor{
     border: 1.75px solid rgba(140, 140, 140, 0.2);
     border-radius: 0 0 10px 10px ;

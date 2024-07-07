@@ -92,7 +92,7 @@ watch(() => searchQuery.value, () => {
   opacity: 75%;
 }
 
-:deep .v-field__outline {
+:deep(.v-field__outline) {
   opacity: 70%;
   color: #8C8C8C;
   --v-field-border-width: 1px !important;

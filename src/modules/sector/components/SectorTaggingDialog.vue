@@ -160,25 +160,6 @@ const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
   font-size: 14px;
 }
 
-:deep .v-label{
-  opacity: 100% !important;
-}
-
-:deep .v-icon{
-  --v-icon-size-multiplier: 1.23
-}
-
-:deep .v-field__outline {
-  opacity: 20%;
-  color: #8C8C8C;
-  --v-field-border-width: 1.75px !important;
-}
-
-:deep input::placeholder {
-  color: #5F6061;
-  opacity: 90%;
-}
-
 .button-outline{
   font-weight: 500 !important;
   letter-spacing: 0;
@@ -186,7 +167,26 @@ const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
   border-radius: 10px;
 }
 
-:deep .v-overlay__content {
+:deep(.v-label){
+  opacity: 100% !important;
+}
+
+:deep(.v-icon){
+  --v-icon-size-multiplier: 1.23
+}
+
+:deep(.v-field__outline){
+  opacity: 20%;
+  color: #8C8C8C;
+  --v-field-border-width: 1.75px !important;
+}
+
+:deep(input::placeholder){
+  color: #5F6061;
+  opacity: 90%;
+}
+
+:deep(.v-overlay__content){
   display: grid !important;
   place-items: center !important;
 }

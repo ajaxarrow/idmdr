@@ -322,22 +322,22 @@ const {showSnackbarMessage} = useSnackbarStore();
     background-color: #e0e3e3;
   }
 
-  :deep .v-field__outline {
+  :deep(.v-field__outline){
     opacity: 20%;
     color: #8C8C8C;
     --v-field-border-width: 1.75px !important;
   }
 
-  :deep textarea::placeholder {
+  :deep(textarea::placeholder){
     color: #5F6061;
     opacity: 90%;
   }
 
-  :deep .v-input__control{
+  :deep(.v-input__control){
     height: 70px;
   }
 
-  :deep .v-snackbar__content{
+  :deep(.v-snackbar__content){
 
   }
 

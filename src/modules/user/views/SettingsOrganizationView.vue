@@ -102,7 +102,7 @@ const {members} = useMemberStore();
     letter-spacing: 0.5px;
   }
 
-  :deep .v-label{
+  :deep(.v-label){
     opacity: 100% !important;
   }
 

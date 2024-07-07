@@ -55,7 +55,7 @@
   border-radius: 15px !important;
 }
 
-:deep .v-overlay__content {
+:deep(.v-overlay__content){
   display: grid !important;
   place-items: center !important;
 }

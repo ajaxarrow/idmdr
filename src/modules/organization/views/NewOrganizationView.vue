@@ -222,17 +222,17 @@ const clusters: string[] = Object.values(ClusterType);
 </template>
 
 <style scoped>
-:deep .ql-toolbar{
+:deep(.ql-toolbar){
   margin-top: 8px;
   border: 1.75px solid rgba(140, 140, 140, 0.2) !important;
   border-radius: 10px 10px 0 0 !important;
 }
 
-:deep .ql-editor.ql-blank::before {
+:deep(.ql-editor.ql-blank::before){
   content: none;
 }
 
-:deep .ql-editor.ql-blank::after {
+:deep(.ql-editor.ql-blank::after){
   color: #5F6061;
   opacity: 90%;
   content: attr(data-placeholder);
@@ -302,31 +302,6 @@ const clusters: string[] = Object.values(ClusterType);
   text-decoration: underline;
 }
 
-
-:deep .v-label{
-  opacity: 100% !important;
-}
-
-:deep .v-icon{
-  --v-icon-size-multiplier: 1.23
-}
-
-:deep .v-field__outline {
-  opacity: 20%;
-  color: #8C8C8C;
-  --v-field-border-width: 1.75px !important;
-}
-
-:deep input::placeholder {
-  color: #5F6061;
-  opacity: 90%;
-}
-
-:deep textarea::placeholder {
-  color: #5F6061;
-  opacity: 90%;
-}
-
 .back-button{
   width: 175px;
   font-size: 14px;
@@ -334,5 +309,29 @@ const clusters: string[] = Object.values(ClusterType);
 .back-button:hover{
   border-radius: 8px;
   background-color: #f2f7fa;
+}
+
+:deep(.v-label){
+  opacity: 100% !important;
+}
+
+:deep(.v-icon){
+  --v-icon-size-multiplier: 1.23
+}
+
+:deep(.v-field__outline){
+  opacity: 20%;
+  color: #8C8C8C;
+  --v-field-border-width: 1.75px !important;
+}
+
+:deep(input::placeholder){
+  color: #5F6061;
+  opacity: 90%;
+}
+
+:deep(textarea::placeholder){
+  color: #5F6061;
+  opacity: 90%;
 }
 </style>
