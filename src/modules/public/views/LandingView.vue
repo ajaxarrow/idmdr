@@ -6,13 +6,12 @@ import FeatureMap from '../../../assets/landing-page/feature-map.png';
 import FeatureOrganization from '../../../assets/landing-page/feature-organization.png';
 import FeatureRepository from '../../../assets/landing-page/feature-repository.png';
 import FeatureTagging from '../../../assets/landing-page/feature-tagging.png';
-import {onMounted, ref, watch} from "vue";
+import {defineComponent, onMounted, ref, watch} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
 import {PhCloud, PhMapPinLine, PhOption, PhTag, PhUsersThree} from "@phosphor-icons/vue";
 import Footer from "../components/Footer.vue";
-import {defineComponent} from "vue/dist/vue";
 
 type CustomComponent = ReturnType<typeof defineComponent>;
 
