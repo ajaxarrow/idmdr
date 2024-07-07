@@ -7,7 +7,7 @@ import FeatureOrganization from '../../../assets/landing-page/feature-organizati
 import FeatureRepository from '../../../assets/landing-page/feature-repository.png';
 import FeatureTagging from '../../../assets/landing-page/feature-tagging.png';
 import HighFive from '../../../assets/landing-page/high-five.svg';
-import {defineComponent, onMounted, ref, shallowRef, watch} from "vue";
+import {defineComponent, onMounted, ref, shallowRef} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
