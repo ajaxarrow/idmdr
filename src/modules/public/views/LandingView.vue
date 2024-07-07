@@ -6,11 +6,12 @@ import FeatureMap from '../../../assets/landing-page/feature-map.png';
 import FeatureOrganization from '../../../assets/landing-page/feature-organization.png';
 import FeatureRepository from '../../../assets/landing-page/feature-repository.png';
 import FeatureTagging from '../../../assets/landing-page/feature-tagging.png';
-import {defineComponent, onMounted, ref, watch} from "vue";
+import HighFive from '../../../assets/landing-page/high-five.svg';
+import {defineComponent, onMounted, ref, shallowRef, watch} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
-import {PhCloud, PhMapPinLine, PhOption, PhTag, PhUsersThree} from "@phosphor-icons/vue";
+import {PhCloud, PhMapPinLine, PhMapTrifold, PhOption, PhTag, PhUsersThree} from "@phosphor-icons/vue";
 import Footer from "../components/Footer.vue";
 
 type CustomComponent = ReturnType<typeof defineComponent>;
@@ -41,7 +42,7 @@ const highlights = [
   }
 ]
 
-const selectedFeature = ref<Feature>(  {
+const selectedFeature = shallowRef<Feature>(  {
   title: 'Repository',
   description: 'Store project files and collaborate',
   icon: PhCloud,
@@ -188,7 +189,28 @@ onMounted(() => {
                 </VCarousel>
               </VRow>
             </VContainer>
+            <div class="mt-10">
+              <p class="text-h5 text-sm-h4 text-md-h3 text-lg-h4 text-xl-h3 text-xxl-h3 font-weight-bold text-center my-2 mx-5">Get Started Now!</p>
+              <p class="text-center font-weight-medium text-gs30 my-2 mx-5 ">Explore IDMDR now as a guest by browsing the interactive map and discover new features today</p>
+              <VRow class="ma-0 mb-15" justify="center">
+                <VBtn
+                    color="bs50"
+                    variant="elevated"
+                    height="47px"
+                    class="text-none hvr-icon-spin explore-button browse-map-button mx-1"
+                    :to="{name: 'map'}">
+                  <PhMapTrifold size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">Browse Our Interactive Map</span></span>
+                </VBtn>
+              </VRow>
+              <VImg
+                  class="mx-5"
+                  :height="isSmall ? '200px' : '400px'"
+                  :src="HighFive"
+                  alt="Hero Image"
+              />
+            </div>
           </div>
+          <VDivider/>
           <Footer/>
         </Navbar>
       </div>
