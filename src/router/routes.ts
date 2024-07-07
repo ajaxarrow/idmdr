@@ -10,6 +10,12 @@ export const routes = [
     component: () => import('../modules/public/views/LandingView.vue')
   },
   {
+    path: '/about',
+    name: 'about',
+    // @ts-ignore
+    component: () => import('../modules/public/views/AboutView.vue')
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     // @ts-ignore
