@@ -11,7 +11,8 @@ import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
 import {PhCloud, PhMapPinLine, PhOption, PhTag, PhUsersThree} from "@phosphor-icons/vue";
-const {isMobile, isLargePhone} = useScreenStore()
+
+const {isMobile, isLargePhone, isSmall} = useScreenStore()
 const loading = ref(true)
 
 const highlights = [
@@ -115,7 +116,7 @@ onMounted(() => {
               <blockquote class="blockquote-question text-center pt-5">
                 Why IDMDR?
               </blockquote>
-              <VRow justify="center" class="ma-0 py-5 px-5 px-xl-15 px-xxl-15 px-lg-15">
+              <VRow justify="center" class="ma-0 mb-15 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
                 <VCol v-for="text in highlights" cols="12" lg="4" xl="4" xxl="4">
                   <div>
                     <p class="text-highlight-title">{{text.adjective}}</p>
@@ -123,24 +124,36 @@ onMounted(() => {
                   </div>
                 </VCol>
               </VRow>
-              <VRow class="ma-0 mx-15" justify="space-around">
-                <div
-                    v-for="(feature, i) in features"
-                    class="d-flex flex-column align-center"
-                >
-                  <component
-                      :is="feature.icon"
-                      size="40"
-                      :color="feature.title == selectedFeature.title ? feature.color : '#8C8C8C'"
-                  />
-                  <p :style="{color: feature.title == selectedFeature.title ? feature.color : '#8C8C8C'}" class="font-weight-bold text-h6">{{feature.title}}</p>
-                </div>
+              <VRow class="ma-0" justify="center" align="center" v-if="isSmall">
+                <component
+                    :is="selectedFeature.icon"
+                    size="26"
+                    :color="selectedFeature.color"
+                />
+                <p  :style="{color: selectedFeature.color}" class="ml-1 font-weight-bold text-h6 text-">{{selectedFeature.title}}</p>
               </VRow>
-              <VRow class="ma-0" justify="center">
+              <VRow
+                justify="center" class="ma-0 mb-5 features-container" v-else>
+                <VRow class="ma-0 mx-15 px-15" justify="space-around">
+                  <div
+                      v-for="(feature, i) in features"
+                      class="d-flex flex-column align-center"
+                  >
+                    <component
+                        weight="bold"
+                        :is="feature.icon"
+                        size="30"
+                        :color="feature.title == selectedFeature.title ? feature.color : '#8C8C8C'"
+                    />
+                    <p :style="{color: feature.title == selectedFeature.title ? feature.color : '#8C8C8C'}" class=" font-weight-bold text-h6">{{feature.title}}</p>
+                  </div>
+                </VRow>
+              </VRow>
+              <p class="mx-4 text-center text-gs10 font-weight-medium mt-2">{{selectedFeature.description}}</p>
+              <VRow class="ma-0 my-7" justify="center">
                 <VCarousel
-                    style="width: 100%; height :100%;"
                     v-model="selectedFeature"
-                    class="rounded-lg"
+                    class="rounded-lg carousel"
                     show-arrows="hover"
                 >
                   <VCarouselItem
@@ -214,9 +227,25 @@ onMounted(() => {
   overflow: hidden;
 }
 
+.carousel{
+  width: 70% !important;
+  height: 70% !important;
+}
+
+
 :deep(.v-window__container){
   width: 100% !important;
   height: 100% !important;
 }
+
+@media (max-width: 768px) {
+  .carousel{
+    width: 85% !important;
+    height: 85% !important;
+  }
+}
+
+
+
 
 </style>
