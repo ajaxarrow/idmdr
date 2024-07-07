@@ -3,7 +3,7 @@ import {PhHardDrives} from "@phosphor-icons/vue";
 </script>
 
 <template>
-  <div class="bg-background">
+  <div class="bg-sb20">
     <VContainer>
       <RouterLink to="/" class="text-decoration-none">
         <div class="d-flex align-center text-logo">
