@@ -12,6 +12,17 @@ import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
 import {PhCloud, PhMapPinLine, PhOption, PhTag, PhUsersThree} from "@phosphor-icons/vue";
 import Footer from "../components/Footer.vue";
+import {defineComponent} from "vue/dist/vue";
+
+type CustomComponent = ReturnType<typeof defineComponent>;
+
+interface Feature {
+  title: string,
+  description: string,
+  icon: CustomComponent,
+  color: string,
+  image: CustomComponent
+}
 
 const {isMobile, isLargePhone, isSmall} = useScreenStore()
 const loading = ref(true)
@@ -31,7 +42,7 @@ const highlights = [
   }
 ]
 
-const selectedFeature = ref<Object>(  {
+const selectedFeature = ref<Feature>(  {
   title: 'Repository',
   description: 'Store project files and collaborate',
   icon: PhCloud,
@@ -39,7 +50,7 @@ const selectedFeature = ref<Object>(  {
   image: FeatureRepository
 })
 
-const features = [
+const features: Feature[] = [
   {
     title: 'Repository',
     description: 'Store project files and collaborate',
@@ -77,7 +88,7 @@ const features = [
   },
 ]
 
-const selectFeature = (feature: Object) => {
+const selectFeature = (feature: Feature) => {
   selectedFeature.value = feature;
 }
 
