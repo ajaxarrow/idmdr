@@ -2,9 +2,11 @@
 
 *{
     font-family: 'Satoshi', sans-serif !important;
+    scroll-behavior: smooth !important;
 }
 
 body{
+    scroll-behavior: smooth;
     /*background-color: #F0F5F9 !important;*/
 }
 
