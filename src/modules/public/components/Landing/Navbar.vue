@@ -15,7 +15,7 @@
     },
     {
       title: 'Stakeholders',
-      link: '/about'
+      link: '/stakeholders'
     },
     {
       title: 'News & Updates',
@@ -23,7 +23,7 @@
     },
     {
       title: 'Help Center',
-      link: '/contact'
+      link: '/help'
     },
     {
       title: 'Contact',
@@ -165,7 +165,6 @@
   .active-nav {
     background-color: transparent;
     color: transparent !important;
-    text-decoration: underline;
   }
 
   .active-text{
