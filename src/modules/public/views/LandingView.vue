@@ -11,6 +11,7 @@ import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
 import {PhCloud, PhMapPinLine, PhOption, PhTag, PhUsersThree} from "@phosphor-icons/vue";
+import Footer from "../components/Footer.vue";
 
 const {isMobile, isLargePhone, isSmall} = useScreenStore()
 const loading = ref(true)
@@ -104,19 +105,19 @@ onMounted(() => {
           :width="isMobile || isLargePhone ? '300' : '500'" />
     </Container>
     <transition name="fade" v-show="!loading">
-      <div style="width: 100%">
+      <div style="width: 100%" >
         <Navbar>
           <div class="landing-container">
             <VContainer>
               <Hero/>
             </VContainer>
           </div>
-          <div class="bg-white">
+          <div class="bg-sb20">
             <VContainer>
               <blockquote class="blockquote-question text-center pt-5">
                 Why IDMDR?
               </blockquote>
-              <VRow justify="center" class="ma-0 mb-15 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
+              <VRow justify="center" class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
                 <VCol v-for="text in highlights" cols="12" lg="4" xl="4" xxl="4">
                   <div>
                     <p class="text-highlight-title">{{text.adjective}}</p>
@@ -124,20 +125,25 @@ onMounted(() => {
                   </div>
                 </VCol>
               </VRow>
-              <VRow class="ma-0" justify="center" align="center" v-if="isSmall">
+            </VContainer>
+          </div>
+          <div class="bg-sb10">
+            <VContainer>
+              <VRow class="ma-0 mt-5"  justify="center" align="center" v-if="isSmall">
                 <component
                     :is="selectedFeature.icon"
                     size="26"
                     :color="selectedFeature.color"
                 />
-                <p  :style="{color: selectedFeature.color}" class="ml-1 font-weight-bold text-h6 text-">{{selectedFeature.title}}</p>
+                <p  :style="{color: selectedFeature.color}" class="ml-1 font-weight-bold text-h6">{{selectedFeature.title}}</p>
               </VRow>
               <VRow
-                justify="center" class="ma-0 mb-5 features-container" v-else>
+                justify="center" class="ma-0 my-6 features-container" v-else>
                 <VRow class="ma-0 mx-15 px-15" justify="space-around">
                   <div
-                      v-for="(feature, i) in features"
-                      class="d-flex flex-column align-center"
+                      v-for="(feature) in features"
+                      class="d-flex flex-column align-center cursor-pointer"
+                      @click="selectFeature(feature)"
                   >
                     <component
                         weight="bold"
@@ -149,8 +155,10 @@ onMounted(() => {
                   </div>
                 </VRow>
               </VRow>
-              <p class="mx-4 text-center text-gs10 font-weight-medium mt-2">{{selectedFeature.description}}</p>
-              <VRow class="ma-0 my-7" justify="center">
+              <p
+                :style="{fontSize: isSmall ? '16px' : '18px'}"
+                class="mx-4 text-center text-gs10 font-weight-medium mt-2">{{selectedFeature.description}}</p>
+              <VRow class="ma-0 my-10" justify="center">
                 <VCarousel
                     v-model="selectedFeature"
                     class="rounded-lg carousel"
@@ -172,10 +180,10 @@ onMounted(() => {
             </VContainer>
           </div>
         </Navbar>
+        <Footer/>
       </div>
     </transition>
-
-  </VLayout>>
+  </VLayout>
 </template>
 
 <style scoped>
