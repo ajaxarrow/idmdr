@@ -2,6 +2,7 @@
 import {PhMapTrifold} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
 import HeroMainImage from "../../../../assets/landing-page/hero-main-image.svg"
+import Placeholder from "../../../../assets/landing-page/placeholder.png"
 const {isMobile, isSmall} = useScreenStore();
 </script>
 
@@ -38,16 +39,11 @@ const {isMobile, isSmall} = useScreenStore();
   </VRow>
   <VRow class="ma-0 mt-10" justify="center">
     <VImg
+        height="100%"
         :src="HeroMainImage"
         alt="Hero Image"
-    >
-      <template v-slot:placeholder>
-        <div class="placeholder-container">
-          <VProgressCircular indeterminate color="primary" />
-          <span>Loading image...</span>
-        </div>
-      </template>
-    </VImg>
+        :lazy-src="Placeholder"
+    />
   </VRow>
 </template>
 

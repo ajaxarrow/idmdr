@@ -7,6 +7,7 @@ import FeatureOrganization from '../../../assets/landing-page/feature-organizati
 import FeatureRepository from '../../../assets/landing-page/feature-repository.png';
 import FeatureTagging from '../../../assets/landing-page/feature-tagging.png';
 import HighFive from '../../../assets/landing-page/high-five.svg';
+import Placeholder from '../../../assets/landing-page/placeholder.png';
 import {defineComponent, onMounted, ref, shallowRef} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
@@ -172,22 +173,17 @@ onMounted(() => {
                     show-arrows="hover"
                 >
                   <VCarouselItem
-                      class="bg-white w-100"
+                      class="bg-sb20 w-100"
                       v-for="(feature, i) in features"
                       :key="i"
                       :value="feature"
                   >
                       <VImg
+                          height="100%"
+                          :lazy-src="Placeholder"
                           :src="feature.image"
                           alt="Hero Image"
-                      >
-                        <template v-slot:placeholder>
-                          <div class="placeholder-container">
-                            <VProgressCircular indeterminate color="primary" />
-                            <span>Loading image...</span>
-                          </div>
-                        </template>
-                      </VImg>
+                      />
                   </VCarouselItem>
                 </VCarousel>
               </VRow>
@@ -206,10 +202,10 @@ onMounted(() => {
                 </VBtn>
               </VRow>
               <VImg
-                  class="mx-5"
-                  :height="isSmall ? '200px' : '400px'"
-                  :src="HighFive"
-                  alt="Hero Image"
+                class="mx-5"
+                :height="isSmall ? '200px' : '400px'"
+                :src="HighFive"
+                alt="Hero Image"
               />
             </div>
           </div>
