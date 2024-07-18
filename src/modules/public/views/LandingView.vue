@@ -177,10 +177,17 @@ onMounted(() => {
                       :key="i"
                       :value="feature"
                   >
-                    <VImg
-                        :src="feature.image"
-                        alt="Hero Image"
-                    />
+                      <VImg
+                          :src="feature.image"
+                          alt="Hero Image"
+                      >
+                        <template v-slot:placeholder>
+                          <div class="placeholder-container">
+                            <VProgressCircular indeterminate color="primary" />
+                            <span>Loading image...</span>
+                          </div>
+                        </template>
+                      </VImg>
                   </VCarouselItem>
                 </VCarousel>
               </VRow>

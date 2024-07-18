@@ -40,7 +40,14 @@ const {isMobile, isSmall} = useScreenStore();
     <VImg
         :src="HeroMainImage"
         alt="Hero Image"
-    />
+    >
+      <template v-slot:placeholder>
+        <div class="placeholder-container">
+          <VProgressCircular indeterminate color="primary" />
+          <span>Loading image...</span>
+        </div>
+      </template>
+    </VImg>
   </VRow>
 </template>
 
