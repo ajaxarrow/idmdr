@@ -115,28 +115,25 @@ onMounted(() => {
           <nav class="toc">
             <ul>
               <li>
-                <a href="#intro">Intro</a>
+                <a href="#about">About the Stakeholders</a>
                 <ul>
-                  <li><a href="#intro-project">About the Project</a></li>
-                  <li><a href="#intro-stakeholders">Stakeholders</a></li>
+                  <li><a href="#intro-nomcaarrd">What is NOMCAARRD?</a></li>
                 </ul>
               </li>
               <li>
-                <a href="#problem">Problems</a>
+                <a href="#goals">Purpose and Goals</a>
                 <ul>
-                  <li><a href="#problem-repository">Storing and Sharing of Data</a></li>
-                  <li><a href="#problem-access-control">Unwanted Access</a></li>
-                  <li><a href="#problem-tagging">Project and Area Association</a></li>
-                  <li><a href="#problem-visualization">Visualizing Data</a></li>
+                  <li><a href="#goals-vision">Vision</a></li>
+                  <li><a href="#goals-mission">Mission</a></li>
+                  <li><a href="#goals-objectives">Objectives</a></li>
                 </ul>
               </li>
               <li>
-                <a href="#solution">Solution</a>
+                <a href="#cmi">Consortium Member-Institutions</a>
                 <ul>
-                  <li><a href="#solution-repository">Repository Management</a></li>
-                  <li><a href="#solution-access-control">Access Controls</a></li>
-                  <li><a href="#solution-tagging">Sector Tagging</a></li>
-                  <li><a href="#solution-visualization">Map Visualization</a></li>
+                  <li><a href="#cmi-about">What is a CMI?</a></li>
+                  <li><a href="#cmi-research">Research Delivering Institutions</a></li>
+                  <li><a href="#cmi-non-research">Non-Research Delivering Institutions</a></li>
                 </ul>
               </li>
             </ul>
@@ -146,106 +143,121 @@ onMounted(() => {
           </nav>
 
           <article class="contents">
-            <p class="text-h4 font-weight-bold">About IDMDR</p>
-            <section id="intro">
-              <h2>Introduction</h2>
-              <div id="intro-project">
-                <h3>About the Project</h3>
+            <p class="text-h4 font-weight-bold">Stakeholders</p>
+            <section id="about">
+              <h2>About the Stakeholders</h2>
+              <div id="intro-nomcaarrd">
+                <h3>What is NOMCAARRD?</h3>
                 <p>
-                  The Interactive Data Mapping Distribution and Repository aims to digitize and centralize the storage of datasets collected by NOMCAARRD. This platform will enable organization members to establish repositories, categorize datasets into specific geographical areas on a map, and visualize data.
+                  The Northern Mindanao Consortium for Agriculture, Aquatic, and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization of 20 government and non-government entities in Region 10. Its primary role is to coordinate regional research, development, and extension priorities within the agriculture, fisheries, and natural resources sectors.
                 </p>
                 <p>
-                  The project, NIDMDR, seeks to establish a comprehensive repository for datasets, accommodating various data types such as images, CSV files, and text documents. This repository will provide researchers and users with a centralized location to access and manage diverse datasets efficiently.
+                  NOMCAARRD’s history includes several name changes and organizational expansions. It began in December 1978 as the Northern and Central Mindanao Coordinated Agriculture and Resources Research Program (NOCEMCARRP), initially consisting of only 9 member agencies. As the consortium grew, it was renamed the Northern Mindanao Consortium for Agriculture and Natural Resources Research and Development (NOMCAARD) to reflect its broader membership. Following a government rationalization program, where the Philippine Council for Aquatic Marine Resources Research and Development (PCAMRRD) was integrated with the Philippine Council for Agriculture and Natural Resources Research and Development (PCAARD) to form the Philippine Council for Agriculture, Aquatic and Natural Resources Research and Development (PCAARRD), the consortium adapted to these changes by adopting its current name, Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD), in 2015.
                 </p>
                 <p>
-                  The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
-                </p>
-              </div>
-              <div id="intro-stakeholders">
-                <h3>Stakeholders</h3>
-                <p>
-                  The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization consisting of 20 government and non-government entities in region 10.
-                </p>
-                <p>
-                  These include educational institutions like Central Mindanao University (CMU), Xavier University (XU), and others, as well as government agencies like the Department of Agriculture Regional Field Office-10 (DA RFO-10) and the National Economic Development Authority-10 (NEDA-10). NOMCAARRD's main goal is to coordinate research, development, and extension efforts related to agriculture, fisheries, and natural resources in the region. Its office is situated at CMU.
-                </p>
-                <p>
-                  NOOMCAARD is supported the development of the project. They are the stakeholders of the system. The system is tailored to the organizations' problems and needs.
+                  To address the need for better collaboration and data visualization among its varied member organizations, NOMCAARRD looked into NOMCAARRD Interactive Data Mapping Distribution and Repository (NIDMDR). This centralized repository serves as a platform for the consortium’s projects and developments, providing a visual representation of the initiatives across different sectors and organizations involved with NOMCAARRD.
                 </p>
               </div>
+            </section>
+            <section id="goals">
+              <h2>NOMCAARRD'S Purpose and Goals</h2>
+              <div>
+                <p>
+                  The Consortium is hereby created for the following:
+                </p>
+                <ul>
+                  <li>
+                    To promote science and technology applications for agriculture, aquatic, forestry, and natural resources (AANR) sectors.
+                  </li>
+                  <li>
+                    To promote science and technology applications for agriculture, aquatic, forestry, and natural resources (AANR) sectors.
+                    Provide a venue for planning, monitoring evaluation and sharing resources through collaborative involvements of its members through the implementation of:
+                    <ol class="ml-5">
+                      <li>
+                        Strategic Research and Development
+                      </li>
+                      <li>
+                        Capability Building and Research and Development Governance
+                      </li>
+                      <li>
+                        Research Results Dissemination and Utilization
+                      </li>
+                      <li>
+                        Policy Advocacy
+                      </li>
+                    </ol>
+                  </li>
+                  <li>
+                    To collaborate with Regional Research, Development, and Innovation Committee (RRDIC)-Region 10 for maximizing the utilization of research results to support regional development.
+                  </li>
+                  <li>
+                    To source other funds for use in the implementation of research and development.
+
+                  </li>
+                </ul>
+                <p>
+                  It shall   operate as a program funded by the Department of Science and Technology – Philippine Council for Agriculture, Aquatic and natural Resources Research and Development (DOST-PCAARRD) as the PCAARRD in the Northern Mindanao.
+                </p>
+              </div>
+              <div id="goals-vision">
+                <h3>NOMCAARRD'S Vision</h3>
+                <p>
+                  NOMCAARRD envisions a productive, competitive, and sustainable Science and Technology-based (S&T) Agriculture, Aquatic, and Natural Resources (AANR) sector in Northern Mindanao. As a regional research and development consortium, it is committed to develop knowledge and provide innovative technologies through collaboration and networking with local and international organizations to bring about improvements for the AANR sectors.
+                </p>
+              </div>
+              <div id="goals-mission">
+                <h3>NOMCAARRD'S Mission</h3>
+                <p>
+                  As a regional research consortium, we commit ourselves to develop knowledge and provide innovative technologies through collaboration and networking with local and international organizations to bring about improvements for the AAFNR sectors.
+                </p>
+              </div>
+              <div id="goals-objectives">
+                <h3>NOMCAARRD'S Objectives</h3>
+                <ul>
+                  <li>
+                    To identify regional research and development priorities;
+                  </li>
+                  <li>
+                    To plan, monitor, and evaluate integrated regional research and development programs;
+                  </li>
+                  <li>
+                    To plan, monitor and evaluate related activities in agriculture, fisheries, forestry environment, and natural resources;
+                  </li>
+                  <li>
+                    To develop and implement a system of research management attuned to the development efforts of the region to maximize the utilization of research results to support regional development; and,
+                  </li>
+                  <li>
+                    To source other funds for use in the implantation of research and development programs.
+                  </li>
+                </ul>
+              </div>
+
 
             </section>
-            <section id="problem">
-              <h2>Problem</h2>
-              <div id="problem-repository">
-                <h3>Storing and Sharing of Data</h3>
+
+            <section id="cmi">
+              <h2>Consortium Member-Institutions (CMIs)</h2>
+              <div id="cmi-about">
+                <h3>What is a CMI?</h3>
                 <p>
-                  Projects from each cluster under NOMCAARRD have been stored locally, resulting in several issues. Over the years, NOMCAARRD relied heavily on local storage solutions like flash drives, hard drives, and individual computers. Unfortunately, numerous project files and documentation have been lost due to hardware failures, such as broken or damaged computers.
+                  The Consortium Member-Institutions (CMIs) represent a collective of esteemed agencies and academic institutions dedicated to advancing research and development in the fields of agriculture, aquatic sciences, and natural resources within Northern Mindanao.
                 </p>
-                <img class="developer-image" :src="p1Current"  alt="current-process-1"/>
                 <p>
-                  In addition to storage issues, the sharing of project updates and information lacked coordination and centralization. Updates were often communicated through messenger, a platform not designed for systematic data management or archiving. This decentralized approach not only made it difficult to track and retrieve essential documents but also increased the risk of data fragmentation and loss. The absence of a centralized system hindered collaboration, making it challenging for team members to access up-to-date information and maintain a consistent understanding of project progress.
+                  These institutions collaborate to pool their expertise, resources, and knowledge to address the region's most pressing challenges, driving innovation and sustainable practices that benefit both the environment and local communities. Through their concerted efforts, the CMIs aim to foster a vibrant research ecosystem that supports the region's growth and development, ensuring a prosperous future for the people and the natural heritage of Northern Mindanao.
                 </p>
               </div>
-
-              <div id="problem-access-control">
-                <h3>Unwanted Access</h3>
+              <div id="cmi-research">
+                <h3>Research Delivering Institutions</h3>
                 <p>
-                  Preventing unauthorized access to files and data is crucial to avoid the leakage of sensitive information that should remain within the organization. Unfortunately, security measures for accessing and sharing data within NOMCAARRD were not fully implemented. The use of social media platforms, such as messenger, for transmitting data and information further exacerbated this issue, as these platforms support forwarding information to any individuals even outside the organization. This practice not only exposed sensitive information to potential breaches but also highlighted a significant gap in the organization’s data security infrastructure.
-                </p>
-                <img class="developer-image" :src="p2Current"  alt="current-process-2"/>
-              </div>
-
-              <div id="problem-tagging">
-                <h3>Project and Area Association</h3>
-                <p>
-                  In line with preventing unwanted access, it is important to recognize that nearly all of the organization’s projects and data are assigned to specific clusters. Access to ongoing projects should be restricted to individuals within the relevant cluster to maintain confidentiality and protect sensitive information. The data of ongoing projects should be limited to members directly associated with the specific area until a careful decision is made about whether to share it more broadly—whether privately, within the organization, or publicly.
-                </p>
-                <p>
-                  Furthermore, both ongoing and completed projects should be closely monitored to determine which specific area or cluster they belong to. This tracking not only ensures proper access control but also highlights the contributions of each cluster to the organization’s overall research and development efforts.
+                  Research Delivering Institutions are central to the consortium’s mission, driving innovation through focused research in agriculture, aquatic sciences, and natural resources. With advanced facilities and skilled researchers, these institutions develop sustainable technologies and solutions to address regional challenges. Their research directly supports the socio-economic growth of Northern Mindanao, benefiting local communities and ecosystems.
                 </p>
               </div>
-
-              <div id="problem-visualization">
-                <h3>Visualizing Data</h3>
+              <div id="cmi-non-research">
+                <h3>Non-Research Delivering Institutions</h3>
                 <p>
-                  Project data and information within the organization were primarily visualized using PowerPoint presentations or Excel spreadsheets. These tools were used to compile and present the results of various projects during organizational meetings and conferences. While effective for basic reporting, this approach has limitations in terms of dynamic data interaction and comprehensive analysis. The reliance on static presentations may hinder deeper insights and collaborative discussions, as the data is often presented in a one-dimensional format, lacking the flexibility needed for real-time exploration or detailed examination of trends and outcomes.
+                  Non-Research Delivering Institutions play a supportive role in the consortium, helping to apply and disseminate the research conducted by their counterparts. These institutions, which include government agencies and NGOs, focus on policy-making, education, and community engagement. Their efforts ensure that research outcomes are effectively implemented, enhancing sustainability and development in Northern Mindanao.
                 </p>
               </div>
-
-            </section>
-
-            <section id="solution">
-              <h2>Solution</h2>
-              <div id="solution-repository">
-                <h3>Repository Management</h3>
-                <p>
-                  To address the challenges of storing and sharing data and information across various parties, establishing a centralized repository is crucial. A well-organized repository will serve as a central hub where members of the organization can collaborate, share updates, and manage their projects efficiently. This centralized system will not only facilitate seamless collaboration among team members but also ensure that all project data is consistently monitored and updated in real time. By having a unified repository, the organization can improve data integrity, streamline project management, and enhance overall productivity, making it easier to track progress and ensure that all relevant stakeholders have access to the most up-to-date information.
-                </p>
-                <img class="developer-image" :src="p1Proposed"  alt="proposed-process-1"/>
-              </div>
-              <div id="solution-access-control">
-                <h3>Access Control</h3>
-                <p>
-                  To prevent unauthorized access to data and information, each field within the repository should have an option to set its visibility level—whether it should be accessible to the public, limited to a specific group within the organization, or available to all members of the organization. By empowering the repository owner with the ability to control the visibility of each project, the organization can significantly reduce the risk of data breaches and prevent the leakage of sensitive information. This level of control ensures that only authorized individuals can access critical data, thereby maintaining the confidentiality and integrity of the organization’s projects.
-                </p>
-                <img class="developer-image" :src="p2Proposed"  alt="proposed-process-2"/>
-              </div>
-              <section id="solution-tagging">
-                <h3>Sector Tagging</h3>
-                <p>
-                  Sector tagging directly addresses the challenge of monitoring data within specific entities. By implementing sector tagging, each project is clearly associated with the relevant entity or sector, allowing for more effective tracking of progress and development within that specific area. This system not only enhances the ability to monitor contributions and advancements by individual sectors but also enables filtering of projects to display only those related to a particular sector. As a result, sector tagging facilitates more targeted analysis and reporting, ensuring that data management is both organized and efficient.
-                </p>
-                <img class="developer-image" :src="p3Proposed"  alt="proposed-process-3"/>
-              </section>
-
-              <section id="solution-visualization">
-                <h3>Map Visualization</h3>
-                <p>
-                  This platform provides map visualization capabilities, allowing users to visualize data and information for each project and repository geographically. Map visualization plays a crucial role in monitoring and tracking data related to specific locations where sectors have conducted their research and development activities. The map visualization module enables users to view repositories situated within designated areas, including predefined regions such as the provinces of Region X, as well as custom boundaries created by users. This feature enhances the ability to analyze geographic trends, assess the impact of projects in particular areas, and support strategic decision-making based on location-specific data.
-                </p>
-                <img class="developer-image" :src="p4Proposed"  alt="proposed-process-4"/>
-              </section>
             </section>
           </article>
         </div>
