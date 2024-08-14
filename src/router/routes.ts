@@ -16,6 +16,30 @@ export const routes = [
     component: () => import('../modules/public/views/AboutView.vue')
   },
   {
+    path: '/stakeholders',
+    name: 'stakeholders',
+    // @ts-ignore
+    component: () => import('../modules/public/views/StakeholdersView.vue')
+  },
+  {
+    path: '/news-updates',
+    name: 'news-updates',
+    // @ts-ignore
+    component: () => import('../modules/public/views/NewsUpdatesView.vue')
+  },
+  {
+    path: '/help',
+    name: 'help',
+    // @ts-ignore
+    component: () => import('../modules/public/views/HelpCenterView.vue')
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    // @ts-ignore
+    component: () => import('../modules/public/views/ContactsView.vue')
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     // @ts-ignore
