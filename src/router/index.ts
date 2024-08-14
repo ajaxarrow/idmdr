@@ -7,10 +7,14 @@ const router = createRouter({
     routes: routes
 })
 
-router.beforeEach(() => {
+router.beforeEach((to) => {
     const {isLoading} = useLoadingStore();
     isLoading.value = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if(to.name === 'signout'){
+        return {name: 'landing'}
+    }
 })
 
 router.beforeResolve(() => {

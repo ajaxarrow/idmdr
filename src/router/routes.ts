@@ -81,6 +81,12 @@ export const routes = [
     // @ts-ignore
     component: () => import('../core/views/Error404View.vue')
   },
+  {
+    path: '/signout',
+    name: 'signout',
+    // @ts-ignore
+    component: () => import('../core/views/Error404View.vue')
+  },
   ...authRoutes,
   ...repositoryRoutes,
   ...organizationRoutes
