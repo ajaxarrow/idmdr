@@ -3,14 +3,6 @@
 import { onMounted, ref } from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import p1Proposed from "../../../assets/about/p1-proposed.png";
-import p2Proposed from "../../../assets/about/p2-proposed.png";
-import p1Current from "../../../assets/about/p1-current.png";
-import p2Current from "../../../assets/about/p2-current.png";
-import p3Proposed from "../../../assets/about/p3-proposed.png";
-import p4Proposed from "../../../assets/about/p4-proposed.png";
-
-
 const TOP_MARGIN = 0.1;
 const BOTTOM_MARGIN = 0.2;
 
