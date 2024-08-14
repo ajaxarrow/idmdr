@@ -3,6 +3,13 @@
 import { onMounted, ref } from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
+import p1Proposed from "../../../assets/about/p1-proposed.png";
+import p2Proposed from "../../../assets/about/p2-proposed.png";
+import p1Current from "../../../assets/about/p1-current.png";
+import p2Current from "../../../assets/about/p2-current.png";
+import p3Proposed from "../../../assets/about/p3-proposed.png";
+import p4Proposed from "../../../assets/about/p4-proposed.png";
+
 
 const TOP_MARGIN = 0.1;
 const BOTTOM_MARGIN = 0.2;
@@ -173,45 +180,37 @@ onMounted(() => {
               <div id="problem-repository">
                 <h3>Storing and Sharing of Data</h3>
                 <p>
-                  The Slides editor has a developer mode which is useful if you know a bit of HTML and CSS. With this mode active you will be able to modify the underlying HTML of your deck, allowing you to make adjustments that the Slides editor does not provide interface options for.
+                  Projects from each cluster under NOMCAARRD have been stored locally, resulting in several issues. Over the years, NOMCAARRD relied heavily on local storage solutions like flash drives, hard drives, and individual computers. Unfortunately, numerous project files and documentation have been lost due to hardware failures, such as broken or damaged computers.
                 </p>
+                <img class="developer-image" :src="p1Current"  alt="current-process-1"/>
                 <p>
-                  To enable the developer mode open the editor settings in the bottom left corner:
+                  In addition to storage issues, the sharing of project updates and information lacked coordination and centralization. Updates were often communicated through messenger, a platform not designed for systematic data management or archiving. This decentralized approach not only made it difficult to track and retrieve essential documents but also increased the risk of data fragmentation and loss. The absence of a centralized system hindered collaboration, making it challenging for team members to access up-to-date information and maintain a consistent understanding of project progress.
                 </p>
               </div>
 
               <div id="problem-access-control">
                 <h3>Unwanted Access</h3>
                 <p>
-                  The per-slide HTML editor can be accessed from the slide options area. It gives you raw access to the current slide's HTML, allowing you to change anything you like. Note that some elements, such as <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code>, are not allowed for security reasons.﻿
+                  Preventing unauthorized access to files and data is crucial to avoid the leakage of sensitive information that should remain within the organization. Unfortunately, security measures for accessing and sharing data within NOMCAARRD were not fully implemented. The use of social media platforms, such as messenger, for transmitting data and information further exacerbated this issue, as these platforms support forwarding information to any individuals even outside the organization. This practice not only exposed sensitive information to potential breaches but also highlighted a significant gap in the organization’s data security infrastructure.
                 </p>
-                <img class="developer-image" src="https://s3.amazonaws.com/static.slid.es/site/developers/slides-developer-mode-2.png" />
+                <img class="developer-image" :src="p2Current"  alt="current-process-2"/>
               </div>
 
               <div id="problem-tagging">
                 <h3>Project and Area Association</h3>
                 <p>
-                  As a paying Slides customer you have access to the <a href="#css">CSS editor</a> which allows you to add custom styles to your deck. By turning on the developer mode a new "class name" field will appear for any block that you focus. This allows you to easily target a specific element with your CSS.
+                  In line with preventing unwanted access, it is important to recognize that nearly all of the organization’s projects and data are assigned to specific clusters. Access to ongoing projects should be restricted to individuals within the relevant cluster to maintain confidentiality and protect sensitive information. The data of ongoing projects should be limited to members directly associated with the specific area until a careful decision is made about whether to share it more broadly—whether privately, within the organization, or publicly.
                 </p>
                 <p>
-                  Here's an example that defines an "upside-down" class using custom CSS and applies it to a text block.
+                  Furthermore, both ongoing and completed projects should be closely monitored to determine which specific area or cluster they belong to. This tracking not only ensures proper access control but also highlights the contributions of each cluster to the organization’s overall research and development efforts.
                 </p>
-                <pre class="code-block" data-highlight-theme="github-gist"><code class="hljs css">.upside-down {
-  transform: scale(1, -1);
-}</code></pre>
-                <img class="developer-image" src="https://s3.amazonaws.com/static.slid.es/site/developers/slides-developer-mode-3.png" />
               </div>
 
               <div id="problem-visualization">
                 <h3>Visualizing Data</h3>
                 <p>
-                  Just like you can add custom classes to individual elements it's also possible to add custom classes at the slide level. This can be used to apply broader changes to the whole slide like inverting text and icon colors or changing the slide transition.
+                  Project data and information within the organization were primarily visualized using PowerPoint presentations or Excel spreadsheets. These tools were used to compile and present the results of various projects during organizational meetings and conferences. While effective for basic reporting, this approach has limitations in terms of dynamic data interaction and comprehensive analysis. The reliance on static presentations may hinder deeper insights and collaborative discussions, as the data is often presented in a one-dimensional format, lacking the flexibility needed for real-time exploration or detailed examination of trends and outcomes.
                 </p>
-                <img class="developer-image" src="https://s3.amazonaws.com/static.slid.es/site/developers/slides-developer-mode-4.png" />
-                <p>
-                  Under the hood the slide background element is separate from the slide itself. Here are two examples showing how you'd target the slide contents or slide background using a custom class called "night-sky":
-                </p>
-                <img class="developer-image" src="https://s3.amazonaws.com/static.slid.es/site/developers/slides-developer-mode-5.png" />
               </div>
 
             </section>
@@ -221,35 +220,31 @@ onMounted(() => {
               <div id="solution-repository">
                 <h3>Repository Management</h3>
                 <p>
-                  You can access the complete HTML for all slides in your deck inside of the export panel, under "Export to reveal.js"﻿. This provides a way of exporting your deck markup and the core Slides styles to reveal.js. There are a few limitations with exporting this way but it should provide a good starting point.
+                  To address the challenges of storing and sharing data and information across various parties, establishing a centralized repository is crucial. A well-organized repository will serve as a central hub where members of the organization can collaborate, share updates, and manage their projects efficiently. This centralized system will not only facilitate seamless collaboration among team members but also ensure that all project data is consistently monitored and updated in real time. By having a unified repository, the organization can improve data integrity, streamline project management, and enhance overall productivity, making it easier to track progress and ensure that all relevant stakeholders have access to the most up-to-date information.
                 </p>
-                <img class="developer-image" src="https://s3.amazonaws.com/static.slid.es/site/developers/slides-developer-mode-6.png" />
+                <img class="developer-image" :src="p1Proposed"  alt="proposed-process-1"/>
               </div>
              <div id="solution-access-control">
                <h3>Access Control</h3>
                <p>
-                 The CSS editor lets you author custom styles for your presentation with a real-time preview of the result. It's available as an option inside of the Style panel of the presentation editor.
+                 To prevent unauthorized access to data and information, each field within the repository should have an option to set its visibility level—whether it should be accessible to the public, limited to a specific group within the organization, or available to all members of the organization. By empowering the repository owner with the ability to control the visibility of each project, the organization can significantly reduce the risk of data breaches and prevent the leakage of sensitive information. This level of control ensures that only authorized individuals can access critical data, thereby maintaining the confidentiality and integrity of the organization’s projects.
                </p>
-               <p>
-                 The editor preprocesses styles using <a href="http://lesscss.org/">LESS</a>, though you're free to write plain CSS as well. We apply the styles in real-time as you type so there's no need to leave the editor or even press a refresh button to see what you're getting. Note that when your styles are saved they will be automatically wrapped in a ".reveal {}" selector to avoid conflicts with other page styles.
-               </p>
+               <img class="developer-image" :src="p2Proposed"  alt="proposed-process-2"/>
              </div>
             <section id="solution-tagging">
               <h3>Sector Tagging</h3>
               <p>
-                If you turn on the <a href="#dev">developer mode</a> you can also add custom classes to any focused element. This is a convenient way to easily apply your CSS to specific elements.
+                Sector tagging directly addresses the challenge of monitoring data within specific entities. By implementing sector tagging, each project is clearly associated with the relevant entity or sector, allowing for more effective tracking of progress and development within that specific area. This system not only enhances the ability to monitor contributions and advancements by individual sectors but also enables filtering of projects to display only those related to a particular sector. As a result, sector tagging facilitates more targeted analysis and reporting, ensuring that data management is both organized and efficient.
               </p>
+              <img class="developer-image" :src="p3Proposed"  alt="proposed-process-3"/>
             </section>
 
             <section id="solution-visualization">
               <h3>Map Visualization</h3>
-
               <p>
-                All of the above is scoped to your specific presentation and won't affect other presentations or the site in general.
+                This platform provides map visualization capabilities, allowing users to visualize data and information for each project and repository geographically. Map visualization plays a crucial role in monitoring and tracking data related to specific locations where sectors have conducted their research and development activities. The map visualization module enables users to view repositories situated within designated areas, including predefined regions such as the provinces of Region X, as well as custom boundaries created by users. This feature enhances the ability to analyze geographic trends, assess the impact of projects in particular areas, and support strategic decision-making based on location-specific data.
               </p>
-              <p>
-                In this example we are changing the text color and adding a border to all slides. Here's how it looks when combined with a <a href="http://slides.com/november-media/dev-zenith/export?autosize=1">default theme</a>.
-              </p>
+              <img class="developer-image" :src="p4Proposed"  alt="proposed-process-4"/>
             </section>
             </section>
           </article>
@@ -267,7 +262,7 @@ onMounted(() => {
   }
 
   section{
-    margin: 30px 0;
+    margin: 45px 0;
   }
 
   h3{
@@ -320,6 +315,8 @@ onMounted(() => {
 
 .contents img {
   max-width: 100%;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
 }
 
 .code-block {
