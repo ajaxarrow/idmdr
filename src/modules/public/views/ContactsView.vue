@@ -2,7 +2,6 @@
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 const {isMobile, isSmall} = useScreenStore();
 </script>
 
