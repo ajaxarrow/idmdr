@@ -21,11 +21,11 @@
          <p class="organization-description">{{organization.description}}</p>
        </div>
        <VRow class="ma-0 my-7">
-         <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0">
+         <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Address</p>
            <p class="text-subtitle">{{ organization.address }}</p>
          </VCol>
-         <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0">
+         <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Consortium Type</p>
            <p class="text-subtitle">{{ organization.type }}</p>
          </VCol>
