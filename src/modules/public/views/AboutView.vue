@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // @ts-nocheck
-import { onMounted, ref } from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
 import p1Proposed from "../../../assets/about/p1-proposed.png";
@@ -104,6 +104,11 @@ onMounted(() => {
   window.addEventListener('resize', drawPath, false);
   window.addEventListener('scroll', sync, false);
   drawPath();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', drawPath, false);
+  window.removeEventListener('scroll', sync, false);
 });
 </script>
 
