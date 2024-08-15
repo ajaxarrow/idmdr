@@ -2,6 +2,8 @@
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import MapSnippet from "../components/Contact/MapSnippet.vue";
+import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@tabler/icons-vue";
 const {isMobile, isSmall} = useScreenStore();
 </script>
 
@@ -84,6 +86,66 @@ const {isMobile, isSmall} = useScreenStore();
             </VRow>
           </VContainer>
         </div>
+      <div class="">
+        <VContainer>
+          <p class="text-heading text-center gradient-text">
+            <em class="heading-font">Get in touch with us</em>
+          </p>
+          <VRow justify="center" class="ma-0 pa-5">
+            <VCol sm="12" md="7" xxl="8" xl="8" lg="8" class="my-2">
+              <MapSnippet class=""/>
+            </VCol>
+            <VCol sm="12" md="5" xxl="4" xl="4" lg="4" class="my-2">
+              <div class="bg-sb20 contact-details-card pa-5">
+                <div>
+                  <div class="my-2">
+                    <p class="text-contact-title">
+                      Address
+                    </p>
+                    <p class="text-desc">
+                      2nd floor RDE Buiding, College Park, Musuan, Bukidnon
+                    </p>
+                  </div>
+                  <div class="my-2">
+                    <p class="text-contact-title">
+                      Phone
+                    </p>
+                    <p class="text-desc">
+                      0917-1027-065
+                    </p>
+                  </div>
+                  <div class="my-2">
+                    <p class="text-contact-title">
+                      Email
+                    </p>
+                    <p class="text-desc">
+                      nomcaarrd@cmu.edu.ph
+                    </p>
+                  </div>
+                </div>
+                <div class="d-flex ga-2">
+                  <a href="https://www.facebook.com/CMU.IDMDR/" target="_blank">
+                    <div class="logo-icon" >
+                      <IconBrandFacebookFilled size="30" color="#050E14"/>
+                    </div>
+                  </a>
+                  <a href="https://www.facebook.com/CMU.IDMDR/" target="_blank">
+                    <div class="logo-icon" >
+                      <IconBrandYoutubeFilled size="30" color="#050E14"/>
+                    </div>
+                  </a>
+                  <a href="https://www.facebook.com/CMU.IDMDR/" target="#050E14">
+                    <div class="logo-icon" >
+                      <IconMailFilled size="30" color="black"/>
+
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </VCol>
+          </VRow>
+        </VContainer>
+      </div>
       <Footer/>
     </Navbar>
     </div>
@@ -91,6 +153,36 @@ const {isMobile, isSmall} = useScreenStore();
 </template>
 
 <style scoped>
+.text-contact-title{
+  font-size: 18px;
+  font-weight: 500;
+  color: #5e5e5e;
+}
+
+.text-desc{
+  font-size: 20px;
+  font-weight: 700;
+  color: #050E14;
+}
+.logo-icon{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  width: 50px;
+  height: 50px;
+  text-decoration: none;
+  border-radius: 50%;
+
+}
+.contact-details-card{
+  height: 400px;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .text-heading{
   font-family: 'Gambetta', serif !important;
   font-weight: 500;
