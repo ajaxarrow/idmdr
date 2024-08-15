@@ -126,17 +126,17 @@ const {isMobile, isSmall} = useScreenStore();
                 <div class="d-flex ga-2">
                   <a href="https://www.facebook.com/CMU.IDMDR/" target="_blank">
                     <div class="logo-icon" >
-                      <IconBrandFacebookFilled size="30" color="#050E14"/>
+                      <IconBrandFacebookFilled :size="30" color="#050E14"/>
                     </div>
                   </a>
                   <a href="https://www.facebook.com/CMU.IDMDR/" target="_blank">
                     <div class="logo-icon" >
-                      <IconBrandYoutubeFilled size="30" color="#050E14"/>
+                      <IconBrandYoutubeFilled :size="30" color="#050E14"/>
                     </div>
                   </a>
                   <a href="https://www.facebook.com/CMU.IDMDR/" target="#050E14">
                     <div class="logo-icon" >
-                      <IconMailFilled size="30" color="black"/>
+                      <IconMailFilled :size="30" color="black"/>
 
                     </div>
                   </a>
