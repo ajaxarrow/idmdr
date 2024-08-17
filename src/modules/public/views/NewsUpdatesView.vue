@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import {NewsUpdate, newsUpdates} from "../../../data/newsupdates.ts"
+import {newsUpdates} from "../../../data/newsupdates.ts"
 import {PhCalendar} from "@phosphor-icons/vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import Placeholder from "../../../assets/landing-page/placeholder.png";
