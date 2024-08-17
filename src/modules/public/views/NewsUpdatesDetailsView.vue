@@ -58,7 +58,7 @@ onMounted(() => {
           <h1>{{ blog?.title }}</h1>
           <p class="pt-4 d-flex align-center ga-1 text-gs60">
             <PhCalendar size="16"/>
-            {{ formatDate(blog?.date) }}
+            {{ formatDate(blog?.date as string) }}
           </p>
         </div>
         <VImg :lazy-src="Placeholder" :src="blog?.image!" class="my-10" style="border-radius: 16px;"></VImg>
