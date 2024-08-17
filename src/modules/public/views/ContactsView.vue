@@ -103,7 +103,7 @@ const {isMobile, isSmall} = useScreenStore();
                       Address
                     </p>
                     <p class="text-desc">
-                      2nd floor RDE Buiding, College Park, Musuan, Bukidnon
+                      2nd floor RDE Building, College Park, Musuan, Bukidnon
                     </p>
                   </div>
                   <div class="my-2">
@@ -129,12 +129,12 @@ const {isMobile, isSmall} = useScreenStore();
                       <IconBrandFacebookFilled :size="30" color="#050E14"/>
                     </div>
                   </a>
-                  <a href="https://www.facebook.com/CMU.IDMDR/" target="_blank">
+                  <a href="https://www.youtube.com/channel/UCWc3VFaHFLj9LDMjfyWdjEA" target="_blank">
                     <div class="logo-icon" >
                       <IconBrandYoutubeFilled :size="30" color="#050E14"/>
                     </div>
                   </a>
-                  <a href="https://www.facebook.com/CMU.IDMDR/" target="#050E14">
+                  <a href="https://mail.google.com/mail/u/0/?fs=1&to=nomcaarrd@cmu.edu.ph&tf=cm" target="_blank">
                     <div class="logo-icon" >
                       <IconMailFilled :size="30" color="black"/>
 
@@ -160,6 +160,7 @@ const {isMobile, isSmall} = useScreenStore();
 }
 
 .text-desc{
+  font-family: 'Gambetta', serif !important;
   font-size: 20px;
   font-weight: 700;
   color: #050E14;
