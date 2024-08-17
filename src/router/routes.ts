@@ -25,7 +25,13 @@ export const routes = [
     path: '/news-updates',
     name: 'news-updates',
     // @ts-ignore
-    component: () => import('../modules/public/views/NewsUpdatesView.vue')
+    component: () => import('../modules/public/views/NewsUpdatesView.vue'),
+  },
+  {
+    path: '/news-updates/:slug',
+    name: 'news-updates-detail',
+    // @ts-ignore
+    component: () => import('../modules/public/views/NewsUpdatesDetailsView.vue')
   },
   {
     path: '/help',
