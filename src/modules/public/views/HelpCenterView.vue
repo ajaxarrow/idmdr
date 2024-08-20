@@ -3,13 +3,21 @@
 import {onMounted, onUnmounted, ref} from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import p1Proposed from "../../../assets/about/p1-proposed.png";
-import p2Proposed from "../../../assets/about/p2-proposed.png";
-import p1Current from "../../../assets/about/p1-current.png";
-import p2Current from "../../../assets/about/p2-current.png";
-import p3Proposed from "../../../assets/about/p3-proposed.png";
-import p4Proposed from "../../../assets/about/p4-proposed.png";
-
+import auth from "../../../assets/helpcenter/auth.png"
+import dashboard from "../../../assets/helpcenter/dashboard.png"
+import mapping from "../../../assets/helpcenter/mapping.png"
+import newRepo1 from "../../../assets/helpcenter/newRepo1.png"
+import newRepo2 from "../../../assets/helpcenter/newRepo2.png"
+import org from "../../../assets/helpcenter/org.png"
+import org2 from "../../../assets/helpcenter/org2.png"
+import orgNew from "../../../assets/helpcenter/orgNew.png"
+import orgRoles from "../../../assets/helpcenter/orgRoles.png"
+import repo from "../../../assets/helpcenter/repo.png"
+import repoDetails from "../../../assets/helpcenter/repoDetails.png"
+import repoTopics from "../../../assets/helpcenter/repoTopics.png"
+import repoTopics2 from "../../../assets/helpcenter/repoTopics2.png"
+import tag1 from "../../../assets/helpcenter/tag1.png"
+import tag2 from "../../../assets/helpcenter/tag1.png"
 
 const TOP_MARGIN = 0.1;
 const BOTTOM_MARGIN = 0.2;
@@ -126,28 +134,38 @@ onUnmounted(() => {
                 </ul>
               </li>
               <li>
-                <a href="#problem">Onboarding</a>
+                <a href="#auth">Authentication</a>
+              </li>
+              <li>
+                <a href="#dashboard">Dashboard</a>
+              </li>
+              <li>
+                <a href="#repo">Repository Management</a>
                 <ul>
-                  <li><a href="#problem-repository">Storing and Sharing of Data</a></li>
-                  <li><a href="#problem-access-control">Unwanted Access</a></li>
-                  <li><a href="#problem-tagging">Project and Area Association</a></li>
-                  <li><a href="#problem-visualization">Visualizing Data</a></li>
+                  <li><a href="#repo-new">Creating a New Repository</a></li>
+                  <li><a href="#repo-details">Repository Details</a></li>
+                  <li><a href="#repo-discuss">Repository Discussions</a></li>
                 </ul>
               </li>
               <li>
-                <a href="#solution">Features</a>
+                <a href="#mapping">Mapping</a>
+              </li>
+              <li>
+                <a href="#sector">Sector Tagging</a>
+              </li>
+              <li>
+                <a href="#org">Organization Management</a>
                 <ul>
-                  <li><a href="#solution-repository">Repository Management</a></li>
-                  <li><a href="#solution-access-control">Access Controls</a></li>
-                  <li><a href="#solution-tagging">Sector Tagging</a></li>
-                  <li><a href="#solution-visualization">Map Visualization</a></li>
+                  <li><a href="#org-new">Creating New Organization</a></li>
+                  <li><a href="#org-access">Organization Access Roles</a></li>
                 </ul>
               </li>
               <li>
-                <a href="#faqs">FAQS</a>
-                <ul>
-                  <li><a href="#faqs1">FAQS</a></li>
-                </ul>
+                <a href="#faqs">Frequently Asked Questions</a>
+<!--                <ul>-->
+<!--                  <li><a href="#faq1">Public Module</a></li>-->
+<!--                  <li><a href="#faq2">Requesting Access</a></li>-->
+<!--                </ul>-->
               </li>
             </ul>
             <svg class="toc-marker" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
@@ -159,103 +177,134 @@ onUnmounted(() => {
             <p class="text-h4 font-weight-bold">Help Center</p>
             <section id="intro">
               <h2>Introduction</h2>
-              <div id="intro-project">
-                <h3>About the Project</h3>
+              <div id="intro-about">
+                <h3>About this Page</h3>
                 <p>
-                  The Interactive Data Mapping Distribution and Repository aims to digitize and centralize the storage of datasets collected by NOMCAARRD. This platform will enable organization members to establish repositories, categorize datasets into specific geographical areas on a map, and visualize data.
-                </p>
-                <p>
-                  The project, NIDMDR, seeks to establish a comprehensive repository for datasets, accommodating various data types such as images, CSV files, and text documents. This repository will provide researchers and users with a centralized location to access and manage diverse datasets efficiently.
-                </p>
-                <p>
-                  The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
+                  This page will guide NOMCAARRD members in navigating the system and interacting with it daily. It will highlight the main features and provide tips on how to maximize and utilize these features to assist with their everyday tasks.
                 </p>
               </div>
-              <div id="intro-stakeholders">
-                <h3>Stakeholders</h3>
-                <p>
-                  The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization consisting of 20 government and non-government entities in region 10.
-                </p>
-                <p>
-                  These include educational institutions like Central Mindanao University (CMU), Xavier University (XU), and others, as well as government agencies like the Department of Agriculture Regional Field Office-10 (DA RFO-10) and the National Economic Development Authority-10 (NEDA-10). NOMCAARRD's main goal is to coordinate research, development, and extension efforts related to agriculture, fisheries, and natural resources in the region. Its office is situated at CMU.
-                </p>
-                <p>
-                  NOOMCAARD is supported the development of the project. They are the stakeholders of the system. The system is tailored to the organizations' problems and needs.
-                </p>
-              </div>
-
             </section>
-            <section id="problem">
-              <h2>Problem</h2>
-              <div id="problem-repository">
-                <h3>Storing and Sharing of Data</h3>
+            <section id="auth">
+              <h2>Authentication</h2>
+              <div>
                 <p>
-                  Projects from each cluster under NOMCAARRD have been stored locally, resulting in several issues. Over the years, NOMCAARRD relied heavily on local storage solutions like flash drives, hard drives, and individual computers. Unfortunately, numerous project files and documentation have been lost due to hardware failures, such as broken or damaged computers.
+                  The authentication page of the study features two buttons for users to authenticate via their Google and GitHub accounts exclusively. The system restricts authentication to only these two providers to avoid multiple and dummy user accounts.
                 </p>
-                <img class="developer-image" :src="p1Current"  alt="current-process-1"/>
-                <p>
-                  In addition to storage issues, the sharing of project updates and information lacked coordination and centralization. Updates were often communicated through messenger, a platform not designed for systematic data management or archiving. This decentralized approach not only made it difficult to track and retrieve essential documents but also increased the risk of data fragmentation and loss. The absence of a centralized system hindered collaboration, making it challenging for team members to access up-to-date information and maintain a consistent understanding of project progress.
-                </p>
+                <img class="developer-image" :src="auth"  alt="auth"/>
               </div>
-
-              <div id="problem-access-control">
-                <h3>Unwanted Access</h3>
-                <p>
-                  Preventing unauthorized access to files and data is crucial to avoid the leakage of sensitive information that should remain within the organization. Unfortunately, security measures for accessing and sharing data within NOMCAARRD were not fully implemented. The use of social media platforms, such as messenger, for transmitting data and information further exacerbated this issue, as these platforms support forwarding information to any individuals even outside the organization. This practice not only exposed sensitive information to potential breaches but also highlighted a significant gap in the organization’s data security infrastructure.
-                </p>
-                <img class="developer-image" :src="p2Current"  alt="current-process-2"/>
-              </div>
-
-              <div id="problem-tagging">
-                <h3>Project and Area Association</h3>
-                <p>
-                  In line with preventing unwanted access, it is important to recognize that nearly all of the organization’s projects and data are assigned to specific clusters. Access to ongoing projects should be restricted to individuals within the relevant cluster to maintain confidentiality and protect sensitive information. The data of ongoing projects should be limited to members directly associated with the specific area until a careful decision is made about whether to share it more broadly—whether privately, within the organization, or publicly.
-                </p>
-                <p>
-                  Furthermore, both ongoing and completed projects should be closely monitored to determine which specific area or cluster they belong to. This tracking not only ensures proper access control but also highlights the contributions of each cluster to the organization’s overall research and development efforts.
-                </p>
-              </div>
-
-              <div id="problem-visualization">
-                <h3>Visualizing Data</h3>
-                <p>
-                  Project data and information within the organization were primarily visualized using PowerPoint presentations or Excel spreadsheets. These tools were used to compile and present the results of various projects during organizational meetings and conferences. While effective for basic reporting, this approach has limitations in terms of dynamic data interaction and comprehensive analysis. The reliance on static presentations may hinder deeper insights and collaborative discussions, as the data is often presented in a one-dimensional format, lacking the flexibility needed for real-time exploration or detailed examination of trends and outcomes.
-                </p>
-              </div>
-
             </section>
-
-            <section id="solution">
-              <h2>Solution</h2>
-              <div id="solution-repository">
-                <h3>Repository Management</h3>
+            <section id="dashboard">
+              <h2>Dashboard</h2>
+              <div>
                 <p>
-                  To address the challenges of storing and sharing data and information across various parties, establishing a centralized repository is crucial. A well-organized repository will serve as a central hub where members of the organization can collaborate, share updates, and manage their projects efficiently. This centralized system will not only facilitate seamless collaboration among team members but also ensure that all project data is consistently monitored and updated in real time. By having a unified repository, the organization can improve data integrity, streamline project management, and enhance overall productivity, making it easier to track progress and ensure that all relevant stakeholders have access to the most up-to-date information.
+                  The system's primary layout is divided into three sections: the main content area, the sidebar, and the top bar. The main content area dynamically adjusts based on the selected route, such as the dashboard, where users can monitor the status of sectors, repositories, and current organization members within their respective organizations. Additionally, it enables users to browse the latest repositories uploaded or created on the platform and provides an option to easily tag sectors for the organization’s existing repositories.
                 </p>
-                <img class="developer-image" :src="p1Proposed"  alt="proposed-process-1"/>
+                <img class="developer-image" :src="dashboard"  alt="dashboard"/>
+                <p>
+                  The top bar includes essential components such as the notification icon, account menu, and organization dropdown. The sidebar serves as the primary navigation hub, offering quick access to key functionalities, including repository management, sector tagging, map visualization, organization settings, and the sign-out option.
+                </p>
               </div>
-              <div id="solution-access-control">
-                <h3>Access Control</h3>
+            </section>
+            <section id="repo">
+              <h2>Repository Management</h2>
+              <div>
                 <p>
-                  To prevent unauthorized access to data and information, each field within the repository should have an option to set its visibility level—whether it should be accessible to the public, limited to a specific group within the organization, or available to all members of the organization. By empowering the repository owner with the ability to control the visibility of each project, the organization can significantly reduce the risk of data breaches and prevent the leakage of sensitive information. This level of control ensures that only authorized individuals can access critical data, thereby maintaining the confidentiality and integrity of the organization’s projects.
+                  On this page, users can view all repositories created within the organization. Additionally, they have the option to add new repositories using a designated button. To facilitate efficient navigation and retrieval, users can filter repositories by utilizing the search input or by selecting tag chips displayed below the search input.
                 </p>
-                <img class="developer-image" :src="p2Proposed"  alt="proposed-process-2"/>
+                <img class="developer-image" :src="repo"  alt="current-process-1"/>
               </div>
-              <section id="solution-tagging">
-                <h3>Sector Tagging</h3>
+              <div id="repo-new">
+                <h3>Creating a New Repository</h3>
                 <p>
-                  Sector tagging directly addresses the challenge of monitoring data within specific entities. By implementing sector tagging, each project is clearly associated with the relevant entity or sector, allowing for more effective tracking of progress and development within that specific area. This system not only enhances the ability to monitor contributions and advancements by individual sectors but also enables filtering of projects to display only those related to a particular sector. As a result, sector tagging facilitates more targeted analysis and reporting, ensuring that data management is both organized and efficient.
+                  To create a new repository, simply click the "New Repository" button, which will direct you to the repository creation page. This page includes various fields that can be filled out, such as repository title, subtitle, project component, location, abstract, affiliation, tags, and file uploads. Some of these fields are optional, allowing users flexibility in the information they provide. Additionally, there are buttons available for selecting commodity, industry, and the start and end dates of the project.
                 </p>
-                <img class="developer-image" :src="p3Proposed"  alt="proposed-process-3"/>
-              </section>
+                <img class="developer-image" :src="newRepo1"  alt="current-process-1"/>
+                <p>
+                  An important feature of the repository creation process is the selection of the access level. Users can choose from three levels: public (including guest view), within the organization (accessible only to members of the repository owner’s organization), or within all organizations (visible to all members of any organization).
+                </p>
+                <img class="developer-image" :src="newRepo2"  alt="current-process-1"/>
+              </div>
 
-              <section id="solution-visualization">
-                <h3>Map Visualization</h3>
+              <div id="repo-details">
+                <h3>Repository Details</h3>
                 <p>
-                  This platform provides map visualization capabilities, allowing users to visualize data and information for each project and repository geographically. Map visualization plays a crucial role in monitoring and tracking data related to specific locations where sectors have conducted their research and development activities. The map visualization module enables users to view repositories situated within designated areas, including predefined regions such as the provinces of Region X, as well as custom boundaries created by users. This feature enhances the ability to analyze geographic trends, assess the impact of projects in particular areas, and support strategic decision-making based on location-specific data.
+                  While browsing the repository page, users have the option to view the details of a specific repository by clicking the "View Details" button. This action will direct the user to a page with more comprehensive information about the repository, including its abstract, findings, tags, and any files attached. If the repository owner has set the repository to be downloadable, the attached files will be accessible for download.
                 </p>
-                <img class="developer-image" :src="p4Proposed"  alt="proposed-process-4"/>
-              </section>
+                <img class="developer-image" :src="repoDetails"  alt="current-process-2"/>
+              </div>
+
+              <div id="repo-discuss">
+                <h3>Repository Discussions</h3>
+                <p>
+                  The repository includes a discussion section where users can initiate threads or topics to discuss comments or issues related to the specific repository.
+                </p>
+                <img class="developer-image" :src="repoTopics"  alt="current-process-2"/>
+                <img class="developer-image" :src="repoTopics2"  alt="current-process-2"/>
+              </div>
+            </section>
+            <section id="mapping">
+              <h2>Mapping</h2>
+              <div>
+                <p>
+                  The Mapping menu provides a visualization of provinces, sectors, and organizations. When a user selects a specific province or sector, the menu displays an overview along with the repositories available or associated with that particular area. Similarly, selecting an organization allows users to locate its physical location and view an overview of the organization, as well as the repositories linked to it.
+                </p>
+                <img class="developer-image" :src="mapping"  alt="current-process-2"/>
+              </div>
+            </section>
+            <section id="sector">
+              <h2>Sector Tagging</h2>
+              <div>
+                <p>
+                  The sector tagging menu features a map that allows users to create new sectors for tagging their repositories or to view existing available sectors. The sectors are categorized into two main types: "Sectors" (representing the locations where projects are based) and "Organization" (indicating the headquarters or base of the organization). Additionally, the menu includes a filter option that enables users to refine the map visualization based on specific sectors.
+                </p>
+                <img class="developer-image" :src="tag1"  alt="current-process-2"/>
+                <p>
+                  Additionally, when adding new sectors, users can choose whether to import a GeoJson file or directly draw boundaries on the map.
+                </p>
+                <img class="developer-image" :src="tag2"  alt="current-process-2"/>
+              </div>
+            </section>
+            <section id="org">
+              <h2>Organization Management</h2>
+              <div>
+                <p>
+                  The organization bar allows users to navigate through different available organizations, where they can select and view detailed information about each one. There is also a button for creating a new organization and a search feature for finding existing organizations.
+                </p>
+                <img class="developer-image" :src="org"  alt="current-process-2"/>
+                <p>
+                  When selecting or viewing an organization, users will be presented with an overview that includes the organization’s address, consortium type, cluster representatives, and the repositories associated with that organization.
+                </p>
+                <img class="developer-image" :src="org2"  alt="current-process-2"/>
+              </div>
+              <div id="org-new">
+                <h3>Creating New Organization</h3>
+                <p>
+                  When creating a new organization, the creator has the option to specify whether it is an agency or institution. They will need to input the organization's name, description, address, president, contact information, and details for the organization's representatives. Additionally, there is an option to upload a logo or relevant image for the organization. Creators can also directly attach a GeoJSON file or draw the boundary for the organization.
+                </p>
+                <img class="developer-image" :src="orgNew"  alt="current-process-2"/>
+              </div>
+              <div id="org-access">
+                <h3>Organization Access Roles</h3>
+                <p>
+                  The organization owner or creator has comprehensive management capabilities for their organization. They can update any details related to the organization, ensuring that information remains current and accurate. In addition, the owner can manage membership by adding new members to the organization. When adding members, the owner can assign specific access levels to each individual, which include read-only access for viewing information without making changes, moderate access for limited editing capabilities, and full access control for complete administrative authority. This allows for tailored management and control based on the roles and responsibilities of each member within the organization.
+                </p>
+                <img class="developer-image" :src="orgRoles"  alt="proposed-process-2"/>
+              </div>
+            </section>
+            <section id="faqs">
+              <h2>Frequently Asked Questions</h2>
+              <div id="">
+                <h3>Can I Access Information and Repositories Without an Account?</h3>
+                <p>
+                  You can browse the platform’s map to explore publicly available information without needing to register an account.
+                </p>
+              </div>
+              <div id="">
+                <h3>How Can I Request Access to a Specific Repository?</h3>
+                <p>
+                  To request access to a specific repository, ensure you are logged in with your authenticated account. Navigate to the repository you wish to access, and you will find an option to request access. The request will be reviewed by the repository owner or administrator, and you will be notified once access is granted.
+                </p>
+              </div>
             </section>
           </article>
         </div>
