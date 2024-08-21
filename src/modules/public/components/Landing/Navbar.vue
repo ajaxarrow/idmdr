@@ -3,10 +3,12 @@
   import Logo from "../../../../core/components/Logo.vue";
   import {useToggleMenu} from "../../../../core/composables/useToggleMenu.ts";
   import {useRouting} from "../../../../core/composables/useRouting.ts";
+  import {useUserStore} from "../../../../core/stores/user.store.ts";
 
   const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
   const {isSmall} = useScreenStore();
   const {route} = useRouting();
+  const {user} = useUserStore();
 
   const baseNavLinks = [
     {
@@ -81,21 +83,33 @@
             </transition>
           </VCol>
           <VRow v-else class="ma-0" justify="end">
-            <VBtn
-                variant="text"
-                class="text-none mx-1 font-weight-medium"
-                :to="{ path: 'auth', query: { tab: 'login' } }"
-            >
-              Login
-            </VBtn>
-            <VBtn
-                variant="elevated"
-                color="bs50"
-                class="text-none mx-1 font-weight-medium"
-                :to="{ path: 'auth', query: { tab: 'register' } }"
-            >
-              Register
-            </VBtn>
+            <div v-if="user">
+              <VBtn
+                  variant="elevated"
+                  color="bs50"
+                  class="text-none mx-1 font-weight-medium"
+                  :to="{ name: 'dashboard' }"
+              >
+                Dashboard
+              </VBtn>
+            </div>
+            <div v-else>
+              <VBtn
+                  variant="text"
+                  class="text-none mx-1 font-weight-medium"
+                  :to="{ path: 'auth', query: { tab: 'login' } }"
+              >
+                Login
+              </VBtn>
+              <VBtn
+                  variant="elevated"
+                  color="bs50"
+                  class="text-none mx-1 font-weight-medium"
+                  :to="{ path: 'auth', query: { tab: 'register' } }"
+              >
+                Register
+              </VBtn>
+            </div>
           </VRow>
         </VRow>
       </VContainer>
@@ -114,22 +128,33 @@
             </div>
           </RouterLink>
           <VBtnPrimaryAlt
+              v-if="user"
               color="bs50"
               width="98%"
               class="submit-button my-1 mt-5"
-              :to="{ path: 'auth', query: { tab: 'register' } }"
+              :to="{ path: 'dashboard' }"
           >
-            Register
+            Dashboard
           </VBtnPrimaryAlt>
-          <VBtnPrimaryAlt
-              color="bs50"
-              width="98%"
-              variant="outlined"
-              class="button-outline my-1"
-              :to="{ path: 'auth', query: { tab: 'login' } }"
-          >
-            Login
-          </VBtnPrimaryAlt>
+          <div v-else>
+            <VBtnPrimaryAlt
+                color="bs50"
+                width="98%"
+                class="submit-button my-1 mt-5"
+                :to="{ path: 'auth', query: { tab: 'register' } }"
+            >
+              Register
+            </VBtnPrimaryAlt>
+            <VBtnPrimaryAlt
+                color="bs50"
+                width="98%"
+                variant="outlined"
+                class="button-outline my-1"
+                :to="{ path: 'auth', query: { tab: 'login' } }"
+            >
+              Login
+            </VBtnPrimaryAlt>
+          </div>
         </div>
         <div v-else>
           <slot/>

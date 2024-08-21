@@ -5,7 +5,7 @@ import {createGlobalState} from "@vueuse/core";
 
 const {user} = useUserStore();
 
-const handleGithub = async (code: string, state: string, router: Router) => {
+const handleGithub = async (code: string, state: string, ) => {
   try{
     const res = await server.get(`/api/github-oauth2/login/raw/callback/?code=${code}&state=${state}`)
     const user = {
@@ -13,17 +13,20 @@ const handleGithub = async (code: string, state: string, router: Router) => {
       accessToken: res.data.access,
       refreshToken: res.data.refresh
     }
-    localStorage.setItem('user', JSON.stringify(user));
-    await router.push({path: '/dashboard'})
-    setTimeout(() => {
-      router.push({path: '/dashboard'})
-    }, 1000);
+    await localStorage.setItem('user', JSON.stringify(user));
+    window.location.href = '/dashboard'
+    // router.push({path: '/dashboard'}).then(() => {
+    //   setTimeout(() => {
+    //     router.push({path: '/dashboard'})
+    //   }, 3000);
+    // })
+
   } catch (e) {
     console.log(e)
   }
 }
 
-const handleGoogle = async (code: string, state: string, router: Router) => {
+const handleGoogle = async (code: string, state: string, ) => {
   try{
     const res = await server.get(`/api/google-oauth2/login/raw/callback/?code=${code}&state=${state}`)
     const user = {
@@ -31,11 +34,13 @@ const handleGoogle = async (code: string, state: string, router: Router) => {
       accessToken: res.data.access,
       refreshToken: res.data.refresh
     }
-    localStorage.setItem('user', JSON.stringify(user));
-    await router.push({path: '/dashboard'})
-    setTimeout(() => {
-      router.push({path: '/dashboard'})
-    }, 1000);
+    await localStorage.setItem('user', JSON.stringify(user))
+    window.location.href = '/dashboard'
+    // router.push({path: '/dashboard'}).then(() => {
+    //   setTimeout(() => {
+    //     router.push({path: '/dashboard'})
+    //   }, 3000);
+    // })
   } catch (e) {
     console.log(e)
   }

@@ -3,7 +3,9 @@ import {PhMapTrifold} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
 import HeroMainImage from "../../../../assets/landing-page/hero-main-image.svg"
 import Placeholder from "../../../../assets/landing-page/placeholder.png"
+import {useUserStore} from "../../../../core/stores/user.store.ts";
 const {isMobile, isSmall} = useScreenStore();
+const {user} = useUserStore();
 </script>
 
 <template>
@@ -25,7 +27,7 @@ const {isMobile, isSmall} = useScreenStore();
           color="bs50"
           height="45px"
           class="text-none hvr-icon-spin explore-button mx-1"
-          :to="{name: 'map'}">
+          :to="{name: user ? 'dashboard' : 'auth'}">
         Get Started
       </VBtn>
       <VBtn
