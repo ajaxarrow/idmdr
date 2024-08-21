@@ -6,11 +6,9 @@
   import {LocationQueryValue} from "vue-router";
   import googleLoad from "../../../assets/lottiefiles/google-load.json"
   import githubLoad from "../../../assets/lottiefiles/github-load.json"
-  import Container from "../../../core/components/Container.vue";
   import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
   import {Vue3Lottie} from "vue3-lottie";
   import {useAuthUrls} from "../composables/useAuthUrls.ts";
-  import {useUserStore} from "../../../core/stores/user.store.ts";
   import {useAuthStore} from "../stores/auth.store.ts";
   const {router, route} = useRouting()
   const {getGoogleUrl, getGithubUrl} = useAuthUrls()
@@ -54,9 +52,6 @@
     }
   });
 
-  const {user} = useUserStore();
-
-
   onMounted(() => {
     tab.value = <string>route.query.tab || "register"
     if(<string>route.query.callback){
@@ -64,9 +59,9 @@
       callback.value = <string>route.query.callback
 
       if(callback.value === 'github'){
-        handleGithub(<string>route.query.code, <string>route.query.state, router);
+        handleGithub(<string>route.query.code, <string>route.query.state);
       }else{
-        handleGoogle(<string>route.query.code, <string>route.query.state, router);
+        handleGoogle(<string>route.query.code, <string>route.query.state);
       }
     }
   })
