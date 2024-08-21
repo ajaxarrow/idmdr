@@ -1,23 +1,40 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import {routes} from "./routes.ts";
 import {useLoadingStore} from "../core/stores/progress-bar.store.ts";
+import {useAuthStore} from "../modules/auth/stores/auth.store.ts";
+import {useMiddleware} from "../middlewares/middlewares.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: routes
 })
 
-router.beforeEach((to) => {
+const {handleLogout} = useAuthStore();
+const {checkAuth, checkIfAuthenticated} = useMiddleware();
+const publicPages = [
+    'landing', 'about', 'stakeholders',
+    'news-updates', 'news-updates-detail',
+    'help', 'contact', 'map', 'auth'
+];
+
+router.beforeEach(async (to) => {
     const {isLoading} = useLoadingStore();
     isLoading.value = true;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
 
-    if(to.name === 'signout'){
+    if (to.name === 'signout') {
+        await handleLogout(router);
         return {name: 'landing'}
     }
 })
 
-router.beforeResolve(() => {
+router.beforeResolve((to) => {
+    if (!publicPages.includes(<string>to.name)) {
+        checkIfAuthenticated();
+    }
+    if(to.name === 'auth'){
+        checkAuth();
+    }
     const {isLoading} = useLoadingStore();
     isLoading.value = false;
 })
