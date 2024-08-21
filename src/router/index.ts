@@ -14,7 +14,7 @@ const {checkAuth, checkIfAuthenticated} = useMiddleware();
 const publicPages = [
     'landing', 'about', 'stakeholders',
     'news-updates', 'news-updates-detail',
-    'help', 'contact', 'map', 'auth'
+    'help', 'contact', 'map', 'auth', 'error404'
 ];
 
 router.beforeEach(async (to) => {
