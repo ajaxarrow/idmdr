@@ -4,8 +4,10 @@ import {useScreenStore} from "../../stores/screen-size.store.ts";
 import {IconMenuDeep} from "@tabler/icons-vue";
 import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
 import {computed} from "vue";
+import {useUserStore} from "../../stores/user.store.ts";
 const {isSmall, isMobile, isLargePhone} = useScreenStore();
 const {toggleSidebar, isCollapsed, toggleProfileSidebar} = useToggleSidebar();
+const {userData} = useUserStore();
 const props = defineProps({
   title: {
     type: String,
@@ -50,14 +52,14 @@ const appBarWidthStyle = computed(() => {
             <PhBell size="24"/>
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">
-              <p class="text-name text-container">Jiu Axl Tabilla</p>
-              <p class="text-right text-name-subtitle">Coordinator</p>
+              <p class="text-name text-container">{{userData.username}}</p>
+              <p class="text-right text-name-subtitle">{{ userData.email }}</p>
             </div>
             <VAvatar
                 size="45"
                 class="ml-1 cursor-pointer"
             >
-              <VImg src="https://mighty.tools/mockmind-api/content/abstract/46.jpg"></VImg>
+              <VImg :src="userData.profilePicture"></VImg>
               <VTooltip
                   activator="parent"
                   location="bottom"

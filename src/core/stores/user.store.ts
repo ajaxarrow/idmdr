@@ -5,10 +5,12 @@ import {createGlobalState} from "@vueuse/core";
 const user = ref(JSON.parse(localStorage.getItem('user')));
 
 const userData = reactive({
-  email: user.value ? 'd' : '',
-  username: user.value ? 'd' : ''
-  // email: user.value ? user.value.user.email : '',
-  // username: user.value ? user.value.user.username : ''
+  // email: user.value.user.email ? user.value.user.email : 'user@example.com',
+  // username: user.value.user.username ? user.value.user.username : 'User',
+  // profilePicture: user.value.user.profile_picture ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'
+  email: user.value ? user.value.user.email : 'user@example.com',
+  username: user.value ? user.value.user.username : 'User',
+  profilePicture: user.value ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'
 });
 
 export const useUserStore = createGlobalState(() => ({ user, userData}));
