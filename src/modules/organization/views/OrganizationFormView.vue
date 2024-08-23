@@ -7,10 +7,12 @@ import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vu
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import {useOrganizationServices} from "../services/organization.services.ts";
 
 const visibility = ref("public");
 const type = ref("institution");
 const formType = ref<FormType>(FormType.create);
+const {addOrganization, errorMessage} = useOrganizationServices();
 
 const {route} = useRouting();
 
@@ -51,6 +53,10 @@ const organization = reactive<Organization>({
     phone: '',
   },
 });
+
+const addOrganizationData = async () => {
+  await addOrganization(organization)
+}
 
 onMounted(() => {
   const type = <string>route.path.split('/').filter(Boolean).pop()
@@ -138,13 +144,13 @@ onMounted(() => {
       </div>
       <VDivider/>
       <div class="pa-6">
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Organization Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.name"
               placeholder="E.g. Central Mindanao University"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -152,13 +158,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Organization Acronym</label>
           <VTextField
               v-model="organization.acronym"
               placeholder="E.g. CMU"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.acronym"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -174,7 +180,7 @@ onMounted(() => {
 <!--          <VTextarea-->
 <!--              placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."-->
 <!--              class="my-2"-->
-<!--              hide-details-->
+<!--              :error-messages="errorMessage"-->
 <!--              rounded="lg"-->
 <!--              density="comfortable"-->
 <!--              variant="outlined"-->
@@ -182,13 +188,13 @@ onMounted(() => {
 <!--              base-color="gs60"-->
 <!--          />-->
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Address<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.address"
               placeholder="E.g. University"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.address"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -196,13 +202,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">President<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.president"
               placeholder="E.g. John Doe"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.president"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -210,13 +216,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Telephone Number<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.tel"
               placeholder="E.g. 000-888-000"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.tel"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -224,13 +230,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Cell Number<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.phone"
               placeholder="E.g. 09510055677"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -238,13 +244,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Email<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.email"
               placeholder="E.g. cmu@edu.ph"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -252,13 +258,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Website<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.website"
               placeholder="E.g. www.cmu.edu.ph"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.website"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -267,12 +273,12 @@ onMounted(() => {
           />
         </div>
 <!--        <div v-for="cluster in clusters">-->
-<!--          <div class="mb-5">-->
+<!--          <div class="mb-3">-->
 <!--            <label class="input-label">{{cluster}} Name<span class="text-pink">*</span></label>-->
 <!--            <VTextField-->
 <!--                placeholder="E.g. John Doe"-->
 <!--                class="my-2"-->
-<!--                hide-details-->
+<!--                :error-messages="errorMessage"-->
 <!--                rounded="lg"-->
 <!--                density="comfortable"-->
 <!--                variant="outlined"-->
@@ -280,12 +286,12 @@ onMounted(() => {
 <!--                base-color="gs60"-->
 <!--            />-->
 <!--          </div>-->
-<!--          <div class="mb-5">-->
+<!--          <div class="mb-3">-->
 <!--            <label class="input-label">{{cluster}} Email<span class="text-pink">*</span></label>-->
 <!--            <VTextField-->
 <!--                placeholder="E.g. johndoe@example.com"-->
 <!--                class="my-2"-->
-<!--                hide-details-->
+<!--                :error-messages="errorMessage"-->
 <!--                rounded="lg"-->
 <!--                density="comfortable"-->
 <!--                variant="outlined"-->
@@ -294,13 +300,13 @@ onMounted(() => {
 <!--            />-->
 <!--          </div>-->
 <!--        </div>-->
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Research & Development Representative Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.rd_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.rd_rep.name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -308,13 +314,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
         <label class="input-label">Research & Development Representative Email<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.rd_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.rd_rep.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -322,13 +328,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Research & Development Representative Phone<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.rd_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.rd_rep.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -336,13 +342,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.tt_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.tt_rep.name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -350,13 +356,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Email<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.tt_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.tt_rep.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -364,13 +370,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Phone<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.tt_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.tt_rep.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -378,13 +384,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Information Communication Representative Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.ic_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.ic_rep.name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -392,13 +398,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Information Communication Representative Email<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.ic_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.ic_rep.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -406,13 +412,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Information Communication Representative Phone<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.ic_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.ic_rep.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -420,13 +426,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Science Communication Representative Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.sc_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.sc_rep.name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -434,13 +440,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Science Communication Representative Email<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.sc_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.sc_rep.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -448,13 +454,13 @@ onMounted(() => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Science Communication Representative Phone<span class="text-pink">*</span></label>
           <VTextField
               v-model="organization.sc_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
-              hide-details
+              :error-messages="errorMessage.sc_rep.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -480,6 +486,7 @@ onMounted(() => {
         </div>
         <VRow class="ma-0" justify="end">
           <VBtnPrimaryFilled
+              @click="addOrganizationData"
               rounded="lg"
               height="44px"
               width="166px"
