@@ -9,7 +9,7 @@ const organizationRoutes = [
     path: '/organizations/new',
     name: 'new-organization',
     // @ts-ignore
-    component: () => import('../../modules/organization/views/NewOrganizationView.vue')
+    component: () => import('../../modules/organization/views/OrganizationFormView.vue')
   },
   {
     path: '/organizations/:slug',

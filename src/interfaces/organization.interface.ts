@@ -2,18 +2,20 @@ import {OrganizationType, ClusterType} from "./enums/organization.enum";
 
 
 interface Organization {
+  is_public: boolean,
   name: string,
   acronym?: string,
   slug: string,
   description: string,
   geojson?: any,
   image?: string,
-  type: OrganizationType,
+  type?: OrganizationType,
+  website?: string,
   address?: string,
   tel?: string,
   phone?: string,
   email?: string,
-  president: string,
+  president?: string,
   rd_rep: Representative,
   tt_rep: Representative,
   ic_rep: Representative,
