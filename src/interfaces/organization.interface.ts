@@ -14,8 +14,13 @@ interface Organization {
   phone?: string,
   email?: string,
   president: string,
-  clusterRepresentatives: ClusterRepresentative[]
+  rd_rep: Representative,
+  tt_rep: Representative,
+  ic_rep: Representative,
+  sc_rep: Representative,
+  // clusterRepresentatives: ClusterRepresentative[]
 }
+
 
 interface ClusterRepresentative{
   type: ClusterType,
@@ -23,4 +28,10 @@ interface ClusterRepresentative{
   email?: string
 }
 
-export type {Organization, ClusterRepresentative}
+interface Representative{
+  name: string,
+  email?: string,
+  phone?: string
+}
+
+export type {Organization, ClusterRepresentative, Representative}
