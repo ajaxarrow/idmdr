@@ -274,7 +274,6 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      console.log(rawData)
       const organizations: Organization[] = rawData.map((org: any) => ({
         uid: org.uid,
         acronym: org.acronym,
