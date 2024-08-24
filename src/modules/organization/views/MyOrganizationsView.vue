@@ -100,7 +100,7 @@ onMounted(async () => {
           <p class="text-center">No more organizations to fetch!</p>
         </div>
         <div class="pa-3" v-else>
-          <Observer  @intersect="fetchMoreOrganizations"/>
+          <Observer @intersect="fetchMoreOrganizations"/>
         </div>
       </div>
     </div>
