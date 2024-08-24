@@ -26,7 +26,6 @@ watch(() => searchQuery.value, () => {
 
 onMounted(async () => {
   organizationData.value = await fetchOrganizationByUser();
-  console.log(myOrganizations.value)
 })
 </script>
 

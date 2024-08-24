@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
-import {PropType} from "vue";
+import {onMounted, PropType, ref} from "vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 
+const path = ref('/organizations')
 const props = defineProps({
   organization: {
     type: Object as PropType<Organization>
@@ -11,14 +12,18 @@ const props = defineProps({
 })
 
 const {isDesktop} = useScreenStore();
-const {router} = useRouting()
+const {router, route} = useRouting()
 
 const goToOrganizationDetails = () => {
   router.push({
-    name: 'organization-data',
+    name: path.value == '/organizations' ?  'organization-data' : 'my-organization-data',
     params: { slug: props.organization?.slug }
   });
 }
+
+onMounted(() => {
+  path.value = <string>route.path
+})
 </script>
 
 <template>
@@ -38,7 +43,7 @@ const goToOrganizationDetails = () => {
         </div>
       </div>
       <VBtn
-          :to="{ name: 'organization-data', params: { slug: props.organization?.slug } }"
+          :to="{ name: path == '/organizations' ?  'organization-data' : 'my-organization-data', params: { slug: props.organization?.slug } }"
           class="text-none bg-background view-details-btn"
           height="35px"
           width="95px"

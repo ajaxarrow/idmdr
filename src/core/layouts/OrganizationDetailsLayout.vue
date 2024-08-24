@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "./MainLayout.vue";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
 import {Organization} from "../../interfaces/organization.interface.ts";
@@ -9,8 +9,9 @@ import NotFound from "../../assets/images/404.svg";
 import {useScreenStore} from "../stores/screen-size.store.ts";
 import {PhArrowLeft} from "@phosphor-icons/vue";
 
+const path = ref('organizations')
 const tab = ref("about");
-const {router} = useRouting();
+const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
 const props = defineProps({
   organization: {
@@ -22,15 +23,32 @@ const props = defineProps({
 });
 
 const tabs = [
-  {
-    name: "About",
-    linkName: "organization-data"
-  },
-  {
-    name: "Repositories",
-    linkName: "organization-repositories"
-  },
-]
+  { name: "About" },
+  { name: "Repositories" }
+];
+
+// Create a computed property that maps over the tabs array
+const computedTabs = computed(() => {
+  return tabs.map(tab => {
+    let linkName;
+
+    if (tab.name === "About") {
+      linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
+    } else if (tab.name === "Repositories") {
+      linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
+    }
+
+    return {
+      ...tab,
+      linkName,
+    };
+  });
+});
+
+
+const getFirstPath = (url: string) => {
+  return url.split('/').filter(Boolean)[0];
+}
 
 const navigateTo = (linkName: string) => {
   router.push({
@@ -42,6 +60,7 @@ onMounted(()=>{
   if(props.activeTab){
     tab.value = props.activeTab
   }
+  path.value = getFirstPath(<string>route.path)
 })
 </script>
 
@@ -51,12 +70,12 @@ onMounted(()=>{
       <div class="pa-6 relative-container" style="z-index: 20;">
         <RouterLink
             :to="{
-          name: 'organizations'
+          name: path == 'organizations' ?  'organizations' : 'my-organizations'
         }"
             class="text-decoration-none text-none">
           <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
             <PhArrowLeft size="14" class="mr-1"/>
-            Back To Organizations
+            Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
           </p>
         </RouterLink>
         <VRow justify="space-between" align="center" class="ma-0">
@@ -88,7 +107,7 @@ onMounted(()=>{
         v-model="tab"
       >
         <VTab
-          v-for="tab in tabs"
+          v-for="tab in computedTabs"
           class="tab-title text-none mx-2"
           :value="tab.name.toLowerCase()"
           @click="navigateTo(tab.linkName)"
@@ -146,7 +165,7 @@ onMounted(()=>{
 }
 
 .back-button{
-  width: 175px;
+  width: 195px;
   font-size: 14px;
 }
 .back-button:hover{
