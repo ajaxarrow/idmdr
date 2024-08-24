@@ -17,7 +17,7 @@ const publicPages = [
     'help', 'contact', 'map', 'auth', 'error404'
 ];
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from, next) => {
     const {isLoading} = useLoadingStore();
     isLoading.value = true;
     window.scrollTo({top: 0, behavior: 'smooth'});
@@ -26,6 +26,7 @@ router.beforeEach(async (to) => {
         await handleLogout(router);
         return {name: 'landing'}
     }
+    next()
 })
 
 router.beforeResolve((to) => {

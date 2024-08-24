@@ -4,10 +4,10 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {reactive} from "vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import {OrganizationType} from "../../../interfaces/enums/organization.enum.ts";
 import organizationData from "../../../data/organizations.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
+import router from "../../../router";
 
 // Function to transform representative data
 const transformRepData = (rep: any) => ({
@@ -23,7 +23,7 @@ const transformRepDataFromAPI = (rep: any) => ({
 });
 const { userData } = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
-const {router} = useRouting()
+// const {router} = useRouting()
 const {myOrganizations} = useOrganizationStore();
 
 export const useOrganizationServices = () => {
@@ -150,10 +150,8 @@ export const useOrganizationServices = () => {
       });
 
       await addMemberToOrganization(res.data.uid);
-
-      await router.push({name: 'my-organizations'});
+      await router.push({path: '/my-organizations'});
       showSnackbarMessage('Organization created successfully', Status.success);
-
     } catch (e: any) {
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
       handleError(e.response?.data);
@@ -183,7 +181,8 @@ export const useOrganizationServices = () => {
   }
 
   const addOrganization = async (organization: Organization) => {
-    await saveOrganization(organization, `/v1/organization/${userData.uid}/`);
+    await saveOrganization(organization, `/v1/organization/`);
+    // await router.push({path: '/my-organizations'});
   };
 
   const updateOrganization = async (organization: Organization, id: string) => {
@@ -217,9 +216,9 @@ export const useOrganizationServices = () => {
         tel: '221-2237 ',
         president: 'Anie Joseph Cabahug',
         slug: org.organization.uid,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur, a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
+        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur,a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
 
-Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
+        Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
       }));
       const data = [...organizationData, ...organizations];
       myOrganizations.value = data;
