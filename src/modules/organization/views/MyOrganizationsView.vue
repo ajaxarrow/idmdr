@@ -3,7 +3,6 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
-import organizations from "../../../data/organizations.ts";
 import {onMounted, ref, watch} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
