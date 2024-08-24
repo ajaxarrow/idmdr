@@ -6,6 +6,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationsView.vue')
   },
   {
+    path: '/my-organizations',
+    name: 'my-organizations',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/MyOrganizationsView.vue')
+  },
+  {
     path: '/organizations/new',
     name: 'new-organization',
     // @ts-ignore
