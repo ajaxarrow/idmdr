@@ -5,6 +5,9 @@ import {reactive} from "vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
+import {OrganizationType} from "../../../interfaces/enums/organization.enum.ts";
+import organizationData from "../../../data/organizations.ts";
+import {useOrganizationStore} from "../stores/organization.store.ts";
 
 // Function to transform representative data
 const transformRepData = (rep: any) => ({
@@ -13,10 +16,17 @@ const transformRepData = (rep: any) => ({
   phone: rep?.phone,
 });
 
+const transformRepDataFromAPI = (rep: any) => ({
+  name: rep?.full_name,
+  email: rep?.email,
+  phone: rep?.phone,
+});
+const { userData } = useUserStore();
+const {showSnackbarMessage} = useSnackbarStore();
+const {router} = useRouting()
+const {myOrganizations} = useOrganizationStore();
+
 export const useOrganizationServices = () => {
-  const { userData } = useUserStore();
-  const {showSnackbarMessage} = useSnackbarStore();
-  const {router} = useRouting()
 
   const errorMessageIntialState = reactive({
     name: '',
@@ -113,7 +123,6 @@ export const useOrganizationServices = () => {
     });
   };
 
-
   const clearErrorMessage = () => {
     Object.assign(errorMessage, { ...errorMessageIntialState });
   };
@@ -181,12 +190,65 @@ export const useOrganizationServices = () => {
     await saveOrganization(organization, `/v1/organization/${id}/update`);
   };
 
+  const fetchOrganizationByUser = async () : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/user/${userData.uid}/organizations`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = rawData.map((org: any) => ({
+        uid: org.organization.uid,
+        acronym: org.organization.acronym,
+        name: org.organization.name,
+        address: org.organization.address,
+        phone: org.organization.phone,
+        email: org.organization.email,
+        website: org.organization.website,
+        tt_rep: transformRepDataFromAPI(org.organization.ttc_rep),
+        ic_rep: transformRepDataFromAPI(org.organization.icc_rep),
+        sc_rep: transformRepDataFromAPI(org.organization.scc_rep),
+        rd_rep: transformRepDataFromAPI(org.organization.rdc_rep),
+        // geojson: org.geojson,
+        is_public: org.organization.is_public,
+        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+        type: OrganizationType.Institution,
+        tel: '221-2237 ',
+        president: 'Anie Joseph Cabahug',
+        slug: org.organization.uid,
+        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur, a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
+
+Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
+      }));
+      const data = [...organizationData, ...organizations];
+      myOrganizations.value = data;
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
+  const fetchOrganizationData = (slug: string, organizations: Organization[]): Organization | null => {
+    const organization = organizations.find(org => org.slug === slug);
+    if (organization) {
+      return organization;
+    } else {
+      console.error('no org')
+      return null;
+    }
+  }
+
+
+
 
   return {
     addOrganization,
     updateOrganization,
     errorMessage,
     clearErrorMessage,
-    hasErrorMessages
+    hasErrorMessages,
+    fetchOrganizationByUser,
+    fetchOrganizationData
   };
 };

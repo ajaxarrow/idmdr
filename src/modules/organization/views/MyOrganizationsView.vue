@@ -4,8 +4,12 @@ import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
 import organizations from "../../../data/organizations.ts";
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
+import {useOrganizationServices} from "../services/organization.services.ts";
+import {useOrganizationStore} from "../stores/organization.store.ts";
 
+const {fetchOrganizationByUser} = useOrganizationServices();
+const {myOrganizations} = useOrganizationStore();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
 const organizationData = ref(organizations);
@@ -19,6 +23,11 @@ const filterOrganizationsBySearchQuery = () => {
 watch(() => searchQuery.value, () => {
   filterOrganizationsBySearchQuery()
 });
+
+onMounted(async () => {
+  organizationData.value = await fetchOrganizationByUser();
+  console.log(myOrganizations.value)
+})
 </script>
 
 <template>
@@ -40,7 +49,7 @@ watch(() => searchQuery.value, () => {
               <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-if="isSmall || isTablet" icon >
                 <PhPlus size="20"/>
               </VBtnPrimaryFilled>
-              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
+              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md" style="font-size: 15px !important;">
                 <PhPlus size="20" class="mr-2"/>
                 New Organization
               </VBtnPrimaryFilled>

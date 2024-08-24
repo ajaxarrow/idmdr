@@ -1,8 +1,9 @@
 import {Organization} from "../interfaces/organization.interface.ts";
-import {ClusterType, OrganizationType} from "../interfaces/enums/organization.enum.ts";
+import {OrganizationType} from "../interfaces/enums/organization.enum.ts";
 
 const organizations: Organization[] = [
   {
+    is_public: true,
     name: "Central Mindanao University",
     slug: "central-mindanao-university",
     acronym: "CMU",
@@ -14,27 +15,21 @@ const organizations: Organization[] = [
     phone: "+63 998-5741-547",
     president: "Dr. Rolito G. Eballe Ph.D ",
     image: "https://www.cmu.edu.ph/wp-content/uploads/2023/06/branding-web-cover-660x330.jpg",
-    clusterRepresentatives: [
-      {
-        type: ClusterType.ResearchAndDevelopment,
-        name: "Jupiter V. Casas, PhD",
-        email: "jupitcasas@yahoo.com",
-      },
-      {
-        type: ClusterType.TechnologyTransfer,
-        name: "Estrella Dacillo, PhD",
-        email: "dacilloestrella@gmail.com",
-      },
-      {
-        type: ClusterType.InformationCommunication,
-        name: "Ferdinand Jr. D. Bascones",
-        email: "ferdinand.basconesjr@cmu.edu.ph",
-      },
-      {
-        type: ClusterType.ScienceCommunication,
-        name: "Maejoy L. Talisay",
-      }
-    ],
+    rd_rep: {
+      name: "Jupiter V. Casas, PhD",
+      email: "jupitcasas@yahoo.com",
+    },
+    tt_rep: {
+      name: "Estrella Dacillo, PhD",
+      email: "dacilloestrella@gmail.com",
+    },
+    ic_rep: {
+      name: "Ferdinand Jr. D. Bascones, PhD",
+      email: "ferdinand.basconesjr@cmu.edu.ph",
+    },
+    sc_rep: {
+      name: "Maejoy L. Talisay",
+    },
     geojson: {
       type: 'Feature',
       geometry: {
@@ -245,6 +240,7 @@ const organizations: Organization[] = [
     }
   },
   {
+    is_public: true,
     name: "Bukidnon State University",
     slug: "bukidnon-state-university",
     acronym: "BSU",
@@ -256,22 +252,21 @@ const organizations: Organization[] = [
     phone: "+63 998-5741-547",
     president: "Atty. Ryan L. Estevez (OIC)",
     image: "https://i.ytimg.com/vi/1qczSFQBx80/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9gaIPv6vNlW_rIUzzOZSGyP5EOg",
-    clusterRepresentatives: [
-      {
-        type: ClusterType.ResearchAndDevelopment,
-        name: "Lesley C. Lubos",
-        email: "bbicar@yahoo.com",
-      },
-      {
-        type: ClusterType.TechnologyTransfer,
-        name: "Jiemalyn B. Paulican ",
-        email: "godsgift.jaraba@gmail.com",
-      },
-      {
-        type: ClusterType.InformationCommunication,
-        name: "Ma. Teresa G. Salumintao",
-      },
-    ],
+    rd_rep: {
+      name: "Lesley C. Lubos",
+      email: "bbicar@yahoo.com",
+    },
+    tt_rep: {
+      name: "Jiemalyn B. Paulican ",
+      email: "godsgift.jaraba@gmail.com",
+    },
+    ic_rep: {
+      name: "N/A",
+      email: "N/A",
+    },
+    sc_rep: {
+      name: "Ma. Teresa G. Salumintao",
+    },
     geojson: {
       type: 'Feature',
       geometry: {
@@ -310,6 +305,7 @@ const organizations: Organization[] = [
     }
   },
   {
+    is_public: true,
     name: "Liceo de Cagayan University",
     slug: "liceo-de-cagayan-university",
     acronym: "LDCU",
@@ -321,28 +317,22 @@ const organizations: Organization[] = [
     phone: "+63 998-5741-547",
     president: "Dr. Alain Marc P. Golez ",
     image: "https://www.liceo.edu.ph/images/Paseo%20Facilities%20Home.jpg",
-    clusterRepresentatives: [
-      {
-        type: ClusterType.ResearchAndDevelopment,
-        name: "Ma. Felicitas M. Mamuag",
-        email: "mmamauag@liceo.edu.ph",
-      },
-      {
-        type: ClusterType.TechnologyTransfer,
-        name: "Jun Brian P. Tubongbanua",
-        email: "jbtubongbanua@liceo.edu.ph",
-      },
-      {
-        type: ClusterType.InformationCommunication,
-        name: "Aurora Cindy A. Balabat",
-        email: "acbalabat@liceo.edu.ph",
-      },
-      {
-        type: ClusterType.ScienceCommunication,
-        name: "Judy Marie R. Zoleta",
-        email: "jrzoleta@liceo.edu.ph"
-      }
-    ],
+    rd_rep: {
+      name: "Ma. Felicitas M. Mamuag",
+      email: "mmamauag@liceo.edu.ph",
+    },
+    tt_rep: {
+      name: "Jun Brian P. Tubongbanua",
+      email: "jbtubongbanua@liceo.edu.ph",
+    },
+    ic_rep: {
+      name: "Aurora Cindy A. Balabat",
+      email: "acbalabat@liceo.edu.ph",
+    },
+    sc_rep: {
+      name: "Judy Marie R. Zoleta",
+      email: "jrzoleta@liceo.edu.ph"
+    },
     geojson: {
       type: 'Feature',
       geometry: {

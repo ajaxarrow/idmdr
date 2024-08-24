@@ -40,7 +40,7 @@ watch(() => searchQuery.value, () => {
              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-if="isSmall || isTablet" icon >
                <PhPlus size="20"/>
              </VBtnPrimaryFilled>
-             <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
+             <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md" style="font-size: 15px !important;">
                <PhPlus size="20" class="mr-2"/>
                New Organization
              </VBtnPrimaryFilled>
