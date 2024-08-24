@@ -1,7 +1,10 @@
-import { Organization } from "../../../interfaces/organization.interface.ts";
-import { server } from "../../../plugins/axios.ts";
-import { useUserStore } from "../../../core/stores/user.store.ts";
-import { reactive } from "vue";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import {server} from "../../../plugins/axios.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import {reactive} from "vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
 
 // Function to transform representative data
 const transformRepData = (rep: any) => ({
@@ -12,6 +15,8 @@ const transformRepData = (rep: any) => ({
 
 export const useOrganizationServices = () => {
   const { userData } = useUserStore();
+  const {showSnackbarMessage} = useSnackbarStore();
+  const {router} = useRouting()
 
   const errorMessageIntialState = reactive({
     name: '',
@@ -49,6 +54,20 @@ export const useOrganizationServices = () => {
   });
 
   const errorMessage = reactive({ ...errorMessageIntialState });
+  const hasErrorMessages = (errorMessage: any): boolean => {
+    // Iterate over each key in the errorMessage object
+    return Object.keys(errorMessage).some(key => {
+      const value = errorMessage[key];
+
+      // If value is an object, recursively check its properties
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        return hasErrorMessages(value);
+      }
+
+      // Check if the value is a non-empty string (error message present)
+      return typeof value === 'string' && value.trim().length > 0;
+    });
+  };
 
   const handleError = (data: any) => {
     clearErrorMessage();
@@ -121,27 +140,53 @@ export const useOrganizationServices = () => {
         }
       });
 
-      console.log(res.data);
+      await addMemberToOrganization(res.data.uid);
+
+      await router.push({name: 'my-organizations'});
+      showSnackbarMessage('Organization created successfully', Status.success);
+
     } catch (e: any) {
-      console.log(e.response?.data);
+      showSnackbarMessage('OOPS! Something went wrong', Status.error);
       handleError(e.response?.data);
+      return;
       // clearErrorMessage();
       // handleDynamicErrorMapping(e.response?.data, errorMessage);
     }
   };
 
+  const addMemberToOrganization = async(orgID: string) => {
+    try {
+      await server.post(`/v1/user/${userData.uid}/organizations`, {
+        user: userData.uid,
+        organization: orgID,
+        access_level: 'admin'
+      }, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      // console.log(res.data);
+    } catch (e: any) {
+      showSnackbarMessage('OOPS! Something went wrong', Status.error);
+      // console.log(e.response?.data);
+      return;
+    }
+  }
+
   const addOrganization = async (organization: Organization) => {
-    await saveOrganization(organization, '/v1/organization/');
+    await saveOrganization(organization, `/v1/organization/${userData.uid}/`);
   };
 
   const updateOrganization = async (organization: Organization, id: string) => {
     await saveOrganization(organization, `/v1/organization/${id}/update`);
   };
 
+
   return {
     addOrganization,
     updateOrganization,
     errorMessage,
     clearErrorMessage,
+    hasErrorMessages
   };
 };

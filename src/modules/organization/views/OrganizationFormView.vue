@@ -9,16 +9,17 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 
+const organizationForm = ref(null);
 const visibility = ref("public");
 const type = ref("institution");
 const formType = ref<FormType>(FormType.create);
-const {addOrganization, errorMessage} = useOrganizationServices();
+const {addOrganization, errorMessage, hasErrorMessages} = useOrganizationServices();
 
 const {route} = useRouting();
 
 // const clusters: string[] = Object.values(ClusterType);
-const organization = reactive<Organization>({
-  is_public: false,
+const organizationDataInitialState = reactive<Organization>({
+  is_public: true,
   name: '',
   acronym: '',
   description: '',
@@ -54,8 +55,35 @@ const organization = reactive<Organization>({
   },
 });
 
+const organization = reactive<Organization>({
+  ...organizationDataInitialState
+});
+
+const clearFields = () => {
+  Object.assign(organization, {...organizationDataInitialState});
+}
+
+const scrollToFirstErrorMessage = () => {
+  //@ts-ignore
+  const fields = organizationForm.value.items
+  const firstErrorField = fields.find((field) => field.errorMessages.length > 0);
+  const element = document.getElementById(firstErrorField.id);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
+  }
+}
+
 const addOrganizationData = async () => {
   await addOrganization(organization)
+  if(hasErrorMessages(errorMessage)){
+    scrollToFirstErrorMessage()
+  } else {
+    clearFields();
+  }
 }
 
 onMounted(() => {
@@ -71,7 +99,7 @@ onMounted(() => {
 
 <template>
   <MainLayout title="New Organization">
-    <div style="height: 100%" class="relative-container circle">
+    <VForm ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
           <RouterLink :to="{ name: 'organizations'}"  class="text-decoration-none text-none">
@@ -481,7 +509,7 @@ onMounted(() => {
           <div class="my-2 file-upload-container">
             <PhFileDashed size="50"/>
             <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label> or <label class="file-label" for="dropzoneFile">Draw Boundary</label></p>
-            <VFileInput id="dropzoneFile" style="display: none"/>
+            <VFileInput id="dropzoneFileGeoJSON" style="display: none"/>
           </div>
         </div>
         <VRow class="ma-0" justify="end">
@@ -495,7 +523,7 @@ onMounted(() => {
           </VBtnPrimaryFilled>
         </VRow>
       </div>
-    </div>
+    </VForm>
 
   </MainLayout>
 </template>
