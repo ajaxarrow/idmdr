@@ -66,7 +66,7 @@ const clearFields = () => {
 const scrollToFirstErrorMessage = () => {
   //@ts-ignore
   const fields = organizationForm.value.items
-  const firstErrorField = fields.find((field) => field.errorMessages.length > 0);
+  const firstErrorField = fields.find((field: any) => field.errorMessages.length > 0);
   const element = document.getElementById(firstErrorField.id);
   if (element) {
     element.scrollIntoView({
