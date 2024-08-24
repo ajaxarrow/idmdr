@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized} from 'vue-router'
 import {routes} from "./routes.ts";
 import {useLoadingStore} from "../core/stores/progress-bar.store.ts";
 import {useAuthStore} from "../modules/auth/stores/auth.store.ts";
@@ -17,7 +17,7 @@ const publicPages = [
     'help', 'contact', 'map', 'auth', 'error404'
 ];
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNext) => {
     const {isLoading} = useLoadingStore();
     isLoading.value = true;
     window.scrollTo({top: 0, behavior: 'smooth'});
