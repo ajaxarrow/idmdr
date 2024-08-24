@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {ClusterType, OrganizationType} from "../../../interfaces/enums/organization.enum.ts"
-import {onMounted, PropType, reactive, ref} from "vue";
+import {OrganizationType} from "../../../interfaces/enums/organization.enum.ts"
+import {onMounted, reactive, ref} from "vue";
 import {PhArrowLeft, PhFileDashed} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
