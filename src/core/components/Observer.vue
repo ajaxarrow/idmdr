@@ -1,21 +1,30 @@
-<script setup>
-import { ref, onMounted} from 'vue';
-//@ts-nocheck
-const observer = ref(null);
-const root = ref(null);
+<script setup lang="ts">
+import { ref, onMounted, defineEmits } from 'vue';
 
-const emits = defineEmits(["intersect"])
+
+const observer = ref<IntersectionObserver | null>(null);
+const root = ref<HTMLElement | null>(null);
+
+const emits = defineEmits<{
+  (event: 'intersect'): void;
+}>();
 
 onMounted(() => {
   observer.value = new IntersectionObserver(([entry]) => {
-    if(entry && entry.isIntersecting){
-      emits("intersect")
+    if (entry.isIntersecting) {
+      emits('intersect');
     }
-  })
+  });
 
-  observer.value.observe(root.value)
-})
+  if (root.value) {
+    if (observer.value) {
+      // @ts-ignore
+      observer.value.observe(root.value);
+    }
+  }
+});
 </script>
+
 
 <template>
   <div class="observer" ref="root">
