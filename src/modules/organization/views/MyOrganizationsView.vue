@@ -7,6 +7,7 @@ import {onMounted, ref, watch} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import Observer from "../../../core/components/Observer.vue";
+import organizations from "../../../data/organizations.ts";
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
@@ -37,7 +38,8 @@ watch(() => searchQuery.value, () => {
 });
 
 onMounted(async () => {
-  organizationData.value = await fetchOrganizationByUserWithPagination(lastItemValue.value);
+  const fetchedData = await fetchOrganizationByUserWithPagination(lastItemValue.value);
+  organizationData.value = [...organizations, ...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
 })
 </script>
