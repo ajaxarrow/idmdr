@@ -189,6 +189,44 @@ export const useOrganizationServices = () => {
     await saveOrganization(organization, `/v1/organization/${id}/update`);
   };
 
+  const fetchOrganizationByUserWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/user/${userData.uid}/organizations?page=${pageNumber}&page_size=5`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = rawData.map((org: any) => ({
+        uid: org.organization.uid,
+        acronym: org.organization.acronym,
+        name: org.organization.name,
+        address: org.organization.address,
+        phone: org.organization.phone,
+        email: org.organization.email,
+        website: org.organization.website,
+        tt_rep: transformRepDataFromAPI(org.organization.ttc_rep),
+        ic_rep: transformRepDataFromAPI(org.organization.icc_rep),
+        sc_rep: transformRepDataFromAPI(org.organization.scc_rep),
+        rd_rep: transformRepDataFromAPI(org.organization.rdc_rep),
+        // geojson: org.geojson,
+        is_public: org.organization.is_public,
+        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+        type: OrganizationType.Institution,
+        tel: '221-2237 ',
+        president: 'Anie Joseph Cabahug',
+        slug: org.organization.uid,
+        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur,a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
+
+        Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
+      }));
+      myOrganizations.value = [...myOrganizations.value, ...organizations];
+      return organizations;
+    } catch (e) {
+      return []
+    }
+  }
+
   const fetchOrganizationByUser = async () : Promise<Organization[]> => {
     try{
       const res = await server.get(`/v1/user/${userData.uid}/organizations`, {
@@ -221,7 +259,7 @@ export const useOrganizationServices = () => {
         Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
       }));
       const data = [...organizationData, ...organizations];
-      myOrganizations.value = data;
+      myOrganizations.value = [...myOrganizations.value, ...data];
       return data;
     } catch (e) {
       return []
@@ -248,6 +286,7 @@ export const useOrganizationServices = () => {
     clearErrorMessage,
     hasErrorMessages,
     fetchOrganizationByUser,
+    fetchOrganizationByUserWithPagination,
     fetchOrganizationData
   };
 };

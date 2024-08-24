@@ -6,15 +6,30 @@ import OrganizationItem from "../components/OrganizationItem.vue";
 import organizations from "../../../data/organizations.ts";
 import {onMounted, ref, watch} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
+import {useOrganizationStore} from "../stores/organization.store.ts";
+import Observer from "../../../core/components/Observer.vue";
 
-const {fetchOrganizationByUser} = useOrganizationServices();
+const reachEnd = ref(false)
+const lastItemValue = ref(1);
+const {myOrganizations} = useOrganizationStore();
+const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
-const organizationData = ref(organizations);
+const organizationData = ref(myOrganizations);
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
-    organizationData.value = organizations.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    organizationData.value = myOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  } else {
+    organizationData.value = myOrganizations.value
+  }
+}
+
+const fetchMoreOrganizations = async () => {
+  const data = await fetchOrganizationByUserWithPagination(lastItemValue.value);
+  lastItemValue.value = lastItemValue.value + 1
+  if (data.length === 0) {
+    reachEnd.value = true
   }
 }
 
@@ -23,7 +38,8 @@ watch(() => searchQuery.value, () => {
 });
 
 onMounted(async () => {
-  organizationData.value = await fetchOrganizationByUser();
+  organizationData.value = await fetchOrganizationByUserWithPagination(lastItemValue.value);
+  lastItemValue.value = lastItemValue.value + 1
 })
 </script>
 
@@ -79,6 +95,12 @@ onMounted(async () => {
           </p>
         </VRow>
         <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
+        <div class="pa-3" v-if="reachEnd">
+          <p class="text-center">No more organizations to fetch!</p>
+        </div>
+        <div class="pa-3" v-else>
+          <Observer  @intersect="fetchMoreOrganizations"/>
+        </div>
       </div>
     </div>
   </MainLayout>
