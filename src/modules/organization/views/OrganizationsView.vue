@@ -4,21 +4,45 @@ import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
 import organizations from "../../../data/organizations.ts";
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
+import {useOrganizationStore} from "../stores/organization.store.ts";
+import {useOrganizationServices} from "../services/organization.services.ts";
+import Observer from "../../../core/components/Observer.vue";
 
+const {allOrganizations} = useOrganizationStore();
+const {fetchOrganizationsWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
-const organizationData = ref(organizations);
+const organizationData = ref(allOrganizations);
+const reachEnd = ref(false)
+const lastItemValue = ref(1);
+
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
-    organizationData.value = organizations.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    organizationData.value = allOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  } else {
+    organizationData.value = allOrganizations.value
+  }
+}
+
+const fetchMoreOrganizations = async () => {
+  const data = await fetchOrganizationsWithPagination(lastItemValue.value);
+  lastItemValue.value = lastItemValue.value + 1
+  if (data.length === 0) {
+    reachEnd.value = true
   }
 }
 
 watch(() => searchQuery.value, () => {
   filterOrganizationsBySearchQuery()
 });
+
+onMounted(async () => {
+  const fetchedData = await fetchOrganizationsWithPagination(lastItemValue.value);
+  organizationData.value = [...organizations, ...fetchedData];
+  lastItemValue.value = lastItemValue.value + 1
+})
 </script>
 
 <template>
@@ -73,6 +97,12 @@ watch(() => searchQuery.value, () => {
           </p>
         </VRow>
         <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
+        <div class="pa-3" v-if="reachEnd">
+          <p class="text-center">No more organizations to fetch!</p>
+        </div>
+        <div class="pa-3" v-else>
+          <Observer  @intersect="fetchMoreOrganizations"/>
+        </div>
       </div>
     </div>
   </MainLayout>

@@ -7,6 +7,7 @@ const organization = ref<Organization | null | undefined>();
 const selectedOrganization = ref<Organization | null>(null);
 const organizations = ref(organizationData);
 const myOrganizations = ref<Organization[]>(organizationData);
+const allOrganizations = ref<Organization[]>(organizationData);
 
 const selectOrganization = (organization: Organization) => {
   if(selectedOrganization.value === organization) {
@@ -38,4 +39,4 @@ const setOrganizationData = (slug: string, organizationData: Organization[]) => 
   organization.value = fetchOrganizationData(slug, organizationData);
 }
 
-export const useOrganizationStore = createGlobalState(() => ({setOrganizationData, organization, filterOrganizations, selectedOrganization, selectOrganization, removeSelectedOrganization, organizations, myOrganizations}));
+export const useOrganizationStore = createGlobalState(() => ({setOrganizationData, organization, filterOrganizations, selectedOrganization, selectOrganization, removeSelectedOrganization, organizations, myOrganizations, allOrganizations}));
