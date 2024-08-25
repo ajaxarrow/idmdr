@@ -140,17 +140,19 @@ draw.onAdd = (map) => {
 
 onMounted(() => {
   //@ts-ignore
-  map.value = markRaw(
-      new Map({
-        container: mapContainer.value,
-        style: `https://api.maptiler.com/maps/topo-v2/style.json?key=slSuwEtNY8loqQWUZ9IO`,
-        center: [initState.lng, initState.lat],
-        zoom: initState.zoom,
-        maxBounds: bounds
-      })
-  );
+  if(mapContainer.value){
+    map.value = markRaw(
+        new Map({
+          container: mapContainer.value,
+          style: `https://api.maptiler.com/maps/topo-v2/style.json?key=slSuwEtNY8loqQWUZ9IO`,
+          center: [initState.lng, initState.lat],
+          zoom: initState.zoom,
+          maxBounds: bounds
+        })
+    );
+  }
 
-
+  //@ts-ignore
   map.value.addControl(new NavigationControl(), 'bottom-right');
   //@ts-ignore
   map.value.addControl(draw);
@@ -159,7 +161,7 @@ onMounted(() => {
     map.value.on(eventName, handleDrawEvent);
   });
 
-
+  //@ts-ignore
   map.value.on('style.load', () => {
 
 
