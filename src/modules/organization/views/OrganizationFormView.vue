@@ -139,9 +139,8 @@ const formatDate = (): string=> {
 }
 
 onMounted(() => {
-  const rawSegments = <string>route.path.split('/').filter(Boolean);
-  const segments = rawSegments as unknown as string[]
-  const type = <string>segments[1]
+  const segments = <string>route.path.split('/').filter(Boolean);
+  const type = segments[1] as unknown as string
   if(type === 'edit') {
     formType.value = FormType.edit
   }
