@@ -41,6 +41,7 @@ onMounted(async () => {
   const fetchedData = await fetchOrganizationByUserWithPagination(lastItemValue.value);
   organizationData.value = [...organizations, ...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
+  console.log(myOrganizations.value)
 })
 </script>
 

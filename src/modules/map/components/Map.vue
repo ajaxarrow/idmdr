@@ -10,7 +10,10 @@ import {markRaw, onBeforeMount, onMounted, onUnmounted, shallowRef, watch} from 
 import MapProductionDetails from "./Filters/MapFiltersDetails.vue";
 import sectors from "../../../data/sectors.ts";
 import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSidebar.vue";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
 
+  const {fetchOrganizations} = useOrganizationServices()
   const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
@@ -47,7 +50,8 @@ import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSideb
   });
 
 
-  onMounted(() => {
+  onMounted(async () => {
+    await fetchOrganizations();
     initMap();
     map.value?.addControl(new NavigationControl(), 'top-right');
 
@@ -58,6 +62,10 @@ import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSideb
       setupBoundaries(sectors, 'Sector');
       loadRandomCoordinates(boundaries);
     })
+
+
+
+
   });
 
   onBeforeMount(() => {

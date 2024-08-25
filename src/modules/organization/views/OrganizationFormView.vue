@@ -2,18 +2,22 @@
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {OrganizationType} from "../../../interfaces/enums/organization.enum.ts"
 import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhFileDashed} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
+import OrganizationFormMapPreview from "../components/OrganizationFormMapPreview.vue";
 
 const organizationForm = ref(null);
 const visibility = ref("public");
 const type = ref("institution");
 const formType = ref<FormType>(FormType.create);
 const {addOrganization, errorMessage, hasErrorMessages} = useOrganizationServices();
+const isMapPreview= ref(false);
+const isGeoJSONDrawn = ref(true);
+const geoJSONFileName = ref('')
 
 const {route} = useRouting();
 
@@ -84,6 +88,52 @@ const addOrganizationData = async () => {
   } else {
     clearFields();
   }
+}
+
+const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
+  organization.geojson = JSON.stringify(geojson)
+  isGeoJSONDrawn.value = isJSONDrawn
+  console.log(organization.geojson)
+}
+
+const handleGeoJSONFileInput = (e: any) => {
+
+  const file = e.target.files[0]
+
+  if (file && file.type === 'application/json') {
+    const reader = new FileReader()
+    geoJSONFileName.value = file.name
+
+    reader.onload = (e) => {
+      try {
+        if (typeof e.target.result === "string") {
+          const jsonData = JSON.parse(e.target.result)
+          setGeoJSON(jsonData, false)
+        }
+
+        // Perform any additional operations with the parsed JSON data
+      } catch (error) {
+        console.error('Error parsing JSON:', error)
+      }
+    }
+
+    reader.readAsText(file)
+  } else {
+    console.error('Please select a valid JSON file.')
+  }
+}
+
+const formatDate = (): string=> {
+  const now = new Date()
+
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+
+  return `${year}-${month}-${day}-${hours}${minutes}${seconds}`
 }
 
 onMounted(() => {
@@ -506,10 +556,35 @@ onMounted(() => {
         </div>
         <div class="mb-10">
           <label class="input-label">GeoJSON</label>
-          <div class="my-2 file-upload-container">
-            <PhFileDashed size="50"/>
-            <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label> or <label class="file-label" for="dropzoneFile">Draw Boundary</label></p>
-            <VFileInput id="dropzoneFileGeoJSON" style="display: none"/>
+
+          <OrganizationFormMapPreview
+              class="my-2"
+              v-if="isMapPreview"
+              @setGeoJSONData="setGeoJSON"
+              @closeMapPreview="isMapPreview = false"
+          />
+          <div v-else>
+            <div class="my-3" v-if="organization.geojson">
+              <VDivider/>
+              <div class="d-flex align-center justify-space-between pa-2" >
+                <p class="dialog-boundary-title d-flex align-center">
+                  <PhPolygon class="mr-1"/>
+                  {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
+                </p>
+                <PhX class="cursor-pointer" @click="organization.geojson = ''"/>
+              </div>
+              <VDivider/>
+            </div>
+
+            <div class="my-2 file-upload-container" v-else>
+              <PhFileDashed size="50"/>
+              <p class="text-dropzone">
+                Drag and drop files here or
+                <label class="file-label" for="dropzoneFileGeoJSON">Choose files</label>
+                or <label class="file-label" @click="isMapPreview = !isMapPreview">Draw Boundary</label>
+              </p>
+              <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
+            </div>
           </div>
         </div>
         <VRow class="ma-0" justify="end">
