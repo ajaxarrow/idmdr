@@ -14,6 +14,7 @@ import {useOrganizationServices} from "../../organization/services/organization.
 import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
 
   const {fetchOrganizations} = useOrganizationServices()
+  const {mapOrganizations} = useOrganizationStore();
   const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
   const {removeSelectedSector} = useSectorsStore();
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
@@ -57,7 +58,7 @@ import {useOrganizationStore} from "../../organization/stores/organization.store
 
     // @ts-ignore
     map.value?.on('style.load', () => {
-      setupBoundariesforOrganization(organizations);
+      setupBoundariesforOrganization(mapOrganizations.value);
       setupBoundaries(boundaries, 'Province');
       setupBoundaries(sectors, 'Sector');
       loadRandomCoordinates(boundaries);

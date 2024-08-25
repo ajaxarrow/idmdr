@@ -24,7 +24,7 @@ const transformRepDataFromAPI = (rep: any) => ({
 const { userData } = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 // const {router} = useRouting()
-const {myOrganizations, allOrganizations} = useOrganizationStore();
+const {myOrganizations, allOrganizations, mapOrganizations} = useOrganizationStore();
 
 export const useOrganizationServices = () => {
 
@@ -260,7 +260,8 @@ export const useOrganizationServices = () => {
         Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
       }));
       const data = [...organizationData, ...organizations];
-      myOrganizations.value = [...myOrganizations.value, ...data];
+      // myOrganizations.value = [...myOrganizations.value, ...data];
+      myOrganizations.value = data
       return data;
     } catch (e) {
       return []
@@ -338,7 +339,8 @@ export const useOrganizationServices = () => {
         Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
       }));
       const data = [...organizationData, ...organizations];
-      allOrganizations.value = [...allOrganizations.value, ...data];
+      mapOrganizations.value = data
+      allOrganizations.value = data
       return data;
     } catch (e) {
       return []

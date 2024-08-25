@@ -3,7 +3,7 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import Observer from "../../../core/components/Observer.vue";
@@ -16,6 +16,7 @@ const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
 const organizationData = ref(myOrganizations);
+const observerReady = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
@@ -41,7 +42,11 @@ onMounted(async () => {
   const fetchedData = await fetchOrganizationByUserWithPagination(lastItemValue.value);
   organizationData.value = [...organizations, ...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
-  console.log(myOrganizations.value)
+  observerReady.value = true
+})
+
+onUnmounted(() => {
+  observerReady.value = false
 })
 </script>
 
@@ -101,7 +106,7 @@ onMounted(async () => {
           <p class="text-center">No more organizations to fetch!</p>
         </div>
         <div class="pa-3" v-else>
-          <Observer @intersect="fetchMoreOrganizations"/>
+          <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
         </div>
       </div>
     </div>

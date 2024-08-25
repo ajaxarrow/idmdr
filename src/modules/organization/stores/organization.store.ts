@@ -5,7 +5,7 @@ import {createGlobalState} from "@vueuse/core";
 
 const organization = ref<Organization | null | undefined>();
 const selectedOrganization = ref<Organization | null>(null);
-// const organizations = ref<Organization[]>(organizationData);
+const mapOrganizations = ref<Organization[]>(organizationData);
 const myOrganizations = ref<Organization[]>(organizationData);
 const allOrganizations = ref<Organization[]>(organizationData);
 
@@ -18,7 +18,7 @@ const selectOrganization = (organization: Organization) => {
 }
 
 const filterOrganizations = (title: string) => {
-  allOrganizations.value = organizationData.filter(organization => organization.name.toLowerCase().includes(title.toLowerCase().trim()));
+  allOrganizations.value = mapOrganizations.value.filter(organization => organization.name.toLowerCase().includes(title.toLowerCase().trim()));
 }
 
 const removeSelectedOrganization = () => {
@@ -39,4 +39,4 @@ const setOrganizationData = (slug: string, organizationData: Organization[]) => 
   organization.value = fetchOrganizationData(slug, organizationData);
 }
 
-export const useOrganizationStore = createGlobalState(() => ({setOrganizationData, filterOrganizations, selectedOrganization, selectOrganization, removeSelectedOrganization, organization, myOrganizations, allOrganizations}));
+export const useOrganizationStore = createGlobalState(() => ({setOrganizationData, filterOrganizations, selectedOrganization, selectOrganization, removeSelectedOrganization, organization, myOrganizations, allOrganizations, mapOrganizations}));

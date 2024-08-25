@@ -4,7 +4,7 @@ import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
 import organizations from "../../../data/organizations.ts";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, onUnmounted} from "vue";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import Observer from "../../../core/components/Observer.vue";
@@ -16,6 +16,7 @@ const searchQuery = ref('');
 const organizationData = ref(allOrganizations);
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
+const observerReady = ref(false)
 
 
 const filterOrganizationsBySearchQuery = () => {
@@ -42,6 +43,11 @@ onMounted(async () => {
   const fetchedData = await fetchOrganizationsWithPagination(lastItemValue.value);
   organizationData.value = [...organizations, ...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
+  observerReady.value = true
+})
+
+onUnmounted(() => {
+  observerReady.value = false
 })
 </script>
 
@@ -101,7 +107,7 @@ onMounted(async () => {
           <p class="text-center">No more organizations to fetch!</p>
         </div>
         <div class="pa-3" v-else>
-          <Observer @intersect="fetchMoreOrganizations"/>
+          <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
         </div>
       </div>
     </div>
