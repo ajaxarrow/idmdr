@@ -9,10 +9,13 @@ import {useMapStore} from "../../map/stores/map.store.ts";
 import sectors from "../../../data/sectors.ts";
 import boundaries from "../../../data/boundaries.ts";
 import MapProductionDetails from "../../map/components/Filters/MapFiltersDetails.vue";
-import organizations from "../../../data/organizations.ts";
 import OrganizationDetailsSidebar from "../../map/components/Organizations/OrganizationDetailsSidebar.vue";
 import {useSectorsStore} from "../stores/sectors.store.ts";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
 
+const {fetchOrganizations} = useOrganizationServices()
+const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
 const {removeSelectedSector} = useSectorsStore();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
@@ -57,7 +60,8 @@ watch(dotDensityLayer, (newValue) => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchOrganizations();
   (MapboxDraw as any).constants = MapboxDraw.constants || {};
   (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
   (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
@@ -76,7 +80,7 @@ onMounted(() => {
 
   // @ts-ignore
   map.value?.on('style.load', () => {
-    setupBoundariesforOrganization(organizations);
+    setupBoundariesforOrganization(mapOrganizations.value);
     setupBoundaries(sectors, 'Sector');
     loadRandomCoordinates(boundaries)
   })
