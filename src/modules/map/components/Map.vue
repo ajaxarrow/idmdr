@@ -4,7 +4,6 @@ import {markRaw, onBeforeMount, onMounted, onUnmounted, shallowRef, watch} from 
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../../sector/components/SectorDetailsSidebar.vue";
   import boundaries from "../../../data/boundaries.ts";
-  import organizations from "../../../data/organizations.ts";
   import {useMapStore} from "../stores/map.store.ts";
   import {useSectorsStore} from "../../sector/stores/sectors.store.ts";
 import MapProductionDetails from "./Filters/MapFiltersDetails.vue";
