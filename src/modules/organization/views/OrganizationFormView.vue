@@ -106,9 +106,11 @@ const handleGeoJSONFileInput = (e: any) => {
 
     reader.onload = (e) => {
       try {
-        if (typeof e.target.result === "string") {
-          const jsonData = JSON.parse(e.target.result)
-          setGeoJSON(jsonData, false)
+        if(e.target){
+          if (typeof e.target.result === "string") {
+            const jsonData = JSON.parse(e.target.result)
+            setGeoJSON(jsonData, false)
+          }
         }
 
         // Perform any additional operations with the parsed JSON data
