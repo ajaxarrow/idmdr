@@ -7,7 +7,7 @@ import * as turf from '@turf/turf'
 import {v4 as uuidv4} from "uuid";
 
 const emit = defineEmits(['setGeoJSONData', 'closeMapPreview'])
-const mapContainer = shallowRef(null);
+const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const map = shallowRef<null | Map>(null);
 const initState = reactive({
   lng: 125.05237646156849,
@@ -16,11 +16,11 @@ const initState = reactive({
 });
 const coords = ref([])
 
-const layerIDs = ref([])
+const layerIDs = ref<string[]>([])
 
-const bounds = [
-  [102.43621431035973, 3.982590021377476],
-  [141.1117856896347, 21.472305228005112]
+const bounds = <[number, number, number, number]>[
+  102.43621431035973, 3.982590021377476,
+  141.1117856896347, 21.472305228005112
 ];
 
 const draw = new MapboxDraw({
@@ -48,7 +48,7 @@ const updateArea = () => {
   }
 }
 
-const handleDrawEvent = (event) => {
+const handleDrawEvent = (event: any) => {
   updateArea();
   const feature = event.features[0];
   const coordinates = feature.geometry.coordinates;
@@ -109,27 +109,26 @@ const convertToGeoJson = () => {
   });
 }
 
-const removeLayers = () => {
-  layerIDs.value.forEach((id) => {
-    const sourceID = `geojson-source-${id}`;
-    const layerID = id; // Assuming the layer ID is the same as the source ID
-
-    // Check if the layer exists and remove it
-    //@ts-ignore
-    if (map.value.getLayer(layerID)) {
-      //@ts-ignore
-      map.value.removeLayer(layerID);
-    }
-
-    // Check if the source exists and remove it
-    //@ts-ignore
-    if (map.value.getSource(sourceID)) {
-      //@ts-ignore
-      map.value.removeSource(sourceID);
-    }
-  });
-};
-
+// const removeLayers = () => {
+//   layerIDs.value.forEach((id) => {
+//     const sourceID = `geojson-source-${id}`;
+//     const layerID = id; // Assuming the layer ID is the same as the source ID
+//
+//     // Check if the layer exists and remove it
+//     //@ts-ignore
+//     if (map.value.getLayer(layerID)) {
+//       //@ts-ignore
+//       map.value.removeLayer(layerID);
+//     }
+//
+//     // Check if the source exists and remove it
+//     //@ts-ignore
+//     if (map.value.getSource(sourceID)) {
+//       //@ts-ignore
+//       map.value.removeSource(sourceID);
+//     }
+//   });
+// };
 
 
 const originalOnAdd = draw.onAdd.bind(draw);
