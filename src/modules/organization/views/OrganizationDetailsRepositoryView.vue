@@ -9,7 +9,7 @@ import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 const {route} = useRouting()
-const {organization, setOrganizationData, myOrganizations} = useOrganizationStore();
+const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
 
 
 const {tags, selectedTags, fetchTags} = useTags();
@@ -41,7 +41,7 @@ watch(() => selectedTags.value, (newVal) => {
 
 
 onMounted(async () => {
-  setOrganizationData(route.params.slug as string, myOrganizations.value);
+  setOrganizationData(route.params.slug as string, allOrganizations.value);
   repositoryItems.value = fetchRepositoriesByOrganization(route.params.slug as string);
   fetchTags();
   repositoryData.value = fetchRepositoriesByOrganization(route.params.slug as string);

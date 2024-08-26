@@ -6,12 +6,12 @@
   import {useOrganizationServices} from "../services/organization.services.ts";
 
   const {route} = useRouting()
-  const {organization, setOrganizationData, myOrganizations} = useOrganizationStore();
-  const {fetchOrganizationByUser} = useOrganizationServices();
+  const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
+  const {fetchOrganizations} = useOrganizationServices();
 
   onMounted(async () => {
-    await fetchOrganizationByUser()
-    setOrganizationData(route.params.slug as string, myOrganizations.value);
+    await fetchOrganizations()
+    setOrganizationData(route.params.slug as string, allOrganizations.value);
   })
 </script>
 
