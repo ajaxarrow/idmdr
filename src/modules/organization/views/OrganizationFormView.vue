@@ -9,12 +9,14 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import OrganizationFormMapPreview from "../components/OrganizationFormMapPreview.vue";
+import {useOrganizationStore} from "../stores/organization.store.ts";
 
 const organizationForm = ref(null);
 const visibility = ref("public");
 const type = ref("institution");
 const formType = ref<FormType>(FormType.create);
-const {addOrganization, errorMessage, hasErrorMessages} = useOrganizationServices();
+const {allOrganizations, setOrganizationData, organization} = useOrganizationStore();
+const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizations} = useOrganizationServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const geoJSONFileName = ref('')
@@ -59,12 +61,12 @@ const organizationDataInitialState = reactive<Organization>({
   },
 });
 
-const organization = reactive<Organization>({
+const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
 
 const clearFields = () => {
-  Object.assign(organization, {...organizationDataInitialState});
+  Object.assign(organizationData, {...organizationDataInitialState});
 }
 
 const scrollToFirstErrorMessage = () => {
@@ -82,7 +84,7 @@ const scrollToFirstErrorMessage = () => {
 }
 
 const addOrganizationData = async () => {
-  await addOrganization(organization)
+  await addOrganization(organizationData)
   if(hasErrorMessages(errorMessage)){
     scrollToFirstErrorMessage()
   } else {
@@ -90,10 +92,20 @@ const addOrganizationData = async () => {
   }
 }
 
+const updateOrganizationData = async () => {
+  await updateOrganization(organizationData, organizationData.slug)
+  if(hasErrorMessages(errorMessage)){
+    scrollToFirstErrorMessage()
+  } else {
+    clearFields();
+  }
+}
+
+
 const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
-  organization.geojson = JSON.stringify(geojson)
+  organizationData.geojson = JSON.stringify(geojson)
   isGeoJSONDrawn.value = isJSONDrawn
-  console.log(organization.geojson)
+  console.log(organizationData.geojson)
 }
 
 const handleGeoJSONFileInput = (e: any) => {
@@ -138,13 +150,18 @@ const formatDate = (): string=> {
   return `${year}-${month}-${day}-${hours}${minutes}${seconds}`
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchOrganizations()
+  setOrganizationData(route.params.slug as string, allOrganizations.value);
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
 
   if(type === 'edit') {
     formType.value = FormType.edit
+    Object.assign(organizationData, {...organization.value});
+    organizationData.geojson = JSON.stringify(organizationData.geojson)
   }
+
 })
 
 
@@ -152,7 +169,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout title="New Organization">
+  <MainLayout :title="formType === FormType.edit ? 'Edit Organization' : 'New Organization'">
     <VForm ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
@@ -163,7 +180,7 @@ onMounted(() => {
             </p>
           </RouterLink>
           <p class="text-heading d-flex align-center">
-            Create New Organization
+            {{formType === FormType.edit ? 'Edit Organization' : 'Create New Organization'}}
           </p>
           <p class="text-subtitle">
             An organization is an agency or institution undertaking research and development.
@@ -229,7 +246,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Organization Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.name"
+              v-model="organizationData.name"
               placeholder="E.g. Central Mindanao University"
               class="my-2"
               :error-messages="errorMessage.name"
@@ -243,7 +260,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Organization Acronym</label>
           <VTextField
-              v-model="organization.acronym"
+              v-model="organizationData.acronym"
               placeholder="E.g. CMU"
               class="my-2"
               :error-messages="errorMessage.acronym"
@@ -273,7 +290,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Address<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.address"
+              v-model="organizationData.address"
               placeholder="E.g. University"
               class="my-2"
               :error-messages="errorMessage.address"
@@ -287,7 +304,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">President<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.president"
+              v-model="organizationData.president"
               placeholder="E.g. John Doe"
               class="my-2"
               :error-messages="errorMessage.president"
@@ -301,7 +318,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Telephone Number<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.tel"
+              v-model="organizationData.tel"
               placeholder="E.g. 000-888-000"
               class="my-2"
               :error-messages="errorMessage.tel"
@@ -315,7 +332,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Cell Number<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.phone"
+              v-model="organizationData.phone"
               placeholder="E.g. 09510055677"
               class="my-2"
               :error-messages="errorMessage.phone"
@@ -329,7 +346,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Email<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.email"
+              v-model="organizationData.email"
               placeholder="E.g. cmu@edu.ph"
               class="my-2"
               :error-messages="errorMessage.email"
@@ -343,7 +360,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Website<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.website"
+              v-model="organizationData.website"
               placeholder="E.g. www.cmu.edu.ph"
               class="my-2"
               :error-messages="errorMessage.website"
@@ -385,7 +402,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Research & Development Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.rd_rep.name"
+              v-model="organizationData.rd_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
               :error-messages="errorMessage.rd_rep.name"
@@ -399,7 +416,7 @@ onMounted(() => {
         <div class="mb-3">
         <label class="input-label">Research & Development Representative Email<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.rd_rep.email"
+              v-model="organizationData.rd_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
               :error-messages="errorMessage.rd_rep.email"
@@ -413,7 +430,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Research & Development Representative Phone<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.rd_rep.phone"
+              v-model="organizationData.rd_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
               :error-messages="errorMessage.rd_rep.phone"
@@ -427,7 +444,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.tt_rep.name"
+              v-model="organizationData.tt_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
               :error-messages="errorMessage.tt_rep.name"
@@ -441,7 +458,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Email<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.tt_rep.email"
+              v-model="organizationData.tt_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
               :error-messages="errorMessage.tt_rep.email"
@@ -455,7 +472,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Phone<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.tt_rep.phone"
+              v-model="organizationData.tt_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
               :error-messages="errorMessage.tt_rep.phone"
@@ -469,7 +486,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Information Communication Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.ic_rep.name"
+              v-model="organizationData.ic_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
               :error-messages="errorMessage.ic_rep.name"
@@ -483,7 +500,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Information Communication Representative Email<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.ic_rep.email"
+              v-model="organizationData.ic_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
               :error-messages="errorMessage.ic_rep.email"
@@ -497,7 +514,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Information Communication Representative Phone<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.ic_rep.phone"
+              v-model="organizationData.ic_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
               :error-messages="errorMessage.ic_rep.phone"
@@ -511,7 +528,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Science Communication Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.sc_rep.name"
+              v-model="organizationData.sc_rep.name"
               placeholder="E.g. John Doe"
               class="my-2"
               :error-messages="errorMessage.sc_rep.name"
@@ -525,7 +542,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Science Communication Representative Email<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.sc_rep.email"
+              v-model="organizationData.sc_rep.email"
               placeholder="E.g. johndoe@example.com"
               class="my-2"
               :error-messages="errorMessage.sc_rep.email"
@@ -539,7 +556,7 @@ onMounted(() => {
         <div class="mb-3">
           <label class="input-label">Science Communication Representative Phone<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organization.sc_rep.phone"
+              v-model="organizationData.sc_rep.phone"
               placeholder="E.g. 09123456789"
               class="my-2"
               :error-messages="errorMessage.sc_rep.phone"
@@ -568,14 +585,14 @@ onMounted(() => {
               @closeMapPreview="isMapPreview = false"
           />
           <div v-else>
-            <div class="my-3" v-if="organization.geojson">
+            <div class="my-3" v-if="organizationData.geojson">
               <VDivider/>
               <div class="d-flex align-center justify-space-between pa-2" >
                 <p class="dialog-boundary-title d-flex align-center">
                   <PhPolygon class="mr-1"/>
                   {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
                 </p>
-                <PhX class="cursor-pointer" @click="organization.geojson = ''"/>
+                <PhX class="cursor-pointer" @click="organizationData.geojson = ''"/>
               </div>
               <VDivider/>
             </div>
@@ -593,7 +610,7 @@ onMounted(() => {
         </div>
         <VRow class="ma-0" justify="end">
           <VBtnPrimaryFilled
-              @click="addOrganizationData"
+              @click="formType === FormType.edit ? updateOrganizationData() : addOrganizationData()"
               rounded="lg"
               height="44px"
               width="166px"

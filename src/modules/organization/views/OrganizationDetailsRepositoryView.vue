@@ -8,8 +8,10 @@ import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vu
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
+import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
 const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
+const {fetchOrganizations} = useOrganizationServices();
 
 
 const {tags, selectedTags, fetchTags} = useTags();
@@ -41,6 +43,7 @@ watch(() => selectedTags.value, (newVal) => {
 
 
 onMounted(async () => {
+  await fetchOrganizations()
   setOrganizationData(route.params.slug as string, allOrganizations.value);
   repositoryItems.value = fetchRepositoriesByOrganization(route.params.slug as string);
   fetchTags();
