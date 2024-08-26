@@ -24,7 +24,8 @@ const props = defineProps({
 
 const tabs = [
   { name: "About" },
-  { name: "Repositories" }
+  { name: "Repositories" },
+  { name: 'Settings'}
 ];
 
 // Create a computed property that maps over the tabs array
@@ -36,6 +37,8 @@ const computedTabs = computed(() => {
       linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
     } else if (tab.name === "Repositories") {
       linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
+    } else if (tab.name === "Settings") {
+      linkName = path.value === 'organizations' ? 'organization-settings' : 'my-organization-settings';
     }
 
     return {

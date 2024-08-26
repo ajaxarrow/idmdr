@@ -24,6 +24,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsRepositoryView.vue'),
   },
   {
+    path: '/my-organizations/:slug/settings',
+    name: 'my-organization-settings',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsSettingsView.vue'),
+  },
+  {
     path: '/organizations/new',
     name: 'new-organization',
     // @ts-ignore
@@ -34,6 +40,12 @@ const organizationRoutes = [
     name: 'edit-organization',
     // @ts-ignore
     component: () => import('../../modules/organization/views/OrganizationFormView.vue')
+  },
+  {
+    path: '/organizations/:slug/settings',
+    name: 'organization-settings',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsSettingsView.vue'),
   },
   {
     path: '/organizations/:slug',
