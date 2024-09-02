@@ -8,7 +8,6 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
-import {Status} from "../../../interfaces/enums/status.enum.ts";
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
