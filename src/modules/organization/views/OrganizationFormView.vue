@@ -11,12 +11,13 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import OrganizationFormMapPreview from "../components/OrganizationFormMapPreview.vue";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 
 const {isEmptyObject} = useObjectChecker()
 const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {allOrganizations, setOrganizationData, organization} = useOrganizationStore();
-const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizations} = useOrganizationServices();
+const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizations, loading} = useOrganizationServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const geoJSONFileName = ref('')
@@ -169,6 +170,7 @@ onMounted(async () => {
 </script>
 
 <template>
+  <LoadingOverlay :overlay="loading"/>
   <MainLayout :title="formType === FormType.edit ? 'Edit Organization' : 'New Organization'">
     <VForm ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">

@@ -1,7 +1,7 @@
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {server} from "../../../plugins/axios.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
@@ -59,6 +59,8 @@ export const useOrganizationServices = () => {
       phone: '',
     },
   });
+
+  const loading = ref(false);
 
   const errorMessage = reactive({ ...errorMessageIntialState });
   const hasErrorMessages = (errorMessage: any): boolean => {
@@ -152,6 +154,7 @@ export const useOrganizationServices = () => {
 
   const saveOrganization = async (organization: Organization, endpoint: string, type: string) => {
     clearErrorMessage();
+    loading.value = true;
     try {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
@@ -186,6 +189,9 @@ export const useOrganizationServices = () => {
           message: 'Organization created successfully',
           status: 'success'
         }))
+        setTimeout(function() {
+          loading.value = false;
+        }, 3000);
         window.location.href = '/my-organizations';
         // await router.push({path: '/my-organizations'});
       } else if(type == 'update'){
@@ -193,10 +199,16 @@ export const useOrganizationServices = () => {
           message: 'Organization updated successfully',
           status: 'success'
         }))
+        setTimeout(function() {
+          loading.value = false;
+        }, 3000);
         window.location.href = `/my-organizations/${organization.slug}`
         // await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
       }
     } catch (e: any) {
+      setTimeout(function() {
+        loading.value = false;
+      }, 3000);
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
       // handleError(e.response?.data);
       // return;
@@ -346,6 +358,7 @@ export const useOrganizationServices = () => {
 
 
   return {
+    loading,
     addOrganization,
     updateOrganization,
     errorMessage,
