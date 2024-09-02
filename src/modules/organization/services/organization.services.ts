@@ -159,6 +159,7 @@ export const useOrganizationServices = () => {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
         {
+          tel_phone: organization.tel_phone,
           sub_org_type: organization.sub_org_type,
           description: organization.description,
           president: organization.president,

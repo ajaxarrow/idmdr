@@ -284,6 +284,52 @@ onMounted(async () => {
         </VRadioGroup>
       </div>
       <VDivider/>
+      <div class="px-6 py-6">
+        <label class="input-label mb-3">Sub Organization Type</label>
+        <VRadioGroup hide-details v-model="organizationData.sub_org_type">
+          <VRadio color="bs50" :value="1" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Academia</p>
+                <p class="radio-text-subtitle">This organization sub type is an academia type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="2" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Research</p>
+                <p class="radio-text-subtitle">This organization sub type is an research type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="3" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Agency</p>
+                <p class="radio-text-subtitle">This organization sub type is an agency type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="4" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Institutional</p>
+                <p class="radio-text-subtitle">This organization sub type is an institutional type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="5" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Others</p>
+                <p class="radio-text-subtitle">This organization sub type is an others type.</p>
+              </div>
+            </template>
+          </VRadio>
+        </VRadioGroup>
+      </div>
+      <VDivider/>
       <div class="pa-6">
         <div class="mb-3">
           <label class="input-label">Organization Name<span class="text-pink">*</span></label>
