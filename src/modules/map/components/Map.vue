@@ -56,8 +56,8 @@ import {useOrganizationStore} from "../../organization/stores/organization.store
     map.value?.addControl(new NavigationControl(), 'top-right');
 
     // @ts-ignore
-    map.value?.on('style.load', () => {
-      setupBoundariesforOrganization(mapOrganizations.value);
+    map.value?.on('style.load', async () => {
+      await setupBoundariesforOrganization(mapOrganizations.value);
       setupBoundaries(boundaries, 'Province');
       setupBoundaries(sectors, 'Sector');
       loadRandomCoordinates(boundaries);

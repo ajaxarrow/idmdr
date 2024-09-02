@@ -183,7 +183,7 @@ const setupBoundaries = (boundaries: Sector[], type: string) => {
 }
 
 
-const setupBoundariesforOrganization = (boundaries: Organization[]) => {
+const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
   boundaries.forEach((boundary: Organization) => {
     // @ts-ignore
     map.value?.addSource(boundary.name, {

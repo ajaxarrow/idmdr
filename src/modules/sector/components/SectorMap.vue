@@ -79,8 +79,8 @@ onMounted(async () => {
   });
 
   // @ts-ignore
-  map.value?.on('style.load', () => {
-    setupBoundariesforOrganization(mapOrganizations.value);
+  map.value?.on('style.load', async () => {
+    await setupBoundariesforOrganization(mapOrganizations.value);
     setupBoundaries(sectors, 'Sector');
     loadRandomCoordinates(boundaries)
   })
