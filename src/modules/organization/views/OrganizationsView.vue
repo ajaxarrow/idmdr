@@ -3,17 +3,17 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
-import organizations from "../../../data/organizations.ts";
 import {onMounted, ref, watch, onUnmounted} from "vue";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import Observer from "../../../core/components/Observer.vue";
+import {Organization} from "../../../interfaces/organization.interface.ts";
 
 const {allOrganizations} = useOrganizationStore();
 const {fetchOrganizationsWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
-const organizationData = ref([]);
+const organizationData = ref<Organization[]>([]);
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)

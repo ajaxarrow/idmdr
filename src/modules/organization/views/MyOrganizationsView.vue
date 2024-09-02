@@ -8,6 +8,7 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
@@ -16,7 +17,7 @@ const {myOrganizations} = useOrganizationStore();
 const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
-const organizationData = ref([]);
+const organizationData = ref<Organization[]>([]);
 const observerReady = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
