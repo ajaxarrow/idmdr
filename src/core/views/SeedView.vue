@@ -1,17 +1,14 @@
 <script setup lang="ts">
 
 import organizations from "../../data/organizations.ts";
-import {useOrganizationServices} from "../../modules/organization/services/organization.services.ts";
 import {useSnackbarStore} from "../stores/snackbar.store.ts";
 import {Status} from "../../interfaces/enums/status.enum.ts";
 import MainLayout from "../layouts/MainLayout.vue";
-import {useAuthStore} from "../../modules/auth/stores/auth.store.ts";
 import {useUserStore} from "../stores/user.store.ts";
 import {server} from "../../plugins/axios.ts";
 import {Organization} from "../../interfaces/organization.interface.ts";
 
 const {userData} = useUserStore()
-const {addOrganization} = useOrganizationServices()
 const {showSnackbarMessage} = useSnackbarStore()
 
 const addMemberToOrganization = async(orgID: string) => {
