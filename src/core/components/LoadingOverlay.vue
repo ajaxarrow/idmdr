@@ -1,8 +1,6 @@
 <script setup lang="ts">
-
 import catlLoad from "../../assets/lottiefiles/cat-load.json";
 import {Vue3Lottie} from "vue3-lottie";
-import {useScreenStore} from "../stores/screen-size.store.ts";
 const props = defineProps({
   overlay: {
     type: Boolean,
