@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {OrganizationType} from "../../../interfaces/enums/organization.enum.ts"
 import {onMounted, reactive, ref} from "vue";
 import {PhArrowLeft, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
