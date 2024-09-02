@@ -13,7 +13,6 @@ const {route} = useRouting()
 const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
 const {fetchOrganizations} = useOrganizationServices();
 
-
 const {tags, selectedTags, fetchTags} = useTags();
 const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
 const searchQuery = ref('');

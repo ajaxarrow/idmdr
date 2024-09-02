@@ -41,7 +41,7 @@ watch(() => searchQuery.value, () => {
 
 onMounted(async () => {
   const fetchedData = await fetchOrganizationsWithPagination(lastItemValue.value);
-  organizationData.value = [...organizations, ...fetchedData];
+  organizationData.value = [...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
   observerReady.value = true
 })

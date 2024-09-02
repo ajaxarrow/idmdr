@@ -7,10 +7,12 @@ import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import Observer from "../../../core/components/Observer.vue";
-import organizations from "../../../data/organizations.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
+const {setSnackbarMessage} = useSnackbarStore()
 const {myOrganizations} = useOrganizationStore();
 const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
@@ -40,9 +42,10 @@ watch(() => searchQuery.value, () => {
 
 onMounted(async () => {
   const fetchedData = await fetchOrganizationByUserWithPagination(lastItemValue.value);
-  organizationData.value = [...organizations, ...fetchedData];
+  organizationData.value = [...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
   observerReady.value = true
+  await setSnackbarMessage()
 })
 
 onUnmounted(() => {

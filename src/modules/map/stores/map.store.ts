@@ -1,4 +1,4 @@
-import {shallowRef, ref} from "vue";
+import {ref, shallowRef} from "vue";
 import {LngLatLike, Map, Popup} from "maplibre-gl";
 import {Sector} from "../../../interfaces/sector.interface.ts";
 import {useSectorsStore} from "../../sector/stores/sectors.store.ts";
@@ -7,9 +7,14 @@ import {createGlobalState} from "@vueuse/core";
 import * as turf from "@turf/turf";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 
+const {isEmptyObject} = useObjectChecker()
 const {selectSector, removeSelectedSector} = useSectorsStore();
 const {selectOrganization, removeSelectedOrganization} = useOrganizationStore();
+const {showSnackbarMessage} = useSnackbarStore();
 
 const map = shallowRef<null | Map>(null);
 const dotDensityLayer = ref(false);
@@ -54,7 +59,12 @@ const clickProvince = (boundary: Sector, type: string) => {
   }
 }
 
+
+
 const clickOrganization = (boundary: Organization) => {
+  if(isEmptyObject(boundary.geojson)){
+    showSnackbarMessage('No location data available for this organization', Status.error)
+  }
   if (boundary.name !== clickedBoundary.value) {
     selectOrganization(boundary);
     if (clickedBoundary.value) {

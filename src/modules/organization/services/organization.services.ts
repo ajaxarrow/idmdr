@@ -4,30 +4,27 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {reactive} from "vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
-import {OrganizationType} from "../../../interfaces/enums/organization.enum.ts";
-import organizationData from "../../../data/organizations.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
-import router from "../../../router";
+import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 
-// Function to transform representative data
-const transformRepData = (rep: any) => ({
-  full_name: rep?.name,
-  email: rep?.email,
-  phone: rep?.phone,
-});
-
-const transformRepDataFromAPI = (rep: any) => ({
-  name: rep?.full_name,
-  email: rep?.email,
-  phone: rep?.phone,
-});
+// const transformRepData = (rep: any) => ({
+//   full_name: rep?.full_name,
+//   email: rep?.email,
+//   phone: rep?.phone,
+// });
+//
+// const transformRepDataFromAPI = (rep: any) => ({
+//   full_name: rep?.full_name,
+//   email: rep?.email,
+//   phone: rep?.phone,
+// });
 const { userData } = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
+const {isEmptyObject} = useObjectChecker()
 // const {router} = useRouting()
 const {myOrganizations, allOrganizations, mapOrganizations} = useOrganizationStore();
 
 export const useOrganizationServices = () => {
-
   const errorMessageIntialState = reactive({
     name: '',
     acronym: '',
@@ -43,22 +40,22 @@ export const useOrganizationServices = () => {
     president: '',
     rd_rep: {
       email: '',
-      name: '',
+      full_name: '',
       phone: '',
     },
     tt_rep: {
       email: '',
-      name: '',
+      full_name: '',
       phone: '',
     },
     ic_rep: {
       email: '',
-      name: '',
+      full_name: '',
       phone: '',
     },
     sc_rep: {
       email: '',
-      name: '',
+      full_name: '',
       phone: '',
     },
   });
@@ -79,62 +76,91 @@ export const useOrganizationServices = () => {
     });
   };
 
-  const handleError = (data: any) => {
-    clearErrorMessage();
-    errorMessage.name = data.name?.[0] ?? errorMessage.name;
-    errorMessage.acronym = data.acronym?.[0] ?? errorMessage.acronym;
-    errorMessage.website = data.website?.[0] ?? errorMessage.website;
-    errorMessage.address = data.address?.[0] ?? errorMessage.address;
-    errorMessage.phone = data.phone?.[0] ?? errorMessage.phone;
-    errorMessage.email = data.email?.[0] ?? errorMessage.email;
+  // const handleError = (data: any) => {
+  //   clearErrorMessage();
+  //   errorMessage.full_name = data.full_name?.[0] ?? errorMessage.full_name;
+  //   errorMessage.acronym = data.acronym?.[0] ?? errorMessage.acronym;
+  //   errorMessage.website = data.website?.[0] ?? errorMessage.website;
+  //   errorMessage.address = data.address?.[0] ?? errorMessage.address;
+  //   errorMessage.phone = data.phone?.[0] ?? errorMessage.phone;
+  //   errorMessage.email = data.email?.[0] ?? errorMessage.email;
+  //
+  //   errorMessage.rd_rep = {
+  //     email: data.rdc_rep?.email?.[0] ?? errorMessage.rd_rep.email,
+  //     full_name: data.rdc_rep?.full_name?.[0] ?? errorMessage.rd_rep.full_name,
+  //     phone: data.rdc_rep?.phone?.[0] ?? errorMessage.rd_rep.phone,
+  //   };
+  //
+  //   errorMessage.tt_rep = {
+  //     email: data.ttc_rep?.email?.[0] ?? errorMessage.tt_rep.email,
+  //     full_name: data.ttc_rep?.full_name?.[0] ?? errorMessage.tt_rep.full_name,
+  //     phone: data.ttc_rep?.phone?.[0] ?? errorMessage.tt_rep.phone,
+  //   };
+  //
+  //   errorMessage.ic_rep = {
+  //     email: data.icc_rep?.email?.[0] ?? errorMessage.ic_rep.email,
+  //     full_name: data.icc_rep?.full_name?.[0] ?? errorMessage.ic_rep.full_name,
+  //     phone: data.icc_rep?.phone?.[0] ?? errorMessage.ic_rep.phone,
+  //   };
+  //
+  //   errorMessage.sc_rep = {
+  //     email: data.scc_rep?.email?.[0] ?? errorMessage.sc_rep.email,
+  //     full_name: data.scc_rep?.full_name?.[0] ?? errorMessage.sc_rep.full_name,
+  //     phone: data.scc_rep?.phone?.[0] ?? errorMessage.sc_rep.phone,
+  //   };
+  // };
 
-    errorMessage.rd_rep = {
-      email: data.rdc_rep?.email?.[0] ?? errorMessage.rd_rep.email,
-      name: data.rdc_rep?.full_name?.[0] ?? errorMessage.rd_rep.name,
-      phone: data.rdc_rep?.phone?.[0] ?? errorMessage.rd_rep.phone,
-    };
+  // const handleDynamicErrorMapping = (data: any, target: any) => {
+  //   Object.keys(data).forEach(key => {
+  //     console.log(key)
+  //     if (typeof data[key] === 'object' && !Array.isArray(data[key])) {
+  //       handleDynamicErrorMapping(data[key], target[key]);
+  //     } else {
+  //       target[key] = data[key]?.[0] ?? target[key];
+  //     }
+  //   });
+  // };
 
-    errorMessage.tt_rep = {
-      email: data.ttc_rep?.email?.[0] ?? errorMessage.tt_rep.email,
-      name: data.ttc_rep?.full_name?.[0] ?? errorMessage.tt_rep.name,
-      phone: data.ttc_rep?.phone?.[0] ?? errorMessage.tt_rep.phone,
-    };
-
-    errorMessage.ic_rep = {
-      email: data.icc_rep?.email?.[0] ?? errorMessage.ic_rep.email,
-      name: data.icc_rep?.full_name?.[0] ?? errorMessage.ic_rep.name,
-      phone: data.icc_rep?.phone?.[0] ?? errorMessage.ic_rep.phone,
-    };
-
-    errorMessage.sc_rep = {
-      email: data.scc_rep?.email?.[0] ?? errorMessage.sc_rep.email,
-      name: data.scc_rep?.full_name?.[0] ?? errorMessage.sc_rep.name,
-      phone: data.scc_rep?.phone?.[0] ?? errorMessage.sc_rep.phone,
-    };
+  // Key mapping from data keys to target keys
+  const keyMapping = {
+    ttc_rep: 'tt_rep',
+    icc_rep: 'ic_rep',
+    scc_rep: 'sc_rep',
+    rdc_rep: 'rd_rep',
   };
 
-  const handleDynamicErrorMapping = (data: any, target: any) => {
+  const handleDynamicErrorMapping = (data: any, target: any, keyMapping: any) => {
     Object.keys(data).forEach(key => {
+      const targetKey = keyMapping[key] || key; // Map key if a mapping exists, otherwise use the key as-is
       if (typeof data[key] === 'object' && !Array.isArray(data[key])) {
-        handleDynamicErrorMapping(data[key], target[key]);
+        // Ensure the nested object exists in the target
+        if (!target[targetKey]) {
+          target[targetKey] = {}; // Create the nested object if it doesn't exist
+        }
+        handleDynamicErrorMapping(data[key], target[targetKey], keyMapping);
       } else {
-        target[key] = data[key]?.[0] ?? target[key];
+        target[targetKey] = data[key]?.[0] ?? target[targetKey];
       }
     });
   };
+
+
 
   const clearErrorMessage = () => {
     Object.assign(errorMessage, { ...errorMessageIntialState });
   };
 
   const saveOrganization = async (organization: Organization, endpoint: string, type: string) => {
-    clearErrorMessage(); // Clear error messages before making a request
-
+    clearErrorMessage();
     try {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
         {
-          is_public: organization.is_public,
+          sub_org_type: organization.sub_org_type,
+          description: organization.description,
+          president: organization.president,
+          visibility: organization.visibility,
+          org_type: organization.org_type,
           name: organization.name,
           acronym: organization.acronym,
           address: organization.address,
@@ -142,10 +168,10 @@ export const useOrganizationServices = () => {
           email: organization.email,
           website: organization.website,
           geojson: organization.geojson,
-          rdc_rep: transformRepData(organization.rd_rep),
-          ttc_rep: transformRepData(organization.tt_rep),
-          icc_rep: transformRepData(organization.ic_rep),
-          scc_rep: transformRepData(organization.sc_rep),
+          rdc_rep: organization.rd_rep,
+          ttc_rep: organization.tt_rep,
+          icc_rep: organization.ic_rep,
+          scc_rep: organization.sc_rep,
         },
         {
           headers: {
@@ -156,17 +182,27 @@ export const useOrganizationServices = () => {
 
       if(type == 'create'){
         await addMemberToOrganization(res.data.uid);
-        await router.push({path: '/my-organizations'});
+        await localStorage.setItem('snackbarmessage', JSON.stringify({
+          message: 'Organization created successfully',
+          status: 'success'
+        }))
+        window.location.href = '/my-organizations';
+        // await router.push({path: '/my-organizations'});
       } else if(type == 'update'){
-        await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
+        await localStorage.setItem('snackbarmessage', JSON.stringify({
+          message: 'Organization updated successfully',
+          status: 'success'
+        }))
+        window.location.href = `/my-organizations/${organization.slug}`
+        // await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
       }
-      showSnackbarMessage('Organization created successfully', Status.success);
     } catch (e: any) {
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
-      handleError(e.response?.data);
+      // handleError(e.response?.data);
+      // return;
+      clearErrorMessage();
+      handleDynamicErrorMapping(e.response?.data, errorMessage, keyMapping);
       return;
-      // clearErrorMessage();
-      // handleDynamicErrorMapping(e.response?.data, errorMessage);
     }
   };
 
@@ -198,6 +234,35 @@ export const useOrganizationServices = () => {
     await saveOrganization(organization, `/v1/organization/${id}/update`, 'update');
   };
 
+  const mapOrgData = (rawData: any): Organization[] => {
+    return rawData.map((org: any) => {
+      const organization = org.organization || org;
+      return {
+        sub_org_type: organization.sub_org_type,
+        uid: organization.uid,
+        acronym: organization.acronym,
+        name: organization.name,
+        address: organization.address,
+        phone: organization.phone,
+        email: organization.email,
+        website: organization.website,
+        tt_rep: organization.ttc_rep,
+        ic_rep: organization.icc_rep,
+        sc_rep: organization.scc_rep,
+        rd_rep: organization.rdc_rep,
+        geojson: isEmptyObject(organization.geojson) ? {} : JSON.parse(organization.geojson),
+        is_public: organization.is_public,
+        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+        type: organization.org_type,
+        tel_phone: organization.tel_phone,
+        president: organization.president,
+        slug: organization.uid,
+        description: organization.description,
+      };
+    });
+  };
+
+
   const fetchOrganizationByUserWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
     try{
       const res = await server.get(`/v1/user/${userData.uid}/organizations?page=${pageNumber}&page_size=5`, {
@@ -206,29 +271,7 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = rawData.map((org: any) => ({
-        uid: org.organization.uid,
-        acronym: org.organization.acronym,
-        name: org.organization.name,
-        address: org.organization.address,
-        phone: org.organization.phone,
-        email: org.organization.email,
-        website: org.organization.website,
-        tt_rep: transformRepDataFromAPI(org.organization.ttc_rep),
-        ic_rep: transformRepDataFromAPI(org.organization.icc_rep),
-        sc_rep: transformRepDataFromAPI(org.organization.scc_rep),
-        rd_rep: transformRepDataFromAPI(org.organization.rdc_rep),
-        geojson: JSON.parse(org.organization.geojson),
-        is_public: org.organization.is_public,
-        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
-        type: OrganizationType.Institution,
-        tel: '221-2237 ',
-        president: 'Anie Joseph Cabahug',
-        slug: org.organization.uid,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur,a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
-
-        Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
-      }));
+      const organizations: Organization[] = mapOrgData(rawData)
       myOrganizations.value = [...myOrganizations.value, ...organizations];
       return organizations;
     } catch (e) {
@@ -244,30 +287,8 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = rawData.map((org: any) => ({
-        uid: org.organization.uid,
-        acronym: org.organization.acronym,
-        name: org.organization.name,
-        address: org.organization.address,
-        phone: org.organization.phone,
-        email: org.organization.email,
-        website: org.organization.website,
-        tt_rep: transformRepDataFromAPI(org.organization.ttc_rep),
-        ic_rep: transformRepDataFromAPI(org.organization.icc_rep),
-        sc_rep: transformRepDataFromAPI(org.organization.scc_rep),
-        rd_rep: transformRepDataFromAPI(org.organization.rdc_rep),
-        geojson: JSON.parse(org.organization.geojson),
-        is_public: org.organization.is_public,
-        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
-        type: OrganizationType.Institution,
-        tel: '221-2237 ',
-        president: 'Anie Joseph Cabahug',
-        slug: org.organization.uid,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur,a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
-
-        Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
-      }));
-      const data = [...organizationData, ...organizations];
+      const organizations: Organization[] = mapOrgData(rawData)
+      const data = [ ...organizations];
       // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data
       return data;
@@ -284,33 +305,11 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = rawData.map((org: any) => ({
-        uid: org.uid,
-        acronym: org.acronym,
-        name: org.name,
-        address: org.address,
-        phone: org.phone,
-        email: org.email,
-        website: org.website,
-        tt_rep: transformRepDataFromAPI(org.ttc_rep),
-        ic_rep: transformRepDataFromAPI(org.icc_rep),
-        sc_rep: transformRepDataFromAPI(org.scc_rep),
-        rd_rep: transformRepDataFromAPI(org.rdc_rep),
-        geojson: JSON.parse(org.geojson),
-        is_public: org.is_public,
-        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
-        type: OrganizationType.Institution,
-        tel: '221-2237 ',
-        president: 'Anie Joseph Cabahug',
-        slug: org.uid,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur,a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
-
-        Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
-      }));
+      const organizations: Organization[] = mapOrgData(rawData)
       allOrganizations.value = [...allOrganizations.value, ...organizations];
       return organizations;
     } catch (e) {
-      console.log(e)
+      // console.log(e)
       return []
     }
   }
@@ -323,31 +322,8 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = rawData.map((org: any) => ({
-        uid: org.uid,
-        acronym: org.acronym,
-        name: org.name,
-        address: org.address,
-        phone: org.phone,
-        email: org.email,
-        website: org.website,
-        tt_rep: transformRepDataFromAPI(org.ttc_rep),
-        ic_rep: transformRepDataFromAPI(org.icc_rep),
-        sc_rep: transformRepDataFromAPI(org.scc_rep),
-        rd_rep: transformRepDataFromAPI(org.rdc_rep),
-        geojson: JSON.parse(org.geojson),
-        // geojson: org.geojson,
-        is_public: org.is_public,
-        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
-        type: OrganizationType.Institution,
-        tel: '221-2237 ',
-        president: 'Anie Joseph Cabahug',
-        slug: org.uid,
-        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla nisl non eros facilisis, a euismod lorem egestas. Integer convallis metus a elit efficitur,a viverra turpis dignissim. Mauris hendrerit nibh eu nulla consequat, non laoreet turpis venenatis. Ut vitae augue vitae lectus vehicula suscipit. Sed bibendum eros at mi convallis, non sodales nisi iaculis.
-
-        Nunc convallis, dui a varius lacinia, odio justo consequat arcu, ut tincidunt purus dolor at libero. Duis ut cursus velit. Vivamus vel risus velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec dui vitae felis elementum volutpat at et lorem. Donec consectetur, sem id volutpat aliquam, nulla nunc cursus libero, sit amet viverra nulla elit a felis.`
-      }));
-      const data = [...organizationData, ...organizations];
+      const organizations: Organization[] = mapOrgData(rawData)
+      const data = [...organizations];
       mapOrganizations.value = data
       allOrganizations.value = data
       return data;
@@ -366,7 +342,6 @@ export const useOrganizationServices = () => {
       return null;
     }
   }
-
 
 
 

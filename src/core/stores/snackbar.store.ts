@@ -12,9 +12,22 @@ const showSnackbarMessage = (message: string, status: Status) => {
   showSnackbar.value = true;
 };
 
+const setSnackbarMessage = async () => {
+  // @ts-ignore
+  const message = JSON.parse(await localStorage.getItem('snackbarmessage'))
+  if(message) {
+    showSnackbarMessage(
+      message.message,
+      Status.success
+    )
+    localStorage.removeItem('snackbarmessage')
+  }
+};
+
 export const useSnackbarStore = createGlobalState(() => ({
   showSnackbar,
   snackbarMessage,
   snackbarStatus,
-  showSnackbarMessage
+  showSnackbarMessage,
+  setSnackbarMessage
 }))

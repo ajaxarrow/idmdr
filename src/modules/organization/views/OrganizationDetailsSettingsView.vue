@@ -3,10 +3,12 @@ import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetails
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted} from "vue";
+import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
 const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
-
+const {fetchOrganizations} = useOrganizationServices();
 onMounted(async () => {
+  await fetchOrganizations()
   setOrganizationData(route.params.slug as string, allOrganizations.value);
 })
 

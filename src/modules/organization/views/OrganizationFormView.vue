@@ -10,10 +10,10 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import OrganizationFormMapPreview from "../components/OrganizationFormMapPreview.vue";
 import {useOrganizationStore} from "../stores/organization.store.ts";
+import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 
+const {isEmptyObject} = useObjectChecker()
 const organizationForm = ref(null);
-const visibility = ref("public");
-const type = ref("institution");
 const formType = ref<FormType>(FormType.create);
 const {allOrganizations, setOrganizationData, organization} = useOrganizationStore();
 const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizations} = useOrganizationServices();
@@ -23,40 +23,40 @@ const geoJSONFileName = ref('')
 
 const {route} = useRouting();
 
-// const clusters: string[] = Object.values(ClusterType);
 const organizationDataInitialState = reactive<Organization>({
-  is_public: true,
   name: '',
   acronym: '',
-  description: '',
+  description: ``,
   geojson: '',
   slug: '',
   image: '',
-  type: OrganizationType.Institution,
+  sub_org_type: 1,
+  org_type: 1,
+  visibility: 1,
   website: '',
   address: '',
-  tel: '',
+  tel_phone: '',
   phone: '',
   email: '',
   president: '',
   rd_rep: {
     email: '',
-    name: '',
+    full_name: '',
     phone: '',
   },
   tt_rep: {
     email: '',
-    name: '',
+    full_name: '',
     phone: '',
   },
   ic_rep: {
     email: '',
-    name: '',
+    full_name: '',
     phone: '',
   },
   sc_rep: {
     email: '',
-    name: '',
+    full_name: '',
     phone: '',
   },
 });
@@ -64,6 +64,7 @@ const organizationDataInitialState = reactive<Organization>({
 const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
+
 
 const clearFields = () => {
   Object.assign(organizationData, {...organizationDataInitialState});
@@ -161,7 +162,6 @@ onMounted(async () => {
     Object.assign(organizationData, {...organization.value});
     organizationData.geojson = JSON.stringify(organizationData.geojson)
   }
-
 })
 
 
@@ -192,50 +192,90 @@ onMounted(async () => {
       <VDivider/>
       <div class="px-6 py-6">
         <label class="input-label mb-3">Organization Visibility</label>
-        <VRadioGroup hide-details v-model="visibility">
-          <VRadio color="bs50" value="public" class="my-3">
+        <VRadioGroup hide-details v-model="organizationData.visibility">
+          <VRadio color="bs50" :value="1" class="my-3">
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Public</p>
-                <p class="radio-text-subtitle">The repository is accessible to the general public for content exploration.</p>
+                <p class="radio-text-subtitle">The organization is accessible to the general public for content exploration.</p>
               </div>
             </template>
           </VRadio>
-          <VRadio color="bs50" value="withinorg" class="my-3">
+          <VRadio color="bs50" :value="2" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Private</p>
+                <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the organization.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="3" class="my-3">
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Within Organization</p>
-                <p class="radio-text-subtitle">The repository's content is exclusively visible to members within the organization.</p>
+                <p class="radio-text-subtitle">The organization's information is exclusively visible to members within the organization.</p>
               </div>
             </template>
           </VRadio>
-<!--          <VRadio color="bs50" value="withinall" class="my-3">-->
-<!--            <template v-slot:label>-->
-<!--              <div>-->
-<!--                <p class="radio-text-heading">Within All Organization</p>-->
-<!--                <p class="radio-text-subtitle">The repository's content is visible to all members of any organization</p>-->
-<!--              </div>-->
-<!--            </template>-->
-<!--          </VRadio>-->
+          <VRadio color="bs50" :value="4" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Within All Organization</p>
+                <p class="radio-text-subtitle">The organization's information is visible to all members of any organization</p>
+              </div>
+            </template>
+          </VRadio>
         </VRadioGroup>
       </div>
       <VDivider/>
       <div class="px-6 py-6">
         <label class="input-label mb-3">Organization Type</label>
-        <VRadioGroup hide-details v-model="type">
-          <VRadio color="bs50" value="agency" class="my-3">
+        <VRadioGroup hide-details v-model="organizationData.org_type">
+          <VRadio color="bs50" :value="1" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Agency</p>
+                <p class="radio-text-heading">Government</p>
                 <p class="radio-text-subtitle">This organization is an agency type.</p>
               </div>
             </template>
           </VRadio>
-          <VRadio color="bs50" value="institution" class="my-3">
+          <VRadio color="bs50" :value="2" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Institution</p>
-                <p class="radio-text-subtitle">This organization is an institution type.</p>
+                <p class="radio-text-heading">Private</p>
+                <p class="radio-text-subtitle">This organization is an private type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="3" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Public</p>
+                <p class="radio-text-subtitle">This organization is an public type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="4" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">International</p>
+                <p class="radio-text-subtitle">This organization is an international type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="5" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">NGO</p>
+                <p class="radio-text-subtitle">This organization is an NGO type.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="6" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Others</p>
+                <p class="radio-text-subtitle">This organization is an others type.</p>
               </div>
             </template>
           </VRadio>
@@ -271,21 +311,22 @@ onMounted(async () => {
               base-color="gs60"
           />
         </div>
-        <div class="mb-5">
-          <label class="input-label">Description<span class="text-pink">*</span></label>
+        <div class="mb-5" v-if="formType === FormType.edit">
+          <label class="input-label">Description</label>
           <QuillRichTextEditor
+            v-if="organizationData.description"
+            :modelValue="organizationData.description"
+            @update:modelValue="$event => (organizationData.description = $event)"
             placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."
           />
-<!--          <VTextarea-->
-<!--              placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."-->
-<!--              class="my-2"-->
-<!--              :error-messages="errorMessage"-->
-<!--              rounded="lg"-->
-<!--              density="comfortable"-->
-<!--              variant="outlined"-->
-<!--              color="primary"-->
-<!--              base-color="gs60"-->
-<!--          />-->
+        </div>
+        <div class="mb-5" v-else>
+          <label class="input-label">Description</label>
+          <QuillRichTextEditor
+              :modelValue="organizationData.description"
+              @update:modelValue="$event => (organizationData.description = $event)"
+              placeholder="E.g. Central Mindanao University is a State University located in the heart of Mindanao Island, Province of Bukidnon, Philippines. It was transformed from a settlement farm school organized by the Americans. It started as the Mailag Industrial School founded in 1910. It is one of the oldest premier universities in Southern Philippines."
+          />
         </div>
         <div class="mb-3">
           <label class="input-label">Address<span class="text-pink">*</span></label>
@@ -302,7 +343,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">President<span class="text-pink">*</span></label>
+          <label class="input-label">President</label>
           <VTextField
               v-model="organizationData.president"
               placeholder="E.g. John Doe"
@@ -318,7 +359,7 @@ onMounted(async () => {
         <div class="mb-3">
           <label class="input-label">Telephone Number<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organizationData.tel"
+              v-model="organizationData.tel_phone"
               placeholder="E.g. 000-888-000"
               class="my-2"
               :error-messages="errorMessage.tel"
@@ -402,10 +443,10 @@ onMounted(async () => {
         <div class="mb-3">
           <label class="input-label">Research & Development Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organizationData.rd_rep.name"
+              v-model="organizationData.rd_rep.full_name"
               placeholder="E.g. John Doe"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.name"
+              :error-messages="errorMessage.rd_rep.full_name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -444,10 +485,10 @@ onMounted(async () => {
         <div class="mb-3">
           <label class="input-label">Technology Transfer Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organizationData.tt_rep.name"
+              v-model="organizationData.tt_rep.full_name"
               placeholder="E.g. John Doe"
               class="my-2"
-              :error-messages="errorMessage.tt_rep.name"
+              :error-messages="errorMessage.tt_rep.full_name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -486,10 +527,10 @@ onMounted(async () => {
         <div class="mb-3">
           <label class="input-label">Information Communication Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organizationData.ic_rep.name"
+              v-model="organizationData.ic_rep.full_name"
               placeholder="E.g. John Doe"
               class="my-2"
-              :error-messages="errorMessage.ic_rep.name"
+              :error-messages="errorMessage.ic_rep.full_name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -528,10 +569,10 @@ onMounted(async () => {
         <div class="mb-3">
           <label class="input-label">Science Communication Representative Name<span class="text-pink">*</span></label>
           <VTextField
-              v-model="organizationData.sc_rep.name"
+              v-model="organizationData.sc_rep.full_name"
               placeholder="E.g. John Doe"
               class="my-2"
-              :error-messages="errorMessage.sc_rep.name"
+              :error-messages="errorMessage.sc_rep.full_name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
@@ -585,19 +626,7 @@ onMounted(async () => {
               @closeMapPreview="isMapPreview = false"
           />
           <div v-else>
-            <div class="my-3" v-if="organizationData.geojson">
-              <VDivider/>
-              <div class="d-flex align-center justify-space-between pa-2" >
-                <p class="dialog-boundary-title d-flex align-center">
-                  <PhPolygon class="mr-1"/>
-                  {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
-                </p>
-                <PhX class="cursor-pointer" @click="organizationData.geojson = ''"/>
-              </div>
-              <VDivider/>
-            </div>
-
-            <div class="my-2 file-upload-container" v-else>
+            <div class="my-2 file-upload-container" v-if="isEmptyObject(organizationData.geojson)">
               <PhFileDashed size="50"/>
               <p class="text-dropzone">
                 Drag and drop files here or
@@ -605,6 +634,17 @@ onMounted(async () => {
                 or <label class="file-label" @click="isMapPreview = !isMapPreview">Draw Boundary</label>
               </p>
               <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
+            </div>
+            <div class="my-3" v-else>
+              <VDivider/>
+              <div class="d-flex align-center justify-space-between pa-2" >
+                <p class="dialog-boundary-title d-flex align-center">
+                  <PhPolygon class="mr-1"/>
+                  {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
+                </p>
+                <PhX class="cursor-pointer" @click="organizationData.geojson = {}"/>
+              </div>
+              <VDivider/>
             </div>
           </div>
         </div>

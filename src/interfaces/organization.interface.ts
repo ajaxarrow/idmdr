@@ -1,18 +1,18 @@
-import {OrganizationType, ClusterType} from "./enums/organization.enum";
-
+import {ClusterType} from "./enums/organization.enum";
 
 interface Organization {
-  is_public: boolean,
   name: string,
   acronym?: string,
   slug: string,
   description: string,
   geojson?: any,
   image?: string,
-  type?: OrganizationType,
+  org_type?: number,
+  sub_org_type?: number,
+  visibility?: number,
   website?: string,
   address?: string,
-  tel?: string,
+  tel_phone?: string,
   phone?: string,
   email?: string,
   president?: string,
@@ -31,7 +31,7 @@ interface ClusterRepresentative{
 }
 
 interface Representative{
-  name: string,
+  full_name: string,
   email?: string,
   phone?: string
 }

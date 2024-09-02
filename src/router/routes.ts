@@ -10,6 +10,12 @@ export const routes = [
     component: () => import('../modules/public/views/LandingView.vue')
   },
   {
+    path: '/seed',
+    name: 'seed',
+    // @ts-ignore
+    component: () => import('../core/views/SeedView.vue')
+  },
+  {
     path: '/about',
     name: 'about',
     // @ts-ignore
