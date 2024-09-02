@@ -17,7 +17,7 @@ const {myOrganizations} = useOrganizationStore();
 const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
-const organizationData = ref(myOrganizations);
+const organizationData = ref([]);
 const observerReady = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
@@ -30,6 +30,7 @@ const filterOrganizationsBySearchQuery = () => {
 
 const fetchMoreOrganizations = async () => {
   const data = await fetchOrganizationByUserWithPagination(lastItemValue.value);
+  organizationData.value = [...organizationData.value, ...data];
   lastItemValue.value = lastItemValue.value + 1
   if (data.length === 0) {
     reachEnd.value = true

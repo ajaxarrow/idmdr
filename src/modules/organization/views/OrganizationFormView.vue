@@ -28,7 +28,7 @@ const organizationDataInitialState = reactive<Organization>({
   name: '',
   acronym: '',
   description: ``,
-  geojson: '',
+  geojson: {},
   slug: '',
   image: '',
   sub_org_type: 1,

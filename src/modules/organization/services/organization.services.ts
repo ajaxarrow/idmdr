@@ -189,31 +189,32 @@ export const useOrganizationServices = () => {
           message: 'Organization created successfully',
           status: 'success'
         }))
-        setTimeout(function() {
+        setTimeout(async function() {
           loading.value = false;
+          window.location.href = '/my-organizations';
         }, 3000);
-        window.location.href = '/my-organizations';
+
         // await router.push({path: '/my-organizations'});
       } else if(type == 'update'){
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Organization updated successfully',
           status: 'success'
         }))
-        setTimeout(function() {
+        setTimeout(async function() {
           loading.value = false;
+          window.location.href = `/my-organizations/${organization.slug}`
         }, 3000);
-        window.location.href = `/my-organizations/${organization.slug}`
+
         // await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
       }
     } catch (e: any) {
-      setTimeout(function() {
-        loading.value = false;
-      }, 3000);
+      loading.value = false;
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
       // handleError(e.response?.data);
       // return;
       clearErrorMessage();
       handleDynamicErrorMapping(e.response?.data, errorMessage, keyMapping);
+
       return;
     }
   };
@@ -246,7 +247,7 @@ export const useOrganizationServices = () => {
     await saveOrganization(organization, `/v1/organization/${id}/update`, 'update');
   };
 
-  const mapOrgData = (rawData: any): Organization[] => {
+  const mapOrgData = async (rawData: any): Promise<Organization[]> => {
     return rawData.map((org: any) => {
       const organization = org.organization || org;
       return {
@@ -275,6 +276,7 @@ export const useOrganizationServices = () => {
   };
 
 
+  // @ts-ignore
   const fetchOrganizationByUserWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
     try{
       const res = await server.get(`/v1/user/${userData.uid}/organizations?page=${pageNumber}&page_size=5`, {
@@ -283,8 +285,8 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = mapOrgData(rawData)
-      myOrganizations.value = [...myOrganizations.value, ...organizations];
+      const organizations: Organization[] = await mapOrgData(rawData)
+      myOrganizations.value = [...organizations];
       return organizations;
     } catch (e) {
       return []
@@ -299,7 +301,7 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = mapOrgData(rawData)
+      const organizations: Organization[] = await mapOrgData(rawData)
       const data = [ ...organizations];
       // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data
@@ -317,7 +319,7 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = mapOrgData(rawData)
+      const organizations: Organization[] = await mapOrgData(rawData)
       allOrganizations.value = [...allOrganizations.value, ...organizations];
       return organizations;
     } catch (e) {
@@ -328,13 +330,13 @@ export const useOrganizationServices = () => {
 
   const fetchOrganizations = async () : Promise<Organization[]> => {
     try{
-      const res = await server.get(`/v1/organization/`, {
+      const res = await server.get(`/v1/organization/?page_size=100`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = mapOrgData(rawData)
+      const organizations: Organization[] = await mapOrgData(rawData)
       const data = [...organizations];
       mapOrganizations.value = data
       allOrganizations.value = data
