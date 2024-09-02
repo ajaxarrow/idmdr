@@ -177,7 +177,7 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
          <component :is="header"/>
        </div>
        <VDivider/>
-       <div class="pa-5">
+       <div class="pa-5 scrollable-container">
          <component :is="mainContent"/>
        </div>
      </div>
@@ -186,7 +186,10 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 </template>
 
 <style scoped>
-
+.scrollable-container{
+  overflow-y: auto;
+  height: 80vh;
+}
 .add-sector-menu{
   border-radius: 15px !important;
   box-shadow: 0px 4px 10px 0px #5d6e87;
