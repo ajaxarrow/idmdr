@@ -11,10 +11,8 @@ const router = createRouter({
 
 const {handleLogout} = useAuthStore();
 const {checkAuth, checkIfAuthenticated} = useMiddleware();
-const publicPages = [
-    'landing', 'about', 'stakeholders',
-    'news-updates', 'news-updates-detail',
-    'help', 'contact', 'map', 'auth', 'error404'
+const protectedPages = [
+    'settings', 'my-organizations', 'settings-account', 'settings-organizations', 'sectors', 'repository-settings', 'my-organization-settings', 'organization-settings'
 ];
 
 router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNext) => {
@@ -30,7 +28,7 @@ router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNe
 })
 
 router.beforeResolve((to) => {
-    if (!publicPages.includes(<string>to.name)) {
+    if (protectedPages.includes(<string>to.name)) {
         checkIfAuthenticated();
     }
     if(to.name === 'auth'){

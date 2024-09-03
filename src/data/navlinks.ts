@@ -8,7 +8,9 @@ import {
   PhUsersFour,
   PhUsersThree
 } from "@phosphor-icons/vue";
+import {useUserStore} from "../core/stores/user.store.ts";
 
+const {user} = useUserStore()
 export const navLinks = [
   {
     name: 'Dashboard',
@@ -35,19 +37,22 @@ export const navLinks = [
     link: '/map',
     icon: PhMapPinLine
   },
-  {
-    name: 'My Organizations',
-    link: '/my-organizations',
-    icon: PhUsersFour
-  },
-  {
-    name: 'Settings',
-    link: '/settings',
-    icon: PhGearSix
-  },
+  // Conditionally include "My Organizations" and "Settings" links
+  ...(user.value ? [
+    {
+      name: 'My Organizations',
+      link: '/my-organizations',
+      icon: PhUsersFour
+    },
+    {
+      name: 'Settings',
+      link: '/settings',
+      icon: PhGearSix
+    }
+  ] : []),
   {
     name: 'Signout',
     link: '/signout',
     icon: PhSignOut
   }
-]
+];
