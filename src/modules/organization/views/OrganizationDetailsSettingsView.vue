@@ -5,7 +5,7 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
-const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
+const {organization} = useOrganizationStore();
 const {fetchOrganizationData} = useOrganizationServices();
 onMounted(async () => {
   await fetchOrganizationData(route.params.slug as string);

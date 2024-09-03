@@ -10,7 +10,7 @@ import {useRepositoryServices} from "../../repository/services/repository.servic
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
-const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
+const {organization} = useOrganizationStore();
 const {fetchOrganizationData} = useOrganizationServices();
 
 const {tags, selectedTags, fetchTags} = useTags();

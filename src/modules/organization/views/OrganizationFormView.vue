@@ -15,7 +15,7 @@ import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 const {isEmptyObject} = useObjectChecker()
 const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
-const {allOrganizations, setOrganizationData, organization} = useOrganizationStore();
+const {organization} = useOrganizationStore();
 const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
