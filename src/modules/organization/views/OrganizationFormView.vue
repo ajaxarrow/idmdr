@@ -16,7 +16,7 @@ const {isEmptyObject} = useObjectChecker()
 const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {allOrganizations, setOrganizationData, organization} = useOrganizationStore();
-const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizations, loading} = useOrganizationServices();
+const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const geoJSONFileName = ref('')
@@ -152,12 +152,11 @@ const formatDate = (): string=> {
 }
 
 onMounted(async () => {
-  await fetchOrganizations()
-  setOrganizationData(route.params.slug as string, allOrganizations.value);
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
 
   if(type === 'edit') {
+    await fetchOrganizationData(route.params.slug as string);
     formType.value = FormType.edit
     Object.assign(organizationData, {...organization.value});
     organizationData.geojson = JSON.stringify(organizationData.geojson)

@@ -22,7 +22,7 @@ const { userData } = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker()
 // const {router} = useRouting()
-const {myOrganizations, allOrganizations, mapOrganizations} = useOrganizationStore();
+const {myOrganizations, allOrganizations, mapOrganizations, organization} = useOrganizationStore();
 
 export const useOrganizationServices = () => {
   const errorMessageIntialState = reactive({
@@ -348,14 +348,26 @@ export const useOrganizationServices = () => {
   }
 
 
-  const fetchOrganizationData = (slug: string, organizations: Organization[]): Organization | null => {
-    const organization = organizations.find(org => org.slug === slug);
-    if (organization) {
-      return organization;
-    } else {
-      console.error('no org')
+  const fetchOrganizationData = async (slug: string): Promise<Organization | null> => {
+    try{
+      const res = await server.get(`/v1/organization/${slug}/`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = await mapOrgData(rawData)
+      if (organizations) {
+        organization.value = organizations[0];
+        return organizations[0];
+      } else {
+        console.error('no org')
+        return null;
+      }
+    } catch (e) {
       return null;
     }
+
   }
 
 

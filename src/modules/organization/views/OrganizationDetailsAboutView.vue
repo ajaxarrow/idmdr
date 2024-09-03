@@ -5,15 +5,15 @@
   import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
   import {useOrganizationServices} from "../services/organization.services.ts";
   import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
-
+  import "quill/dist/quill.core.css"
+  import "quill/dist/quill.snow.css"
   const {route} = useRouting()
   const {setSnackbarMessage} = useSnackbarStore()
-  const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
-  const {fetchOrganizations} = useOrganizationServices();
+  const {organization} = useOrganizationStore();
+  const {fetchOrganizationData} = useOrganizationServices();
 
   onMounted(async () => {
-    await fetchOrganizations()
-    setOrganizationData(route.params.slug as string, allOrganizations.value);
+    await fetchOrganizationData(route.params.slug as string);
     await setSnackbarMessage()
   })
 </script>
@@ -24,7 +24,9 @@
      <div class="px-6 py-2">
        <div>
          <p class="text-about-heading py-3">About Organization</p>
-         <div v-html="organization.description"></div>
+         <div class="ql-snow">
+           <div class="ql-editor" v-html="organization.description"></div>
+         </div>
 <!--         <p class="organization-description">{{organization.description} }</p>-->
        </div>
        <VRow class="ma-0 my-7">

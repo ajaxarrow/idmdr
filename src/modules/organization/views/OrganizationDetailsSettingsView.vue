@@ -6,17 +6,16 @@ import {onMounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
 const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
-const {fetchOrganizations} = useOrganizationServices();
+const {fetchOrganizationData} = useOrganizationServices();
 onMounted(async () => {
-  await fetchOrganizations()
-  setOrganizationData(route.params.slug as string, allOrganizations.value);
+  await fetchOrganizationData(route.params.slug as string);
 })
 
 
 </script>
 
 <template>
-  <OrganizationDetailsLayout :organization="organization" activeTab="repositories">
+  <OrganizationDetailsLayout :organization="organization" activeTab="settings">
     <div v-if="organization" class="pa-6">
       <div class="mt-2 mb-5">
         <p class="section-title">Update Organization Information</p>

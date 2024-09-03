@@ -11,7 +11,7 @@ import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
 const {organization, setOrganizationData, allOrganizations} = useOrganizationStore();
-const {fetchOrganizations} = useOrganizationServices();
+const {fetchOrganizationData} = useOrganizationServices();
 
 const {tags, selectedTags, fetchTags} = useTags();
 const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
@@ -42,8 +42,7 @@ watch(() => selectedTags.value, (newVal) => {
 
 
 onMounted(async () => {
-  await fetchOrganizations()
-  setOrganizationData(route.params.slug as string, allOrganizations.value);
+  await fetchOrganizationData(route.params.slug as string);
   repositoryItems.value = fetchRepositoriesByOrganization(route.params.slug as string);
   fetchTags();
   repositoryData.value = fetchRepositoriesByOrganization(route.params.slug as string);
