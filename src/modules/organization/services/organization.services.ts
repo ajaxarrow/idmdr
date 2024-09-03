@@ -253,6 +253,7 @@ export const useOrganizationServices = () => {
       const organization = org.organization || org;
       return {
         sub_org_type: organization.sub_org_type,
+        org_type: organization.org_type,
         uid: organization.uid,
         acronym: organization.acronym,
         name: organization.name,

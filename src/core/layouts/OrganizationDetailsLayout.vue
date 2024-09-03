@@ -88,7 +88,7 @@ onMounted(()=>{
                 {{organization.name}} ({{organization.acronym}})
               </p>
               <p class="text-subtitle">{{ organization.president }}</p>
-              <p class="text-subtitle text-gs20">{{organization.tel_phone}} | {{organization.phone}} | {{organization.email}}</p>
+              <p class="text-subtitle text-gs20">{{organization.tel_phone}} <span v-if="organization.tel_phone">|</span> {{organization.phone}} <span v-if="organization.email">|</span> {{organization.email}}</p>
             </div>
           </VCol>
           <VCol md="3" class="pa-0" v-if="!isSmall">

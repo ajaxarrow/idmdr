@@ -12,6 +12,41 @@
   const {organization} = useOrganizationStore();
   const {fetchOrganizationData} = useOrganizationServices();
 
+  const getOrganizationType = (x: number) => {
+    switch(x) {
+      case 1:
+        return "Government";
+      case 2:
+        return "Private";
+      case 3:
+        return "Public";
+      case 4:
+        return "Internatonal";
+      case 5:
+        return "Public";
+      case 6:
+        return "Others";
+      default:
+        return "Unknown";
+    }
+  }
+
+  const getOrganizationSubType = (x: number) => {
+    switch(x) {
+      case 1:
+        return "Academia";
+      case 2:
+        return "Research";
+      case 3:
+        return "Agency";
+      case 4:
+        return "Institutional";
+      default:
+        return "Unknown";
+    }
+  }
+
+
   onMounted(async () => {
     await fetchOrganizationData(route.params.slug as string);
     await setSnackbarMessage()
@@ -27,16 +62,49 @@
          <div class="ql-snow">
            <div class="ql-editor" v-html="organization.description"></div>
          </div>
-<!--         <p class="organization-description">{{organization.description} }</p>-->
        </div>
-       <VRow class="ma-0 my-7">
-         <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+     </div>
+     <VDivider/>
+     <div class="px-6 py-2">
+       <p class="text-about-heading py-3">Consortium Type</p>
+       <VRow class="ma-0">
+         <VCol v-if="organization.org_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">Organization Type</p>
+           <p class="text-subtitle">{{ getOrganizationType(organization.org_type) }}</p>
+         </VCol>
+         <VCol v-if="organization.sub_org_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">Organization Sub Type</p>
+           <p class="text-subtitle">{{ getOrganizationSubType(organization.sub_org_type) }}</p>
+         </VCol>
+       </VRow>
+     </div>
+     <VDivider/>
+     <div class="px-6 py-2">
+       <p class="text-about-heading py-3">Contact Information</p>
+       <VRow class="ma-0">
+         <VCol v-if="organization.president" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">President</p>
+           <p class="text-subtitle">{{ organization.president }}</p>
+         </VCol>
+         <VCol v-if="organization.address" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Address</p>
            <p class="text-subtitle">{{ organization.address }}</p>
          </VCol>
-         <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-           <p class="text-subtitle text-gs20">Consortium Type</p>
-           <p class="text-subtitle">hello</p>
+         <VCol v-if="organization.tel_phone" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">Telephone</p>
+           <p class="text-subtitle">{{ organization.tel_phone }}</p>
+         </VCol>
+         <VCol v-if="organization.phone" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">Cell Number</p>
+           <p class="text-subtitle">{{ organization.phone }}</p>
+         </VCol>
+         <VCol v-if="organization.email" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">Email</p>
+           <p class="text-subtitle">{{ organization.email }}</p>
+         </VCol>
+         <VCol v-if="organization.website" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+           <p class="text-subtitle text-gs20">Website</p>
+           <p class="text-subtitle">{{ organization.website }}</p>
          </VCol>
        </VRow>
      </div>
