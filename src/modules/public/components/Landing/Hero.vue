@@ -3,9 +3,7 @@ import {PhMapTrifold} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
 import HeroMainImage from "../../../../assets/landing-page/hero-main-image.svg"
 import Placeholder from "../../../../assets/landing-page/placeholder.png"
-import {useUserStore} from "../../../../core/stores/user.store.ts";
 const {isMobile, isSmall} = useScreenStore();
-const {user} = useUserStore();
 </script>
 
 <template>
