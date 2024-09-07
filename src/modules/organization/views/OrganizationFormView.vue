@@ -333,6 +333,7 @@ onMounted(async () => {
           <label class="input-label">Organization Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organizationData.name"
+              hint="This field is for the name of the organization"
               placeholder="E.g. Central Mindanao University"
               class="my-2"
               :error-messages="errorMessage.name"
@@ -663,7 +664,7 @@ onMounted(async () => {
           </div>
         </div>
         <div class="mb-10">
-          <label class="input-label">GeoJSON</label>
+          <label class="input-label">Location/Area</label>
 
           <OrganizationFormMapPreview
               class="my-2"
