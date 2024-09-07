@@ -12,8 +12,8 @@ const userData = reactive({
   username: user.value ? user.value.user.username : 'Guest User',
   profilePicture: user.value ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
   uid: user.value ? user.value.user.uid: '',
-  accessToken: user.value ? user.value.accessToken : '',
-  refreshToken: user.value ? user.value.refreshToken : '',
+  accessToken: user.value ? user.value.accessToken : '1000',
+  refreshToken: user.value ? user.value.refreshToken : '1000',
 });
 
 export const useUserStore = createGlobalState(() => ({ user, userData}));

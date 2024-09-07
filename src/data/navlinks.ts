@@ -6,7 +6,8 @@ import {
   PhSignOut,
   PhTag,
   PhUsersFour,
-  PhUsersThree
+  PhUsersThree,
+  PhAirplaneLanding
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
@@ -51,8 +52,8 @@ export const navLinks = [
     }
   ] : []),
   {
-    name: 'Signout',
-    link: '/signout',
-    icon: PhSignOut
+    name: user.value ? 'Signout' : 'Back to Landing',
+    link: user.value ? '/signout' : '/',
+    icon: user.value ? PhSignOut : PhAirplaneLanding
   }
 ];

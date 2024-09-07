@@ -18,7 +18,7 @@ import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 //   email: rep?.email,
 //   phone: rep?.phone,
 // });
-const { userData } = useUserStore();
+const { userData, user } = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker()
 // const {router} = useRouting()
@@ -313,48 +313,72 @@ export const useOrganizationServices = () => {
     }
   }
 
-  const fetchOrganizationsWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
-    try{
-      const res = await server.get(`/v1/organization?page=${pageNumber}&page_size=5/`, {
-        headers: {
-          'Authorization': `Bearer ${userData.accessToken}`
-        }
-      });
-      const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
-      allOrganizations.value = [...allOrganizations.value, ...organizations];
-      return organizations;
-    } catch (e) {
-      // console.log(e)
-      return []
-    }
-  }
+  const fetchOrganizationsWithPagination = async (pageNumber: number): Promise<Organization[]> => {
+    let data: Organization[] = [];
+    try {
 
-  const fetchOrganizations = async () : Promise<Organization[]> => {
-    try{
-      const res = await server.get(`/v1/organization/?page_size=100`, {
-        headers: {
-          'Authorization': `Bearer ${userData.accessToken}`
-        }
-      });
-      const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
-      const data = [...organizations];
-      mapOrganizations.value = data
-      allOrganizations.value = data
+      if (user.value) {
+        data = await fetchPaginatedOrganizations(pageNumber, [1, 4]);
+      } else {
+        data = await fetchPaginatedOrganizations(pageNumber, [1]);
+      }
+
+      allOrganizations.value = [...allOrganizations.value, ...data];
       return data;
     } catch (e) {
-      return []
+      return data;
     }
-  }
+  };
+
+  const fetchPaginatedOrganizations = async (pageNumber: number, visibilities: number[]): Promise<Organization[]> => {
+    const promises = visibilities.map(async (visibility) => {
+      const res = await server.get(`/v1/organization?page=${pageNumber}&page_size=5&visibility=${visibility}`, {
+        headers: user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {},
+      });
+      return mapOrgData(res.data.results);
+    });
+
+    const results = await Promise.all(promises);
+    return results.flat();
+  };
+
+
+  const fetchOrganizations = async (): Promise<Organization[]> => {
+    try {
+      let data: Organization[] = [];
+
+      if (user.value) {
+        const visibilityData = await fetchOrganizationsByVisibility([1, 4]);
+        data = visibilityData.flat();
+      } else {
+        const visibilityData = await fetchOrganizationsByVisibility([1]);
+        data = visibilityData[0];
+      }
+
+      mapOrganizations.value = data;
+      allOrganizations.value = data;
+      return data;
+    } catch (e) {
+      return [];
+    }
+  };
+
+  const fetchOrganizationsByVisibility = async (visibilities: number[]): Promise<Organization[][]> => {
+    const promises = visibilities.map(async (visibility) => {
+      const res = await server.get(`/v1/organization/?page_size=100&visibility=${visibility}`, {
+        headers: user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {},
+      });
+      return mapOrgData(res.data.results);
+    });
+    return Promise.all(promises);
+  };
+
 
 
   const fetchOrganizationData = async (slug: string): Promise<Organization | null> => {
     try{
       const res = await server.get(`/v1/organization/${slug}/`, {
-        headers: {
-          'Authorization': `Bearer ${userData.accessToken}`
-        }
+        headers: user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {},
       });
       const rawData = res.data.results;
       const organizations: Organization[] = await mapOrgData(rawData)

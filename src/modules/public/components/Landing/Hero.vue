@@ -27,8 +27,8 @@ const {user} = useUserStore();
           color="bs50"
           height="45px"
           class="text-none hvr-icon-spin explore-button mx-1"
-          :to="{name: user ? 'dashboard' : 'auth'}">
-        Get Started
+          :to="{name: 'dashboard'}">
+        Start Collaborating as Guest
       </VBtn>
       <VBtn
         variant="elevated"

@@ -8,7 +8,9 @@ import {onMounted} from "vue";
 import NotFound from "../../assets/images/404.svg";
 import {useScreenStore} from "../stores/screen-size.store.ts";
 import {PhArrowLeft} from "@phosphor-icons/vue";
+import {useUserStore} from "../stores/user.store.ts";
 
+const {user} = useUserStore();
 const path = ref('organizations')
 const tab = ref("about");
 const {router, route} = useRouting();
@@ -25,8 +27,9 @@ const props = defineProps({
 const tabs = [
   { name: "About" },
   { name: "Repositories" },
-  { name: 'Settings'}
+  ...(user.value ? [{ name: "Settings" }] : [])
 ];
+
 
 // Create a computed property that maps over the tabs array
 const computedTabs = computed(() => {
@@ -37,7 +40,7 @@ const computedTabs = computed(() => {
       linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
     } else if (tab.name === "Repositories") {
       linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
-    } else if (tab.name === "Settings") {
+    } else if (tab.name === "Settings" && user.value) {
       linkName = path.value === 'organizations' ? 'organization-settings' : 'my-organization-settings';
     }
 

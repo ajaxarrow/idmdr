@@ -9,7 +9,9 @@
   import {useRepositoryServices} from "../services/repository.services.ts";
   import {useTags} from "../composables/useTags.ts";
   import {Repository} from "../../../interfaces/repository.interface.ts";
+  import {useUserStore} from "../../../core/stores/user.store.ts";
 
+  const {user} = useUserStore();
   const {tags, selectedTags, fetchTags} = useTags();
   const {fetchRepositories, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
   const searchQuery = ref('');
@@ -65,13 +67,15 @@
             </p>
             <p class="text-subtitle">Create and manage repositories within your organization!</p>
           </div>
-          <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-if="isSmall || isTablet" icon >
-            <PhPlus size="20"/>
-          </VBtnPrimaryFilled>
-          <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
-            <PhPlus size="20" class="mr-2"/>
-            New Repository
-          </VBtnPrimaryFilled>
+          <div v-if="user">
+            <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-if="isSmall || isTablet" icon >
+              <PhPlus size="20"/>
+            </VBtnPrimaryFilled>
+            <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
+              <PhPlus size="20" class="mr-2"/>
+              New Repository
+            </VBtnPrimaryFilled>
+          </div>
         </VRow>
       </div>
       <VDivider/>

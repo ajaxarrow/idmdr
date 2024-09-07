@@ -6,7 +6,9 @@ import {PropType} from "vue";
 import {Repository} from "../../interfaces/repository.interface.ts";
 import {onMounted, ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
+import {useUserStore} from "../stores/user.store.ts";
 
+const {user} = useUserStore();
 const tab = ref("data");
 const {router} = useRouting()
 const props = defineProps({
@@ -52,10 +54,10 @@ const tabs = [
     name: "Discussions",
     linkName: "repository-discussions"
   },
-  {
+  ...(user.value ? [{
     name: "Settings",
     linkName: "repository-settings"
-  }
+  }] : [])
 ]
 
 const navigateTo = (linkName: string) => {

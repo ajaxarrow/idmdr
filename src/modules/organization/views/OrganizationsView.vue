@@ -8,7 +8,9 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
+const {user} = useUserStore();
 const {allOrganizations} = useOrganizationStore();
 const {fetchOrganizationsWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
@@ -67,7 +69,7 @@ onUnmounted(() => {
             </div>
           </VCol>
          <VCol md="3" class="pa-0">
-           <VRow class="ma-0 justify-end">
+           <VRow class="ma-0 justify-end" v-if="user">
              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-if="isSmall || isTablet" icon >
                <PhPlus size="20"/>
              </VBtnPrimaryFilled>
