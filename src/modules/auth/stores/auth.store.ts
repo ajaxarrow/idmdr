@@ -1,6 +1,5 @@
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {server} from "../../../plugins/axios.ts";
-import {Router} from "vue-router";
 import {createGlobalState} from "@vueuse/core";
 
 const {user} = useUserStore();
@@ -46,10 +45,11 @@ const handleGoogle = async (code: string, state: string, ) => {
   }
 }
 
-const handleLogout = async (router: Router) => {
+const handleLogout = async () => {
   localStorage.removeItem('user');
   user.value = null
-  await router.push({name: 'landing'});
+  window.location.href = '/'
+  // await router.push({name: 'landing'});
 }
 
 export const useAuthStore = createGlobalState(() => ({ user, handleGithub, handleGoogle, handleLogout}));

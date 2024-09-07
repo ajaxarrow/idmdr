@@ -5,7 +5,9 @@ import {repositories} from '../../../data/repository.ts'
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import HeadlineCard from "../../../core/components/Dashboard/HeadlineCard.vue";
 import DataCard from "../../../core/components/Dashboard/DataCard.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
+const {user} = useUserStore()
 const dataCards = [
   {
     name: 'Sectors',
@@ -36,7 +38,7 @@ const dataCards = [
     <VDivider/>
     <div class="pa-6 mt-3">
       <VRow align="center" class="mx-0" >
-        <VCol cols="auto" style="padding: unset;">
+        <VCol cols="auto" style="padding: unset;" v-if="user">
           <HeadlineCard/>
         </VCol>
         <VCol cols="auto" style="padding: unset;">

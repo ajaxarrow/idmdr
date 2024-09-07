@@ -21,7 +21,7 @@ router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNe
     window.scrollTo({top: 0, behavior: 'smooth'});
 
     if (to.name === 'signout') {
-        await handleLogout(router);
+        await handleLogout();
         return {name: 'landing'}
     }
     next()

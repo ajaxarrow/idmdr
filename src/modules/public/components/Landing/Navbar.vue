@@ -85,6 +85,13 @@
           <VRow v-else class="ma-0" justify="end">
             <div v-if="user">
               <VBtn
+                  variant="text"
+                  class="text-none mx-1 font-weight-medium"
+                  :to="{ name: 'signout'}"
+              >
+                Signout
+              </VBtn>
+              <VBtn
                   variant="elevated"
                   color="bs50"
                   class="text-none mx-1 font-weight-medium"
@@ -127,15 +134,25 @@
               <VDivider class="my-2"/>
             </div>
           </RouterLink>
-          <VBtnPrimaryAlt
-              v-if="user"
-              color="bs50"
-              width="98%"
-              class="submit-button my-1 mt-5"
-              :to="{ path: 'dashboard' }"
-          >
-            Dashboard
-          </VBtnPrimaryAlt>
+         <div v-if="user">
+           <VBtnPrimaryAlt
+               color="bs50"
+               width="98%"
+               class="submit-button my-1 mt-5"
+               :to="{ path: 'dashboard' }"
+           >
+             Dashboard
+           </VBtnPrimaryAlt>
+           <VBtnPrimaryAlt
+               color="bs50"
+               width="98%"
+               variant="outlined"
+               class="button-outline my-1"
+               :to="{ name: 'signout'}"
+           >
+             Signout
+           </VBtnPrimaryAlt>
+         </div>
           <div v-else>
             <VBtnPrimaryAlt
                 color="bs50"
