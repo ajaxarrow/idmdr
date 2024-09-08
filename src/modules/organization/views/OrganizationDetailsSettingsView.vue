@@ -6,23 +6,35 @@ import {onMounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
-const {fetchOrganizationData} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+
+const isSlugInOrgList = (organization, orgList) => {
+  return orgList.some(org => org.slug === organization.slug);
+};
+
 onMounted(async () => {
+  const alluserOrg = await fetchOrganizationByUser();
   await fetchOrganizationData(route.params.slug as string);
+
+  if(isSlugInOrgList(organization.value, alluserOrg)){
+    if ("is_member" in organization.value) {
+      organization.value.is_member = true;
+    }
+  }
 })
-
-
 </script>
 
 <template>
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
     <div v-if="organization" class="pa-6">
       <div class="mt-2 mb-5">
-        <p class="section-title">Update Organization Information</p>
-        <p class="text-gs20 my-2">Modify your organization details and information</p>
-        <VBtnPrimaryFilled :to="{ name: 'edit-organization', params: {slug: organization.slug}}" width="235px" height="37px" rounded="lg" class="satoshi-md">
-          Update Organization Info
-        </VBtnPrimaryFilled>
+        <div v-if="organization.is_member">
+          <p class="section-title">Update Organization Information</p>
+          <p class="text-gs20 my-2">Modify your organization details and information</p>
+          <VBtnPrimaryFilled :to="{ name: 'edit-organization', params: {slug: organization.slug}}" width="235px" height="37px" rounded="lg" class="satoshi-md">
+            Update Organization Info
+          </VBtnPrimaryFilled>
+        </div>
       </div>
     </div>
   </OrganizationDetailsLayout>
