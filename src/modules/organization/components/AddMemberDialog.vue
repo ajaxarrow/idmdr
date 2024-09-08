@@ -19,7 +19,7 @@ const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
     <VSheet class="sector-tagging-dialog-container" @click.stop>
       <p class="dialog-title pa-5">Add Members</p>
       <VDivider/>
-      <div class="px-5 py-5">
+      <div class="pa-5">
         <div>
           <p class="dialog-label mb-2">Member</p>
           <VAutocomplete

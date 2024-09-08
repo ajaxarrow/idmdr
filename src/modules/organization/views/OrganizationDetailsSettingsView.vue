@@ -31,7 +31,7 @@ onMounted(async () => {
 
 <template>
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
-    <div v-if="organization" class="pa-6">
+    <div v-if="organization" class="py-6 px-7">
       <div class="mt-2">
         <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
           <div>
@@ -59,7 +59,7 @@ onMounted(async () => {
 
 <style scoped>
 .section-title{
-  font-weight: 600;
+  font-weight: 700;
   font-size: 18px;
   letter-spacing: 0.5px;
 }

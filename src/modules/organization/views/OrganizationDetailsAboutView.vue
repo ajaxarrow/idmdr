@@ -56,7 +56,7 @@
 <template>
   <OrganizationDetailsLayout :organization="organization" :activeTab="'about'">
    <div v-if="organization">
-     <div class="px-6 py-2">
+     <div class="px-7 py-5">
        <div>
          <p class="text-about-heading py-3">About Organization</p>
          <div class="ql-snow">
@@ -65,7 +65,7 @@
        </div>
      </div>
      <VDivider/>
-     <div class="px-6 py-2">
+     <div class="px-7 py-5">
        <p class="text-about-heading py-3">Consortium Type</p>
        <VRow class="ma-0">
          <VCol v-if="organization.org_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -79,7 +79,7 @@
        </VRow>
      </div>
      <VDivider/>
-     <div class="px-6 py-2">
+     <div class="px-7 py-5">
        <p class="text-about-heading py-3">Contact Information</p>
        <VRow class="ma-0">
          <VCol v-if="organization.president" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -109,7 +109,7 @@
        </VRow>
      </div>
      <VDivider/>
-     <div class="px-6 py-2 mb-10">
+     <div class="px-7 py-5 mb-10">
        <p class="text-about-heading py-3">Cluster Representatives</p>
        <VRow class="ma-0">
          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
