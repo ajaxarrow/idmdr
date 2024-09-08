@@ -15,6 +15,8 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import "quill/dist/quill.core.css"
+import "quill/dist/quill.snow.css"
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
@@ -179,7 +181,9 @@ onMounted(() => {
           </VMenu>
         </VRow>
         <p class="topic-title my-3">{{topic.title}}</p>
-        <div v-html="topic.description" class="my-1"></div>
+        <div class="ql-snow">
+          <div v-html="topic.description" class="ql-editor"></div>
+        </div>
         <VDivider class="my-5"/>
         <p class="mb-3" style="font-weight: 600; font-size: 18px">
           Comment<span v-if="totalComment != 0"><span v-if="totalComment > 1">s</span> ({{totalComment}})</span>
