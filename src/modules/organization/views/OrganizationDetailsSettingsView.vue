@@ -16,6 +16,12 @@ const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
+const path = ref('organizations')
+
+const getFirstPath = (url: string) => {
+  return url.split('/').filter(Boolean)[0];
+}
+
 
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
   return orgList.some(org => org.slug === organization?.slug);
@@ -23,6 +29,7 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
 
 onMounted(async () => {
   const alluserOrg = await fetchOrganizationByUser();
+  path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
 
   if(organization.value){
@@ -44,7 +51,12 @@ onMounted(async () => {
             <p class="section-title">Update Organization Information</p>
             <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
           </div>
-          <VBtnPrimaryFilled :to="{ name: 'edit-organization', params: {slug: organization.slug}}" height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+          <VBtnPrimaryFilled
+              :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization.slug}}"
+              height="41px"
+              rounded="lg"
+              class="satoshi-md"
+              style="font-size: 14px !important;">
             Update Organization Info
           </VBtnPrimaryFilled>
         </VRow>

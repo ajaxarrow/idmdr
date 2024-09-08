@@ -42,6 +42,18 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationFormView.vue')
   },
   {
+    path: '/my-organizations/new',
+    name: 'new-organization-my',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationFormView.vue')
+  },
+  {
+    path: '/my-organizations/edit/:slug',
+    name: 'edit-organization-my',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationFormView.vue')
+  },
+  {
     path: '/organizations/:slug/settings',
     name: 'organization-settings',
     // @ts-ignore

@@ -70,10 +70,10 @@ onUnmounted(() => {
           </VCol>
           <VCol md="3" class="pa-0">
             <VRow class="ma-0 justify-end">
-              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-if="isSmall || isTablet" icon >
+              <VBtnPrimaryFilled :to="{ name: 'new-organization-my'}" v-if="isSmall || isTablet" icon >
                 <PhPlus size="16"/>
               </VBtnPrimaryFilled>
-              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+              <VBtnPrimaryFilled :to="{ name: 'new-organization-my'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                 <PhPlus size="16" class="mr-2"/>
                 New Organization
               </VBtnPrimaryFilled>

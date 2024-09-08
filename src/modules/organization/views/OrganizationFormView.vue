@@ -13,6 +13,7 @@ import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 
 const {isEmptyObject} = useObjectChecker()
+const path = ref('organizations')
 const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {organization} = useOrganizationStore();
@@ -64,6 +65,10 @@ const organizationDataInitialState = reactive<Organization>({
 const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
+
+const getFirstPath = (url: string) => {
+  return url.split('/').filter(Boolean)[0];
+}
 
 
 const clearFields = () => {
@@ -154,7 +159,7 @@ const formatDate = (): string=> {
 onMounted(async () => {
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
-
+  path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
     await fetchOrganizationData(route.params.slug as string);
     formType.value = FormType.edit
@@ -173,12 +178,18 @@ onMounted(async () => {
     <VForm ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
-          <RouterLink :to="{ name: 'organizations'}"  class="text-decoration-none text-none">
-            <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
-              <PhArrowLeft size="14" class="mr-1"/>
-              Back To Organizations
-            </p>
-          </RouterLink>
+         <div class="d-flex">
+           <RouterLink
+               :to="{
+            name: path == 'organizations' ?  'organizations' : 'my-organizations'
+            }"
+               class="text-decoration-none text-none">
+             <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+               <PhArrowLeft size="14" class="mr-1"/>
+               Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
+             </p>
+           </RouterLink>
+         </div>
           <p class="text-heading d-flex align-center">
             {{formType === FormType.edit ? 'Edit Organization' : 'Create New Organization'}}
           </p>
@@ -793,7 +804,6 @@ onMounted(async () => {
 }
 
 .back-button{
-  width: 175px;
   font-size: 14px;
 }
 .back-button:hover{

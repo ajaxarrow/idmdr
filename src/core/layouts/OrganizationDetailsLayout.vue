@@ -74,16 +74,18 @@ onMounted(()=>{
   <MainLayout title="Organization Details">
     <div v-if="organization" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
-        <RouterLink
-            :to="{
+       <div class="d-flex">
+         <RouterLink
+             :to="{
           name: path == 'organizations' ?  'organizations' : 'my-organizations'
         }"
-            class="text-decoration-none text-none">
-          <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
-            <PhArrowLeft size="14" class="mr-1"/>
-            Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
-          </p>
-        </RouterLink>
+             class="text-decoration-none text-none">
+           <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+             <PhArrowLeft size="14" class="mr-1"/>
+             Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
+           </p>
+         </RouterLink>
+       </div>
         <VRow justify="space-between" align="center" class="ma-0">
           <VCol md="9" class="pa-0">
             <div>
@@ -171,7 +173,6 @@ onMounted(()=>{
 }
 
 .back-button{
-  width: 195px;
   font-size: 14px;
 }
 .back-button:hover{
