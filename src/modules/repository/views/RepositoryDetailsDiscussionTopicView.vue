@@ -4,7 +4,7 @@ import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
-import {PhArrowLeft, PhChat, PhDotsThreeOutlineVertical, PhPencil, PhTrash,} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhChat, PhDotsThreeOutlineVertical, PhInfo, PhPencil, PhTrash,} from "@phosphor-icons/vue";
 import NotFound from "../../../assets/images/404.svg";
 import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
 import TopicCommentItem from "../components/Discussion/TopicCommentItem.vue";
@@ -14,102 +14,104 @@ import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
+const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
-  const {repository, setRepositoryData} = useRepositoryStore();
-  const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
-  const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
-  const {route, router} = useRouting();
+const {repository, setRepositoryData} = useRepositoryStore();
+const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
+const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
+const {route, router} = useRouting();
 
-  const topicActionMenu = ref(false);
+const topicActionMenu = ref(false);
 
-  const topic = ref<Topic | null>(null);
-  const commentList = ref<Comment[]>([]);
-  const totalComment = ref(0);
+const topic = ref<Topic | null>(null);
+const commentList = ref<Comment[]>([]);
+const totalComment = ref(0);
 
-  const commentContent = ref('');
-  const commentContentEdit = ref('');
-  const selectedCommentID = ref('');
-  const generateRandom10DigitNumber = () => {
-    return Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
+const commentContent = ref('');
+const commentContentEdit = ref('');
+const selectedCommentID = ref('');
+const generateRandom10DigitNumber = () => {
+  return Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
+}
+
+const fetchCommentList = () => {
+  commentList.value = fetchCommentsByTopic(<string>route.params.topic);
+  totalComment.value = commentList.value.length
+}
+
+const handleComment = async () => {
+  const newComment: Comment = {
+    owner: 'Tabilla, Jiu Axl',
+    ownerImage: 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
+    content: commentContent.value,
+    id: generateRandom10DigitNumber().toString(),
+    topicID: <string>topic.value?.id
   }
+  await addComment(newComment);
+  fetchCommentList()
+  commentContent.value = '';
+  showSnackbarMessage('Comment Added', Status.success)
+}
 
-  const fetchCommentList = () => {
-    commentList.value = fetchCommentsByTopic(<string>route.params.topic);
-    totalComment.value = commentList.value.length
+const removeEditedComment = () => {
+  selectedCommentID.value = ''
+  commentContentEdit.value = ''
+}
+
+const editComment = (comment: Comment) => {
+  selectedCommentID.value = comment.id
+  commentContentEdit.value = comment.content
+}
+
+const updateCommentData = async (comment: Comment) => {
+  await updateComment({
+    owner: comment.owner,
+    ownerImage: comment.ownerImage,
+    content: commentContentEdit.value,
+    id: comment.id,
+    topicID: comment.topicID
+  });
+  removeEditedComment();
+  fetchCommentList()
+  showSnackbarMessage('Comment Updated', Status.success)
+}
+
+const deleteCommentData = async (comment: Comment) => {
+  await deleteComment(comment);
+  fetchCommentList()
+  showSnackbarMessage('Comment Deleted', Status.success)
+}
+
+const editTopicCallback = () => {
+  showSnackbarMessage('Topic Edited Successfully', Status.success)
+  topic.value = fetchTopicByTopicID(<string>route.params.topic);
+  topicActionMenu.value = false
+}
+
+const deleteTopicCallback = () => {
+  showSnackbarMessage('Topic Deleted Successfully', Status.success)
+  deleteTopic(<Topic>topic.value);
+  topicActionMenu.value = false
+  router.push({
+    name: 'repository-discussions',
+  });
+}
+
+const scrollToCommentInput = () => {
+  const commentInput = document.getElementById('comment-input');
+  if(commentInput){
+    commentInput.scrollIntoView({behavior: 'smooth', block: 'start'});
   }
+}
 
-  const handleComment = async () => {
-    const newComment: Comment = {
-      owner: 'Tabilla, Jiu Axl',
-      ownerImage: 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
-      content: commentContent.value,
-      id: generateRandom10DigitNumber().toString(),
-      topicID: <string>topic.value?.id
-    }
-    await addComment(newComment);
-    fetchCommentList()
-    commentContent.value = '';
-    showSnackbarMessage('Comment Added', Status.success)
-  }
-
-  const removeEditedComment = () => {
-    selectedCommentID.value = ''
-    commentContentEdit.value = ''
-  }
-
-  const editComment = (comment: Comment) => {
-    selectedCommentID.value = comment.id
-    commentContentEdit.value = comment.content
-  }
-
-  const updateCommentData = async (comment: Comment) => {
-    await updateComment({
-      owner: comment.owner,
-      ownerImage: comment.ownerImage,
-      content: commentContentEdit.value,
-      id: comment.id,
-      topicID: comment.topicID
-    });
-    removeEditedComment();
-    fetchCommentList()
-    showSnackbarMessage('Comment Updated', Status.success)
-  }
-
-  const deleteCommentData = async (comment: Comment) => {
-    await deleteComment(comment);
-    fetchCommentList()
-    showSnackbarMessage('Comment Deleted', Status.success)
-  }
-
-  const editTopicCallback = () => {
-    showSnackbarMessage('Topic Edited Successfully', Status.success)
-    topic.value = fetchTopicByTopicID(<string>route.params.topic);
-    topicActionMenu.value = false
-  }
-
-  const deleteTopicCallback = () => {
-    showSnackbarMessage('Topic Deleted Successfully', Status.success)
-    deleteTopic(<Topic>topic.value);
-    topicActionMenu.value = false
-    router.push({
-      name: 'repository-discussions',
-    });
-  }
-
-  const scrollToCommentInput = () => {
-    const commentInput = document.getElementById('comment-input');
-    if(commentInput){
-      commentInput.scrollIntoView({behavior: 'smooth', block: 'start'});
-    }
-  }
-
-  onMounted(() => {
-    setRepositoryData(route.params.slug as string);
-    fetchCommentList()
-    topic.value = fetchTopicByTopicID(<string>route.params.topic);
-    totalComment.value = commentList.value.length
-  })
+onMounted(() => {
+  setRepositoryData(route.params.slug as string);
+  fetchCommentList()
+  topic.value = fetchTopicByTopicID(<string>route.params.topic);
+  totalComment.value = commentList.value.length
+})
 </script>
 
 <template>
@@ -233,37 +235,42 @@ const {showSnackbarMessage} = useSnackbarStore();
             :delete-comment="deleteCommentData"
           />
         </div>
-       <VRow class="ma-0 mt-3">
-         <VAvatar
-             class="mr-2 mt-2"
-             size="40"
-         >
-           <VImg src="https://mighty.tools/mockmind-api/content/abstract/46.jpg"></VImg>
-         </VAvatar>
-         <VTextField
-             id="comment-input"
-             autofocus
-             @keydown.enter="handleComment"
-             v-model="commentContent"
-             placeholder="Write a comment..."
-             rounded="lg"
-             density="comfortable"
-             variant="outlined"
-             color="primary"
-             base-color="gs60"
-             hide-details
+       <div v-if="user">
+         <VRow class="ma-0 mt-3">
+           <VAvatar
+               class="mr-2 mt-2"
+               size="40"
+           >
+             <VImg src="https://mighty.tools/mockmind-api/content/abstract/46.jpg"></VImg>
+           </VAvatar>
+           <VTextField
+               id="comment-input"
+               autofocus
+               @keydown.enter="handleComment"
+               v-model="commentContent"
+               placeholder="Write a comment..."
+               rounded="lg"
+               density="comfortable"
+               variant="outlined"
+               color="primary"
+               base-color="gs60"
+               hide-details
 
-         />
-       </VRow>
-      <VRow class="ma-0 my-2" justify="end">
-        <VBtnPrimaryFilled
-            @click="handleComment"
-            rounded="lg"
-            height="44px"
-        >
-          Submit
-        </VBtnPrimaryFilled>
-      </VRow>
+           />
+         </VRow>
+         <VRow class="ma-0 my-2" justify="end">
+           <VBtnPrimaryFilled
+               @click="handleComment"
+               rounded="lg"
+               height="44px"
+           >
+             Submit
+           </VBtnPrimaryFilled>
+         </VRow>
+       </div>
+      <div v-else class="d-flex ga-1 mt-3 align-center text-gs60">
+        <PhInfo/> Commenting is only for authenticated user.
+      </div>
       </div>
       <div v-else style="height: 100%">
         <div style="height:45vh" class="d-flex flex-column justify-center align-center">

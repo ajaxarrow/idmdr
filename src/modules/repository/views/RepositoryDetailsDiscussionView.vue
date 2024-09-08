@@ -11,43 +11,45 @@ import {useRepositoryDiscussionTopicServices} from "../services/repository-discu
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
-  const {showSnackbarMessage} = useSnackbarStore();
-  const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
-  const {repository, setRepositoryData} = useRepositoryStore()
-  const searchedTopics = ref<Topic[]>([]);
-  const topicList = ref<Topic[]>([]);
-  const {route} = useRouting()
-  const searchQuery = ref('');
+const {user} = useUserStore()
+const {showSnackbarMessage} = useSnackbarStore();
+const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
+const {repository, setRepositoryData} = useRepositoryStore()
+const searchedTopics = ref<Topic[]>([]);
+const topicList = ref<Topic[]>([]);
+const {route} = useRouting()
+const searchQuery = ref('');
 
-  const fetchTopicList = () => {
-    topicList.value = fetchTopicsByRepository(<string>route.params.slug)
-    searchedTopics.value = topicList.value
+const fetchTopicList = () => {
+  topicList.value = fetchTopicsByRepository(<string>route.params.slug)
+  searchedTopics.value = topicList.value
+}
+
+const addTopicCallback = () => {
+  showSnackbarMessage('Topic Added Successfully', Status.success)
+  fetchTopicList();
+}
+
+
+const filterTopicsBySearchQuery = (): Topic[] => {
+  if (searchQuery.value) {
+    return topicList.value.filter(topic =>  topic.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+  } else {
+    return topicList.value
   }
+}
 
-  const addTopicCallback = () => {
-    showSnackbarMessage('Topic Added Successfully', Status.success)
-    fetchTopicList();
-  }
+watch(() => searchQuery.value, () => {
+  searchedTopics.value = filterTopicsBySearchQuery()
+});
 
-
-  const filterTopicsBySearchQuery = (): Topic[] => {
-    if (searchQuery.value) {
-      return topicList.value.filter(topic =>  topic.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
-    } else {
-      return topicList.value
-    }
-  }
-
-  watch(() => searchQuery.value, () => {
-    searchedTopics.value = filterTopicsBySearchQuery()
-  });
-
-  onMounted(() => {
-    setRepositoryData(route.params.slug as string);
-    fetchTopicList();
-  })
+onMounted(() => {
+  setRepositoryData(route.params.slug as string);
+  fetchTopicList();
+})
 </script>
 
 <template>
@@ -75,6 +77,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
           Discussions
         </p>
         <TopicFormDialog
+          v-if="user"
           :form-type="FormType.create"
           @callback="addTopicCallback"
         >
