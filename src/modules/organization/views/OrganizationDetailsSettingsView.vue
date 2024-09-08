@@ -4,11 +4,12 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 
-const isSlugInOrgList = (organization, orgList) => {
+const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
   return orgList.some(org => org.slug === organization.slug);
 };
 
