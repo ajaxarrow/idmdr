@@ -5,6 +5,8 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
+import AddMemberDialog from "../components/AddMemberDialog.vue";
+import AccessLeveLInfoDialog from "../components/AccessLeveLInfoDialog.vue";
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
@@ -30,14 +32,26 @@ onMounted(async () => {
 <template>
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
     <div v-if="organization" class="pa-6">
-      <div class="mt-2 mb-5">
-        <div v-if="organization.is_member">
-          <p class="section-title">Update Organization Information</p>
-          <p class="text-gs20 my-2">Modify your organization details and information</p>
-          <VBtnPrimaryFilled :to="{ name: 'edit-organization', params: {slug: organization.slug}}" width="235px" height="37px" rounded="lg" class="satoshi-md">
+      <div class="mt-2">
+        <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
+          <div>
+            <p class="section-title">Update Organization Information</p>
+            <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
+          </div>
+          <VBtnPrimaryFilled :to="{ name: 'edit-organization', params: {slug: organization.slug}}" height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
             Update Organization Info
           </VBtnPrimaryFilled>
-        </div>
+        </VRow>
+      </div>
+      <VDivider class="my-5"/>
+      <div class="mt-2">
+        <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
+          <div>
+            <p class="section-title">Organization Members</p>
+            <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
+          </div>
+          <AddMemberDialog/>
+        </VRow>
       </div>
     </div>
   </OrganizationDetailsLayout>
@@ -46,7 +60,7 @@ onMounted(async () => {
 <style scoped>
 .section-title{
   font-weight: 600;
-  font-size: 20px;
+  font-size: 18px;
   letter-spacing: 0.5px;
 }
 
