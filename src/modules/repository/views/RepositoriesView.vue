@@ -69,10 +69,10 @@
           </div>
           <div v-if="user">
             <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-if="isSmall || isTablet" icon >
-              <PhPlus size="20"/>
+              <PhPlus size="16"/>
             </VBtnPrimaryFilled>
-            <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else width="201px" height="45px" rounded="lg" class="satoshi-md">
-              <PhPlus size="20" class="mr-2"/>
+            <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+              <PhPlus size="16" class="mr-2"/>
               New Repository
             </VBtnPrimaryFilled>
           </div>
