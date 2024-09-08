@@ -7,10 +7,7 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import AddMemberDialog from "../components/AddMemberDialog.vue";
 import AccessLeveLInfoDialog from "../components/AccessLeveLInfoDialog.vue";
-import {PhChat, PhDotsThreeOutlineVertical, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
-import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
-import DeleteDialog from "../../../core/components/DeleteDialog.vue";
-import TopicFormDialog from "../../repository/components/Discussion/TopicFormDialog.vue";
+import {PhDotsThreeOutlineVertical, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
