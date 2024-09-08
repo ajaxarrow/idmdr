@@ -19,6 +19,7 @@ import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 //   phone: rep?.phone,
 // });
 const { userData, user } = useUserStore();
+const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker()
 // const {router} = useRouting()
@@ -252,6 +253,9 @@ export const useOrganizationServices = () => {
     return rawData.map((org: any) => {
       const organization = org.organization || org;
       return {
+        is_member: false,
+        access_level: org.access_level,
+        visibility: organization.visibility,
         sub_org_type: organization.sub_org_type,
         org_type: organization.org_type,
         uid: organization.uid,
@@ -316,13 +320,17 @@ export const useOrganizationServices = () => {
   const fetchOrganizationsWithPagination = async (pageNumber: number): Promise<Organization[]> => {
     let data: Organization[] = [];
     try {
-
       if (user.value) {
-        data = await fetchPaginatedOrganizations(pageNumber, [1, 4]);
+        const publicOrg = await fetchPaginatedOrganizations(pageNumber, [1, 4]);
+        const userDataOrg = await fetchOrganizationByUserWithPagination(pageNumber);
+        let combinedData = [...publicOrg, ...userDataOrg];
+        const uniqueData = Array.from(new Set(combinedData.map(org => org.slug)))
+          .map(slug => combinedData.find(org => org.slug === slug));
+        // @ts-ignore
+        data = uniqueData ;
       } else {
         data = await fetchPaginatedOrganizations(pageNumber, [1]);
       }
-
       allOrganizations.value = [...allOrganizations.value, ...data];
       return data;
     } catch (e) {
@@ -333,7 +341,7 @@ export const useOrganizationServices = () => {
   const fetchPaginatedOrganizations = async (pageNumber: number, visibilities: number[]): Promise<Organization[]> => {
     const promises = visibilities.map(async (visibility) => {
       const res = await server.get(`/v1/organization?page=${pageNumber}&page_size=5&visibility=${visibility}`, {
-        headers: user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {},
+        headers: authorizationHeader,
       });
       return mapOrgData(res.data.results);
     });
@@ -346,10 +354,14 @@ export const useOrganizationServices = () => {
   const fetchOrganizations = async (): Promise<Organization[]> => {
     try {
       let data: Organization[] = [];
-
       if (user.value) {
         const visibilityData = await fetchOrganizationsByVisibility([1, 4]);
-        data = visibilityData.flat();
+        const userOrg = await fetchOrganizationByUser();
+        let combinedData = [...visibilityData.flat(), ...userOrg];
+        const uniqueData = Array.from(new Set(combinedData.map(org => org.slug)))
+          .map(slug => combinedData.find(org => org.slug === slug));
+        // @ts-ignore
+        data = uniqueData ;
       } else {
         const visibilityData = await fetchOrganizationsByVisibility([1]);
         data = visibilityData[0];
@@ -366,7 +378,7 @@ export const useOrganizationServices = () => {
   const fetchOrganizationsByVisibility = async (visibilities: number[]): Promise<Organization[][]> => {
     const promises = visibilities.map(async (visibility) => {
       const res = await server.get(`/v1/organization/?page_size=100&visibility=${visibility}`, {
-        headers: user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {},
+        headers: authorizationHeader
       });
       return mapOrgData(res.data.results);
     });
@@ -378,7 +390,7 @@ export const useOrganizationServices = () => {
   const fetchOrganizationData = async (slug: string): Promise<Organization | null> => {
     try{
       const res = await server.get(`/v1/organization/${slug}/`, {
-        headers: user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {},
+        headers: authorizationHeader
       });
       const rawData = res.data.results;
       const organizations: Organization[] = await mapOrgData(rawData)
