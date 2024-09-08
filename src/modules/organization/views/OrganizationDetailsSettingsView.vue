@@ -10,16 +10,18 @@ const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
-  return orgList.some(org => org.slug === organization.slug);
+  return orgList.some(org => org.slug === organization?.slug);
 };
 
 onMounted(async () => {
   const alluserOrg = await fetchOrganizationByUser();
   await fetchOrganizationData(route.params.slug as string);
 
-  if(isSlugInOrgList(organization.value, alluserOrg)){
-    if ("is_member" in organization.value) {
-      organization.value.is_member = true;
+  if(organization.value){
+    if(isSlugInOrgList(organization.value, alluserOrg)){
+      if ("is_member" in organization.value) {
+        organization.value.is_member = true;
+      }
     }
   }
 })
