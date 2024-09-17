@@ -59,13 +59,13 @@ const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
             @click="addMembersDialog = false"
             width="86"
             variant="outlined"
-            class="button-outline"
+            class="button-outline action-button"
         >
           Close
         </VBtnPrimaryAlt>
         <VBtnPrimaryAlt
             width="86"
-            class="button-outline"
+            class="action-button"
         >
           Save
         </VBtnPrimaryAlt>
@@ -113,9 +113,11 @@ const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
 }
 
 .button-outline{
+  border-width: 3px;
+}
+.action-button{
   font-weight: 500 !important;
   letter-spacing: 0;
-  border-width: 3px;
   border-radius: 10px;
 }
 

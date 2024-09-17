@@ -91,7 +91,6 @@ li{
 .button-outline{
   font-weight: 500 !important;
   letter-spacing: 0;
-  border-width: 3px;
   border-radius: 10px;
 }
 

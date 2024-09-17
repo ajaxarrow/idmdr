@@ -86,14 +86,14 @@ const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
             @click="sectorTaggingDialog = false"
             width="86"
             variant="outlined"
-            class="button-outline"
+            class="button-outline action-button"
         >
           Close
         </VBtnPrimaryAlt>
         <VBtnPrimaryAlt
             @click="sectorTaggingDialog = false"
             width="86"
-            class="button-outline"
+            class="action-button"
         >
           Save
         </VBtnPrimaryAlt>
@@ -161,9 +161,12 @@ const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
 }
 
 .button-outline{
+  border-width: 3px;
+}
+
+.action-button{
   font-weight: 500 !important;
   letter-spacing: 0;
-  border-width: 3px;
   border-radius: 10px;
 }
 
