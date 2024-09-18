@@ -5,7 +5,7 @@ import {
 } from "@phosphor-icons/vue";
 
   import Logo from "../../../core/components/Logo.vue";
-import {ref, computed, defineComponent, markRaw, onMounted} from 'vue';
+import {ref, computed, defineComponent, markRaw, onMounted, onUpdated} from 'vue';
   import MapProvincesHeader from "./Provinces/MapProvincesHeader.vue";
   import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
   import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
@@ -96,6 +96,23 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
       if(<string>route.query.dialog == 'true'){
         addSectorDialogMenu.value = true;
         showDialog.value = true
+      } else {
+        showDialog.value = false;
+        addSectorDialogMenu.value = false
+
+      }
+    }
+  })
+
+  onUpdated(() => {
+    if(route.query.dialog){
+      if(<string>route.query.dialog == 'true'){
+        addSectorDialogMenu.value = true;
+        showDialog.value = true
+      } else {
+        showDialog.value = false;
+        addSectorDialogMenu.value = false
+
       }
     }
   })

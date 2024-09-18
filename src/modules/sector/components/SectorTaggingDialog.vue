@@ -2,7 +2,9 @@
 import {PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import {ref} from "vue";
 import {repositories} from "../../../data/repository.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
 
+const {router} = useRouting()
 const props = defineProps({
   showDialog: {
     type: Boolean,
@@ -12,6 +14,12 @@ const props = defineProps({
 })
 
 const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
+
+
+const closeDialog = () => {
+  sectorTaggingDialog.value = false
+  router.push({name: 'sectors', query: {dialog: 'false'}})
+}
 
 </script>
 
@@ -83,7 +91,7 @@ const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
 
       <VRow class="ma-0 pa-4" justify="end">
         <VBtnPrimaryAlt
-            @click="sectorTaggingDialog = false"
+            @click="closeDialog"
             width="86"
             variant="outlined"
             class="button-outline action-button"
@@ -91,7 +99,7 @@ const sectorTaggingDialog = ref<boolean>(<boolean>props.showDialog);
           Close
         </VBtnPrimaryAlt>
         <VBtnPrimaryAlt
-            @click="sectorTaggingDialog = false"
+            @click="closeDialog"
             width="86"
             class="action-button"
         >
