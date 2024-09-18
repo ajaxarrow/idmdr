@@ -7,9 +7,10 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import AddMemberDialog from "../components/AddMemberDialog.vue";
 import AccessLeveLInfoDialog from "../components/AccessLeveLInfoDialog.vue";
-import {PhDotsThreeOutlineVertical, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
 import {OrgMember} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
+import {watch} from "vue";
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
@@ -17,7 +18,16 @@ const {fetchOrgMembers} = useOrganizationMembersServices()
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
 const path = ref('organizations')
+const orgMemberData = ref<OrgMember[]>([])
 const orgMembers = ref<OrgMember[]>([])
+
+const filterOrganizationMembersBySearchQuery = () => {
+  if(searchQuery.value) {
+    orgMembers.value = orgMemberData.value.filter(member => member.user.username.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
+  } else {
+    orgMembers.value = orgMemberData.value
+  }
+}
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -27,6 +37,10 @@ const getFirstPath = (url: string) => {
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
   return orgList.some(org => org.slug === organization?.slug);
 };
+
+watch(() => searchQuery.value, () => {
+  filterOrganizationMembersBySearchQuery()
+});
 
 onMounted(async () => {
   const alluserOrg = await fetchOrganizationByUser();
@@ -41,8 +55,9 @@ onMounted(async () => {
     }
   }
 
-  orgMembers.value = await fetchOrgMembers(<string>route.params.slug)
-  console.log(orgMembers.value)
+  const data = await fetchOrgMembers(<string>route.params.slug)
+  orgMembers.value = data
+  orgMemberData.value = data
 })
 </script>
 
@@ -95,7 +110,7 @@ onMounted(async () => {
             <p class="text-gs20">Find members</p>
           </template>
         </VTextField>
-        <div class="my-5 mx-1" v-if="orgMembers.length !== 0">
+        <div class="my-5 mx-1" v-if="orgMembers.length > 0">
           <div
             v-for="member in orgMembers"
             :key="member.membership_uid"
@@ -140,6 +155,11 @@ onMounted(async () => {
             </VRow>
             <VDivider class="mt-3"/>
           </div>
+        </div>
+        <div class="my-5 mx-1" v-else>
+          <p class="d-flex align-center justify-center">
+            <PhInfo class="mr-1"/>No Organization Members Found
+          </p>
         </div>
       </div>
     </div>
