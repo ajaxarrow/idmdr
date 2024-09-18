@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
+import {PhInfo, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
 import {onMounted, ref, watch, onUnmounted} from "vue";
@@ -23,7 +23,7 @@ const observerReady = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
-    organizationData.value = allOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    organizationData.value = allOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
   } else {
     organizationData.value = allOrganizations.value
   }
@@ -105,13 +105,18 @@ onUnmounted(() => {
             <p>{{organizationData.length}} Organization<span v-if="organizationData.length > 1">s</span> Available</p>
           </p>
         </VRow>
-        <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
-        <div class="pa-3" v-if="reachEnd">
-          <p class="text-center">No more organizations to fetch!</p>
+        <div v-if="organizationData.length > 0">
+          <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
+          <div class="pa-3" v-if="reachEnd">
+            <p class="text-center">No more organizations to fetch!</p>
+          </div>
+          <div class="pa-3" v-else>
+            <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
+          </div>
         </div>
-        <div class="pa-3" v-else>
-          <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
-        </div>
+        <p v-else class="d-flex align-center justify-center">
+          <PhInfo class="mr-1"/>No Organization Found
+        </p>
       </div>
     </div>
   </MainLayout>

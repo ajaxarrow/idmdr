@@ -7,7 +7,7 @@ const organization = ref<Organization | null | undefined>();
 const selectedOrganization = ref<Organization | null>(null);
 const mapOrganizations = ref<Organization[]>(organizationData);
 const myOrganizations = ref<Organization[]>(organizationData);
-const allOrganizations = ref<Organization[]>(organizationData);
+const allOrganizations = ref<Organization[]>([]);
 
 const selectOrganization = (organization: Organization) => {
   if(selectedOrganization.value === organization) {
