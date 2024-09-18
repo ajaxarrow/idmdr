@@ -8,12 +8,16 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import AddMemberDialog from "../components/AddMemberDialog.vue";
 import AccessLeveLInfoDialog from "../components/AccessLeveLInfoDialog.vue";
 import {PhDotsThreeOutlineVertical, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {OrgMember} from "../../../interfaces/member.interface.ts";
+import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrgMembers} = useOrganizationMembersServices()
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
 const path = ref('organizations')
+const orgMembers = ref<OrgMember[]>([])
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -36,6 +40,9 @@ onMounted(async () => {
       }
     }
   }
+
+  orgMembers.value = await fetchOrgMembers(<string>route.params.slug)
+  console.log(orgMembers.value)
 })
 </script>
 
@@ -65,7 +72,11 @@ onMounted(async () => {
             <p class="section-title">Organization Members</p>
             <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
           </div>
-          <AddMemberDialog/>
+          <AddMemberDialog>
+            <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+              Add Member
+            </VBtnPrimaryFilled>
+          </AddMemberDialog>
         </VRow>
         <VTextField
             class="my-3"
@@ -84,19 +95,22 @@ onMounted(async () => {
             <p class="text-gs20">Find members</p>
           </template>
         </VTextField>
-        <div class="my-5 mx-1">
-          <div>
-            <VRow class="ma-0" justify="space-between" align="center">
+        <div class="my-5 mx-1" v-if="orgMembers.length !== 0">
+          <div
+            v-for="member in orgMembers"
+            :key="member.membership_uid"
+          >
+            <VRow v-if="!member.is_deleted" class="ma-0" justify="space-between" align="center">
               <div class="d-flex align-center">
                 <VAvatar
                     size="40"
                     class="mr-1 cursor-pointer"
                 >
-                  <VImg src="https://mighty.tools/mockmind-api/content/abstract/43.jpg"></VImg>
+                  <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
                 </VAvatar>
                 <div class="mr-2">
-                  <p class="text-name text-container">Jiu Axl</p>
-                  <p class="text-name-subtitle">jiuaxl@gmail.com · Admin</p>
+                  <p class="text-name text-container">{{member.user.username}}</p>
+                  <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
                 </div>
               </div>
               <VMenu
@@ -111,10 +125,12 @@ onMounted(async () => {
                   </p>
                 </template>
                 <VSheet width="200" class="rounded-b-lg py-2">
-                  <p class="cursor-pointer action-menu-item">
-                    <PhPencil/>
-                    Edit Access
-                  </p>
+                  <AddMemberDialog>
+                    <p class="cursor-pointer action-menu-item">
+                      <PhPencil/>
+                      Edit Access
+                    </p>
+                  </AddMemberDialog>
                   <p class="cursor-pointer action-menu-item">
                     <PhTrash/>
                     Remove User
