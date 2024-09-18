@@ -5,7 +5,7 @@ import {
 } from "@phosphor-icons/vue";
 
   import Logo from "../../../core/components/Logo.vue";
-import {ref, computed, defineComponent, markRaw, onMounted, onUpdated, watch} from 'vue';
+import {ref, computed, defineComponent, markRaw, onMounted, watch} from 'vue';
   import MapProvincesHeader from "./Provinces/MapProvincesHeader.vue";
   import MapSectorsHeader from "./Sectors/MapSectorsHeader.vue";
   import MapProvincesMainContent from "./Provinces/MapProvincesMainContent.vue";
