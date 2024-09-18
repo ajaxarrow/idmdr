@@ -12,9 +12,10 @@ const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
 </script>
 
 <template>
-  <VBtnPrimaryFilled  @click="addMembersDialog = true"  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-    Add Member
-  </VBtnPrimaryFilled>
+  <div @click="addMembersDialog = true">
+    <slot></slot>
+  </div>
+
   <VDialog v-model="addMembersDialog" class="center">
     <VSheet class="sector-tagging-dialog-container" @click.stop>
       <p class="dialog-title pa-5">Add Members</p>
@@ -37,7 +38,12 @@ const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
           />
         </div>
         <div>
-          <p class="dialog-label mb-2 d-flex justify-space-between">Access Control <AccessLeveLInfoDialog/></p>
+          <p class="dialog-label mb-2 d-flex justify-space-between">
+            Access Control
+            <span style="font-size: 14px; font-weight: 400;">
+              <AccessLeveLInfoDialog/>
+            </span>
+          </p>
           <VAutocomplete
               v-model="selectedAccessLevel"
               placeholder="Choose Appropriate Access Level"
