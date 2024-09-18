@@ -7,4 +7,18 @@ interface Member{
   access?: AccessLevel
 }
 
-export type {Member}
+interface OrgMember {
+  membership_uid: string,
+  user: User,
+  access_level: string,
+  is_deleted: boolean
+}
+
+interface User{
+  uid: string,
+  username: string,
+  email: string,
+  profile_picture: string
+}
+
+export type {Member, OrgMember, User}
