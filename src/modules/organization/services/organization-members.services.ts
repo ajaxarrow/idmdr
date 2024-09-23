@@ -1,50 +1,146 @@
-import {useUserStore} from "../../../core/stores/user.store.ts";
-import {reactive, ref} from "vue";
-import {OrgMember} from "../../../interfaces/member.interface.ts";
-import {server} from "../../../plugins/axios.ts";
-
-const { userData, user } = useUserStore();
-const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
-
+import { useUserStore } from "../../../core/stores/user.store.ts";
+import { reactive, ref } from "vue";
+import { OrgMember } from "../../../interfaces/member.interface.ts";
+import { server } from "../../../plugins/axios.ts";
+import { Status } from "../../../interfaces/enums/status.enum.ts";
+import { useSnackbarStore } from "../../../core/stores/snackbar.store.ts";
 
 export const useOrganizationMembersServices = () => {
-  const errorMessageIntialState = reactive({
-    name: '',
-    access_level: '',
+  // Store access and helper constants
+  const { userData, user } = useUserStore();
+  const { showSnackbarMessage } = useSnackbarStore();
+  const authorizationHeader = user.value
+    ? { Authorization: `Bearer ${userData.accessToken}` }
+    : {};
+
+  // Reactive states
+  const errorMessageInitialState = reactive({
+    name: "",
+    access_level: "",
   });
   const loading = ref(false);
-  const errorMessage = reactive({ ...errorMessageIntialState });
+  const errorMessage = reactive({ ...errorMessageInitialState });
+
+  // Utility functions
   const clearErrorMessage = () => {
-    Object.assign(errorMessage, { ...errorMessageIntialState });
+    Object.assign(errorMessage, { ...errorMessageInitialState });
   };
 
+  const mapOrgMembers = (rawData: any): OrgMember[] => {
+    return rawData.map((member: any) => ({
+      membership_uid: member.membership_uid,
+      user: {
+        uid: member.user.uid,
+        username: member.user.username,
+        email: member.user.email,
+        profile_picture: member.user.profile_picture,
+      },
+      access_level: member.access_level,
+      is_deleted: member.is_deleted,
+    }));
+  };
 
-  const mapOrgMembers = async (rawData: any): Promise<OrgMember[]> => {
-    return rawData.map((member: any) => {
-      return {
-        membership_uid: member.membership_uid,
-        user: {
-          uid: member.user.uid,
-          username: member.user.username,
-          email: member.user.email,
-          profile_picture: member.user.profile_picture
-        },
-        access_level: member.access_level,
-        is_deleted: member.is_deleted
-      }
-    })
-  }
-
+  // API Functions
   const fetchOrgMembers = async (orgID: string): Promise<OrgMember[]> => {
     try {
-      const res = await server.get(`/org-users/${orgID}`, { headers: authorizationHeader });
+      const res = await server.get(`/org-users/${orgID}`, {
+        headers: authorizationHeader,
+      });
       return mapOrgMembers(res.data.results);
-    } catch (e) {
-       return []
+    } catch {
+      return [];
     }
-  }
+  };
+
+  const addOrgMember = async (orgID: string, member: OrgMember) => {
+    const orgMembers = await fetchOrgMembers(orgID);
+    const existingMember = orgMembers.find((m) => m.user.uid === member.user.uid);
+
+    try {
+      if (existingMember) {
+        if (existingMember.is_deleted) {
+          await restoreOrgMember(orgID, member);
+          return;
+        }
+      } else {
+        await createOrgMember(orgID, member);
+      }
+    } catch (e: any) {
+      handleApiError(e);
+    }
+  };
+
+  const updateOrgMember = async (member: OrgMember) => {
+    try {
+      await server.put(
+        `/v1/user/${userData.uid}/organizations`,
+        {
+          membership_uid: member.membership_uid,
+          user: member.user.uid,
+          access_level: member.access_level,
+          is_deleted: false,
+        },
+        { headers: authorizationHeader }
+      );
+    } catch (e: any) {
+      handleApiError(e);
+    }
+  };
+
+  const removeOrgMember = async (member: OrgMember) => {
+    try {
+      await server.put(
+        `/v1/user/${userData.uid}/organizations`,
+        {
+          membership_uid: member.membership_uid,
+          is_deleted: true,
+        },
+        { headers: authorizationHeader }
+      );
+    } catch (e: any) {
+      handleApiError(e);
+    }
+  };
+
+  // Helper Functions
+  const createOrgMember = async (orgID: string, member: OrgMember) => {
+    await server.post(
+      `/v1/user/${userData.uid}/organizations`,
+      {
+        user: member.user.uid,
+        organization: orgID,
+        access_level: member.access_level,
+      },
+      { headers: authorizationHeader }
+    );
+  };
+
+  const restoreOrgMember = async (orgID: string, member: OrgMember) => {
+    await server.put(
+      `/v1/user/${userData.uid}/organizations`,
+      {
+        membership_uid: member.membership_uid,
+        user: member.user.uid,
+        organization: orgID,
+        access_level: member.access_level,
+        is_deleted: false,
+      },
+      { headers: authorizationHeader }
+    );
+  };
+
+  const handleApiError = (e: any) => {
+    showSnackbarMessage("OOPS! Something went wrong", Status.error);
+    console.error(e.response?.data || e.message);
+  };
 
   return {
-    loading, errorMessage, clearErrorMessage, fetchOrgMembers
-  }
-}
+    loading,
+    errorMessage,
+    clearErrorMessage,
+    fetchOrgMembers,
+    addOrgMember,
+    updateOrgMember,
+    removeOrgMember,
+  };
+};
