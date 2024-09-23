@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {membersData} from "../../../data/members.ts";
 import AccessLeveLInfoDialog from "./AccessLeveLInfoDialog.vue";
 
 
 const addMembersDialog = ref(false);
 const selectedMember = ref<string | null>(null);
-const selectedAccessLevel = ref(null);
+const selectedAccessLevel = ref<string | null>(null);
 
-const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
+watch(() => selectedAccessLevel.value, () => {
+  console.log(selectedAccessLevel.value)
+})
+
+const accessLevels = ['admin', 'moderator', 'member', 'viewer']
 </script>
 
 <template>
@@ -47,7 +51,9 @@ const accessLevels = ['Admin', 'Moderator', 'Team Member', 'Viewer']
           <VAutocomplete
               v-model="selectedAccessLevel"
               placeholder="Choose Appropriate Access Level"
+              :item-value="accessLevel => `${accessLevel}`"
               :items="accessLevels"
+              :item-title="accessLevel => `${accessLevel.charAt(0).toUpperCase() + accessLevel.slice(1)}`"
               class="my-2"
               hide-details
               rounded="lg"
