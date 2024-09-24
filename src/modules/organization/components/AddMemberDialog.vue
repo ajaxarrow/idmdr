@@ -1,18 +1,33 @@
 <script setup lang="ts">
-import {ref, watch} from "vue";
-import {membersData} from "../../../data/members.ts";
+import {onMounted, ref, watch} from "vue";
 import AccessLeveLInfoDialog from "./AccessLeveLInfoDialog.vue";
+import {OrgMember, User} from "../../../interfaces/member.interface.ts";
+import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
 
-
+const {fetchUsers, fetchOrgMembers} = useOrganizationMembersServices();
+const {route} = useRouting();
+const users = ref<User[]>([]);
+const orgMembers = ref<OrgMember[]>([]);
 const addMembersDialog = ref(false);
-const selectedMember = ref<string | null>(null);
+const selectedMember = ref<User | null>(null);
 const selectedAccessLevel = ref<string | null>(null);
+const accessLevels = ['admin', 'moderator', 'member', 'viewer']
 
 watch(() => selectedAccessLevel.value, () => {
   console.log(selectedAccessLevel.value)
 })
 
-const accessLevels = ['admin', 'moderator', 'member', 'viewer']
+const checkIfMember = (uid: string): OrgMember => {
+  return <OrgMember>orgMembers.value.find(member => member.user.uid === uid);
+}
+
+onMounted(async () => {
+  orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
+  users.value = await fetchUsers();
+  console.log(users.value)
+})
+
 </script>
 
 <template>
@@ -29,17 +44,27 @@ const accessLevels = ['admin', 'moderator', 'member', 'viewer']
           <p class="dialog-label mb-2">Member</p>
           <VAutocomplete
               placeholder="Choose Member"
-              :item-value="member => `${member.email}`"
+              :item-value="user => user"
               v-model="selectedMember"
-              :items="membersData"
-              :item-title="member => `${member.name}`"
+              :items="users"
+              :item-title="user => `${user.username}`"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
+          >
+            <template v-slot:item="{ props, item }">
+              <VListItem
+                  :disabled="!!checkIfMember(item.raw.uid as string)"
+                  v-bind="props"
+                  :prepend-avatar="item.raw.profile_picture"
+                  :subtitle="checkIfMember(item.raw.uid) ? checkIfMember(item.raw.uid).access_level : item.raw.email"
+                  :title="item.raw.username"
+              ></VListItem>
+            </template>
+          </VAutocomplete>
         </div>
         <div>
           <p class="dialog-label mb-2 d-flex justify-space-between">

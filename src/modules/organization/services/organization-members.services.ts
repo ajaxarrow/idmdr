@@ -1,6 +1,6 @@
 import { useUserStore } from "../../../core/stores/user.store.ts";
 import { reactive, ref } from "vue";
-import { OrgMember } from "../../../interfaces/member.interface.ts";
+import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import { server } from "../../../plugins/axios.ts";
 import { Status } from "../../../interfaces/enums/status.enum.ts";
 import { useSnackbarStore } from "../../../core/stores/snackbar.store.ts";
@@ -39,6 +39,25 @@ export const useOrganizationMembersServices = () => {
       is_deleted: member.is_deleted,
     }));
   };
+
+  const fetchUsers = async (): Promise<User[]> => {
+    try {
+      const res = await server.get(`/users/`, {
+        headers: authorizationHeader,
+      });
+
+      return res.data.results
+        .filter((user: any) => user.username)  // Filter out users without a username
+        .map((user: any) => ({
+          uid: user.uid,
+          username: user.username,
+          email: user.email,
+          profile_picture: user.profile_picture,
+        }));
+    } catch {
+      return [];
+    }
+  }
 
   // API Functions
   const fetchOrgMembers = async (orgID: string): Promise<OrgMember[]> => {
@@ -142,5 +161,6 @@ export const useOrganizationMembersServices = () => {
     addOrgMember,
     updateOrgMember,
     removeOrgMember,
+    fetchUsers
   };
 };
