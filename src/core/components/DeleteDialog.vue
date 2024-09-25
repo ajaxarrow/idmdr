@@ -20,14 +20,14 @@
     <VSheet class="delete-dialog-container" @click.stop>
       <PhWarning color="#C83246" weight="duotone" size="50"/>
       <p class="font-weight-black text-h6">Are you sure?</p>
-      <p class="text-center px-1 mb-3">This action cannot be undone. All data associated with this entity will be permanently deleted.</p>
+      <p class="text-center px-1 mb-3">This action cannot be undone. All data associated with this entity will be permanently removed.</p>
       <VBtnPrimaryAlt
           color="warning"
           @click="handleDelete"
           width="98%"
           class="submit-button"
       >
-        Yes, Delete!
+        Yes, Remove!
       </VBtnPrimaryAlt>
       <VBtnPrimaryAlt
           color="warning"
