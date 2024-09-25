@@ -14,18 +14,21 @@ import {watch} from "vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
+import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
-const {fetchOrgMembers} = useOrganizationMembersServices()
+const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {userData} = useUserStore();
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
 const path = ref('organizations')
 const orgMemberData = ref<OrgMember[]>([])
 const orgMembers = ref<OrgMember[]>([])
+const userOrgInfo = ref<OrgMember | null | undefined>(null)
 
 const filterOrganizationMembersBySearchQuery = () => {
   if(searchQuery.value) {
@@ -54,6 +57,20 @@ const fetchMembersCallback = async () => {
   showSnackbarMessage('Member Added Successfully', Status.success)
 }
 
+const updateMembersCallback = async () => {
+  await fetchMembers()
+  showSnackbarMessage('Member Updated Successfully', Status.success)
+  memberActionMenu.value = false
+}
+
+const deleteMemberCallback = async (member: OrgMember) => {
+  await removeOrgMember(<string>route.params.slug, member)
+  await fetchMembers()
+  showSnackbarMessage('Member Removed Successfully', Status.success)
+  memberActionMenu.value = false
+}
+
+
 const fetchMembers = async () => {
   const data = await fetchOrgMembers(<string>route.params.slug)
   orgMembers.value = data
@@ -72,9 +89,8 @@ onMounted(async () => {
       }
     }
   }
-
   await fetchMembers()
-
+  userOrgInfo.value = orgMembers.value.find(member => member.user.uid === userData.uid);
 })
 </script>
 
@@ -82,7 +98,7 @@ onMounted(async () => {
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
     <div v-if="organization" class="py-6 px-7">
       <div v-if="organization.is_member">
-        <div class="mt-2">
+        <div v-if="userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="mt-2">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
               <p class="section-title">Update Organization Information</p>
@@ -98,14 +114,14 @@ onMounted(async () => {
             </VBtnPrimaryFilled>
           </VRow>
         </div>
-        <VDivider class="my-5"/>
+        <VDivider v-if="userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
         <div class="mt-2">
           <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
             <div>
               <p class="section-title">Organization Members</p>
               <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
             </div>
-            <AddMemberDialog @callback="fetchMembersCallback">
+            <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" @callback="fetchMembersCallback">
               <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                 Add Member
               </VBtnPrimaryFilled>
@@ -147,7 +163,7 @@ onMounted(async () => {
                   </div>
                 </div>
                 <VMenu
-                    v-if="member.user.uid != userData.uid"
+                    v-if="member.user.uid != userData.uid || (userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level) == 'moderator'"
                     location="bottom"
                     v-model="memberActionMenu"
                     :close-on-content-click="false"
@@ -159,20 +175,27 @@ onMounted(async () => {
                     </p>
                   </template>
                   <VSheet width="200" class="rounded-b-lg py-2">
-                    <AddMemberDialog>
+                    <AddMemberDialog
+                      :form-type="FormType.edit"
+                      :member="member"
+                      :user-access-level="userOrgInfo?.access_level"
+                      @callback="updateMembersCallback"
+                    >
                       <p class="cursor-pointer action-menu-item">
                         <PhPencil/>
                         Edit Access
                       </p>
                     </AddMemberDialog>
-                    <p class="cursor-pointer action-menu-item">
-                      <PhTrash/>
-                      Remove User
-                    </p>
+                    <DeleteDialog @callback="deleteMemberCallback(member)">
+                      <p class="cursor-pointer action-menu-item">
+                        <PhTrash/>
+                        Remove User
+                      </p>
+                    </DeleteDialog>
                   </VSheet>
                 </VMenu>
               </VRow>
-              <VDivider class="mt-3"/>
+              <VDivider v-if="!member.is_deleted" class="mt-3"/>
             </div>
           </div>
           <div class="my-5 mx-1" v-else>

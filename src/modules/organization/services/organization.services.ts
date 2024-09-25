@@ -290,8 +290,8 @@ export const useOrganizationServices = () => {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
-      const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
+      const rawData = res.data.results
+      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
       myOrganizations.value = [...organizations];
       return organizations;
     } catch (e) {
@@ -307,7 +307,7 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
+      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
       const data = [ ...organizations];
       // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data

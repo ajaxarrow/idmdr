@@ -37,7 +37,7 @@ export const useOrganizationMembersServices = () => {
       });
 
       return res.data.results
-        .filter((user: any) => user.username)  // Filter out users without a username
+        .filter((user: any) => user.username)
         .map((user: any) => ({
           uid: user.uid,
           username: user.username,
@@ -68,7 +68,7 @@ export const useOrganizationMembersServices = () => {
     try {
       if (existingMember) {
         if (existingMember.is_deleted) {
-          await restoreOrgMember(orgID, member);
+          await restoreOrgMember(orgID, existingMember, member.access_level);
           return;
         }
       } else {
@@ -79,11 +79,12 @@ export const useOrganizationMembersServices = () => {
     }
   };
 
-  const updateOrgMember = async (member: OrgMember) => {
+  const updateOrgMember = async (orgID: string, member: OrgMember) => {
     try {
       await server.put(
-        `/v1/user/${userData.uid}/organizations`,
+        `/v1/user/organizations/update/${member.membership_uid}`,
         {
+          organization: orgID,
           membership_uid: member.membership_uid,
           user: member.user.uid,
           access_level: member.access_level,
@@ -96,11 +97,14 @@ export const useOrganizationMembersServices = () => {
     }
   };
 
-  const removeOrgMember = async (member: OrgMember) => {
+  const removeOrgMember = async (orgID: string, member: OrgMember) => {
     try {
       await server.put(
-        `/v1/user/${userData.uid}/organizations`,
+        `/v1/user/organizations/update/${member.membership_uid}`,
         {
+          organization: orgID,
+          user: member.user.uid,
+          access_level: member.access_level,
           membership_uid: member.membership_uid,
           is_deleted: true,
         },
@@ -124,14 +128,14 @@ export const useOrganizationMembersServices = () => {
     );
   };
 
-  const restoreOrgMember = async (orgID: string, member: OrgMember) => {
+  const restoreOrgMember = async (orgID: string, member: OrgMember, newAccessLevel: string) => {
     await server.put(
-      `/v1/user/${userData.uid}/organizations`,
+      `/v1/user/organizations/update/${member.membership_uid}`,
       {
         membership_uid: member.membership_uid,
         user: member.user.uid,
         organization: orgID,
-        access_level: member.access_level,
+        access_level: newAccessLevel,
         is_deleted: false,
       },
       { headers: authorizationHeader }
@@ -140,7 +144,7 @@ export const useOrganizationMembersServices = () => {
 
   const handleApiError = (e: any) => {
     showSnackbarMessage("OOPS! Something went wrong", Status.error);
-    console.error(e.response?.data || e.message);
+    console.error(e.response || e.message);
   };
 
   return {

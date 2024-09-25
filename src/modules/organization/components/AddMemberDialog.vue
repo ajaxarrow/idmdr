@@ -1,19 +1,39 @@
 <script setup lang="ts">
-import {onMounted, ref, watch, reactive} from "vue";
+import {computed, onMounted, onUpdated, reactive, ref} from "vue";
 import AccessLeveLInfoDialog from "./AccessLeveLInfoDialog.vue";
 import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
+import {PropType} from "vue/dist/vue";
+import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 
 const emits = defineEmits(['callback'])
-const {fetchUsers, fetchOrgMembers, addOrgMember} = useOrganizationMembersServices();
+const props = defineProps({
+  formType: {
+    type: String as PropType<FormType>,
+  },
+  member: {
+    type: Object as PropType<OrgMember>
+  },
+  userAccessLevel: {
+    type: String,
+    default: ''
+  }
+})
+const {fetchUsers, fetchOrgMembers, addOrgMember, updateOrgMember} = useOrganizationMembersServices();
 const {route} = useRouting();
 const users = ref<User[]>([]);
 const orgMembers = ref<OrgMember[]>([]);
 const addMembersDialog = ref(false);
 const selectedMember = ref<User | null>(null);
 const selectedAccessLevel = ref<string | null>(null);
-const accessLevels = ['admin', 'moderator', 'member', 'viewer']
+const accessLevels = computed(() => {
+  if (props.userAccessLevel === 'manager') {
+    return ['manager', 'member', 'viewer'];
+  } else {
+    return ['admin', 'manager', 'member', 'viewer'];
+  }
+});
 
 const errorMessageInitialState = reactive({
   name: "",
@@ -39,8 +59,6 @@ const addMember = async () => {
     return;
   }
 
-
-
   try{
     //@ts-ignore
     const newMember: OrgMember = {
@@ -59,6 +77,36 @@ const addMember = async () => {
   }
 }
 
+const updateMember = async () => {
+  clearErrorMessage()
+  if (!selectedMember.value) {
+    errorMessage.name = "Please select a member";
+    return;
+  }
+
+  if (!selectedAccessLevel.value) {
+    errorMessage.access_level = "Please select an access level";
+    return;
+  }
+
+  try{
+    //@ts-ignore
+    const updatedMember: OrgMember = {
+      user: props.member?.user,
+      access_level: selectedAccessLevel.value,
+      membership_uid: props.member?.membership_uid,
+      is_deleted: false
+    }
+    loading.value = true;
+    await updateOrgMember(<string>route.params.slug, updatedMember);
+    orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
+    closeDialog();
+    emits('callback')
+  } catch (e: any) {
+
+  }
+}
+
 const clearMemberData = () => {
   selectedMember.value = null;
   selectedAccessLevel.value = null;
@@ -69,15 +117,27 @@ const closeDialog = () => {
   addMembersDialog.value = false
 }
 
-watch(() => selectedAccessLevel.value, () => {
-  console.log(selectedAccessLevel.value)
-})
+// watch(() => selectedAccessLevel.value, () => {
+//   console.log(selectedAccessLevel.value)
+// })
 
 const checkIfMember = (uid: string): OrgMember => {
   return <OrgMember>orgMembers.value.find(member => member.user.uid === uid);
 }
 
 onMounted(async () => {
+  orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
+  users.value = await fetchUsers();
+
+  if(props.formType === FormType.edit){
+    if(props.member){
+      selectedMember.value = props.member.user
+      selectedAccessLevel.value = props.member.access_level
+    }
+  }
+})
+
+onUpdated(async () => {
   orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
   users.value = await fetchUsers();
 })
@@ -97,6 +157,7 @@ onMounted(async () => {
         <div>
           <p class="dialog-label mb-2">Member</p>
           <VAutocomplete
+              :disabled="props.formType == FormType.edit"
               placeholder="Choose Member"
               :item-value="user => user"
               v-model="selectedMember"
@@ -112,10 +173,10 @@ onMounted(async () => {
           >
             <template v-slot:item="{ props, item }">
               <VListItem
-                  :disabled="!!checkIfMember(item.raw.uid as string)"
+                  :disabled="!!checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted"
                   v-bind="props"
                   :prepend-avatar="item.raw.profile_picture"
-                  :subtitle="checkIfMember(item.raw.uid) ? checkIfMember(item.raw.uid).access_level : item.raw.email"
+                  :subtitle="checkIfMember(item.raw.uid) && !checkIfMember(item.raw.uid as string).is_deleted ? checkIfMember(item.raw.uid).access_level : item.raw.email"
                   :title="item.raw.username"
               ></VListItem>
             </template>
@@ -158,7 +219,7 @@ onMounted(async () => {
         <VBtnPrimaryAlt
             width="86"
             class="action-button"
-            @click="addMember"
+            @click="formType === FormType.edit ? updateMember() : addMember()"
         >
           Save
         </VBtnPrimaryAlt>
