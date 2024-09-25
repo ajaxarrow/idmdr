@@ -13,7 +13,6 @@ const props = defineProps({
   },
   member: {
     type: Object as PropType<OrgMember>,
-    required: true
   },
   userAccessLevel: {
     type: String,
