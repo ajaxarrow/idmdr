@@ -91,9 +91,9 @@ const updateMember = async () => {
   try{
     //@ts-ignore
     const updatedMember: OrgMember = {
-      user: props.member?.user,
+      user: props.member?.user as User,
       access_level: selectedAccessLevel.value,
-      membership_uid: props.member?.membership_uid,
+      membership_uid: props.member?.membership_uid as string,
       is_deleted: false
     }
     loading.value = true;
