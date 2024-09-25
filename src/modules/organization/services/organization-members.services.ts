@@ -1,5 +1,5 @@
 import { useUserStore } from "../../../core/stores/user.store.ts";
-import { reactive, ref } from "vue";
+import {ref } from "vue";
 import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import { server } from "../../../plugins/axios.ts";
 import { Status } from "../../../interfaces/enums/status.enum.ts";
@@ -13,18 +13,8 @@ export const useOrganizationMembersServices = () => {
     ? { Authorization: `Bearer ${userData.accessToken}` }
     : {};
 
-  // Reactive states
-  const errorMessageInitialState = reactive({
-    name: "",
-    access_level: "",
-  });
   const loading = ref(false);
-  const errorMessage = reactive({ ...errorMessageInitialState });
 
-  // Utility functions
-  const clearErrorMessage = () => {
-    Object.assign(errorMessage, { ...errorMessageInitialState });
-  };
 
   const mapOrgMembers = (rawData: any): OrgMember[] => {
     return rawData.map((member: any) => ({
@@ -155,8 +145,6 @@ export const useOrganizationMembersServices = () => {
 
   return {
     loading,
-    errorMessage,
-    clearErrorMessage,
     fetchOrgMembers,
     addOrgMember,
     updateOrgMember,

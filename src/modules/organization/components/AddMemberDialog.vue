@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, reactive} from "vue";
 import AccessLeveLInfoDialog from "./AccessLeveLInfoDialog.vue";
 import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 
-const {fetchUsers, fetchOrgMembers} = useOrganizationMembersServices();
+const emits = defineEmits(['callback'])
+const {fetchUsers, fetchOrgMembers, addOrgMember} = useOrganizationMembersServices();
 const {route} = useRouting();
 const users = ref<User[]>([]);
 const orgMembers = ref<OrgMember[]>([]);
@@ -13,6 +14,60 @@ const addMembersDialog = ref(false);
 const selectedMember = ref<User | null>(null);
 const selectedAccessLevel = ref<string | null>(null);
 const accessLevels = ['admin', 'moderator', 'member', 'viewer']
+
+const errorMessageInitialState = reactive({
+  name: "",
+  access_level: "",
+});
+const loading = ref(false);
+const errorMessage = reactive({ ...errorMessageInitialState });
+
+// Utility functions
+const clearErrorMessage = () => {
+  Object.assign(errorMessage, { ...errorMessageInitialState });
+};
+
+const addMember = async () => {
+  clearErrorMessage()
+  if (!selectedMember.value) {
+    errorMessage.name = "Please select a member";
+    return;
+  }
+
+  if (!selectedAccessLevel.value) {
+    errorMessage.access_level = "Please select an access level";
+    return;
+  }
+
+
+
+  try{
+    //@ts-ignore
+    const newMember: OrgMember = {
+      user: selectedMember?.value,
+      access_level: selectedAccessLevel.value,
+      membership_uid: '',
+      is_deleted: false
+    }
+    loading.value = true;
+    await addOrgMember(<string>route.params.slug, newMember);
+    orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
+    closeDialog();
+    emits('callback')
+  } catch (e: any) {
+
+  }
+}
+
+const clearMemberData = () => {
+  selectedMember.value = null;
+  selectedAccessLevel.value = null;
+}
+const closeDialog = () => {
+  clearErrorMessage()
+  clearMemberData()
+  addMembersDialog.value = false
+}
 
 watch(() => selectedAccessLevel.value, () => {
   console.log(selectedAccessLevel.value)
@@ -25,7 +80,6 @@ const checkIfMember = (uid: string): OrgMember => {
 onMounted(async () => {
   orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
   users.value = await fetchUsers();
-  console.log(users.value)
 })
 
 </script>
@@ -54,6 +108,7 @@ onMounted(async () => {
               variant="outlined"
               color="primary"
               base-color="gs60"
+              :error-messages="errorMessage.name"
           >
             <template v-slot:item="{ props, item }">
               <VListItem
@@ -80,12 +135,12 @@ onMounted(async () => {
               :items="accessLevels"
               :item-title="accessLevel => `${accessLevel.charAt(0).toUpperCase() + accessLevel.slice(1)}`"
               class="my-2"
-              hide-details
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
+              :error-messages="errorMessage.access_level"
           />
         </div>
       </div>
@@ -93,7 +148,7 @@ onMounted(async () => {
 
       <VRow class="ma-0 pa-4" justify="end">
         <VBtnPrimaryAlt
-            @click="addMembersDialog = false"
+            @click="closeDialog"
             width="86"
             variant="outlined"
             class="button-outline action-button"
@@ -103,6 +158,7 @@ onMounted(async () => {
         <VBtnPrimaryAlt
             width="86"
             class="action-button"
+            @click="addMember"
         >
           Save
         </VBtnPrimaryAlt>

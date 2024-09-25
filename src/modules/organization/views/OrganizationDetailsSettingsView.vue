@@ -11,10 +11,16 @@ import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash
 import {OrgMember} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 import {watch} from "vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
+const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const {fetchOrgMembers} = useOrganizationMembersServices()
+const {userData} = useUserStore();
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
 const path = ref('organizations')
@@ -42,124 +48,138 @@ watch(() => searchQuery.value, () => {
   filterOrganizationMembersBySearchQuery()
 });
 
+
+const fetchMembersCallback = async () => {
+  await fetchMembers()
+  showSnackbarMessage('Member Added Successfully', Status.success)
+}
+
+const fetchMembers = async () => {
+  const data = await fetchOrgMembers(<string>route.params.slug)
+  orgMembers.value = data
+  orgMemberData.value = data
+}
+
 onMounted(async () => {
   const alluserOrg = await fetchOrganizationByUser();
   path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
 
   if(organization.value){
-    if(isSlugInOrgList(organization.value, alluserOrg)){
+    if( isSlugInOrgList(organization.value, alluserOrg)){
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
     }
   }
 
-  const data = await fetchOrgMembers(<string>route.params.slug)
-  orgMembers.value = data
-  orgMemberData.value = data
+  await fetchMembers()
+
 })
 </script>
 
 <template>
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
     <div v-if="organization" class="py-6 px-7">
-      <div class="mt-2">
-        <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
-          <div>
-            <p class="section-title">Update Organization Information</p>
-            <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
-          </div>
-          <VBtnPrimaryFilled
-              :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization.slug}}"
-              height="41px"
-              rounded="lg"
-              class="satoshi-md"
-              style="font-size: 14px !important;">
-            Update Organization Info
-          </VBtnPrimaryFilled>
-        </VRow>
-      </div>
-      <VDivider class="my-5"/>
-      <div class="mt-2">
-        <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
-          <div>
-            <p class="section-title">Organization Members</p>
-            <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
-          </div>
-          <AddMemberDialog>
-            <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-              Add Member
+      <div v-if="organization.is_member">
+        <div class="mt-2">
+          <VRow  class="ma-0" justify="space-between" align="center">
+            <div>
+              <p class="section-title">Update Organization Information</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
+            </div>
+            <VBtnPrimaryFilled
+                :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization.slug}}"
+                height="41px"
+                rounded="lg"
+                class="satoshi-md"
+                style="font-size: 14px !important;">
+              Update Organization Info
             </VBtnPrimaryFilled>
-          </AddMemberDialog>
-        </VRow>
-        <VTextField
-            class="my-3"
-            v-model="searchQuery"
-            hide-details
-            variant="outlined"
-            rounded="xl"
-            density="comfortable"
-            color="primary"
-            base-color="gs60"
-        >
-          <template v-slot:prepend-inner>
-            <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
-          </template>
-          <template v-slot:label>
-            <p class="text-gs20">Find members</p>
-          </template>
-        </VTextField>
-        <div class="my-5 mx-1" v-if="orgMembers.length > 0">
-          <div
-            v-for="member in orgMembers"
-            :key="member.membership_uid"
-          >
-            <VRow v-if="!member.is_deleted" class="ma-0" justify="space-between" align="center">
-              <div class="d-flex align-center">
-                <VAvatar
-                    size="40"
-                    class="mr-1 cursor-pointer"
-                >
-                  <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
-                </VAvatar>
-                <div class="mr-2">
-                  <p class="text-name text-container">{{member.user.username}}</p>
-                  <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
-                </div>
-              </div>
-              <VMenu
-                location="bottom"
-                v-model="memberActionMenu"
-                :close-on-content-click="false"
-              >
-                <template #activator="{ props }">
-                  <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
-                    Options
-                    <PhDotsThreeOutlineVertical weight="fill"/>
-                  </p>
-                </template>
-                <VSheet width="200" class="rounded-b-lg py-2">
-                  <AddMemberDialog>
-                    <p class="cursor-pointer action-menu-item">
-                      <PhPencil/>
-                      Edit Access
-                    </p>
-                  </AddMemberDialog>
-                  <p class="cursor-pointer action-menu-item">
-                    <PhTrash/>
-                    Remove User
-                  </p>
-                </VSheet>
-              </VMenu>
-            </VRow>
-            <VDivider class="mt-3"/>
-          </div>
+          </VRow>
         </div>
-        <div class="my-5 mx-1" v-else>
-          <p class="d-flex align-center justify-center">
-            <PhInfo class="mr-1"/>No Organization Members Found
-          </p>
+        <VDivider class="my-5"/>
+        <div class="mt-2">
+          <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
+            <div>
+              <p class="section-title">Organization Members</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
+            </div>
+            <AddMemberDialog @callback="fetchMembersCallback">
+              <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                Add Member
+              </VBtnPrimaryFilled>
+            </AddMemberDialog>
+          </VRow>
+          <VTextField
+              class="my-3"
+              v-model="searchQuery"
+              hide-details
+              variant="outlined"
+              rounded="xl"
+              density="comfortable"
+              color="primary"
+              base-color="gs60"
+          >
+            <template v-slot:prepend-inner>
+              <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
+            </template>
+            <template v-slot:label>
+              <p class="text-gs20">Find members</p>
+            </template>
+          </VTextField>
+          <div class="my-5 mx-1" v-if="orgMembers.length > 0">
+            <div
+                v-for="member in orgMembers"
+                :key="member.membership_uid"
+            >
+              <VRow v-if="!member.is_deleted" class="ma-0 my-3" justify="space-between" align="center">
+                <div class="d-flex align-center">
+                  <VAvatar
+                      size="40"
+                      class="mr-1 cursor-pointer"
+                  >
+                    <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
+                  </VAvatar>
+                  <div class="mr-2">
+                    <p class="text-name text-container">{{member.user.username}}</p>
+                    <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
+                  </div>
+                </div>
+                <VMenu
+                    v-if="member.user.uid != userData.uid"
+                    location="bottom"
+                    v-model="memberActionMenu"
+                    :close-on-content-click="false"
+                >
+                  <template #activator="{ props }">
+                    <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
+                      Options
+                      <PhDotsThreeOutlineVertical weight="fill"/>
+                    </p>
+                  </template>
+                  <VSheet width="200" class="rounded-b-lg py-2">
+                    <AddMemberDialog>
+                      <p class="cursor-pointer action-menu-item">
+                        <PhPencil/>
+                        Edit Access
+                      </p>
+                    </AddMemberDialog>
+                    <p class="cursor-pointer action-menu-item">
+                      <PhTrash/>
+                      Remove User
+                    </p>
+                  </VSheet>
+                </VMenu>
+              </VRow>
+              <VDivider class="mt-3"/>
+            </div>
+          </div>
+          <div class="my-5 mx-1" v-else>
+            <p class="d-flex align-center justify-center">
+              <PhInfo class="mr-1"/>No Organization Members Found
+            </p>
+          </div>
         </div>
       </div>
     </div>
