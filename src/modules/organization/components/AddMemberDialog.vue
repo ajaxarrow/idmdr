@@ -12,7 +12,8 @@ const props = defineProps({
     type: String as PropType<FormType>,
   },
   member: {
-    type: Object as PropType<OrgMember>
+    type: Object as PropType<OrgMember>,
+    required: true
   },
   userAccessLevel: {
     type: String,
@@ -91,9 +92,9 @@ const updateMember = async () => {
   try{
     //@ts-ignore
     const updatedMember: OrgMember = {
-      user: props.member.user,
+      user: props.member?.user,
       access_level: selectedAccessLevel.value,
-      membership_uid: props.member.membership_uid,
+      membership_uid: props.member?.membership_uid,
       is_deleted: false
     }
     loading.value = true;
