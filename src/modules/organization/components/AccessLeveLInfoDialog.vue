@@ -19,7 +19,7 @@ const accessLevelInfoDialog = ref(false);
             <strong>Admin:</strong> The Admin holds the highest access level within the organization. They have the ability to delete and edit content, add or remove users, and are the only role authorized to delete the organization.
           </li>
           <li>
-            <strong>Moderator:</strong> Moderators can update organization details and manage users by adding or removing them, but they cannot delete the organization or modify access levels.
+            <strong>Manager:</strong> Moderators can update organization details and manage users by adding or removing them, but they cannot delete the organization or modify access levels.
           </li>
           <li>
             <strong>Member:</strong> Members can add new users but can only assign them the "Member" role. They can also create repositories but do not have the ability to edit organization content.
