@@ -14,7 +14,7 @@ export const useMiddleware = () => {
       router.push({path: '/'});
     }
     else{
-      console.log('not authenticated')
+      // console.log('not authenticated')
     }
   }
 
