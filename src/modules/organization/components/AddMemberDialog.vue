@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import {computed, onMounted, onUpdated, reactive, ref} from "vue";
+import {computed, onMounted, onUpdated, reactive, ref, PropType} from "vue";
 import AccessLeveLInfoDialog from "./AccessLeveLInfoDialog.vue";
 import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
-import {PropType} from "vue/dist/vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 
 const emits = defineEmits(['callback'])
