@@ -9,7 +9,7 @@ const repositoryRoutes = [
     path: '/repository/new',
     name: 'new-repository',
     // @ts-ignore
-    component: () => import('../../modules/repository/views/NewRepositoryView.vue')
+    component: () => import('../../modules/repository/views/RepositoryFormView.vue')
   },
   {
     path: '/repository/:slug',
