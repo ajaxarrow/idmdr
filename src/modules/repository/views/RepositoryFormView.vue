@@ -1,57 +1,126 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {reactive, ref} from "vue";
-import {PhArrowLeft, PhFileDashed} from "@phosphor-icons/vue";
+import {onMounted, reactive, ref} from "vue";
+import {PhArrowLeft, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
-import {RepositoryData} from "../../../interfaces/repository.interface.ts";
+import {Commercialization, RepositoryData} from "../../../interfaces/repository.interface.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import {
+  commodities, readinessLevel, technologyStatus, technologyCategories, agencies, industries,
+  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus
+} from "../../../data/repository.inventory.fields.ts";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import OrganizationFormMapPreview from "../../organization/components/OrganizationFormMapPreview.vue";
+import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+
+const {isEmptyObject} = useObjectChecker()
+const {fetchOrganizationByUser} = useOrganizationServices();
+const isMapPreview= ref(false);
+const isGeoJSONDrawn = ref(true);
+const geoJSONFileName = ref('')
+const organizations = ref<Organization[]>([]);
 
 const formType = ref<FormType>(FormType.create);
 
 const repositoryDataIntialState = reactive<RepositoryData>({
+  affiliation: "",
+  commodity: "Abaca",
+  description: "",
+  end_date: '',
+  funding_agency: "Aurora State College of Technology (ASCoT)",
   geojson: {},
+  industry: "Agriculture",
   is_active: false,
+  is_approved: false,
   is_deleted: false,
-  is_private: false,
+  location: "",
   organization: "",
-  priority_level: "High",
+  priority_level: "high",
+  project_component: "",
+  rpt: "",
+  slug: "",
+  start_date: '',
+  tags: "",
+  tech_owner: "Aurora State College of Technology (ASCoT)",
+  technology_category: "Application of genomics in the study of diseases of aquatic species",
+  technology_generator: "",
+  technology_readiness_level: "Level 1 - Basic principles observed and reported",
+  technology_status: "Laboratory experiment stage / Lab testing / Greenhouse testing",
+  technology_transfer_status: "",
+  title: "",
+  transfer_plan: "Extension",
+  uid: "",
   visibility: 1,
-  slug: '',
-  title: '',
-  subtitle: '',
-  description: '',
-  commodity: 'Abaca',
-  industry: 'Crops',
-  technology_category: '',
-  technology_status: '',
-  technology_readiness_level: '',
-  rpt: '',
-  funding_agency: '',
-  transfer_plan: 'Extension',
-  technology_transfer_status: '',
-  commercialization_status: '',
-  ip_status: '',
-  ip_registration_number: '',
-  adaptor_status: '',
-  technology_generator: '',
-  tech_owner: ''
+  adopters: 'Farmers'
 })
 
 const repositoryCurrentData = reactive<RepositoryData>({
   ...repositoryDataIntialState
 })
 
-const commodities = [
-  'Abaca', 'Banana', 'Cacao', 'Cashew', 'Cement/Concrete', 'Citrus', 'Coconut', 'Coffee', 'Corn', 'Grains', 'Legume - Mungbean', 'Legume - Peanut', 'Legume - Soybean', 'Mango', 'Medicinal Plants', 'Natural Sources of Dye', 'Oil Palm', 'Ornamental - Cutflowers', 'Ornamental - Foliages', 'Pili', 'Rice', 'Rubber', 'Rootcrops - Sweet Potato', 'Rootcrops - Cassava', 'Sericulture and Apiculture', 'Sugarcane', 'Tropical Fruits - Durian', 'Tropical Fruits - Papaya', 'Tropical Fruits - Pineapple', 'Tropical Fruits - Pomelo', 'Tropical Fruits - Jackfruit', 'Tropical Fruits - Citrus', 'Vegetables', 'Crops (Others)',
-]
+const commercialization = reactive<Commercialization>({
+  adopterStatus: "",
+  currentStatus: "Applied Fairness Opinion Report",
+  ipStatus: "For filing",
+  ipType: "Copyrigth & Related Rights",
+  modeStatus: "Direct Sakes",
+  regNo: ""
+})
 
-const industries = [
-    'Crops', 'Livestock', 'Marine and Inland Aquatic', 'Forestry', 'Environmental Services / Climate Change Adaptation and Disaster Risk Reduction', 'Agriculture', 'Information Technology', 'Food Processing', 'Mining', 'Biotechnology / Molecular Technology', 'Construction', 'Others'
-]
+const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
+  repositoryCurrentData.geojson = JSON.stringify(geojson)
+  isGeoJSONDrawn.value = isJSONDrawn
+  console.log(repositoryCurrentData.geojson)
+}
 
-const transferPlan = ["Extension", "Deployment", "Commercialization"]
+const handleGeoJSONFileInput = (e: any) => {
 
-const priorityLevel = ["High", "Medium", "Low"]
+  const file = e.target.files[0]
+
+  if (file && file.type === 'application/json') {
+    const reader = new FileReader()
+    geoJSONFileName.value = file.name
+
+    reader.onload = (e) => {
+      try {
+        if(e.target){
+          if (typeof e.target.result === "string") {
+            const jsonData = JSON.parse(e.target.result)
+            setGeoJSON(jsonData, false)
+          }
+        }
+
+        // Perform any additional operations with the parsed JSON data
+      } catch (error) {
+        console.error('Error parsing JSON:', error)
+      }
+    }
+
+    reader.readAsText(file)
+  } else {
+    console.error('Please select a valid JSON file.')
+  }
+}
+
+const formatDate = (): string=> {
+  const now = new Date()
+
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+
+  return `${year}-${month}-${day}-${hours}${minutes}${seconds}`
+}
+
+onMounted( async () => {
+  organizations.value = await fetchOrganizationByUser();
+  repositoryCurrentData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
+})
+
 
 </script>
 
@@ -132,20 +201,45 @@ const priorityLevel = ["High", "Medium", "Low"]
             base-color="gs60"
           />
         </div>
-        <div class="mb-3">
-          <label class="input-label">Subtitle</label>
-          <VTextField
-              v-model="repositoryCurrentData.subtitle"
-              placeholder="E.g. Unveiling the Global Tapestry of Soil Vitality and Agricultural Sustainability"
+        <div class="mb-5">
+          <label class="input-label">Organization</label>
+          <VAutocomplete
+              v-model="repositoryCurrentData.organization"
+              placeholder="Select Organization"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              hint="Short description about the project"
-          />
+              :items="organizations"
+              :item-value="organization => `${organization.uid}`"
+              :item-title="organization => `${organization.name} (${organization.acronym})`"
+          >
+            <template v-slot:item="{ props, item }">
+              <VListItem
+                  v-bind="props"
+                  :prepend-avatar="item.raw.image"
+                  :subtitle="item.raw.email"
+                  :title="`${item.raw.name} (${item.raw.acronym})`"
+              ></VListItem>
+            </template>
+          </VAutocomplete>
         </div>
+<!--        <div class="mb-3">-->
+<!--          <label class="input-label">Subtitle</label>-->
+<!--          <VTextField-->
+<!--              v-model="repositoryCurrentData.subtitle"-->
+<!--              placeholder="E.g. Unveiling the Global Tapestry of Soil Vitality and Agricultural Sustainability"-->
+<!--              class="my-2"-->
+<!--              rounded="lg"-->
+<!--              density="comfortable"-->
+<!--              variant="outlined"-->
+<!--              color="primary"-->
+<!--              base-color="gs60"-->
+<!--              hint="Short description about the project"-->
+<!--          />-->
+<!--        </div>-->
         <div class="mb-3" v-if="formType === FormType.edit">
           <label class="input-label">Abstract</label>
           <QuillRichTextEditor
@@ -166,6 +260,7 @@ const priorityLevel = ["High", "Medium", "Low"]
         <div class="mb-5">
           <label class="input-label">Project Component</label>
           <VTextField
+              v-model="repositoryCurrentData.project_component"
               placeholder="E.g. Project Component 1"
               class="my-2"
               rounded="lg"
@@ -178,6 +273,7 @@ const priorityLevel = ["High", "Medium", "Low"]
         <div class="mb-3">
           <label class="input-label">Location</label>
           <VTextField
+              v-model="repositoryCurrentData.location"
               placeholder="E.g. Musuan, Bukidnon"
               class="my-2"
               rounded="lg"
@@ -216,93 +312,117 @@ const priorityLevel = ["High", "Medium", "Low"]
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Technology Category</label>
-          <VAutocomplete
-              v-model="repositoryCurrentData.technology_category"
-              placeholder="Select Industry"
+          <label class="input-label">Start Date</label>
+          <VTextField
+              v-model="repositoryCurrentData.start_date"
+              type="date"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">End Date</label>
+          <VTextField
+              v-model="repositoryCurrentData.end_date"
+              type="date"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">Technology Category</label>
+          <VAutocomplete
+              v-model="repositoryCurrentData.technology_category"
+              placeholder="Select Technology Category"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="technologyCategories"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Technology Status</label>
           <VAutocomplete
               v-model="repositoryCurrentData.technology_status"
-              placeholder="Select Industry"
+              placeholder="Select Technology Status"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
+              :items="technologyStatus"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Technology Readiness Level</label>
           <VAutocomplete
               v-model="repositoryCurrentData.technology_readiness_level"
-              placeholder="Select Industry"
+              placeholder="Select Readiness Level"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
+              :items="readinessLevel"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Research Project/s Conducted</label>
           <VTextField
               v-model="repositoryCurrentData.rpt"
-              placeholder="Select Industry"
+              placeholder="Enter Research Project/s Conducted"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Funding Agency</label>
           <VAutocomplete
               v-model="repositoryCurrentData.funding_agency"
-              placeholder="Select Industry"
+              placeholder="Select Funding Agency"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
+              :items="agencies"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Technology Generator</label>
-          <VAutocomplete
+          <VTextField
               v-model="repositoryCurrentData.technology_generator"
-              placeholder="Select Industry"
+              placeholder="Enter Technology Generator"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Affiliation</label>
           <VTextField
-              v-model="repositoryCurrentData.technology_generator"
+              v-model="repositoryCurrentData.affiliation"
               placeholder="Enter Affiliation"
               class="my-2"
               rounded="lg"
@@ -310,84 +430,83 @@ const priorityLevel = ["High", "Medium", "Low"]
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Technology Owners</label>
           <VAutocomplete
               v-model="repositoryCurrentData.tech_owner"
-              placeholder="Select Industry"
+              placeholder="Select Technology Owners"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
+              :items="agencies"
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Existing or Potential Adaptors</label>
+          <label class="input-label">Existing or Potential Adopters</label>
           <VAutocomplete
-              v-model="repositoryCurrentData.adaptor_status"
-              placeholder="Select Industry"
+              v-model="repositoryCurrentData.adopters"
+              placeholder="Select Adopter"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
+              :items="adopters"
           />
         </div>
         <div class="mb-3">
           <label class="input-label">Technology Transfer Plan</label>
           <VAutocomplete
               v-model="repositoryCurrentData.transfer_plan"
-              placeholder="Select Industry"
+              placeholder="Select Transfer Plan"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="transferPlan"
+              :items="transferPlans"
           />
         </div>
         <div v-if="repositoryCurrentData.transfer_plan == 'Commercialization'">
           <div class="mb-3">
             <label class="input-label">IP Type</label>
             <VAutocomplete
-                v-model="repositoryCurrentData.technology_transfer_status"
-                placeholder="Select Industry"
+                v-model="commercialization.ipType"
+                placeholder="Select IP Type"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="industries"
+                :items="ipType"
             />
           </div>
           <div class="mb-3">
             <label class="input-label">IP Status</label>
             <VAutocomplete
-                v-model="repositoryCurrentData.ip_status"
-                placeholder="Select Industry"
+                v-model="commercialization.ipStatus"
+                placeholder="Select IP Status"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="industries"
+                :items="ipStatus"
             />
           </div>
           <div class="mb-3">
             <label class="input-label">IP Registration Number</label>
             <VTextField
-                v-model="repositoryCurrentData.ip_registration_number"
+                v-model="commercialization.regNo"
                 placeholder="Enter IP Registration Number"
                 class="my-2"
                 rounded="lg"
@@ -401,35 +520,35 @@ const priorityLevel = ["High", "Medium", "Low"]
           <div class="mb-3">
             <label class="input-label">Commercialization Status (Mode)</label>
             <VAutocomplete
-                v-model="repositoryCurrentData.commercialization_status"
-                placeholder="Enter IP Registration Number"
+                v-model="commercialization.modeStatus"
+                placeholder="Select Status Mode"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="industries"
+                :items="modeStatus"
             />
           </div>
           <div class="mb-3">
             <label class="input-label">Commercialization Status (Current)</label>
             <VAutocomplete
-                v-model="repositoryCurrentData.commercialization_status"
-                placeholder="Enter IP Registration Number"
+                v-model="commercialization.currentStatus"
+                placeholder="Select Current Commercialization Status"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="industries"
+                :items="currentStatus"
             />
           </div>
           <div class="mb-3">
-            <label class="input-label">Commercialization Status (Adaptor)</label>
+            <label class="input-label">Commercialization Status (Adopter)</label>
             <VTextField
-                v-model="repositoryCurrentData.adaptor_status"
+                v-model="commercialization.adopterStatus"
                 placeholder="Enter Commercialization Status"
                 class="my-2"
                 rounded="lg"
@@ -437,22 +556,20 @@ const priorityLevel = ["High", "Medium", "Low"]
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="industries"
             />
           </div>
         </div>
         <div class="mb-3" v-else>
           <label class="input-label">Technology Transfer Status</label>
-          <VAutocomplete
+          <VTextField
               v-model="repositoryCurrentData.technology_transfer_status"
-              placeholder="Select Industry"
+              placeholder="Select Transfer Status"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="industries"
           />
         </div>
         <div class="mb-3">
@@ -465,33 +582,9 @@ const priorityLevel = ["High", "Medium", "Low"]
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="priorityLevel"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Start Date</label>
-          <VTextField
-              type="date"
-              class="my-2"
-              
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">End Date</label>
-          <VTextField
-              type="date"
-              class="my-2"
-              
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
+              :item-value="priorityLevel => `${priorityLevel}`"
+              :items="priorityLevels"
+              :item-title="priorityLevel => `${priorityLevel.charAt(0).toUpperCase() + priorityLevel.slice(1)}`"
           />
         </div>
         <div class="mb-3">
@@ -526,6 +619,38 @@ const priorityLevel = ["High", "Medium", "Low"]
             <PhFileDashed size="50"/>
             <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
             <VFileInput id="dropzoneFile" style="display: none"/>
+          </div>
+        </div>
+        <div class="mb-10">
+          <label class="input-label">Location/Area</label>
+
+          <OrganizationFormMapPreview
+              class="my-2"
+              v-if="isMapPreview"
+              @setGeoJSONData="setGeoJSON"
+              @closeMapPreview="isMapPreview = false"
+          />
+          <div v-else>
+            <div class="my-2 file-upload-container" v-if="isEmptyObject(repositoryCurrentData.geojson)">
+              <PhFileDashed size="50"/>
+              <p class="text-dropzone">
+                Drag and drop files here or
+                <label class="file-label" for="dropzoneFileGeoJSON">Choose files</label>
+                or <label class="file-label" @click="isMapPreview = !isMapPreview">Draw Boundary</label>
+              </p>
+              <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
+            </div>
+            <div class="my-3" v-else>
+              <VDivider/>
+              <div class="d-flex align-center justify-space-between pa-2" >
+                <p class="dialog-boundary-title d-flex align-center">
+                  <PhPolygon class="mr-1"/>
+                  {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
+                </p>
+                <PhX class="cursor-pointer" @click="repositoryCurrentData.geojson = {}"/>
+              </div>
+              <VDivider/>
+            </div>
           </div>
         </div>
         <VRow class="ma-0" justify="end">
