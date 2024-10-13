@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {Repository} from '../../../interfaces/repository.interface.ts'
-  import {PropType} from "vue";
+  import {onMounted, PropType, ref} from "vue";
   import {useScreenStore} from "../../stores/screen-size.store.ts";
   import {useRouting} from "../../composables/useRouting.ts";
   const props = defineProps({
@@ -10,14 +10,19 @@
   });
 
   const {isDesktop} = useScreenStore();
-  const {router} = useRouting()
+  const {router, route} = useRouting()
+  const path = ref('/repositories')
 
   const goToRepositoryDetails = () => {
     router.push({
-      name: 'repository-data',
+      name: path.value === '/repositories' ?  'repository-data' : 'my-repository-data',
       params: { slug: props.repository?.slug }
     });
   }
+
+  onMounted(() => {
+    path.value = <string>route.path
+  })
 </script>
 
 <template>
@@ -33,11 +38,11 @@
         />
         <div class="ml-2">
           <p class="repository-title">{{ props.repository?.title }}</p>
-          <p class="repository-subtitle">{{ props.repository?.owner }} · {{ props.repository?.date?.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}</p>
+          <p class="repository-subtitle">{{ props.repository?.owner.username }} · {{ props.repository?.organizationData.name }} ({{ props.repository?.organizationData.acronym }}) · {{ new Date(props.repository?.updated_at).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
         </div>
       </div>
       <VBtn
-          :to="{ name: 'repository-data', params: { slug: props.repository?.slug } }"
+          :to="{ name: path == '/repositories' ?  'repository-data' : 'my-repository-data', params: { slug: props.repository?.slug } }"
           class="text-none bg-background view-details-btn"
           height="35px"
           width="95px"

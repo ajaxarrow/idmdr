@@ -4,22 +4,28 @@
   import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
   import {onMounted, onUnmounted, ref, watch} from "vue";
   import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
-  import {repositories} from "../../../data/repository.ts";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import {useRepositoryServices} from "../services/repository.services.ts";
   import {useTags} from "../composables/useTags.ts";
   import {Repository} from "../../../interfaces/repository.interface.ts";
   import {useUserStore} from "../../../core/stores/user.store.ts";
+  import Observer from "../../../core/components/Observer.vue";
+
 
   const {user} = useUserStore();
   const {tags, selectedTags, fetchTags} = useTags();
-  const {fetchRepositories, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
+  const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
   const searchQuery = ref('');
+  const repositoryItems = ref<Repository[]>([]);
   const repositoryData = ref<Repository[]>([]);
   const searchedRepositories = ref<Repository[]>([]);
   const {isSmall, isTablet} = useScreenStore();
   const showMoreChips = ref(false);
   const {route} = useRouting();
+
+  const reachEnd = ref(false)
+  const lastItemValue = ref(1);
+  const observerReady = ref(false)
 
   const toggleShowMoreChips = () => {
     showMoreChips.value =!showMoreChips.value;
@@ -30,7 +36,7 @@
   });
 
   watch(() => selectedTags.value, () => {
-    searchedRepositories.value = filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
+    searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
   })
 
   watch(() => selectedTags.value, (newVal) => {
@@ -39,19 +45,33 @@
     }
   })
 
+  const fetchMoreRepositories = async () => {
+    const data = await fetchRepositoriesWithPagination(lastItemValue.value);
+    repositoryData.value = [...repositoryData.value, ...data];
+    lastItemValue.value = lastItemValue.value + 1
+    if(data.length === 0){
+      reachEnd.value = true
+    }
+  }
+
   onMounted(async () => {
     fetchTags();
-    repositoryData.value = await fetchRepositories();
+    const fetchedData = await fetchRepositoriesWithPagination(lastItemValue.value);
+    repositoryData.value = [...fetchedData];
+    repositoryItems.value = repositoryData.value;
+    lastItemValue.value = lastItemValue.value + 1
+    observerReady.value = true
     searchedRepositories.value = repositoryData.value;
     if(route.query.tag){
       selectedTags.value.push(<string>route.query.tag);
-      searchedRepositories.value = filterRepositoriesbyTags(repositories, repositoryData.value, selectedTags.value);
+      searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
     }
   })
 
   onUnmounted(() => {
     searchQuery.value = '';
     selectedTags.value = [];
+    observerReady.value = false
   })
 
 </script>
@@ -147,11 +167,15 @@
             <PhCaretDown weight="fill" class="ml-1"/>
           </p>
         </VRow>
-        <RepositoryItem
-            v-if="searchedRepositories.length > 0"
-            v-for="repository in searchedRepositories"
-            :repository="repository"
-        />
+        <div v-if="searchedRepositories.length > 0">
+          <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
+          <div class="pa-3" v-if="reachEnd">
+            <p class="text-center">No more repositories to fetch!</p>
+          </div>
+          <div class="pa-3" v-else>
+            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
+          </div>
+        </div>
         <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
       </div>
     </div>

@@ -12,11 +12,13 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useRepositoryServices} from "../services/repository.services.ts";
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
-const {repository, setRepositoryData} = useRepositoryStore()
+const {repository} = useRepositoryStore()
+const {fetchRepositoryData} = useRepositoryServices()
 const searchedTopics = ref<Topic[]>([]);
 const topicList = ref<Topic[]>([]);
 const {route} = useRouting()
@@ -46,8 +48,8 @@ watch(() => searchQuery.value, () => {
   searchedTopics.value = filterTopicsBySearchQuery()
 });
 
-onMounted(() => {
-  setRepositoryData(route.params.slug as string);
+onMounted(async() => {
+  await fetchRepositoryData(route.params.slug as string);
   fetchTopicList();
 })
 </script>

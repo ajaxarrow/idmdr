@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhCloud, PhFactory, PhHandWaving, PhUsersThree} from "@phosphor-icons/vue";
-import {repositories} from '../../../data/repository.ts'
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import HeadlineCard from "../../../core/components/Dashboard/HeadlineCard.vue";
 import DataCard from "../../../core/components/Dashboard/DataCard.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useRepositoryServices} from "../../repository/services/repository.services.ts";
+import {Repository} from "../../../interfaces/repository.interface.ts";
+import {onMounted, ref} from "vue";
 
+const {fetchRepositories} = useRepositoryServices()
+const repositoryData = ref<Repository[]>([]);
 const {user} = useUserStore()
 const dataCards = [
   {
@@ -25,6 +29,10 @@ const dataCards = [
     icon: PhUsersThree
   }
 ]
+
+onMounted(async () => {
+  repositoryData.value = await fetchRepositories(3)
+})
 </script>
 
 <template>
@@ -51,7 +59,7 @@ const dataCards = [
         <p class="text-title">Browse Latest Repositories</p>
         <RouterLink class="link" :to="{name: 'repositories'}">See All</RouterLink>
       </VRow>
-      <RepositoryItem v-for="repository in repositories.slice(0, 4)" :repository="repository" />
+      <RepositoryItem v-for="repository in repositoryData" :repository="repository" />
     </div>
   </MainLayout>
 </template>
@@ -65,5 +73,13 @@ const dataCards = [
   .link{
     text-decoration: none !important;
     color: #191919;
+    padding: 4px 10px;
+  }
+
+  .link:hover{
+    background: #e4e4e4;
+    color: black;
+    font-weight: 500;
+    border-radius: 4px;
   }
 </style>

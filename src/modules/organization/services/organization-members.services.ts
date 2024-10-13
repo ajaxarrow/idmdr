@@ -49,6 +49,26 @@ export const useOrganizationMembersServices = () => {
     }
   }
 
+  const fetchUser = async (uid: string): Promise<User | null> => {
+    try {
+      const res = await server.get(`/users/${uid}`, {
+        headers: authorizationHeader,
+      });
+
+      return res.data.results
+        .filter((user: any) => user.username)
+        .map((user: any) => ({
+          uid: user.uid,
+          username: user.username,
+          email: user.email,
+          profile_picture: user.profile_picture,
+        }))[0];
+    } catch (e){
+      console.log(e)
+      return null;
+    }
+  }
+
   // API Functions
   const fetchOrgMembers = async (orgID: string): Promise<OrgMember[]> => {
     try {
@@ -153,6 +173,7 @@ export const useOrganizationMembersServices = () => {
     addOrgMember,
     updateOrgMember,
     removeOrgMember,
-    fetchUsers
+    fetchUsers,
+    fetchUser
   };
 };

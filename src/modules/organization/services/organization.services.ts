@@ -212,8 +212,6 @@ export const useOrganizationServices = () => {
     } catch (e: any) {
       loading.value = false;
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
-      // handleError(e.response?.data);
-      // return;
       clearErrorMessage();
       handleDynamicErrorMapping(e.response?.data, errorMessage, keyMapping);
 
@@ -384,7 +382,6 @@ export const useOrganizationServices = () => {
     });
     return Promise.all(promises);
   };
-
 
 
   const fetchOrganizationData = async (slug: string): Promise<Organization | null> => {

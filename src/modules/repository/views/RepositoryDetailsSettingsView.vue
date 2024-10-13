@@ -3,10 +3,12 @@
   import {useRepositoryStore} from "../stores/repository.store.ts";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-  const {repository, setRepositoryData} = useRepositoryStore();
+  import {useRepositoryServices} from "../services/repository.services.ts";
+  const {repository} = useRepositoryStore();
+  const {fetchRepositoryData} = useRepositoryServices()
   const {route} = useRouting()
   onMounted(() => {
-    setRepositoryData(route.params.slug as string);
+    fetchRepositoryData(route.params.slug as string);
   })
 </script>
 

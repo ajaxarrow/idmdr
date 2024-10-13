@@ -17,10 +17,12 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import "quill/dist/quill.core.css"
 import "quill/dist/quill.snow.css"
+import {useRepositoryServices} from "../services/repository.services.ts";
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
-const {repository, setRepositoryData} = useRepositoryStore();
+const {repository} = useRepositoryStore();
+const {fetchRepositoryData} = useRepositoryServices()
 const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
 const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
 const {route, router} = useRouting();
@@ -108,8 +110,8 @@ const scrollToCommentInput = () => {
   }
 }
 
-onMounted(() => {
-  setRepositoryData(route.params.slug as string);
+onMounted(async () => {
+  await fetchRepositoryData(route.params.slug as string);
   fetchCommentList()
   topic.value = fetchTopicByTopicID(<string>route.params.topic);
   totalComment.value = commentList.value.length

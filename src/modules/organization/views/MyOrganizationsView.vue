@@ -22,7 +22,7 @@ const observerReady = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
-    organizationData.value = myOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
+    organizationData.value = myOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) || organization.acronym?.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
   } else {
     organizationData.value = myOrganizations.value
   }

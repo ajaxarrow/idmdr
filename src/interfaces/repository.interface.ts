@@ -1,18 +1,7 @@
-interface Repository {
-  title: string;
-  subtitle: string;
-  slug: string;
-  organization: string;
-  owner: string;
-  date: Date;
-  sectors?: string[];
-  image?: string;
-  tags?: string[];
-  about?: string;
-  files?: FileData[]
-}
+import {Organization} from "./organization.interface.ts";
+import {User} from "./member.interface.ts";
 
-interface RepositoryData {
+interface Repository {
   visibility: number,
   uid: string,
   slug: string,
@@ -30,10 +19,11 @@ interface RepositoryData {
   technology_transfer_status: string,
   technology_generator: string,
   project_component: string,
-  adopters: string,
+  com_extra: Object | string,
+  adaptors: string,
   location: string,
   affiliation: string,
-  tags: string,
+  tags: string | string[],
   // start_date: Date,
   // end_date: Date,
   start_date: string,
@@ -42,10 +32,52 @@ interface RepositoryData {
   organization: string | null,
   priority_level: string,
   is_deleted: boolean,
+  image?: string,
   geojson: any,
   is_active: boolean,
-  is_approved: boolean
+  is_approved: boolean,
+  created_at?: string,
+  updated_at?: string,
+  owner_id?: string,
+  owner?: User,
+  organizationData?: Organization
+  files?: FileData[]
 }
+
+// interface RepositoryData {
+//   visibility: number,
+//   uid: string,
+//   slug: string,
+//   title: string,
+//   // subtitle: string,
+//   description: string,
+//   commodity: string,
+//   industry: string,
+//   technology_category: string,
+//   technology_status: string,
+//   technology_readiness_level: string,
+//   rpt: string,
+//   funding_agency: string,
+//   transfer_plan: string,
+//   technology_transfer_status: string,
+//   technology_generator: string,
+//   project_component: string,
+//   adopters: string,
+//   location: string,
+//   affiliation: string,
+//   tags: string,
+//   // start_date: Date,
+//   // end_date: Date,
+//   start_date: string,
+//   end_date: string,
+//   tech_owner: string,
+//   organization: string | null,
+//   priority_level: string,
+//   is_deleted: boolean,
+//   geojson: any,
+//   is_active: boolean,
+//   is_approved: boolean
+// }
 
 interface Commercialization{
   ipType: string,
@@ -64,4 +96,4 @@ interface FileData {
 
 
 
-export type {Repository, FileData, RepositoryData, Commercialization};
+export type {Repository, FileData, Commercialization};

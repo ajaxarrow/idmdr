@@ -1,16 +1,23 @@
 import {ref} from "vue";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {createGlobalState} from "@vueuse/core";
-import {useRepositoryServices} from "../services/repository.services.ts";
+
 
 const repository = ref<Repository | null | undefined>();
 const repositoryItems = ref<Repository[]>([]);
-const {fetchRepositoryData} = useRepositoryServices();
-
-const setRepositoryData = (slug: string) => {
-  repository.value = fetchRepositoryData(slug);
-}
+const myRepositories = ref<Repository[]>([]);
+const allRepositories = ref<Repository[]>([]);
 
 
 
-export const useRepositoryStore = createGlobalState(() => ({setRepositoryData, repository, repositoryItems}));
+// const setRepositoryData = async (slug: string, repositoryData: Repository[]) => {
+//   repository.value = await fetchRepositoryData(slug);
+// }
+
+export const useRepositoryStore = createGlobalState(() => ({
+
+  repository,
+  repositoryItems,
+  myRepositories,
+  allRepositories
+}));

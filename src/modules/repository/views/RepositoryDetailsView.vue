@@ -12,8 +12,13 @@
   } from "@phosphor-icons/vue";
   import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
   import {useRepositoryStore} from "../stores/repository.store.ts";
+  import {useRepositoryServices} from "../services/repository.services.ts";
+  import "quill/dist/quill.core.css"
+  import "quill/dist/quill.snow.css"
+
   const {route} = useRouting()
-  const {repository, setRepositoryData} = useRepositoryStore();
+  const {repository} = useRepositoryStore();
+  const {fetchRepositoryData} = useRepositoryServices();
 
   const selectedFileName = ref('');
   const selectedFileDescription = ref('');
@@ -107,8 +112,38 @@
     }
   }
 
-  onMounted(() => {
-    setRepositoryData(route.params.slug as string);
+  const formatDate = (date: string): string => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(date).toLocaleDateString('en-US', options);
+  };
+
+  const getRelativeTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const differenceInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    const times = {
+      year: 60 * 60 * 24 * 365,
+      month: 60 * 60 * 24 * 30,
+      week: 60 * 60 * 24 * 7,
+      day: 60 * 60 * 24,
+      hour: 60 * 60,
+      minute: 60,
+      second: 1,
+    };
+
+    for (const [unit, secondsInUnit] of Object.entries(times)) {
+      const elapsed = Math.floor(differenceInSeconds / secondsInUnit);
+      if (elapsed > 0) {
+        return `${elapsed} ${unit}${elapsed > 1 ? 's' : ''} ago`;
+      }
+    }
+
+    return 'Just Now';
+  };
+
+  onMounted(async () => {
+    await fetchRepositoryData(<string>route.params.slug);
   })
 
 </script>
@@ -116,15 +151,17 @@
 <template>
   <RepositoryDetailsLayout :repository="repository" activeTab="data">
     <div v-if="repository">
-      <div class="px-6 py-2">
+      <div class="px-5 py-4">
         <VRow class="ma-0">
           <VCol cols="12" sm="12" md="8" lg="9" xxl="9" xl="9">
-            <p class="text-about-heading">About Repository</p>
-            <div v-html="repository.about"></div>
+            <p class="text-about-heading py-2">About Repository</p>
+            <div class="ql-snow">
+              <div class="ql-editor" v-html="repository.description"></div>
+            </div>
           </VCol>
           <VCol cols="12" sm="12" md="4" lg="3" xxl="3" xl="9">
             <p class="text-subheading">Last Updated</p>
-            <p>3 days ago</p>
+            <p>{{getRelativeTime(repository.updated_at)}}</p>
             <p class="text-subheading mt-3">Tags</p>
             <RouterLink
                 v-for="tag in repository.tags"
@@ -146,58 +183,182 @@
         </VRow>
       </div>
       <VDivider/>
-      <div class="px-8 py-4">
-        <p class="text-about-heading">Files</p>
-        <VSheet width="100%"  class="file-container">
-          <div class="pa-4">
-            <VRow justify="space-between" align="center" class="ma-0">
-              <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>
-              <PhDownload size="24" class="cursor-pointer download-icon" @click="downloadFiles">
-                <VTooltip
-                    activator="parent"
-                    location="bottom"
-                >Download Repository Files</VTooltip>
-              </PhDownload>
-            </VRow>
-          </div>
-          <VDivider v-if="selectedFileDescription" />
-          <div class="px-6 py-4" v-if="selectedFileDescription">
-            <VRow class="ma-0" justify="space-between">
-              <div>
-                <p class="text-data-subheading d-flex align-center">
-                  <PhInfo size="20" class="mr-2"/>
-                  About the selected file
-                </p>
-                <p class="text-data-description">{{selectedFileDescription}}</p>
-              </div>
-              <p class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileName, selectedFileDescription)">
-                <PhDownload size="20" class="mr-2"/>
-                Download File
-              </p>
-            </VRow>
-          </div>
-          <VDivider/>
-          <div class="pa-2">
-            <VListItem
-                v-for="file in repository.files"
-                @click="selectFile(file.description, file.name)">
-              <div
-                  class="my-2 pa-1 d-flex align-center "
-                  :class="{'selected-file': selectedFileDescription === file.description}"
-              >
-                <component
-                    :is="getIcon(file.name).icon"
-                    class="mr-2"
-                    size="24"
-                    :color="getIcon(file.name).color"
-                />
-                {{file.name}}
-              </div>
-              <VDivider/>
-            </VListItem>
-          </div>
-        </VSheet>
+      <div class="px-7 py-5">
+        <p class="text-about-heading py-3">Project Components</p>
+        <VRow class="ma-0">
+          <VCol v-if="repository.organizationData" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Organization</p>
+            <p class="text-subtitle">{{ repository.organizationData.name}} ({{repository.organizationData.acronym}})</p>
+          </VCol>
+          <VCol v-if="repository.location" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Location</p>
+            <p class="text-subtitle">{{ repository.location}}</p>
+          </VCol>
+          <VCol v-if="repository.start_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Start Date</p>
+            <p class="text-subtitle">{{ formatDate(repository.start_date)}}</p>
+          </VCol>
+          <VCol v-if="repository.end_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">End Date</p>
+            <p class="text-subtitle">{{formatDate(repository.end_date)}}</p>
+          </VCol>
+          <VCol v-if="repository.funding_agency" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Funding Agency</p>
+            <p class="text-subtitle">{{repository.funding_agency}}</p>
+          </VCol>
+          <VCol v-if="repository.affiliation" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Affiliation</p>
+            <p class="text-subtitle">{{ repository.affiliation}}</p>
+          </VCol>
+          <VCol v-if="repository.commodity" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Commodity</p>
+            <p class="text-subtitle">{{repository.commodity}}</p>
+          </VCol>
+          <VCol v-if="repository.industry" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Industry</p>
+            <p class="text-subtitle">{{repository.industry}}</p>
+          </VCol>
+          <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Research Project/s Conducted</p>
+            <p class="text-subtitle">{{repository.rpt}}</p>
+          </VCol>
+          <VCol v-if="repository.priority_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Priority Level</p>
+            <p class="text-subtitle">{{repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1)}}</p>
+          </VCol>
+
+        </VRow>
       </div>
+      <VDivider/>
+      <div class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization'}">
+        <p class="text-about-heading py-3">Technology Details</p>
+        <VRow class="ma-0">
+          <VCol v-if="repository.technology_category" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Technology Category</p>
+            <p class="text-subtitle">{{ repository.technology_category}}</p>
+          </VCol>
+          <VCol v-if="repository.technology_status" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Technology Status</p>
+            <p class="text-subtitle">{{ repository.technology_status}}</p>
+          </VCol>
+          <VCol v-if="repository.technology_readiness_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Technology Readiness Level</p>
+            <p class="text-subtitle">{{ repository.technology_readiness_level}}</p>
+          </VCol>
+          <VCol v-if="repository.technology_generator" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Technology Generator</p>
+            <p class="text-subtitle">{{ repository.technology_generator}}</p>
+          </VCol>
+          <VCol v-if="repository.tech_owner" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Technology Owner</p>
+            <p class="text-subtitle">{{repository.tech_owner}}</p>
+          </VCol>
+          <VCol v-if="repository.adaptors" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Existing or Potential Adopters</p>
+            <p class="text-subtitle">{{repository.adaptors}}</p>
+          </VCol>
+          <VCol v-if="repository.transfer_plan" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Transfer Plan</p>
+            <p class="text-subtitle">{{ repository.transfer_plan}}</p>
+          </VCol>
+          <VCol v-if="repository.technology_transfer_status" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Transfer Status</p>
+            <p class="text-subtitle">{{ repository.technology_transfer_status}}</p>
+          </VCol>
+        </VRow>
+      </div>
+
+      <div  v-if="repository.transfer_plan == 'Commercialization'">
+        <VDivider/>
+        <div class="px-7 py-5">
+          <p class="text-about-heading py-3">Commercialization</p>
+          <VRow class="ma-0">
+            <VCol v-if="repository.com_extra.ipType" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">IP Type</p>
+              <p class="text-subtitle">{{ repository.com_extra.ipType}}</p>
+            </VCol>
+            <VCol v-if="repository.com_extra.ipStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">IP Status</p>
+              <p class="text-subtitle">{{ repository.com_extra.ipStatus}}</p>
+            </VCol>
+            <VCol v-if="repository.com_extra.regNo" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">IP Registration Number</p>
+              <p class="text-subtitle">{{ repository.com_extra.regNo}}</p>
+            </VCol>
+          </VRow>
+        </div>
+        <VDivider/>
+        <div class="px-7 py-5 mb-10">
+          <p class="text-about-heading py-3">Commercialization Status</p>
+          <VRow class="ma-0">
+            <VCol v-if="repository.com_extra.modeStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Mode Status</p>
+              <p class="text-subtitle">{{ repository.com_extra.modeStatus}}</p>
+            </VCol>
+            <VCol v-if="repository.com_extra.currentStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Current Status</p>
+              <p class="text-subtitle">{{ repository.com_extra.currentStatus}}</p>
+            </VCol>
+            <VCol v-if="repository.com_extra.adopterStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Adopter Status</p>
+              <p class="text-subtitle">{{ repository.com_extra.adopterStatus}}</p>
+            </VCol>
+          </VRow>
+        </div>
+      </div>
+
+<!--      <div class="px-8 py-4">-->
+<!--        <p class="text-about-heading">Files</p>-->
+<!--        <VSheet width="100%"  class="file-container">-->
+<!--          <div class="pa-4">-->
+<!--            <VRow justify="space-between" align="center" class="ma-0">-->
+<!--              <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>-->
+<!--              <PhDownload size="24" class="cursor-pointer download-icon" @click="downloadFiles">-->
+<!--                <VTooltip-->
+<!--                    activator="parent"-->
+<!--                    location="bottom"-->
+<!--                >Download Repository Files</VTooltip>-->
+<!--              </PhDownload>-->
+<!--            </VRow>-->
+<!--          </div>-->
+<!--          <VDivider v-if="selectedFileDescription" />-->
+<!--          <div class="px-6 py-4" v-if="selectedFileDescription">-->
+<!--            <VRow class="ma-0" justify="space-between">-->
+<!--              <div>-->
+<!--                <p class="text-data-subheading d-flex align-center">-->
+<!--                  <PhInfo size="20" class="mr-2"/>-->
+<!--                  About the selected file-->
+<!--                </p>-->
+<!--                <p class="text-data-description">{{selectedFileDescription}}</p>-->
+<!--              </div>-->
+<!--              <p class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileName, selectedFileDescription)">-->
+<!--                <PhDownload size="20" class="mr-2"/>-->
+<!--                Download File-->
+<!--              </p>-->
+<!--            </VRow>-->
+<!--          </div>-->
+<!--          <VDivider/>-->
+<!--          <div class="pa-2">-->
+<!--            <VListItem-->
+<!--                v-for="file in repository.files"-->
+<!--                @click="selectFile(file.description, file.name)">-->
+<!--              <div-->
+<!--                  class="my-2 pa-1 d-flex align-center "-->
+<!--                  :class="{'selected-file': selectedFileDescription === file.description}"-->
+<!--              >-->
+<!--                <component-->
+<!--                    :is="getIcon(file.name).icon"-->
+<!--                    class="mr-2"-->
+<!--                    size="24"-->
+<!--                    :color="getIcon(file.name).color"-->
+<!--                />-->
+<!--                {{file.name}}-->
+<!--              </div>-->
+<!--              <VDivider/>-->
+<!--            </VListItem>-->
+<!--          </div>-->
+<!--        </VSheet>-->
+<!--      </div>-->
     </div>
   </RepositoryDetailsLayout>
 

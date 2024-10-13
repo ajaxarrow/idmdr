@@ -1,12 +1,11 @@
 import {ref} from "vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
-import organizationData from "../../../data/organizations.ts";
 import {createGlobalState} from "@vueuse/core";
 
 const organization = ref<Organization | null | undefined>();
 const selectedOrganization = ref<Organization | null>(null);
-const mapOrganizations = ref<Organization[]>(organizationData);
-const myOrganizations = ref<Organization[]>(organizationData);
+const mapOrganizations = ref<Organization[]>([]);
+const myOrganizations = ref<Organization[]>([]);
 const allOrganizations = ref<Organization[]>([]);
 
 const selectOrganization = (organization: Organization) => {
