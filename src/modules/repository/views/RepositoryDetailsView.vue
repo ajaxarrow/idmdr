@@ -19,8 +19,8 @@
   const {repository} = useRepositoryStore();
   const {fetchRepositoryData} = useRepositoryServices();
 
-  const selectedFileName = ref('');
-  const selectedFileDescription = ref('');
+  // const selectedFileName = ref('');
+  // const selectedFileDescription = ref('');
 
   // const downloadFiles = () => {
   //   let fileContent = '';
