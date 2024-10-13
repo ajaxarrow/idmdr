@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import {onMounted, ref} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
-  import {
-    PhFile, PhFileArchive,
-    PhFileCsv, PhFileDoc, PhFileJpg,
-    PhFileJs,
-    PhFilePdf, PhFilePng,
-    PhFilePpt,
-    PhFileVideo, PhFileXls,
-  } from "@phosphor-icons/vue";
+  // import {
+  //   PhFile, PhFileArchive,
+  //   PhFileCsv, PhFileDoc, PhFileJpg,
+  //   PhFileJs,
+  //   PhFilePdf, PhFilePng,
+  //   PhFilePpt,
+  //   PhFileVideo, PhFileXls,
+  // } from "@phosphor-icons/vue";
   import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
   import {useRepositoryStore} from "../stores/repository.store.ts";
   import {useRepositoryServices} from "../services/repository.services.ts";
@@ -22,94 +22,94 @@
   const selectedFileName = ref('');
   const selectedFileDescription = ref('');
 
-  const downloadFiles = () => {
-    let fileContent = '';
-    if (repository.value) {
-      fileContent += `Repository Name: ${repository.value?.title}\n\n`;
-      if (repository.value?.files) {
-        repository.value?.files.forEach((file, index) => {
-          fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-        });
-      }
-    }
+  // const downloadFiles = () => {
+  //   let fileContent = '';
+  //   if (repository.value) {
+  //     fileContent += `Repository Name: ${repository.value?.title}\n\n`;
+  //     if (repository.value?.files) {
+  //       repository.value?.files.forEach((file, index) => {
+  //         fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+  //       });
+  //     }
+  //   }
+  //
+  //   const blob = new Blob([fileContent], { type: 'text/plain' });
+  //
+  //   const url = URL.createObjectURL(blob);
+  //
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.download = `${repository.value?.slug}.txt`;
+  //
+  //   link.click();
+  //
+  //   URL.revokeObjectURL(url);
+  // }
 
-    const blob = new Blob([fileContent], { type: 'text/plain' });
+  // const downloadFile = (filename: string, description: string): void => {
+  //   let fileContent = '';
+  //   fileContent += `Name: ${filename}\nDescription: ${description}\n\n`;
+  //
+  //   const blob = new Blob([fileContent], { type: 'text/plain' });
+  //
+  //   const url = URL.createObjectURL(blob);
+  //
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.setAttribute('download', `${filename}.txt`);
+  //
+  //   document.body.appendChild(link);
+  //
+  //   link.click();
+  //
+  //   document.body.removeChild(link);
+  //
+  //   URL.revokeObjectURL(url);
+  // }
+  //
+  // const selectFile = (fileDesc: string, filename: string) => {
+  //   if(selectedFileDescription.value === fileDesc){
+  //     selectedFileDescription.value = ''
+  //     selectedFileName.value = ''
+  //   } else {
+  //     selectedFileDescription.value = fileDesc
+  //     selectedFileName.value = filename
+  //   }
+  // }
+  //
+  // const getFileExtension = (filename: string): string | null => {
+  //   const lastDotIndex = filename.lastIndexOf('.');
+  //   if (lastDotIndex === -1) {
+  //     return null;
+  //   }
+  //   const extension = filename.substring(lastDotIndex + 1);
+  //   return extension.toLowerCase();
+  // }
+  //
+  // interface FileIcon {
+  //   [key: string]: { icon: any, color: string };
+  // }
 
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${repository.value?.slug}.txt`;
-
-    link.click();
-
-    URL.revokeObjectURL(url);
-  }
-
-  const downloadFile = (filename: string, description: string): void => {
-    let fileContent = '';
-    fileContent += `Name: ${filename}\nDescription: ${description}\n\n`;
-
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${filename}.txt`);
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
-  }
-
-  const selectFile = (fileDesc: string, filename: string) => {
-    if(selectedFileDescription.value === fileDesc){
-      selectedFileDescription.value = ''
-      selectedFileName.value = ''
-    } else {
-      selectedFileDescription.value = fileDesc
-      selectedFileName.value = filename
-    }
-  }
-
-  const getFileExtension = (filename: string): string | null => {
-    const lastDotIndex = filename.lastIndexOf('.');
-    if (lastDotIndex === -1) {
-      return null;
-    }
-    const extension = filename.substring(lastDotIndex + 1);
-    return extension.toLowerCase();
-  }
-
-  interface FileIcon {
-    [key: string]: { icon: any, color: string };
-  }
-
-  const getIcon = (name: string) => {
-    const extension = getFileExtension(name);
-    if (extension) {
-      const iconMap: FileIcon = {
-        'json': {icon: PhFileJs, color: '#C43ED0'},
-        'csv': {icon: PhFileCsv, color: '#3291C7'},
-        'pdf': {icon: PhFilePdf, color: '#C83246'},
-        'docx': {icon: PhFileDoc, color: '#3291C7'},
-        'zip': {icon: PhFileArchive, color: '#3291C7'},
-        'xlsx': {icon: PhFileXls, color: '#033512'},
-        'jpg': {icon: PhFileJpg, color: '#97411c'},
-        'png': {icon: PhFilePng, color: '#1c7e97'},
-        'ppt': {icon: PhFilePpt, color: '#971c1c'},
-        'mp4': {icon: PhFileVideo, color: '#591c17'},
-      };
-      return iconMap[extension] || {icon: PhFile, color: '#32C8B4'};
-    } else {
-      return {icon: PhFile, color: '#32C8B4'};
-    }
-  }
+  // const getIcon = (name: string) => {
+  //   const extension = getFileExtension(name);
+  //   if (extension) {
+  //     const iconMap: FileIcon = {
+  //       'json': {icon: PhFileJs, color: '#C43ED0'},
+  //       'csv': {icon: PhFileCsv, color: '#3291C7'},
+  //       'pdf': {icon: PhFilePdf, color: '#C83246'},
+  //       'docx': {icon: PhFileDoc, color: '#3291C7'},
+  //       'zip': {icon: PhFileArchive, color: '#3291C7'},
+  //       'xlsx': {icon: PhFileXls, color: '#033512'},
+  //       'jpg': {icon: PhFileJpg, color: '#97411c'},
+  //       'png': {icon: PhFilePng, color: '#1c7e97'},
+  //       'ppt': {icon: PhFilePpt, color: '#971c1c'},
+  //       'mp4': {icon: PhFileVideo, color: '#591c17'},
+  //     };
+  //     return iconMap[extension] || {icon: PhFile, color: '#32C8B4'};
+  //   } else {
+  //     return {icon: PhFile, color: '#32C8B4'};
+  //   }
+  // }
 
   const formatDate = (date: string): string => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
