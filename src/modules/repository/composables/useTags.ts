@@ -3,7 +3,7 @@ import { commodities, industries, technologyCategories } from "../../../data/rep
 
 export const useTags = () => {
   const selectedTags = ref<string[]>([]);
-  const tags = ref([
+  const tags = ref<string[]>([
     "Agricultural Analytics",
     "Agricultural Data",
     "Agricultural Technology",

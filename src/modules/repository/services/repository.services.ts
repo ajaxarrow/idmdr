@@ -235,6 +235,7 @@ export const useRepositoryServices = () => {
           adaptors: repo.adaptors || "",
           geojson: isEmptyObject(repo.geojson) ? {} : JSON.parse(repo.geojson),
           com_extra: isEmptyObject(repo.com_extra) ? {} : JSON.parse(repo.com_extra),
+          commercialization: isEmptyObject(repo.com_extra) ? {} : JSON.parse(repo.com_extra),
           image: 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
           created_at: repo.created_at || "",
           updated_at: repo.updated_at || "",
