@@ -38,7 +38,7 @@
         />
         <div class="ml-2">
           <p class="repository-title">{{ props.repository?.title }}</p>
-          <p class="repository-subtitle">{{ props.repository?.owner?.username }} · {{ props.repository?.organizationData?.name }} ({{ props.repository?.organizationData?.acronym }}) · {{ new Date(props.repository?.updated_at).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
+          <p class="repository-subtitle">{{ props.repository?.owner?.username }} · {{ props.repository?.organizationData?.name }} ({{ props.repository?.organizationData?.acronym }}) · {{ new Date(props.repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
         </div>
       </div>
       <VBtn
