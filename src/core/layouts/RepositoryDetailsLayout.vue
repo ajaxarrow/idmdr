@@ -138,7 +138,7 @@ onMounted(()=>{
           v-for="tab in computedTabs"
           class="tab-title text-none mx-2"
           :value="tab.name.toLowerCase()"
-          @click="navigateTo(tab.linkName)"
+          @click="navigateTo(<string>tab.linkName)"
         >
           {{tab.name}}
         </VTab>
