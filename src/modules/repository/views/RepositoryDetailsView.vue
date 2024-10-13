@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {onMounted, ref} from "vue";
+  import {onMounted} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   // import {
   //   PhFile, PhFileArchive,
