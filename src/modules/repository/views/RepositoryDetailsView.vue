@@ -2,13 +2,12 @@
   import {onMounted, ref} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import {
-    PhDownload,
     PhFile, PhFileArchive,
     PhFileCsv, PhFileDoc, PhFileJpg,
     PhFileJs,
     PhFilePdf, PhFilePng,
     PhFilePpt,
-    PhFileVideo, PhFileXls, PhInfo,
+    PhFileVideo, PhFileXls,
   } from "@phosphor-icons/vue";
   import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
   import {useRepositoryStore} from "../stores/repository.store.ts";
