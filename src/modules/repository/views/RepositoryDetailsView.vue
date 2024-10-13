@@ -14,11 +14,12 @@
   import {useRepositoryServices} from "../services/repository.services.ts";
   import "quill/dist/quill.core.css"
   import "quill/dist/quill.snow.css"
+  import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 
   const {route} = useRouting()
   const {repository} = useRepositoryStore();
   const {fetchRepositoryData} = useRepositoryServices();
-
+  const {setSnackbarMessage} = useSnackbarStore()
   // const selectedFileName = ref('');
   // const selectedFileDescription = ref('');
 
@@ -143,6 +144,7 @@
 
   onMounted(async () => {
     await fetchRepositoryData(<string>route.params.slug);
+    await setSnackbarMessage()
   })
 
 </script>

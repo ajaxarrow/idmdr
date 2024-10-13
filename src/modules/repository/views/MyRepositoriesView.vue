@@ -10,8 +10,9 @@ import {useTags} from "../composables/useTags.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import Observer from "../../../core/components/Observer.vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 
-
+const {setSnackbarMessage} = useSnackbarStore()
 const {user} = useUserStore();
 const {tags, selectedTags, fetchTags} = useTags();
 const {fetchRepositoriesByUserWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
@@ -66,6 +67,7 @@ onMounted(async () => {
     selectedTags.value.push(<string>route.query.tag);
     searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
   }
+  await setSnackbarMessage()
 })
 
 onUnmounted(() => {
