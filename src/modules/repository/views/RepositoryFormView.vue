@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {onMounted, reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {PhArrowLeft, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {Commercialization, Repository} from "../../../interfaces/repository.interface.ts";
@@ -704,7 +704,7 @@ onMounted( async () => {
               variant="outlined"
               color="primary"
               base-color="gs60"
-              v-model="repositoryData.tags"
+              v-model="repositoryData.tags as string[]"
               :items="tags"
               multiple
               chips
