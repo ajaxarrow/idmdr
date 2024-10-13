@@ -6,32 +6,80 @@ const repositoryRoutes = [
     component: () => import('../../modules/repository/views/RepositoriesView.vue')
   },
   {
-    path: '/repository/new',
+    path: '/my-repositories',
+    name: 'my-repositories',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/MyRepositoriesView.vue')
+  },
+  {
+    path: '/repositories/new',
     name: 'new-repository',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryFormView.vue')
   },
   {
-    path: '/repository/:slug',
+    path: '/repositories/edit/:slug',
+    name: 'edit-repository',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryFormView.vue')
+  },
+  {
+    path: '/my-repositories/new',
+    name: 'new-repository-my',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryFormView.vue')
+  },
+  {
+    path: '/my-repositories/edit/:slug',
+    name: 'edit-repository-my',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryFormView.vue')
+  },
+  {
+    path: '/repositories/:slug',
     name: 'repository-data',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsView.vue')
   },
   {
-    path: '/repository/:slug/discussions',
+    path: '/repositories/:slug/discussions',
     name: 'repository-discussions',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionView.vue')
   },
   {
-    path: '/repository/:slug/discussions/:topic',
+    path: '/repositories/:slug/discussions/:topic',
     name: 'repository-discussions-topic',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionTopicView.vue')
   },
   {
-    path: '/repository/:slug/settings',
+    path: '/repositories/:slug/settings',
     name: 'repository-settings',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsSettingsView.vue')
+  },
+  {
+    path: '/my-repositories/:slug',
+    name: 'my-repository-data',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsView.vue')
+  },
+  {
+    path: '/my-repositories/:slug/discussions',
+    name: 'my-repository-discussions',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionView.vue')
+  },
+  {
+    path: '/my-repositories/:slug/discussions/:topic',
+    name: 'my-repository-discussions-topic',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionTopicView.vue')
+  },
+  {
+    path: '/my-repositories/:slug/settings',
+    name: 'my-repository-settings',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsSettingsView.vue')
   }
