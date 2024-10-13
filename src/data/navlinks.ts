@@ -41,6 +41,11 @@ export const navLinks = [
   // Conditionally include "My Organizations" and "Settings" links
   ...(user.value ? [
     {
+      name: 'My Repositories',
+      link: '/my-repositories',
+      icon: PhCloud
+    },
+    {
       name: 'My Organizations',
       link: '/my-organizations',
       icon: PhUsersFour
