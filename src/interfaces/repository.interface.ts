@@ -19,7 +19,8 @@ interface Repository {
   technology_transfer_status: string,
   technology_generator: string,
   project_component: string,
-  com_extra: Object | string,
+  com_extra: Object |string,
+  commercialization?: Commercialization,
   adaptors: string,
   location: string,
   affiliation: string,
@@ -41,7 +42,8 @@ interface Repository {
   owner_id?: string,
   owner?: User,
   organizationData?: Organization
-  files?: FileData[]
+  files?: FileData[],
+  sectors?: string[],
 }
 
 // interface RepositoryData {

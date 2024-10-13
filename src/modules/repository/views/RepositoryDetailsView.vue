@@ -273,17 +273,17 @@
         <div class="px-7 py-5">
           <p class="text-about-heading py-3">Commercialization</p>
           <VRow class="ma-0">
-            <VCol v-if="repository.com_extra.ipType" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.ipType" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">IP Type</p>
-              <p class="text-subtitle">{{ repository.com_extra.ipType}}</p>
+              <p class="text-subtitle">{{ repository.commercialization.ipType}}</p>
             </VCol>
-            <VCol v-if="repository.com_extra.ipStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.ipStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">IP Status</p>
-              <p class="text-subtitle">{{ repository.com_extra.ipStatus}}</p>
+              <p class="text-subtitle">{{ repository.commercialization.ipStatus}}</p>
             </VCol>
-            <VCol v-if="repository.com_extra.regNo" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.regNo" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">IP Registration Number</p>
-              <p class="text-subtitle">{{ repository.com_extra.regNo}}</p>
+              <p class="text-subtitle">{{ repository.commercialization.regNo}}</p>
             </VCol>
           </VRow>
         </div>
@@ -291,17 +291,17 @@
         <div class="px-7 py-5 mb-10">
           <p class="text-about-heading py-3">Commercialization Status</p>
           <VRow class="ma-0">
-            <VCol v-if="repository.com_extra.modeStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.modeStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Mode Status</p>
-              <p class="text-subtitle">{{ repository.com_extra.modeStatus}}</p>
+              <p class="text-subtitle">{{ repository.commercialization.modeStatus}}</p>
             </VCol>
-            <VCol v-if="repository.com_extra.currentStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.currentStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Current Status</p>
-              <p class="text-subtitle">{{ repository.com_extra.currentStatus}}</p>
+              <p class="text-subtitle">{{ repository.commercialization.currentStatus}}</p>
             </VCol>
-            <VCol v-if="repository.com_extra.adopterStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.adopterStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Adopter Status</p>
-              <p class="text-subtitle">{{ repository.com_extra.adopterStatus}}</p>
+              <p class="text-subtitle">{{ repository.commercialization.adopterStatus}}</p>
             </VCol>
           </VRow>
         </div>
