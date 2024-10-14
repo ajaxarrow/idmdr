@@ -3,7 +3,6 @@ import {onMounted, PropType, ref} from "vue";
 import {Topic} from "../../../../interfaces/discussion.interface.ts";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
 import {useRouting} from "../../../../core/composables/useRouting.ts";
-import {useRepositoryDiscussionCommentServices} from "../../services/repository-discussion-comment.services.ts";
 const props = defineProps({
   topic: {
     type: Object as PropType<Topic>,
@@ -45,7 +44,7 @@ onMounted(() => {
         />
         <div class="ml-2">
           <p class="topic-title">{{ props.topic?.topic_title }}</p>
-          <p class="topic-subtitle">{{ props.topic?.userData.username }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
+          <p class="topic-subtitle">{{ props.topic?.userData?.username }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
         </div>
       </div>
       <VBtn
