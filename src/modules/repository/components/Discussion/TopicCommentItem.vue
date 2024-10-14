@@ -63,8 +63,8 @@ const handleDelete = (comment: Comment) => {
       />
       <div class="ml-2 owner-area">
         <div style="line-height: 20px">
-          <p class="topic-subtitle">{{ props.comment?.userData.username }}</p>
-          <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(props.comment.date_updated)}}</p>
+          <p class="topic-subtitle">{{ props.comment?.userData?.username }}</p>
+          <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(props.comment.date_updated as string)}}</p>
         </div>
       </div>
       <p class="mb-3 ml-2 content-area">{{props.comment?.comment_content}}</p>
