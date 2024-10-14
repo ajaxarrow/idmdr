@@ -7,7 +7,7 @@ import {useRouting} from "../../../../core/composables/useRouting.ts";
 import {useRepositoryDiscussionTopicServices} from "../../services/repository-discussion-topic.services.ts";
 import {useUserStore} from "../../../../core/stores/user.store.ts";
 
-  const {addDiscussionTopic, updateDiscussionTopic, errorMessage, hasErrorMessages, loading} = useRepositoryDiscussionTopicServices();
+  const {addDiscussionTopic, updateDiscussionTopic, errorMessage, hasErrorMessages} = useRepositoryDiscussionTopicServices();
   const {route} = useRouting();
   const {userData} = useUserStore();
   const emits = defineEmits(['callback']);
@@ -47,7 +47,7 @@ import {useUserStore} from "../../../../core/stores/user.store.ts";
     }
   }
 
-  const updateTopicData = async (currentTopic: Topic) => {
+  const updateTopicData = async () => {
     await updateDiscussionTopic(discussionTopicData, <string>discussionTopicData.id);
     if(!hasErrorMessages(errorMessage)) {
       clearTopicData();
@@ -116,7 +116,7 @@ import {useUserStore} from "../../../../core/stores/user.store.ts";
           Close
         </VBtnPrimaryAlt>
         <VBtnPrimaryAlt
-            @click="props.formType === FormType.edit ? updateTopicData(<Topic>props.topic) : addTopicData()"
+            @click="props.formType === FormType.edit ? updateTopicData() : addTopicData()"
             width="86"
             class="submit-button"
         >
