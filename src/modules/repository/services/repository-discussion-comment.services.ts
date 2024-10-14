@@ -1,43 +1,72 @@
-import {Comment} from "../../../interfaces/dicussion.interface.ts";
-import comments from "../../../data/comment.ts";
-import {ref} from "vue";
+import {Comment} from "../../../interfaces/discussion.interface.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
+import {server} from "../../../plugins/axios.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useRepositoryDiscussionTopicServices} from "./repository-discussion-topic.services.ts";
+
+const {fetchUser} = useOrganizationMembersServices()
+const {fetchDiscussionTopicByID} = useRepositoryDiscussionTopicServices();
+const { userData, user } = useUserStore();
+const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
+const {showSnackbarMessage} = useSnackbarStore();
 
 export const useRepositoryDiscussionCommentServices = () => {
 
-  const commentsList = ref(comments);
+  const fetchCommentsByDiscussion = async (id: string): Promise<Comment[]> => {
+    const data = await fetchDiscussionTopicByID(id)
+    // @ts-ignore
+    return Promise.all(data.comments.map(async (comment) => {
+      const ownerData = await fetchUser(comment.user)
+      return {
+        id: comment.id,
+        comment_content: comment.comment_content,
+        date_created: comment.date_created,
+        date_updated: comment.date_updated,
+        userData: ownerData,
+        user: comment.user
+      }
+    }))
+  }
 
-  const fetchCommentsByTopic = (id: string): Comment[] => {
-    const commentList = comments.filter(comment => comment.topicID === id);
-    if (commentList) {
-      return commentList;
-    } else {
-      console.error('no comment')
-      return [];
+  const saveDiscussionTopicComment = async (comment: Comment, endpoint: string, type: string) => {
+    try {
+      await (type === 'create' ? server.post : server.put)(
+        endpoint,
+        comment,
+        {
+          headers: authorizationHeader
+        }
+      );
+    } catch (e: any) {
+      showSnackbarMessage('OOPS! Something went wrong', Status.error);
+      return;
     }
   }
 
-  const addComment = async (comment: Comment) => {
-    commentsList.value.push(comment);
+  const addDiscussionTopicComment = async(comment: Comment, id: string) => {
+    await saveDiscussionTopicComment(comment, `/v1/discussions/${id}/comments/`, 'create');
   }
 
-  const updateComment = async (comment: Comment) => {
-    const index = commentsList.value.findIndex(c => c.id === comment.id);
-    if (index !== -1) {
-      commentsList.value[index] = comment;
-    }
+  const updateDiscussionTopicComment = async(comment: Comment, id: string) => {
+    await saveDiscussionTopicComment(comment, `/comments/${id}/`, 'create');
   }
 
-  const deleteComment = async (comment: Comment) => {
-    const index = commentsList.value.findIndex(c => c.id === comment.id);
-    if (index !== -1) {
-      commentsList.value.splice(index, 1);
+  const deleteDiscussionTopicComment = async(id: string) => {
+    try{
+      await server.delete(`/v1/comments/${id}/`, {
+        headers: authorizationHeader
+      });
+    } catch (e: any) {
+      console.log(e)
     }
   }
 
   return {
-    fetchCommentsByTopic,
-    addComment,
-    updateComment,
-    deleteComment
+    fetchCommentsByDiscussion,
+    addDiscussionTopicComment,
+    updateDiscussionTopicComment,
+    deleteDiscussionTopicComment
   }
 }

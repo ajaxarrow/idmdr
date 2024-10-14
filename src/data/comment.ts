@@ -1,4 +1,4 @@
-import {Comment} from "../interfaces/dicussion.interface.ts";
+import {Comment} from "../interfaces/discussion.interface.ts";
 
 const comments: Comment[] = [
   {

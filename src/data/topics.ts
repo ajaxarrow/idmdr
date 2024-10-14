@@ -1,4 +1,4 @@
-import { Topic } from "../interfaces/dicussion.interface.ts";
+import { Topic } from "../interfaces/discussion.interface.ts";
 
 const topics: Topic[] = [
   {

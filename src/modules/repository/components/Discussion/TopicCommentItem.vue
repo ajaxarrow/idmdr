@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {PropType, ref} from "vue";
-import {Comment} from "../../../../interfaces/dicussion.interface.ts";
+import {Comment} from "../../../../interfaces/discussion.interface.ts";
 import {PhDotsThreeOutlineVertical, PhPencil, PhTrash} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../../core/components/DeleteDialog.vue";
+import {useUserStore} from "../../../../core/stores/user.store.ts";
 
+const {userData, user} = useUserStore()
 const commentActionMenu = ref(false)
 const props = defineProps({
   comment: {
@@ -16,6 +18,31 @@ const props = defineProps({
     type: Function as PropType<(comment: Comment) => void>,
   }
 })
+
+const getRelativeTime = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const differenceInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  const times = {
+    year: 60 * 60 * 24 * 365,
+    month: 60 * 60 * 24 * 30,
+    week: 60 * 60 * 24 * 7,
+    day: 60 * 60 * 24,
+    hour: 60 * 60,
+    minute: 60,
+    second: 1,
+  };
+
+  for (const [unit, secondsInUnit] of Object.entries(times)) {
+    const elapsed = Math.floor(differenceInSeconds / secondsInUnit);
+    if (elapsed > 0) {
+      return `${elapsed} ${unit}${elapsed > 1 ? 's' : ''} ago`;
+    }
+  }
+
+  return 'Just Now';
+};
 
 const handleDelete = (comment: Comment) => {
   props.deleteComment?.(comment)
@@ -32,16 +59,16 @@ const handleDelete = (comment: Comment) => {
           cover
           height="40px"
           width="40px"
-          :src="props.comment?.ownerImage ? props.comment.ownerImage : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+          :src="props.comment?.userData ? props.comment.userData.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
       />
       <div class="ml-2 owner-area">
         <div style="line-height: 20px">
-          <p class="topic-subtitle">{{ props.comment?.owner }}</p>
-          <p class="text-gs60" style="font-size: 14px">Commented a month ago</p>
+          <p class="topic-subtitle">{{ props.comment?.userData.username }}</p>
+          <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(props.comment.date_updated)}}</p>
         </div>
       </div>
-      <p class="mb-3 ml-2 content-area">{{props.comment?.content}}</p>
-      <VMenu v-model="commentActionMenu" :close-on-content-click="false" class="action-area">
+      <p class="mb-3 ml-2 content-area">{{props.comment?.comment_content}}</p>
+      <VMenu v-if="user && userData.uid === props.comment?.user" v-model="commentActionMenu" :close-on-content-click="false" class="action-area">
         <template #activator="{ props }">
           <PhDotsThreeOutlineVertical v-bind="props" weight="fill" class="cursor-pointer action-icon"/>
         </template>

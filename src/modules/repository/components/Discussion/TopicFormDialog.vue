@@ -2,12 +2,14 @@
 import {computed, onMounted, PropType, reactive, ref} from "vue";
   import QuillRichTextEditor from "../../../../core/components/QuillRichTextEditor.vue";
 import {FormType} from "../../../../interfaces/enums/formtype.enum.ts";
-import {Topic} from "../../../../interfaces/dicussion.interface.ts";
+import {Topic} from "../../../../interfaces/discussion.interface.ts";
 import {useRouting} from "../../../../core/composables/useRouting.ts";
 import {useRepositoryDiscussionTopicServices} from "../../services/repository-discussion-topic.services.ts";
+import {useUserStore} from "../../../../core/stores/user.store.ts";
 
-  const {addTopic, updateTopic} = useRepositoryDiscussionTopicServices();
+  const {addDiscussionTopic, updateDiscussionTopic, errorMessage, hasErrorMessages, loading} = useRepositoryDiscussionTopicServices();
   const {route} = useRouting();
+  const {userData} = useUserStore();
   const emits = defineEmits(['callback']);
   const action = computed(() => props.formType === FormType.edit ? 'Update' : 'Add');
   const props = defineProps({
@@ -20,54 +22,48 @@ import {useRepositoryDiscussionTopicServices} from "../../services/repository-di
   })
 
   const topicDialog = ref(false);
-  const topic = reactive({
-    title: '',
-    description: ``
+  const discussionTopicInitialState = reactive<Topic>({
+    repo_id: '',
+    topic_content: '',
+    topic_title: '',
+    id: '',
+    user: ''
+  });
+
+  const discussionTopicData = reactive<Topic>({
+    ...discussionTopicInitialState
   })
 
-  const generateRandom10DigitNumber = () => {
-    return Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
-  }
 
   const addTopicData = async () => {
-    const newTopic: Topic = {
-      owner: 'Tabilla, Jiu Axl',
-      ownerImage: 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
-      id: generateRandom10DigitNumber().toString(),
-      repository: <string>route.params.slug,
-      title: topic.title,
-      description: topic.description
+    discussionTopicData.repo_id = <string>route.params.slug;
+    discussionTopicData.user = userData.uid;
+
+    await addDiscussionTopic(discussionTopicData);
+    if(!hasErrorMessages(errorMessage)) {
+      clearTopicData();
+      emits('callback')
+      topicDialog.value = false;
     }
-    await addTopic(newTopic);
-    clearTopicData();
-    emits('callback')
-    topicDialog.value = false;
   }
 
   const updateTopicData = async (currentTopic: Topic) => {
-    await updateTopic({
-      owner: currentTopic.owner,
-      ownerImage: currentTopic.ownerImage,
-      id: currentTopic.id,
-      repository: currentTopic.repository,
-      title: topic.title,
-      description: topic.description
-    });
-    clearTopicData();
-    emits('callback')
-    topicDialog.value = false;
+    await updateDiscussionTopic(discussionTopicData, <string>discussionTopicData.id);
+    if(!hasErrorMessages(errorMessage)) {
+      clearTopicData();
+      emits('callback')
+      topicDialog.value = false;
+    }
   }
 
   const clearTopicData = () => {
-    topic.description = ``
-    topic.title = ''
+    Object.assign(discussionTopicData, {...discussionTopicInitialState})
   }
 
   onMounted(()=> {
     if(props.formType === FormType.edit) {
       if(props.topic){
-        topic.title = props.topic.title
-        topic.description = props.topic.description
+        Object.assign(discussionTopicData, {...props.topic})
       }
     }
   })
@@ -86,24 +82,25 @@ import {useRepositoryDiscussionTopicServices} from "../../services/repository-di
           <p class="dialog-label mb-2">Topic Title</p>
           <VTextField
               autofocus
-              v-model="topic.title"
+              v-model="discussionTopicData.topic_title"
               placeholder="E.g. New Topic"
               class="my-2"
-              hide-details
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
+              :error-messages="errorMessage.topic_title"
           />
         </div>
         <div class="mb-5">
           <label class="dialog-label mb-2">Topic Description</label>
           <QuillRichTextEditor
-              :modelValue="topic.description"
+              :modelValue="discussionTopicData.topic_content"
               placeholder="Enter topic description here"
-              @update:modelValue="$event => (topic.description = $event)"
+              @update:modelValue="$event => (discussionTopicData.topic_content = $event)"
           />
+          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.topic_content">{{errorMessage.topic_content}}</p>
         </div>
 
       </div>

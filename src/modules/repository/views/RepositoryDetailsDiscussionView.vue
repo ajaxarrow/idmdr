@@ -5,7 +5,7 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {PhChatCircleDots, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import TopicItem from "../components/Discussion/TopicItem.vue";
-import {Topic} from "../../../interfaces/dicussion.interface.ts";
+import {Topic} from "../../../interfaces/discussion.interface.ts";
 import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
 import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
@@ -16,7 +16,7 @@ import {useRepositoryServices} from "../services/repository.services.ts";
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchTopicsByRepository} = useRepositoryDiscussionTopicServices();
+const {fetchDiscussionTopicsByRepository} = useRepositoryDiscussionTopicServices();
 const {repository} = useRepositoryStore()
 const {fetchRepositoryData} = useRepositoryServices()
 const searchedTopics = ref<Topic[]>([]);
@@ -24,20 +24,20 @@ const topicList = ref<Topic[]>([]);
 const {route} = useRouting()
 const searchQuery = ref('');
 
-const fetchTopicList = () => {
-  topicList.value = fetchTopicsByRepository(<string>route.params.slug)
+const fetchTopicList = async() => {
+  topicList.value = await fetchDiscussionTopicsByRepository(<string>route.params.slug)
   searchedTopics.value = topicList.value
 }
 
-const addTopicCallback = () => {
+const addTopicCallback = async () => {
   showSnackbarMessage('Topic Added Successfully', Status.success)
-  fetchTopicList();
+  await fetchTopicList();
 }
 
 
 const filterTopicsBySearchQuery = (): Topic[] => {
   if (searchQuery.value) {
-    return topicList.value.filter(topic =>  topic.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return topicList.value.filter(topic =>  topic.topic_title.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
   } else {
     return topicList.value
@@ -50,7 +50,7 @@ watch(() => searchQuery.value, () => {
 
 onMounted(async() => {
   await fetchRepositoryData(route.params.slug as string);
-  fetchTopicList();
+  await fetchTopicList();
 })
 </script>
 
@@ -76,7 +76,7 @@ onMounted(async() => {
       <VRow justify="space-between" align="center" class="ma-0 my-6 mx-0">
         <p class="text-title d-flex align-center">
           <PhChatCircleDots size="24" class="mr-1"/>
-          Discussions
+          Discussions<span v-if="topicList.length > 0" class="ml-1">({{searchedTopics.length}})</span>
         </p>
         <TopicFormDialog
           v-if="user"

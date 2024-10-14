@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, PropType, ref} from "vue";
-import {Topic} from "../../../../interfaces/dicussion.interface.ts";
+import {Topic} from "../../../../interfaces/discussion.interface.ts";
 import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
 import {useRouting} from "../../../../core/composables/useRouting.ts";
 import {useRepositoryDiscussionCommentServices} from "../../services/repository-discussion-comment.services.ts";
@@ -14,7 +14,6 @@ const {isDesktop} = useScreenStore();
 const {router, route} = useRouting();
 const totalComments = ref(0);
 
-const {fetchCommentsByTopic} = useRepositoryDiscussionCommentServices();
 
 
 const goToTopicDetails = () => {
@@ -28,7 +27,8 @@ const goToTopicDetails = () => {
 }
 
 onMounted(() => {
-  totalComments.value = fetchCommentsByTopic(<string>props.topic?.id).length
+  //@ts-ignore
+  totalComments.value = props.topic?.comments.length
 })
 </script>
 
@@ -41,11 +41,11 @@ onMounted(() => {
             cover
             height="40px"
             width="40px"
-            :src="props.topic?.ownerImage ? props.topic.ownerImage : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+            :src="props.topic?.userData ? props.topic.userData.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
         />
         <div class="ml-2">
-          <p class="topic-title">{{ props.topic?.title }}</p>
-          <p class="topic-subtitle">{{ props.topic?.owner }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
+          <p class="topic-title">{{ props.topic?.topic_title }}</p>
+          <p class="topic-subtitle">{{ props.topic?.userData.username }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
         </div>
       </div>
       <VBtn

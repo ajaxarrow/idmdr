@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-import {Comment, Topic} from "../../../interfaces/dicussion.interface.ts";
+import {Comment, Topic} from "../../../interfaces/discussion.interface.ts";
 import {PhArrowLeft, PhChat, PhDotsThreeOutlineVertical, PhInfo, PhPencil, PhTrash,} from "@phosphor-icons/vue";
 import NotFound from "../../../assets/images/404.svg";
 import {useRepositoryDiscussionTopicServices} from "../services/repository-discussion-topic.services.ts";
@@ -19,12 +19,12 @@ import "quill/dist/quill.core.css"
 import "quill/dist/quill.snow.css"
 import {useRepositoryServices} from "../services/repository.services.ts";
 
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
 const {fetchRepositoryData} = useRepositoryServices()
-const {fetchTopicByTopicID, deleteTopic} = useRepositoryDiscussionTopicServices();
-const {fetchCommentsByTopic, addComment, updateComment, deleteComment} = useRepositoryDiscussionCommentServices();
+const {fetchDiscussionTopicByID, deleteDiscussionTopic} = useRepositoryDiscussionTopicServices();
+const {fetchCommentsByDiscussion, updateDiscussionTopicComment, deleteDiscussionTopicComment, addDiscussionTopicComment} = useRepositoryDiscussionCommentServices();
 const {route, router} = useRouting();
 
 const topicActionMenu = ref(false);
@@ -36,69 +36,90 @@ const totalComment = ref(0);
 const commentContent = ref('');
 const commentContentEdit = ref('');
 const selectedCommentID = ref('');
-const generateRandom10DigitNumber = () => {
-  return Math.floor(Math.random() * (9999999999 - 1000000000 + 1)) + 1000000000;
+const errorMessage = ref('');
+const errorMessageEdit = ref('');
+
+const commentDataInitialState = reactive<Comment>({
+  id: '',
+  comment_content: '',
+  user: '',
+  discussion: ''
+})
+
+const commentData = reactive<Comment>({...commentDataInitialState})
+
+const clearCommentData = () => {
+  Object.assign(commentData, {...commentDataInitialState})
 }
 
-const fetchCommentList = () => {
-  commentList.value = fetchCommentsByTopic(<string>route.params.topic);
+const fetchCommentList = async() => {
+  commentList.value = await fetchCommentsByDiscussion(<string>route.params.topic);
   totalComment.value = commentList.value.length
 }
 
 const handleComment = async () => {
-  const newComment: Comment = {
-    owner: 'Tabilla, Jiu Axl',
-    ownerImage: 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
-    content: commentContent.value,
-    id: generateRandom10DigitNumber().toString(),
-    topicID: <string>topic.value?.id
+  if(commentContent.value.trim() === '') {
+    errorMessage.value = 'Comment cannot be empty';
+  } else {
+    errorMessage.value = '';
+    commentData.comment_content = commentContent.value;
+    commentData.discussion = <string>route.params.topic;
+    commentData.user = userData.uid;
+    await addDiscussionTopicComment(commentData, <string>route.params.topic);
+    await fetchCommentList()
+    clearCommentData()
+    commentContent.value = '';
+    showSnackbarMessage('Comment Added', Status.success)
   }
-  await addComment(newComment);
-  fetchCommentList()
-  commentContent.value = '';
-  showSnackbarMessage('Comment Added', Status.success)
 }
 
 const removeEditedComment = () => {
   selectedCommentID.value = ''
   commentContentEdit.value = ''
+  commentData.comment_content = ''
 }
 
 const editComment = (comment: Comment) => {
-  selectedCommentID.value = comment.id
-  commentContentEdit.value = comment.content
+  selectedCommentID.value = comment?.id!
+  commentContentEdit.value = comment.comment_content!
+  commentData.id = comment?.id!
+  commentData.discussion = comment.discussion
+  commentData.user = comment.user
 }
 
 const updateCommentData = async (comment: Comment) => {
-  await updateComment({
-    owner: comment.owner,
-    ownerImage: comment.ownerImage,
-    content: commentContentEdit.value,
-    id: comment.id,
-    topicID: comment.topicID
-  });
-  removeEditedComment();
-  fetchCommentList()
-  showSnackbarMessage('Comment Updated', Status.success)
+  if(commentContentEdit.value.trim() === '') {
+    errorMessageEdit.value = 'Comment cannot be empty';
+  } else {
+    errorMessageEdit.value = ''
+    commentData.comment_content = commentContentEdit.value;
+    await updateDiscussionTopicComment(commentData, comment.id!);
+    await fetchCommentList()
+    clearCommentData()
+    removeEditedComment();
+    showSnackbarMessage('Comment Updated', Status.success)
+  }
+
+
 }
 
 const deleteCommentData = async (comment: Comment) => {
-  await deleteComment(comment);
-  fetchCommentList()
+  await deleteDiscussionTopicComment(comment.id!)
+  await fetchCommentList()
   showSnackbarMessage('Comment Deleted', Status.success)
 }
 
-const editTopicCallback = () => {
+const editTopicCallback = async () => {
   showSnackbarMessage('Topic Edited Successfully', Status.success)
-  topic.value = fetchTopicByTopicID(<string>route.params.topic);
+  topic.value = await fetchDiscussionTopicByID(<string>route.params.topic);
   topicActionMenu.value = false
 }
 
-const deleteTopicCallback = () => {
+const deleteTopicCallback = async () => {
   showSnackbarMessage('Topic Deleted Successfully', Status.success)
-  deleteTopic(<Topic>topic.value);
+  await deleteDiscussionTopic(topic.value?.id!);
   topicActionMenu.value = false
-  router.push({
+  await router.push({
     name: 'repository-discussions',
   });
 }
@@ -112,8 +133,8 @@ const scrollToCommentInput = () => {
 
 onMounted(async () => {
   await fetchRepositoryData(route.params.slug as string);
-  fetchCommentList()
-  topic.value = fetchTopicByTopicID(<string>route.params.topic);
+  await fetchCommentList()
+  topic.value = await fetchDiscussionTopicByID(<string>route.params.topic);
   totalComment.value = commentList.value.length
 })
 </script>
@@ -143,15 +164,15 @@ onMounted(async () => {
                   cover
                   height="40px"
                   width="40px"
-                  :src="topic.ownerImage ? topic.ownerImage : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+                  :src="topic.userData ? topic.userData.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
               />
               <div class="ml-2" style="line-height: 20px">
-                <p class="topic-subtitle">{{ topic.owner }}</p>
-                <p class="text-gs60" style="font-size: 14px">December 8, 2016</p>
+                <p class="topic-subtitle">{{ topic.userData?.username }}</p>
+                <p class="text-gs60" style="font-size: 14px"> {{ new Date(topic?.date_updated as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
               </div>
             </div>
           </div>
-          <VMenu v-model="topicActionMenu" :close-on-content-click="false">
+          <VMenu v-if="user" v-model="topicActionMenu" :close-on-content-click="false">
             <template #activator="{ props }">
               <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                 Options
@@ -163,28 +184,30 @@ onMounted(async () => {
                 <PhChat/>
                 Comment on Topic
               </p>
-              <TopicFormDialog
-                :form-type="FormType.edit"
-                :topic="topic"
-                @callback="editTopicCallback"
-              >
-                <p class="cursor-pointer action-menu-item">
-                  <PhPencil/>
-                  Edit
-                </p>
-              </TopicFormDialog>
-              <DeleteDialog @callback="deleteTopicCallback">
-                <p class="cursor-pointer action-menu-item">
-                  <PhTrash/>
-                  Delete
-                </p>
-              </DeleteDialog>
+              <div v-if="user && userData.uid === topic?.user">
+                <TopicFormDialog
+                    :form-type="FormType.edit"
+                    :topic="topic"
+                    @callback="editTopicCallback"
+                >
+                  <p class="cursor-pointer action-menu-item">
+                    <PhPencil/>
+                    Edit
+                  </p>
+                </TopicFormDialog>
+                <DeleteDialog @callback="deleteTopicCallback">
+                  <p class="cursor-pointer action-menu-item">
+                    <PhTrash/>
+                    Delete
+                  </p>
+                </DeleteDialog>
+              </div>
             </VSheet>
           </VMenu>
         </VRow>
-        <p class="topic-title my-3">{{topic.title}}</p>
+        <p class="topic-title my-3">{{topic.topic_title}}</p>
         <div class="ql-snow">
-          <div v-html="topic.description" class="ql-editor"></div>
+          <div v-html="topic.topic_content" class="ql-editor"></div>
         </div>
         <VDivider class="my-5"/>
         <p class="mb-3" style="font-weight: 600; font-size: 18px">
@@ -200,7 +223,7 @@ onMounted(async () => {
                   class="mr-2 mt-2"
                   size="40"
               >
-                <VImg :src="comment.ownerImage"></VImg>
+                <VImg :src="comment.userData?.profile_picture!"></VImg>
               </VAvatar>
               <VTextField
                   autofocus
@@ -208,12 +231,12 @@ onMounted(async () => {
                   v-model="commentContentEdit"
                   placeholder="Write a comment..."
                   class="my-2"
-                  hide-details
                   rounded="lg"
                   density="comfortable"
                   variant="outlined"
                   color="primary"
                   base-color="gs60"
+                  :error-messages="errorMessageEdit"
               />
             </VRow>
             <VRow class="ma-0" justify="end">
@@ -247,7 +270,7 @@ onMounted(async () => {
                class="mr-2 mt-2"
                size="40"
            >
-             <VImg src="https://mighty.tools/mockmind-api/content/abstract/46.jpg"></VImg>
+             <VImg :src="userData.profilePicture"></VImg>
            </VAvatar>
            <VTextField
                id="comment-input"
@@ -260,7 +283,7 @@ onMounted(async () => {
                variant="outlined"
                color="primary"
                base-color="gs60"
-               hide-details
+               :error-messages="errorMessage"
 
            />
          </VRow>
