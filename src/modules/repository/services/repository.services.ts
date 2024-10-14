@@ -123,6 +123,7 @@ export const useRepositoryServices = () => {
         }, 3000);
       }
     } catch (e: any){
+      console.log(e)
       loading.value = false;
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
       clearErrorMessage();

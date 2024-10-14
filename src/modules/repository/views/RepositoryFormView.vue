@@ -18,10 +18,12 @@ import {useRepositoryServices} from "../services/repository.services.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useRepositoryStore} from "../stores/repository.store.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
+const {repository} = useRepositoryStore()
 const {tags, fetchTags} = useTags();
 const {route} = useRouting();
 const {userData} = useUserStore();
@@ -174,6 +176,7 @@ const addRepositoryData = async () => {
 }
 
 const updateRepositoryData = async () => {
+  delete repositoryData.image;
   previousTags.value = <string[]>repositoryData.tags
   repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
   if(repositoryData.transfer_plan === 'Commercialization'){
@@ -199,7 +202,7 @@ onMounted( async () => {
   if(type === 'edit') {
     await fetchRepositoryData(route.params.slug as string);
     formType.value = FormType.edit
-    Object.assign(repositoryData, {...repositoryData});
+    Object.assign(repositoryData, {...repository.value});
     repositoryData.tags = stringToArray(<string>repositoryData.tags)
     repositoryData.geojson = JSON.stringify(repositoryData.geojson)
   }
