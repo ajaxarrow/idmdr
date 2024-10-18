@@ -7,6 +7,15 @@ import * as turf from '@turf/turf'
 import {v4 as uuidv4} from "uuid";
 
 const emit = defineEmits(['setGeoJSONData', 'closeMapPreview'])
+const props = defineProps({
+  isGeoJSONPreview: {
+    type: Boolean,
+    default: false
+  },
+  geoJSONData: {
+    type: Object
+  }
+})
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const map = shallowRef<null | Map>(null);
 const initState = reactive({
@@ -154,17 +163,39 @@ onMounted(() => {
 
   //@ts-ignore
   map.value.addControl(new NavigationControl(), 'bottom-right');
-  //@ts-ignore
-  map.value.addControl(draw);
-  ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
-    //@ts-ignore
-    map.value.on(eventName, handleDrawEvent);
-  });
 
   //@ts-ignore
   map.value.on('style.load', () => {
-
-
+    if(props.isGeoJSONPreview){
+      //@ts-ignore
+      map.value?.addSource(`geojson-source-0`, {
+        type: 'geojson',
+        data: props.geoJSONData
+      });
+      //@ts-ignore
+      map.value.addLayer({
+        id: 'geojson-layer-0',
+        type: 'fill',
+        source: `geojson-source-0`,
+        paint: {
+          'fill-color': '#00ACC1',
+          'fill-opacity': .3
+        }
+      });
+      //@ts-ignore
+      map.value?.fitBounds(
+          //@ts-ignore
+          turf.bbox(props.geoJSONData.geometry),
+          {padding: 10, duration: 1000}
+      )
+    } else {
+      //@ts-ignore
+      map.value.addControl(draw);
+      ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
+        //@ts-ignore
+        map.value.on(eventName, handleDrawEvent);
+      });
+    }
   })
 
 })
@@ -178,7 +209,7 @@ onMounted(() => {
     <div class="map" ref="mapContainer">
     </div>
     <button type="button" class="close-button" @click="emit('closeMapPreview')">Close Map</button>
-    <div class="calculation-box">
+    <div v-if="!isGeoJSONPreview" class="calculation-box">
       <div class="action-buttons">
         <button type="button" class="convert-button" @click="convertToGeoJson" v-if="coords.length > 0">Save GeoJSON</button>
 <!--        <button type="button" class="delete-button" @click="removeLayers">Delete Geojsons</button>-->

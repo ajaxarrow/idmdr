@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhEye, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
@@ -20,6 +20,7 @@ const {organization} = useOrganizationStore();
 const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
+const isGeoJSONPreview = ref(false);
 const geoJSONFileName = ref('')
 
 const {route} = useRouting();
@@ -111,7 +112,24 @@ const updateOrganizationData = async () => {
 const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
   organizationData.geojson = JSON.stringify(geojson)
   isGeoJSONDrawn.value = isJSONDrawn
-  console.log(organizationData.geojson)
+  // console.log(organizationData.geojson)
+}
+
+const closeGeoJSONPreview = () => {
+  isGeoJSONPreview.value = false
+  isMapPreview.value = false
+}
+
+const openGeoJSONPreview = () => {
+  isGeoJSONPreview.value = true
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.getElementById('form').scrollHeight + 4000,
+      behavior: 'smooth'
+    });
+  }, 100);
+
+
 }
 
 const handleGeoJSONFileInput = (e: any) => {
@@ -175,7 +193,7 @@ onMounted(async () => {
 <template>
   <LoadingOverlay :overlay="loading"/>
   <MainLayout :title="formType === FormType.edit ? 'Edit Organization' : 'New Organization'">
-    <VForm ref="organizationForm" style="height: 100%" class="relative-container circle">
+    <VForm id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
          <div class="d-flex">
@@ -676,7 +694,6 @@ onMounted(async () => {
         </div>
         <div class="mb-10">
           <label class="input-label">Location/Area</label>
-
           <OrganizationFormMapPreview
               class="my-2"
               v-if="isMapPreview"
@@ -694,15 +711,38 @@ onMounted(async () => {
               <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
             </div>
             <div class="my-3" v-else>
-              <VDivider/>
-              <div class="d-flex align-center justify-space-between pa-2" >
-                <p class="dialog-boundary-title d-flex align-center">
-                  <PhPolygon class="mr-1"/>
-                  {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
-                </p>
-                <PhX class="cursor-pointer" @click="organizationData.geojson = {}"/>
+              <OrganizationFormMapPreview
+                id="geojson-preview"
+                class="my-2"
+                v-if="isGeoJSONPreview"
+                :isGeoJSONPreview="true"
+                :geoJSONData="JSON.parse(organizationData.geojson)"
+                @closeMapPreview="closeGeoJSONPreview"
+              />
+              <div v-else>
+                <VDivider/>
+                <div class="d-flex align-center justify-space-between pa-2" >
+                  <p class="dialog-boundary-title d-flex align-center">
+                    <PhPolygon class="mr-1"/>
+                    {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
+                  </p>
+                  <div class="d-flex align-center ga-2">
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <PhEye v-bind="props" class="cursor-pointer" @click="openGeoJSONPreview"/>
+                      </template>
+                      <span>Preview Location</span>
+                    </VTooltip>
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <PhX v-bind="props" class="cursor-pointer" @click="organizationData.geojson = {}"/>
+                      </template>
+                      <span>Remove Saved File</span>
+                    </VTooltip>
+                  </div>
+                </div>
+                <VDivider/>
               </div>
-              <VDivider/>
             </div>
           </div>
         </div>
