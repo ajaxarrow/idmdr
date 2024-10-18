@@ -58,7 +58,7 @@ onUnmounted(() => {
                   cover
                   height="40px"
                   width="40px"
-                  :src="repository.image ? repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                  :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
               />
               <div class="ml-2">
                 <p class="default">{{ repository.title }}</p>
