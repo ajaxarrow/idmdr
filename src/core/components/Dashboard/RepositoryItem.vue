@@ -34,7 +34,7 @@
             cover
             height="40px"
             width="40px"
-            :src="props.repository?.image ? props.repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+            :src="props.repository?.image ? <string>props.repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
         />
         <div class="ml-2">
           <p class="repository-title">{{ props.repository?.title }}</p>
