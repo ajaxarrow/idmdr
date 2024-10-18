@@ -49,7 +49,7 @@ const removeImage = () => {
   hasImage.value = false;
 }
 
-const handleUploadChange = (e) => {
+const handleUploadChange = (e: any) => {
   const target = e.target;
   if (target.files && target.files[0]) {
     file.value = target.files[0];

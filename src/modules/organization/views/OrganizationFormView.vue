@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhEye, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhEye, PhFileDashed, PhFileImage, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
@@ -11,6 +11,7 @@ import OrganizationFormMapPreview from "../components/OrganizationFormMapPreview
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 
 const {isEmptyObject} = useObjectChecker()
 const path = ref('organizations')
@@ -22,6 +23,30 @@ const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const isGeoJSONPreview = ref(false);
 const geoJSONFileName = ref('')
+const isImagePreviewed = ref(false);
+const hasImage = ref(false);
+const previewImage = ref('');
+const file = ref<File | null>(null);
+const removeImage = () => {
+  file.value = null;
+  hasImage.value = false;
+}
+
+const handleUploadChange = (e: any) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    file.value = target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      previewImage.value = reader.result as string;
+    };
+
+    reader.readAsDataURL(<File>file.value);
+    hasImage.value = true;
+  }
+};
+
 
 const {route} = useRouting();
 
@@ -91,6 +116,12 @@ const scrollToFirstErrorMessage = () => {
 }
 
 const addOrganizationData = async () => {
+  if(file.value){
+    //@ts-ignore
+    organizationData.image = file.value as File
+  } else {
+    delete organizationData.image;
+  }
   await addOrganization(organizationData)
   if(hasErrorMessages(errorMessage)){
     scrollToFirstErrorMessage()
@@ -100,6 +131,12 @@ const addOrganizationData = async () => {
 }
 
 const updateOrganizationData = async () => {
+  if(file.value){
+    //@ts-ignore
+    organizationData.image = file.value as File
+  } else {
+    delete organizationData.image;
+  }
   await updateOrganization(organizationData, organizationData.slug)
   if(hasErrorMessages(errorMessage)){
     scrollToFirstErrorMessage()
@@ -197,6 +234,8 @@ onMounted(async () => {
     formType.value = FormType.edit
     Object.assign(organizationData, {...organization.value});
     organizationData.geojson = JSON.stringify(organizationData.geojson)
+    previewImage.value = <string>organizationData.image
+    hasImage.value = true
   }
 })
 
@@ -206,6 +245,11 @@ onMounted(async () => {
 
 <template>
   <LoadingOverlay :overlay="loading"/>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <MainLayout :title="formType === FormType.edit ? 'Edit Organization' : 'New Organization'">
     <VForm id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
@@ -699,12 +743,56 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-5">
-          <label class="input-label">Organization Image</label>
-          <div class="my-2 file-upload-container">
-            <PhFileDashed size="50"/>
-            <p class="text-dropzone">Drag and drop image file here or <label class="file-label" for="dropzoneFile">Choose file</label></p>
-            <VFileInput id="dropzoneFile" style="display: none"/>
+          <label class="input-label">Organization Logo/Image</label>
+          <div v-if="hasImage" class="my-3">
+            <VDivider/>
+            <div class="d-flex align-center justify-space-between pa-2" >
+              <p class="dialog-boundary-title d-flex align-center">
+                <PhImage class="mr-1"/>
+                {{
+                  file ? file?.name :
+                      (typeof organizationData?.image === 'string' ? organizationData.image.split('/').pop() as string : '')
+                }}
+
+              </p>
+              <div class="d-flex align-center ga-2">
+                <VTooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <PhEye v-bind="props" class="cursor-pointer" @click="isImagePreviewed = true"/>
+                  </template>
+                  <span>Preview Image</span>
+                </VTooltip>
+                <VTooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <PhX v-bind="props" class="cursor-pointer" @click="removeImage"/>
+                  </template>
+                  <span>Remove Saved Image</span>
+                </VTooltip>
+              </div>
+            </div>
+            <VDivider/>
+            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.image">{{errorMessage.image}}</p>
           </div>
+          <VFileInput
+              v-else
+              @change="handleUploadChange"
+              label="Choose Organization Image by Clicking Here"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              chips
+              prepend-icon=""
+              hint="Choose an image that will represent the entire organization. It could be an organization logo or a brand image. "
+              :error-messages="errorMessage.image"
+              accept="image/*"
+          >
+            <template v-slot:prepend-inner>
+              <PhFileImage/>
+            </template>
+          </VFileInput>
         </div>
         <div class="mb-10">
           <label class="input-label">Location/Area</label>

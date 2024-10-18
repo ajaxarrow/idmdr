@@ -160,6 +160,7 @@ export const useOrganizationServices = () => {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
         {
+          image: organization.image,
           tel_phone: organization.tel_phone,
           sub_org_type: organization.sub_org_type,
           description: organization.description,
@@ -180,7 +181,8 @@ export const useOrganizationServices = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${userData.accessToken}`
+            'Authorization': `Bearer ${userData.accessToken}`,
+            "Content-Type": "multipart/form-data"
           }
         }
       );
@@ -267,9 +269,9 @@ export const useOrganizationServices = () => {
         ic_rep: organization.icc_rep,
         sc_rep: organization.scc_rep,
         rd_rep: organization.rdc_rep,
-        geojson: isEmptyObject(organization.geojson) ? {} : JSON.parse(organization.geojson),
+        geojson: isEmptyObject(organization.geojson) ? {} : organization.geojson,
         is_public: organization.is_public,
-        image: 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+        image: organization.image ? organization.image : 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
         type: organization.org_type,
         tel_phone: organization.tel_phone,
         president: organization.president,

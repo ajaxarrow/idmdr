@@ -35,7 +35,7 @@ onMounted(() => {
             cover
             height="40px"
             width="40px"
-            :src="props.organization?.image ? props.organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+            :src="props.organization?.image ? <string>props.organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
         />
         <div class="ml-2">
           <p class="organization-title">{{ props.organization?.name }} ({{props.organization?.acronym}})</p>

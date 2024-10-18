@@ -170,6 +170,7 @@ onMounted(() => {
       //@ts-ignore
       map.value?.addSource(`geojson-source-0`, {
         type: 'geojson',
+        //@ts-ignore
         data: props.geoJSONData
       });
       //@ts-ignore
