@@ -128,8 +128,16 @@ const openGeoJSONPreview = () => {
       behavior: 'smooth'
     });
   }, 100);
+}
 
-
+const closePreview = () => {
+  organizationData.geojson = {}
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.getElementById('form').scrollHeight + 4000,
+      behavior: 'smooth'
+    });
+  }, 100);
 }
 
 const handleGeoJSONFileInput = (e: any) => {
@@ -735,7 +743,7 @@ onMounted(async () => {
                     </VTooltip>
                     <VTooltip location="bottom">
                       <template v-slot:activator="{ props }">
-                        <PhX v-bind="props" class="cursor-pointer" @click="organizationData.geojson = {}"/>
+                        <PhX v-bind="props" class="cursor-pointer" @click="closePreview"/>
                       </template>
                       <span>Remove Saved File</span>
                     </VTooltip>
