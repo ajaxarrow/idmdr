@@ -127,22 +127,28 @@ const closeGeoJSONPreview = () => {
 
 const openGeoJSONPreview = () => {
   isGeoJSONPreview.value = true
-  setTimeout(() => {
-    window.scrollTo({
-      top: document.getElementById('form').scrollHeight + 4000,
-      behavior: 'smooth'
-    });
-  }, 100);
+  const element = document.getElementById('form')
+  if(element){
+    setTimeout(() => {
+      window.scrollTo({
+        top: element.scrollHeight + 4000,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
 }
 
 const closePreview = () => {
   repositoryData.geojson = {}
-  setTimeout(() => {
-    window.scrollTo({
-      top: document.getElementById('form').scrollHeight + 4000,
-      behavior: 'smooth'
-    });
-  }, 200);
+  const element = document.getElementById('form')
+  if(element){
+    setTimeout(() => {
+      window.scrollTo({
+        top: element.scrollHeight + 4000,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
 }
 
 
@@ -286,7 +292,7 @@ onMounted( async () => {
       @closeOverlay="isImagePreviewed = false"
   />
   <MainLayout :title="formType === FormType.edit ? 'Edit Repository' : 'New Repository'">
-    <VForm ref="repositoryForm" style="height: 100%" class="relative-container circle">
+    <VForm id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
        <div class="d-flex">
          <RouterLink
@@ -794,7 +800,11 @@ onMounted( async () => {
             <div class="d-flex align-center justify-space-between pa-2" >
               <p class="dialog-boundary-title d-flex align-center">
                 <PhImage class="mr-1"/>
-                {{file ? file?.name : repositoryData?.image?.split('/').pop() as string}}
+                {{
+                  file ? file?.name :
+                      (typeof repositoryData?.image === 'string' ? repositoryData.image.split('/').pop() as string : '')
+                }}
+
               </p>
               <div class="d-flex align-center ga-2">
                 <VTooltip location="bottom">
