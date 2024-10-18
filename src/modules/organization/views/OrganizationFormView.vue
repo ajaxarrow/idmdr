@@ -122,22 +122,28 @@ const closeGeoJSONPreview = () => {
 
 const openGeoJSONPreview = () => {
   isGeoJSONPreview.value = true
-  setTimeout(() => {
-    window.scrollTo({
-      top: document.getElementById('form').scrollHeight + 4000,
-      behavior: 'smooth'
-    });
-  }, 100);
+  const element = document.getElementById('form')
+  if(element){
+    setTimeout(() => {
+      window.scrollTo({
+        top: element.scrollHeight + 4000,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
 }
 
 const closePreview = () => {
   organizationData.geojson = {}
-  setTimeout(() => {
-    window.scrollTo({
-      top: document.getElementById('form').scrollHeight + 4000,
-      behavior: 'smooth'
-    });
-  }, 100);
+  const element = document.getElementById('form')
+  if(element){
+    setTimeout(() => {
+      window.scrollTo({
+        top: element.scrollHeight + 4000,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
 }
 
 const handleGeoJSONFileInput = (e: any) => {
