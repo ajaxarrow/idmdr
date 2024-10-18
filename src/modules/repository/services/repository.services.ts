@@ -50,7 +50,8 @@ export const useRepositoryServices = () => {
     title: "",
     transfer_plan: "",
     uid: "",
-    adaptors: ''
+    adaptors: '',
+    image: ""
   })
 
   const loading = ref(false);
@@ -93,13 +94,23 @@ export const useRepositoryServices = () => {
   };
 
   const saveRepository = async (repository: Repository, endpoint: string, type: string) => {
+    if(repository.com_extra == null) {
+      repository.com_extra = {};
+    }
+
+    if(repository.geojson == null) {
+      repository.geojson = {};
+    }
     clearErrorMessage();
     loading.value = true;
     try {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
         repository, {
-          headers: authorizationHeader
+          headers: {
+            Authorization: `Bearer ${userData.accessToken}`,
+            "Content-Type": "multipart/form-data"
+          }
         }
       );
       if(type == 'create'){
@@ -234,10 +245,10 @@ export const useRepositoryServices = () => {
           transfer_plan: repo.transfer_plan || "",
           uid: repo.uid || "",
           adaptors: repo.adaptors || "",
-          geojson: isEmptyObject(repo.geojson) ? {} : JSON.parse(repo.geojson),
-          com_extra: isEmptyObject(repo.com_extra) ? {} : JSON.parse(repo.com_extra),
-          commercialization: isEmptyObject(repo.com_extra) ? {} : JSON.parse(repo.com_extra),
-          image: 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
+          geojson: isEmptyObject(repo.geojson) ? {} : repo.geojson,
+          com_extra: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
+          commercialization: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
+          image: repo.image ? repo.image : 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
           created_at: repo.created_at || "",
           updated_at: repo.updated_at || "",
           owner_id: repo.owner_id || "",

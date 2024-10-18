@@ -711,10 +711,10 @@ onMounted(async () => {
           <div v-else>
             <div class="my-2 file-upload-container" v-if="isEmptyObject(organizationData.geojson)">
               <PhFileDashed size="50"/>
-              <p class="text-dropzone">
-                Drag and drop files here or
-                <label class="file-label" for="dropzoneFileGeoJSON">Choose files</label>
-                or <label class="file-label" @click="isMapPreview = !isMapPreview">Draw Boundary</label>
+              <p class="text-dropzone text-center">
+                Submit a geometric representation of the area by
+                <label class="file-label" for="dropzoneFileGeoJSON">uploading a GeoJSON file by clicking here</label>
+                or <br/><label class="file-label" @click="isMapPreview = !isMapPreview">drawing the boundary manually</label>.
               </p>
               <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
             </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhFileDashed, PhPolygon, PhX} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhEye, PhFileDashed, PhFileImage, PhImage, PhPolygon, PhX} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {Commercialization, Repository} from "../../../interfaces/repository.interface.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
@@ -19,6 +19,8 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+
 
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
@@ -29,13 +31,38 @@ const {route} = useRouting();
 const {userData} = useUserStore();
 
 const repositoryForm = ref(null);
+const isImagePreviewed = ref(false);
+const hasImage = ref(false);
+const previewImage = ref('');
 const path = ref('organizations')
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
+const isGeoJSONPreview = ref(false);
 const geoJSONFileName = ref('')
 const organizations = ref<Organization[]>([]);
 const previousTags = ref<string[]>([])
 const formType = ref<FormType>(FormType.create);
+const file = ref<File | null>(null);
+
+const removeImage = () => {
+  file.value = null;
+  hasImage.value = false;
+}
+
+const handleUploadChange = (e) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    file.value = target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      previewImage.value = reader.result as string;
+    };
+
+    reader.readAsDataURL(<File>file.value);
+    hasImage.value = true;
+  }
+};
 
 const repositoryDataIntialState = reactive<Repository>({
   affiliation: "",
@@ -67,7 +94,8 @@ const repositoryDataIntialState = reactive<Repository>({
   uid: "",
   visibility: 1,
   adaptors: 'Farmers',
-  com_extra: {}
+  com_extra: {},
+  image: ''
 })
 
 const repositoryData = reactive<Repository>({
@@ -90,8 +118,33 @@ const commercialization = reactive<Commercialization>({
 const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
   repositoryData.geojson = JSON.stringify(geojson)
   isGeoJSONDrawn.value = isJSONDrawn
-  console.log(repositoryData.geojson)
 }
+
+const closeGeoJSONPreview = () => {
+  isGeoJSONPreview.value = false
+  isMapPreview.value = false
+}
+
+const openGeoJSONPreview = () => {
+  isGeoJSONPreview.value = true
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.getElementById('form').scrollHeight + 4000,
+      behavior: 'smooth'
+    });
+  }, 100);
+}
+
+const closePreview = () => {
+  repositoryData.geojson = {}
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.getElementById('form').scrollHeight + 4000,
+      behavior: 'smooth'
+    });
+  }, 200);
+}
+
 
 const handleGeoJSONFileInput = (e: any) => {
   const file = e.target.files[0]
@@ -133,8 +186,8 @@ const formatDate = (): string=> {
 const arrayToString = (arr: string[]): string =>
     arr.length > 0 ? arr.join(', ') : '';
 
-const stringToArray = (str: string): string[] =>
-    str.length > 0 ? str.split(', ') : [];
+// const stringToArray = (str: string): string[] =>
+//     str.length > 0 ? str.split(', ') : [];
 
 
 const getFirstPath = (url: string) => {
@@ -162,6 +215,12 @@ const scrollToFirstErrorMessage = () => {
 const addRepositoryData = async () => {
   previousTags.value = <string[]>repositoryData.tags
   repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
+  if(file.value){
+    //@ts-ignore
+    repositoryData.image = file.value as File
+  } else {
+    delete repositoryData.image;
+  }
   if(repositoryData.transfer_plan === 'Commercialization'){
     repositoryData.com_extra = JSON.stringify(commercialization)
   }
@@ -176,7 +235,12 @@ const addRepositoryData = async () => {
 }
 
 const updateRepositoryData = async () => {
-  delete repositoryData.image;
+  if(file.value){
+    //@ts-ignore
+    repositoryData.image = file.value as File
+  } else {
+    delete repositoryData.image;
+  }
   previousTags.value = <string[]>repositoryData.tags
   repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
   if(repositoryData.transfer_plan === 'Commercialization'){
@@ -203,8 +267,11 @@ onMounted( async () => {
     await fetchRepositoryData(route.params.slug as string);
     formType.value = FormType.edit
     Object.assign(repositoryData, {...repository.value});
-    repositoryData.tags = stringToArray(<string>repositoryData.tags)
+    // console.log(repositoryData.tags)
+    // repositoryData.tags = stringToArray(<string>repositoryData.tags)
     repositoryData.geojson = JSON.stringify(repositoryData.geojson)
+    previewImage.value = <string>repositoryData.image
+    hasImage.value = true
   }
 })
 
@@ -213,6 +280,11 @@ onMounted( async () => {
 
 <template>
   <LoadingOverlay :overlay="loading"/>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <MainLayout :title="formType === FormType.edit ? 'Edit Repository' : 'New Repository'">
     <VForm ref="repositoryForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
@@ -715,6 +787,54 @@ onMounted( async () => {
               :error-messages="errorMessage.tags"
           />
         </div>
+        <div class="mb-5">
+          <label class="input-label">Image</label>
+          <div v-if="hasImage" class="my-3">
+            <VDivider/>
+            <div class="d-flex align-center justify-space-between pa-2" >
+              <p class="dialog-boundary-title d-flex align-center">
+                <PhImage class="mr-1"/>
+                {{file ? file?.name : repositoryData?.image?.split('/').pop() as string}}
+              </p>
+              <div class="d-flex align-center ga-2">
+                <VTooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <PhEye v-bind="props" class="cursor-pointer" @click="isImagePreviewed = true"/>
+                  </template>
+                  <span>Preview Image</span>
+                </VTooltip>
+                <VTooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <PhX v-bind="props" class="cursor-pointer" @click="removeImage"/>
+                  </template>
+                  <span>Remove Saved Image</span>
+                </VTooltip>
+              </div>
+            </div>
+            <VDivider/>
+            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.image">{{errorMessage.image}}</p>
+          </div>
+          <VFileInput
+              v-else
+              @change="handleUploadChange"
+              label="Choose Repository Image by Clicking Here"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              chips
+              prepend-icon=""
+              hint="Choose an image that will represent your project and be visible in the repository."
+              :error-messages="errorMessage.image"
+              accept="image/*"
+          >
+            <template v-slot:prepend-inner>
+              <PhFileImage/>
+            </template>
+          </VFileInput>
+        </div>
         <div class="mb-10">
           <label class="input-label">File</label>
           <div class="my-2 file-upload-container">
@@ -735,23 +855,46 @@ onMounted( async () => {
           <div v-else>
             <div class="my-2 file-upload-container" v-if="isEmptyObject(repositoryData.geojson)">
               <PhFileDashed size="50"/>
-              <p class="text-dropzone">
-                Drag and drop files here or
-                <label class="file-label" for="dropzoneFileGeoJSON">Choose files</label>
-                or <label class="file-label" @click="isMapPreview = !isMapPreview">Draw Boundary</label>
+              <p class="text-dropzone text-center">
+                Submit a geometric representation of the area by
+                <label class="file-label" for="dropzoneFileGeoJSON">uploading a GeoJSON file by clicking here</label>
+                or <br/><label class="file-label" @click="isMapPreview = !isMapPreview">drawing the boundary manually</label>.
               </p>
               <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
             </div>
             <div class="my-3" v-else>
-              <VDivider/>
-              <div class="d-flex align-center justify-space-between pa-2" >
-                <p class="dialog-boundary-title d-flex align-center">
-                  <PhPolygon class="mr-1"/>
-                  {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
-                </p>
-                <PhX class="cursor-pointer" @click="repositoryData.geojson = {}"/>
+              <OrganizationFormMapPreview
+                  id="geojson-preview"
+                  class="my-2"
+                  v-if="isGeoJSONPreview"
+                  :isGeoJSONPreview="true"
+                  :geoJSONData="JSON.parse(repositoryData.geojson)"
+                  @closeMapPreview="closeGeoJSONPreview"
+              />
+              <div v-else>
+                <VDivider/>
+                <div class="d-flex align-center justify-space-between pa-2" >
+                  <p class="dialog-boundary-title d-flex align-center">
+                    <PhPolygon class="mr-1"/>
+                    {{isGeoJSONDrawn ? `drawn-boundary-coordinates-${formatDate()}` : geoJSONFileName}}
+                  </p>
+                  <div class="d-flex align-center ga-2">
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <PhEye v-bind="props" class="cursor-pointer" @click="openGeoJSONPreview"/>
+                      </template>
+                      <span>Preview Location</span>
+                    </VTooltip>
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <PhX v-bind="props" class="cursor-pointer" @click="closePreview"/>
+                      </template>
+                      <span>Remove Saved File</span>
+                    </VTooltip>
+                  </div>
+                </div>
+                <VDivider/>
               </div>
-              <VDivider/>
             </div>
           </div>
         </div>

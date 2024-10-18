@@ -33,7 +33,7 @@ interface Repository {
   organization: string | null,
   priority_level: string,
   is_deleted: boolean,
-  image?: string,
+  image?: File | string,
   geojson: any,
   is_active: boolean,
   is_approved: boolean,
