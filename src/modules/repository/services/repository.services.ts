@@ -394,6 +394,7 @@ export const useRepositoryServices = () => {
 
 
   const fetchRepositoriesByVisibility = async (visibilities: number[], pageSize: number = 100): Promise<Repository[][]> => {
+
     const promises = visibilities.map(async (visibility) => {
       const res = await server.get(`/repositories/?page_size=${pageSize}&visibility=${visibility}`, {
         headers: authorizationHeader
