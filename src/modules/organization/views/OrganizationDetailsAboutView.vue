@@ -4,6 +4,7 @@
   import {onMounted} from "vue";
   import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
   import {useOrganizationServices} from "../services/organization.services.ts";
+  import {useOrgType} from "../composables/useOrgType.ts";
   import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
   import "quill/dist/quill.core.css"
   import "quill/dist/quill.snow.css"
@@ -11,40 +12,7 @@
   const {setSnackbarMessage} = useSnackbarStore()
   const {organization} = useOrganizationStore();
   const {fetchOrganizationData} = useOrganizationServices();
-
-  const getOrganizationType = (x: number) => {
-    switch(x) {
-      case 1:
-        return "Government";
-      case 2:
-        return "Private";
-      case 3:
-        return "Public";
-      case 4:
-        return "Internatonal";
-      case 5:
-        return "Public";
-      case 6:
-        return "Others";
-      default:
-        return "Unknown";
-    }
-  }
-
-  const getOrganizationSubType = (x: number) => {
-    switch(x) {
-      case 1:
-        return "Academia";
-      case 2:
-        return "Research";
-      case 3:
-        return "Agency";
-      case 4:
-        return "Institutional";
-      default:
-        return "Unknown";
-    }
-  }
+  const {getOrganizationType, getOrganizationSubType} = useOrgType()
 
 
   onMounted(async () => {

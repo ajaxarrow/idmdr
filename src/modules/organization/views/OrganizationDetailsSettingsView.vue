@@ -16,12 +16,16 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import jsPDF from 'jspdf';
+import DOMPurify from 'dompurify';
+import {useOrgType} from "../composables/useOrgType.ts";
 
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
+const {getOrganizationType, getOrganizationSubType} = useOrgType()
 const {userData} = useUserStore();
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
@@ -29,6 +33,239 @@ const path = ref('organizations')
 const orgMemberData = ref<OrgMember[]>([])
 const orgMembers = ref<OrgMember[]>([])
 const userOrgInfo = ref<OrgMember | null | undefined>(null)
+
+const stripHtml = (html: string): string => {
+  const temp = document.createElement('div');
+  temp.innerHTML = DOMPurify.sanitize(html);
+  return temp.textContent || temp.innerText || '';
+};
+
+const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: number, align: 'left' | 'justify' = 'left'): number => {
+  const words = text.split(' ');
+  const lineHeight = doc.getTextDimensions('Text').h * 1.5;
+  let currentLine = '';
+  let currentY = y;
+
+  words.forEach((word, index) => {
+    const testLine = currentLine + (currentLine ? ' ' : '') + word;
+    const testLineWidth = doc.getTextWidth(testLine);
+
+    if (testLineWidth > maxWidth) {
+      // For justified text, we need to calculate word spacing
+      if (align === 'justify' && index < words.length - 1) {
+        const words = currentLine.split(' ');
+        const spaces = words.length - 1;
+        if (spaces > 0) {
+          const spaceWidth = (maxWidth - doc.getTextWidth(currentLine.replace(/ /g, ''))) / spaces;
+          let xPos = x;
+          words.forEach((word, i) => {
+            doc.text(word, xPos, currentY);
+            xPos += doc.getTextWidth(word) + spaceWidth;
+          });
+        } else {
+          doc.text(currentLine, x, currentY);
+        }
+      } else {
+        doc.text(currentLine, x, currentY);
+      }
+      currentY += lineHeight;
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  });
+
+  // Print the last line
+  if (currentLine) {
+    doc.text(currentLine, x, currentY);
+  }
+
+  return currentY + lineHeight;
+};
+
+const formatLabelAndContent = (doc: jsPDF, label: string, content: string, x: number, y: number, maxWidth: number): number => {
+  doc.setFont('helvetica', 'bold');
+  doc.text(label, x, y);
+
+  const labelWidth = doc.getTextWidth(label);
+  doc.setFont('helvetica', 'normal');
+
+  // If content is too long, wrap it
+  if (doc.getTextWidth(content) > maxWidth - labelWidth) {
+    return wrapText(doc, content, x + labelWidth, y, maxWidth - labelWidth);
+  } else {
+    doc.text(content, x + labelWidth, y);
+    return y + 7;
+  }
+};
+
+const downloadOrganizationDataPDF = async (organization: Organization) => {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const margin = 20;
+  const pageWidth = doc.internal.pageSize.width;
+  const contentWidth = pageWidth - (margin * 2);
+  let currentY = margin;
+
+  // Header Section with blue background
+  doc.setFillColor(0, 123, 255);
+  doc.rect(0, 0, pageWidth, 40, 'F');
+
+  // Organization name in white
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.text(`${organization.name} (${organization.acronym})`, margin, 25);
+
+  // Reset text color for body
+  doc.setTextColor(0, 0, 0);
+  currentY = 50;
+
+  // Contact Information Section
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+
+  const contactInfo = [
+    `President: ${organization.president}`,
+    `Telephone: ${organization.tel_phone || 'N/A'}`,
+    `Cell Number: ${organization.phone || 'N/A'}`,
+    `Email: ${organization.email || 'N/A'}`,
+    `Website: ${organization.website || 'N/A'}`
+  ];
+
+  contactInfo.forEach(info => {
+    const infoWidth = doc.getTextWidth(info);
+    if (infoWidth > contentWidth) {
+      currentY = wrapText(doc, info, margin, currentY, contentWidth);
+    } else {
+      doc.text(info, margin, currentY);
+      currentY += 7;
+    }
+  });
+
+  currentY += 5;
+
+  // About Section
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('About Organization', margin, currentY);
+  currentY += 10;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  const cleanDescription = stripHtml(organization.description);
+  currentY = wrapText(doc, cleanDescription, margin, currentY, contentWidth, 'justify');
+
+  currentY += 15;
+
+  // Check if we need a new page
+  if (currentY > doc.internal.pageSize.height - 60) {
+    doc.addPage();
+    currentY = margin;
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Consortium Type', margin, currentY);
+  currentY += 10;
+
+  doc.setFontSize(12);
+  currentY = formatLabelAndContent(
+      doc,
+      'Organization Type: ',
+      getOrganizationType(<number>organization.org_type) || 'N/A',
+      margin,
+      currentY,
+      contentWidth
+  );
+
+  currentY = formatLabelAndContent(
+      doc,
+      'Organization Sub Type: ',
+      getOrganizationSubType(<number>organization.sub_org_type) || 'N/A',
+      margin,
+      currentY,
+      contentWidth
+  );
+
+
+  currentY += 8;
+
+  // Check if we need a new page for representatives
+  if (currentY > doc.internal.pageSize.height - 60) {
+    doc.addPage();
+    currentY = margin;
+  }
+
+  // Representatives Section
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Cluster Representatives', margin, currentY);
+  currentY += 10;
+
+  doc.setFontSize(12);
+  const representatives = [
+    { title: 'Research & Development', rep: organization.rd_rep },
+    { title: 'Technology Transfer', rep: organization.tt_rep },
+    { title: 'Information Communication', rep: organization.ic_rep },
+    { title: 'Science Communication', rep: organization.sc_rep }
+  ];
+
+  representatives.forEach(({ title, rep }) => {
+    if (currentY > doc.internal.pageSize.height - 20) {
+      doc.addPage();
+      currentY = margin;
+    }
+
+    const repInfo = `${rep.full_name || 'N/A'}${rep.email ? ` | ${rep.email}` : ''}`;
+    const availableWidth = contentWidth - (margin + 70); // Space available for the info
+
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${title}:`, margin, currentY);
+    doc.setFont('helvetica', 'normal');
+
+    if (doc.getTextWidth(repInfo) > availableWidth) {
+      // Split the text into lines that fit the available width
+      const words = repInfo.split(' ');
+      let currentLine = '';
+      let firstLine = true;
+
+      words.forEach((word) => {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        if (doc.getTextWidth(testLine) > availableWidth) {
+          // Print the current line
+          doc.text(currentLine, firstLine ? margin + 70 : margin + 70, currentY);
+          currentY += 7;
+          currentLine = word;
+          firstLine = false;
+        } else {
+          currentLine = testLine;
+        }
+      });
+
+      // Print the last line
+      if (currentLine) {
+        doc.text(currentLine, firstLine ? margin + 70 : margin + 70, currentY);
+        currentY += 7;
+      }
+
+      // Add some extra spacing after wrapped text
+      currentY += 3;
+    } else {
+      // No wrapping needed
+      doc.text(repInfo, margin + 70, currentY);
+      currentY += 7;
+    }
+  });
+
+  // Save the PDF
+  doc.save(`${organization.name}-Info.pdf`);
+};
+
 
 const filterOrganizationMembersBySearchQuery = () => {
   if(searchQuery.value) {
@@ -97,7 +334,22 @@ onMounted(async () => {
 <template>
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
     <div v-if="organization" class="py-6 px-7">
+      <VRow  class="ma-0" justify="space-between" align="center">
+        <div>
+          <p class="section-title">Download Organization Information</p>
+          <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Organization Information in PDF</p>
+        </div>
+        <VBtnPrimaryFilled
+            @click="downloadOrganizationDataPDF(organization)"
+            height="41px"
+            rounded="lg"
+            class="satoshi-md"
+            style="font-size: 14px !important;">
+          Download Organization Info
+        </VBtnPrimaryFilled>
+      </VRow>
       <div v-if="organization.is_member">
+        <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
         <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="mt-2">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>

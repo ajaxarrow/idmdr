@@ -15,6 +15,8 @@ import AccessLeveLInfoDialog from "../../organization/components/AccessLeveLInfo
 import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import AddRepoMemberDialog from "../components/AddRepoMemberDialog.vue";
+import jsPDF from 'jspdf';
+import DOMPurify from 'dompurify';
 
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
@@ -29,6 +31,246 @@ const path = ref('repositories')
 const repoMemberData = ref<OrgMember[]>([])
 const repoMembers = ref<OrgMember[]>([])
 const userRepoInfo = ref<OrgMember | null | undefined>(null)
+
+const stripHtml = (html: string): string => {
+  const temp = document.createElement('div');
+  temp.innerHTML = DOMPurify.sanitize(html);
+  return temp.textContent || temp.innerText || '';
+};
+
+const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: number, align: 'left' | 'justify' = 'left'): number => {
+  const words = text.split(' ');
+  const lineHeight = doc.getTextDimensions('Text').h * 1.5;
+  let currentLine = '';
+  let currentY = y;
+
+  words.forEach((word, index) => {
+    const testLine = currentLine + (currentLine ? ' ' : '') + word;
+    const testLineWidth = doc.getTextWidth(testLine);
+
+    if (testLineWidth > maxWidth) {
+      if (align === 'justify' && index < words.length - 1) {
+        const words = currentLine.split(' ');
+        const spaces = words.length - 1;
+        if (spaces > 0) {
+          const spaceWidth = (maxWidth - doc.getTextWidth(currentLine.replace(/ /g, ''))) / spaces;
+          let xPos = x;
+          words.forEach((word, i) => {
+            doc.text(word, xPos, currentY);
+            xPos += doc.getTextWidth(word) + spaceWidth;
+          });
+        } else {
+          doc.text(currentLine, x, currentY);
+        }
+      } else {
+        doc.text(currentLine, x, currentY);
+      }
+      currentY += lineHeight;
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  });
+
+  if (currentLine) {
+    doc.text(currentLine, x, currentY);
+  }
+
+  return currentY + lineHeight;
+};
+
+const formatLabelAndContent = (doc: jsPDF, label: string, content: string | undefined, x: number, y: number, maxWidth: number): number => {
+  if (!content) return y;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text(label, x, y);
+
+  const labelWidth = doc.getTextWidth(label);
+  doc.setFont('helvetica', 'normal');
+
+  if (doc.getTextWidth(content) > maxWidth - labelWidth) {
+    return wrapText(doc, content, x + labelWidth, y, maxWidth - labelWidth);
+  } else {
+    doc.text(content, x + labelWidth, y);
+    return y + 7;
+  }
+};
+
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: 'long',
+    day: '2-digit',
+    year: 'numeric'
+  });
+};
+
+const downloadRepositoryDataPDF = async (repository: Repository) => {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const margin = 20;
+  const pageWidth = doc.internal.pageSize.width;
+  const contentWidth = pageWidth - (margin * 2);
+  let currentY = margin;
+
+  // Header Section with blue background
+  doc.setFillColor(0, 123, 255);
+  doc.rect(0, 0, pageWidth, 40, 'F');
+
+  // Repository title in white
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.text(repository.title, margin, 25);
+
+  // Reset text color for body
+  doc.setTextColor(0, 0, 0);
+  currentY = 50;
+
+  // Basic Info Section
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+
+  const basicInfo = [
+    `Owner: ${repository.owner?.username || 'N/A'}`,
+    `Organization: ${repository.organizationData?.name || 'N/A'} (${repository.organizationData?.acronym || 'N/A'})`,
+    `Last Updated: ${formatDate(<string>repository.updated_at)}`,
+  ];
+
+  basicInfo.forEach(info => {
+    doc.text(info, margin, currentY);
+    currentY += 7;
+  });
+
+  // Tags Section
+  if (repository.tags && repository.tags.length > 0) {
+    currentY += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Tags:', margin, currentY);
+    currentY += 7;
+    doc.setFont('helvetica', 'normal');
+    if (typeof repository.tags !== "string") {
+      const tags = repository.tags.join(', ');
+      currentY = wrapText(doc, tags, margin, currentY, contentWidth);
+    }
+  }
+
+  // About Section
+  currentY += 10;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('About Repository', margin, currentY);
+  currentY += 10;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  const cleanDescription = stripHtml(repository.description);
+  currentY = wrapText(doc, cleanDescription, margin, currentY, contentWidth, 'justify');
+
+  // Project Components Section
+  currentY += 15;
+  if (currentY > doc.internal.pageSize.height - 60) {
+    doc.addPage();
+    currentY = margin;
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Project Components', margin, currentY);
+  currentY += 10;
+
+  doc.setFontSize(12);
+  const projectComponents = [
+    { label: 'Location: ', content: repository.location },
+    { label: 'Start Date: ', content: repository.start_date ? formatDate(repository.start_date) : undefined },
+    { label: 'End Date: ', content: repository.end_date ? formatDate(repository.end_date) : undefined },
+    { label: 'Funding Agency: ', content: repository.funding_agency },
+    { label: 'Affiliation: ', content: repository.affiliation },
+    { label: 'Commodity: ', content: repository.commodity },
+    { label: 'Industry: ', content: repository.industry },
+    { label: 'Research Project/s: ', content: repository.rpt },
+    { label: 'Priority Level: ', content: repository.priority_level ?
+          repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1) : undefined }
+  ];
+
+  projectComponents.forEach(({ label, content }) => {
+    if (currentY > doc.internal.pageSize.height - 20) {
+      doc.addPage();
+      currentY = margin;
+    }
+    currentY = formatLabelAndContent(doc, label, content, margin, currentY, contentWidth);
+  });
+
+  // Technology Details Section
+  currentY += 15;
+  if (currentY > doc.internal.pageSize.height - 60) {
+    doc.addPage();
+    currentY = margin;
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Technology Details', margin, currentY);
+  currentY += 10;
+
+  doc.setFontSize(12);
+  const techDetails = [
+    { label: 'Technology Category: ', content: repository.technology_category },
+    { label: 'Technology Status: ', content: repository.technology_status },
+    { label: 'Technology Readiness Level: ', content: repository.technology_readiness_level },
+    { label: 'Technology Generator: ', content: repository.technology_generator },
+    { label: 'Technology Owner: ', content: repository.tech_owner },
+    { label: 'Existing/Potential Adopters: ', content: repository.adaptors },
+    { label: 'Transfer Plan: ', content: repository.transfer_plan },
+    { label: 'Transfer Status: ', content: repository.technology_transfer_status }
+  ];
+
+  techDetails.forEach(({ label, content }) => {
+    if (currentY > doc.internal.pageSize.height - 20) {
+      doc.addPage();
+      currentY = margin;
+    }
+    currentY = formatLabelAndContent(doc, label, content, margin, currentY, contentWidth);
+  });
+
+  // Commercialization Section (conditional)
+  if (repository.transfer_plan === 'Commercialization' && repository.commercialization) {
+    currentY += 15;
+    if (currentY > doc.internal.pageSize.height - 60) {
+      doc.addPage();
+      currentY = margin;
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('Commercialization', margin, currentY);
+    currentY += 10;
+
+    doc.setFontSize(12);
+    const commercializationDetails = [
+      { label: 'IP Type: ', content: repository.commercialization.ipType },
+      { label: 'IP Status: ', content: repository.commercialization.ipStatus },
+      { label: 'IP Registration Number: ', content: repository.commercialization.regNo },
+      { label: 'Mode Status: ', content: repository.commercialization.modeStatus },
+      { label: 'Current Status: ', content: repository.commercialization.currentStatus },
+      { label: 'Adopter Status: ', content: repository.commercialization.adopterStatus }
+    ];
+
+    commercializationDetails.forEach(({ label, content }) => {
+      if (currentY > doc.internal.pageSize.height - 20) {
+        doc.addPage();
+        currentY = margin;
+      }
+      currentY = formatLabelAndContent(doc, label, content, margin, currentY, contentWidth);
+    });
+  }
+
+  // Save the PDF
+  doc.save(`${repository.title}-Info.pdf`);
+};
 
 const filterRepoMembersBySearchQuery = () => {
   if(searchQuery.value) {
@@ -97,7 +339,22 @@ onMounted(async () => {
 <template>
   <RepositoryDetailsLayout :repository="repository" activeTab="settings">
     <div v-if="repository" class="px-6 py-7">
+      <VRow  class="ma-0" justify="space-between" align="center">
+        <div>
+          <p class="section-title">Download Repository Information</p>
+          <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Repository Information in PDF</p>
+        </div>
+        <VBtnPrimaryFilled
+            @click="downloadRepositoryDataPDF(repository)"
+            height="41px"
+            rounded="lg"
+            class="satoshi-md"
+            style="font-size: 14px !important;">
+          Download Repository Info
+        </VBtnPrimaryFilled>
+      </VRow>
       <div v-if="repository.is_member">
+        <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'" class="my-5"/>
         <div class="mt-2">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
