@@ -58,7 +58,7 @@ const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: numb
         if (spaces > 0) {
           const spaceWidth = (maxWidth - doc.getTextWidth(currentLine.replace(/ /g, ''))) / spaces;
           let xPos = x;
-          words.forEach((word, i) => {
+          words.forEach((word) => {
             doc.text(word, xPos, currentY);
             xPos += doc.getTextWidth(word) + spaceWidth;
           });

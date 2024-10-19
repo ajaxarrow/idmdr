@@ -55,7 +55,7 @@ const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: numb
         if (spaces > 0) {
           const spaceWidth = (maxWidth - doc.getTextWidth(currentLine.replace(/ /g, ''))) / spaces;
           let xPos = x;
-          words.forEach((word, i) => {
+          words.forEach((word) => {
             doc.text(word, xPos, currentY);
             xPos += doc.getTextWidth(word) + spaceWidth;
           });
@@ -358,8 +358,8 @@ onMounted(async () => {
         <div class="mt-2">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
-              <p class="section-title">Update Organization Information</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
+              <p class="section-title">Update Repository Information</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your repository details and information</p>
             </div>
             <VBtnPrimaryFilled
                 :to="{ name: path == 'repositories' ? 'edit-repository' : 'edit-repository-my', params: {slug: repository?.slug}}"
@@ -367,7 +367,7 @@ onMounted(async () => {
                 rounded="lg"
                 class="satoshi-md"
                 style="font-size: 14px !important;">
-              Update Organization Info
+              Update Repository Info
             </VBtnPrimaryFilled>
           </VRow>
         </div>
