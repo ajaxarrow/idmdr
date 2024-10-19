@@ -16,7 +16,7 @@ const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrganizationData} = useOrganizationServices()
-const {fetchUser} = useOrganizationMembersServices()
+const {fetchUser, fetchOrgMembers} = useOrganizationMembersServices()
 
 const stringToArray = (str: string): string[] =>
   str.length > 0 ? str.split(', ') : [];
@@ -114,6 +114,14 @@ export const useRepositoryServices = () => {
       );
       if(type == 'create'){
         await addRepositoryToOrganization(res.data.organization, res.data.uid);
+        const orgMembers = await fetchOrgMembers(res.data.organization);
+
+        for (const member of orgMembers) {
+          if(member.user.uid != userData.uid) {
+            await addUserToRepository(res.data.uid, member.user.uid, member.access_level);
+          }
+        }
+
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Repository created successfully',
           status: 'success'
@@ -122,6 +130,8 @@ export const useRepositoryServices = () => {
           loading.value = false;
           window.location.href = '/my-repositories';
         }, 3000);
+
+
       } else if(type == 'update'){
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Repository updated successfully',
@@ -138,6 +148,25 @@ export const useRepositoryServices = () => {
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
       clearErrorMessage();
       handleDynamicErrorMapping(e.response?.data, errorMessage);
+      return;
+    }
+  }
+
+  const addUserToRepository = async (repoID: string, userID: string, accessLevel: string) => {
+    try {
+      await server.post(`/repo-users/${repoID}`, {
+        repo: repoID,
+        user: userID,
+        access_level: accessLevel
+      }, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      // console.log(res.data);
+    } catch (e: any) {
+      showSnackbarMessage('OOPS! Something went wrong', Status.error);
+      console.log(e.response?.data);
       return;
     }
   }
