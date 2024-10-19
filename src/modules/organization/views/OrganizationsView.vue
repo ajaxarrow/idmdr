@@ -16,6 +16,7 @@ const {fetchOrganizationsWithPagination, loading} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
 const organizationData = ref<Organization[]>([]);
+const organizationItem = ref<Organization[]>([]);
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
@@ -23,9 +24,9 @@ const observerReady = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
-    organizationData.value = allOrganizations.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) || organization.acronym?.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
+    organizationData.value = organizationItem.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) || organization.acronym?.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
   } else {
-    organizationData.value = allOrganizations.value
+    organizationData.value = organizationItem.value
   }
 }
 
@@ -45,6 +46,7 @@ watch(() => searchQuery.value, () => {
 onMounted(async () => {
   const fetchedData = await fetchOrganizationsWithPagination(lastItemValue.value);
   organizationData.value = [...fetchedData];
+  organizationItem.value = organizationData.value;
   lastItemValue.value = lastItemValue.value + 1
   observerReady.value = true
 })
