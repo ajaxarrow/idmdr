@@ -4,7 +4,6 @@ import {PhInfo, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/v
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
 import {onMounted, ref, watch, onUnmounted} from "vue";
-import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
