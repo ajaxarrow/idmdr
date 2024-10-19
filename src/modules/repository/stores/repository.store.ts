@@ -7,7 +7,7 @@ const repository = ref<Repository | null | undefined>();
 const repositoryItems = ref<Repository[]>([]);
 const myRepositories = ref<Repository[]>([]);
 const allRepositories = ref<Repository[]>([]);
-
+const orgRepositories = ref<Repository[]>([]);
 
 
 // const setRepositoryData = async (slug: string, repositoryData: Repository[]) => {
@@ -15,9 +15,9 @@ const allRepositories = ref<Repository[]>([]);
 // }
 
 export const useRepositoryStore = createGlobalState(() => ({
-
   repository,
   repositoryItems,
   myRepositories,
-  allRepositories
+  allRepositories,
+  orgRepositories
 }));

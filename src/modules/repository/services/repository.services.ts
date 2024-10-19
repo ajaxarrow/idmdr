@@ -1,5 +1,4 @@
 import {Repository} from "../../../interfaces/repository.interface.ts";
-import {repositories} from "../../../data/repository.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
@@ -15,7 +14,7 @@ const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker();
-const { repository, myRepositories, allRepositories} = useRepositoryStore();
+const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrganizationData} = useOrganizationServices()
 const {fetchUser} = useOrganizationMembersServices()
 
@@ -284,15 +283,62 @@ export const useRepositoryServices = () => {
     }
   }
 
-  const fetchRepositoriesByOrganization = (slug: string): Repository[]  => {
-    const repositoryList = repositories.filter(repo => repo.organization === slug);
-    if (repositoryList) {
-      return repositoryList;
-    } else {
-      console.error('no repo')
+  const fetchRepositoriesByOrganization = async (
+    orgID: string,
+    isForUser: boolean,
+    isPaginated: boolean = false,  // Optional pagination flag
+    pageSize?: number               // Optional page size parameter
+  ): Promise<Repository[]> => {
+    try {
+      let endpoint = `/org_repo/${orgID}/?page_size=${5}`;
+      if (isPaginated && pageSize) {
+        endpoint += `&page=${pageSize}`;
+      }
+
+      const res = await server.get(endpoint, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+
+      const rawData = res.data.results;
+
+      const filteredDataPromises = rawData.map(async (data: any) => {
+        if (isForUser) {
+          // For user-specific filtering
+          if (data.repo.visibility === 2) {
+            return data.repo.user === userData.uid ? data.repo : null;
+          }
+          return data.repo;
+        } else {
+          if (user.value) {
+            const userRepo = await fetchRepositoriesByUser(userData.uid);
+            const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
+            console.log(isBelong)
+            return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data.repo : null;
+          } else {
+            return data.repo.visibility === 1 ? data.repo : null;
+          }
+        }
+      });
+
+      const filteredData = (await Promise.all(filteredDataPromises)).filter(Boolean);
+
+      const repositories: Repository[] = await mapRepoData(filteredData);
+
+      const data = [...repositories];
+      orgRepositories.value = data;
+      return data;
+
+    } catch (e) {
+      console.error("Error fetching repositories:", e);
       return [];
     }
-  }
+  };
+
+
+
+
 
 
   const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {

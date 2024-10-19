@@ -14,11 +14,17 @@ const {organization} = useOrganizationStore();
 const {fetchOrganizationData} = useOrganizationServices();
 
 const {tags, selectedTags, fetchTags} = useTags();
-const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
+const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization, loading} = useRepositoryServices();
+
+const path = ref('organizations')
 const searchQuery = ref('');
 const repositoryData = ref<Repository[]>([]);
 const repositoryItems = ref<Repository[]>([]);
 const searchedRepositories = ref<Repository[]>([]);
+
+const reachEnd = ref(false)
+const lastItemValue = ref(1);
+const observerReady = ref(false)
 
 const showMoreChips = ref(false);
 
@@ -40,14 +46,32 @@ watch(() => selectedTags.value, (newVal) => {
   }
 })
 
+const fetchMoreRepositories = async () => {
+  const data = await fetchRepositoriesByOrganization(
+      route.params.slug as string,
+      path.value !== 'organizations',
+      true,
+      lastItemValue.value
+  );
+  repositoryData.value = [...repositoryData.value, ...data];
+  lastItemValue.value = lastItemValue.value + 1
+  if(data.length === 0){
+    reachEnd.value = true
+  }
+}
+
+const getFirstPath = (url: string) => {
+  return url.split('/').filter(Boolean)[0];
+}
+
 
 onMounted(async () => {
+  path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
-  repositoryItems.value = fetchRepositoriesByOrganization(route.params.slug as string);
-  fetchTags();
-  repositoryData.value = fetchRepositoriesByOrganization(route.params.slug as string);
-  fetchTags();
+  await fetchMoreRepositories();
+  repositoryItems.value = repositoryData.value;
   searchedRepositories.value = repositoryData.value;
+  observerReady.value = true
   if(route.query.tag){
     selectedTags.value.push(<string>route.query.tag);
     searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
@@ -57,6 +81,7 @@ onMounted(async () => {
 onUnmounted(() => {
   searchQuery.value = '';
   selectedTags.value = [];
+  observerReady.value = false;
 })
 
 </script>
@@ -131,14 +156,22 @@ onUnmounted(() => {
           <PhCaretDown weight="fill" class="ml-1"/>
         </p>
       </VRow>
-      <p v-if="repositoryItems.length == 0" class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+      <div v-if="loading" class="loading-state-container">
+        <VProgressCircular
+            indeterminate
+            color="#23668b"
+        ></VProgressCircular>
+      </div>
       <div v-else>
-        <RepositoryItem
-            v-if="searchedRepositories.length > 0"
-            v-for="repository in searchedRepositories"
-            :repository="repository"
-        />
-        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+        <p v-if="repositoryItems.length == 0" class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+        <div v-else>
+          <RepositoryItem
+              v-if="searchedRepositories.length > 0"
+              v-for="repository in searchedRepositories"
+              :repository="repository"
+          />
+          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+        </div>
       </div>
     </div>
   </OrganizationDetailsLayout>
