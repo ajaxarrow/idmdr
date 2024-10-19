@@ -16,7 +16,7 @@ import {useRepositoryServices} from "../services/repository.services.ts";
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchDiscussionTopicsByRepository} = useRepositoryDiscussionTopicServices();
+const {fetchDiscussionTopicsByRepository, loading} = useRepositoryDiscussionTopicServices();
 const {repository} = useRepositoryStore()
 const {fetchRepositoryData} = useRepositoryServices()
 const searchedTopics = ref<Topic[]>([]);
@@ -94,13 +94,21 @@ onMounted(async() => {
           </VBtnPrimaryFilled>
         </TopicFormDialog>
       </VRow>
-      <TopicItem
-        v-if="searchedTopics.length > 0"
-        v-for="topic in searchedTopics"
-        :topic="topic"
-        :key="topic.id"
-      />
-      <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Discussions Found</p>
+      <div v-if="loading" class="loading-state-container">
+        <VProgressCircular
+            indeterminate
+            color="#23668b"
+        ></VProgressCircular>
+      </div>
+      <div v-else>
+        <TopicItem
+            v-if="searchedTopics.length > 0"
+            v-for="topic in searchedTopics"
+            :topic="topic"
+            :key="topic.id"
+        />
+        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Discussions Found</p>
+      </div>
     </div>
   </RepositoryDetailsLayout>
 </template>
