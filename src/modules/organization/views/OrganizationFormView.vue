@@ -27,26 +27,6 @@ const isImagePreviewed = ref(false);
 const hasImage = ref(false);
 const previewImage = ref('');
 const file = ref<File | null>(null);
-const removeImage = () => {
-  file.value = null;
-  hasImage.value = false;
-}
-
-const handleUploadChange = (e: any) => {
-  const target = e.target;
-  if (target.files && target.files[0]) {
-    file.value = target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      previewImage.value = reader.result as string;
-    };
-
-    reader.readAsDataURL(<File>file.value);
-    hasImage.value = true;
-  }
-};
-
 
 const {route} = useRouting();
 
@@ -91,6 +71,26 @@ const organizationDataInitialState = reactive<Organization>({
 const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
+
+const removeImage = () => {
+  file.value = null;
+  hasImage.value = false;
+}
+
+const handleUploadChange = (e: any) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    file.value = target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      previewImage.value = reader.result as string;
+    };
+
+    reader.readAsDataURL(<File>file.value);
+    hasImage.value = true;
+  }
+};
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -152,35 +152,36 @@ const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
   // console.log(organizationData.geojson)
 }
 
+const scrollToBottom = () => {
+  const element = document.getElementById('form')
+  if(element){
+    setTimeout(() => {
+      window.scrollTo({
+        top: element.scrollHeight + 4000,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
+}
+
 const closeGeoJSONPreview = () => {
   isGeoJSONPreview.value = false
   isMapPreview.value = false
 }
 
+const openMapPreview = () => {
+  isMapPreview.value = true
+  scrollToBottom()
+}
+
 const openGeoJSONPreview = () => {
   isGeoJSONPreview.value = true
-  const element = document.getElementById('form')
-  if(element){
-    setTimeout(() => {
-      window.scrollTo({
-        top: element.scrollHeight + 4000,
-        behavior: 'smooth'
-      });
-    }, 100);
-  }
+  scrollToBottom()
 }
 
 const closePreview = () => {
   organizationData.geojson = {}
-  const element = document.getElementById('form')
-  if(element){
-    setTimeout(() => {
-      window.scrollTo({
-        top: element.scrollHeight + 4000,
-        behavior: 'smooth'
-      });
-    }, 100);
-  }
+  scrollToBottom()
 }
 
 const handleGeoJSONFileInput = (e: any) => {
@@ -808,7 +809,7 @@ onMounted(async () => {
               <p class="text-dropzone text-center">
                 Submit a geometric representation of the area by
                 <label class="file-label" for="dropzoneFileGeoJSON">uploading a GeoJSON file by clicking here</label>
-                or <br/><label class="file-label" @click="isMapPreview = !isMapPreview">drawing the boundary manually</label>.
+                or <br/><label class="file-label" @click="openMapPreview">drawing the boundary manually</label>.
               </p>
               <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
             </div>

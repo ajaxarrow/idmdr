@@ -120,35 +120,36 @@ const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
   isGeoJSONDrawn.value = isJSONDrawn
 }
 
+const scrollToBottom = () => {
+  const element = document.getElementById('form')
+  if(element){
+    setTimeout(() => {
+      window.scrollTo({
+        top: element.scrollHeight + 4000,
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
+}
+
 const closeGeoJSONPreview = () => {
   isGeoJSONPreview.value = false
   isMapPreview.value = false
 }
 
+const openMapPreview = () => {
+  isMapPreview.value = true
+  scrollToBottom()
+}
+
 const openGeoJSONPreview = () => {
   isGeoJSONPreview.value = true
-  const element = document.getElementById('form')
-  if(element){
-    setTimeout(() => {
-      window.scrollTo({
-        top: element.scrollHeight + 4000,
-        behavior: 'smooth'
-      });
-    }, 100);
-  }
+  scrollToBottom()
 }
 
 const closePreview = () => {
   repositoryData.geojson = {}
-  const element = document.getElementById('form')
-  if(element){
-    setTimeout(() => {
-      window.scrollTo({
-        top: element.scrollHeight + 4000,
-        behavior: 'smooth'
-      });
-    }, 100);
-  }
+  closeGeoJSONPreview()
 }
 
 
@@ -868,7 +869,7 @@ onMounted( async () => {
               <p class="text-dropzone text-center">
                 Submit a geometric representation of the area by
                 <label class="file-label" for="dropzoneFileGeoJSON">uploading a GeoJSON file by clicking here</label>
-                or <br/><label class="file-label" @click="isMapPreview = !isMapPreview">drawing the boundary manually</label>.
+                or <br/><label class="file-label" @click="openMapPreview">drawing the boundary manually</label>.
               </p>
               <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSONFileInput" accept="application/json"/>
             </div>
