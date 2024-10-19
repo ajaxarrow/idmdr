@@ -11,7 +11,6 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {user} = useUserStore();
-const {allOrganizations} = useOrganizationStore();
 const {fetchOrganizationsWithPagination, loading} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');

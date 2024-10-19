@@ -13,7 +13,7 @@ const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData} = useOrganizationServices();
 
-const {tags, selectedTags, fetchTags} = useTags();
+const {tags, selectedTags} = useTags();
 const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization, loading} = useRepositoryServices();
 
 const path = ref('organizations')

@@ -303,28 +303,54 @@ export const useRepositoryServices = () => {
 
       const rawData = res.data.results;
 
-      const filteredDataPromises = rawData.map(async (data: any) => {
-        if (isForUser) {
-          // For user-specific filtering
-          if (data.repo.visibility === 2) {
-            return data.repo.user === userData.uid ? data.repo : null;
-          }
-          return data.repo;
-        } else {
-          if (user.value) {
-            const userRepo = await fetchRepositoriesByUser(userData.uid);
-            const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
-            console.log(isBelong)
-            return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data.repo : null;
+      // const filteredData = rawData.filter(async (data: any) => {
+      //   if (isForUser) {
+      //     // For user-specific filtering
+      //     if (data.repo.visibility === 2) {
+      //       return data.repo.user === userData.uid;
+      //     }
+      //     return true;
+      //   } else {
+      //     if (user.value) {
+      //       const userRepo = await fetchRepositoriesByUser(userData.uid);
+      //       const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
+      //       //this part
+      //       return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong;
+      //     } else {
+      //       return data.repo.visibility === 1;
+      //     }
+      //   }
+      // }).map((data: any) => data.repo);
+      //
+      // const repositories: Repository[] = await mapRepoData(filteredData);
+
+      const filteredData = await Promise.all(
+        rawData.map(async (data: any) => {
+          if (isForUser) {
+            // For user-specific filtering
+            if (data.repo.visibility === 2) {
+              return data.repo.user === userData.uid ? data : null;
+            }
+            return data;
           } else {
-            return data.repo.visibility === 1 ? data.repo : null;
+            if (user.value) {
+              const userRepo = await fetchRepositoriesByUser(userData.uid);
+              const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
+              //this part
+              return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data : null;
+            } else {
+              return data.repo.visibility === 1 ? data : null;
+            }
           }
-        }
-      });
+        })
+      );
 
-      const filteredData = (await Promise.all(filteredDataPromises)).filter(Boolean);
+// Filter out the null values
+      const validData = filteredData.filter((data) => data !== null);
 
-      const repositories: Repository[] = await mapRepoData(filteredData);
+// Map the valid data
+      const repositories: Repository[] = await mapRepoData(validData.map((data: any) => data.repo));
+
 
       const data = [...repositories];
       orgRepositories.value = data;
@@ -335,9 +361,6 @@ export const useRepositoryServices = () => {
       return [];
     }
   };
-
-
-
 
 
 
