@@ -226,7 +226,7 @@ export const useOrganizationServices = () => {
       await server.post(`/v1/user/${userData.uid}/organizations`, {
         user: userData.uid,
         organization: orgID,
-        access_level: 'admin'
+        access_level: 'owner'
       }, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
@@ -285,6 +285,7 @@ export const useOrganizationServices = () => {
   // @ts-ignore
   const fetchOrganizationByUserWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
     try{
+      loading.value = true
       const res = await server.get(`/v1/user/${userData.uid}/organizations?page=${pageNumber}&page_size=5`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
@@ -293,8 +294,10 @@ export const useOrganizationServices = () => {
       const rawData = res.data.results
       const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
       myOrganizations.value = [...organizations];
+      loading.value = false
       return organizations;
     } catch (e) {
+      loading.value = false
       return []
     }
   }
@@ -320,6 +323,7 @@ export const useOrganizationServices = () => {
   const fetchOrganizationsWithPagination = async (pageNumber: number): Promise<Organization[]> => {
     let data: Organization[] = [];
     try {
+      loading.value = true;
       if (user.value) {
         const publicOrg = await fetchPaginatedOrganizations(pageNumber, [1, 4]);
         const userDataOrg = await fetchOrganizationByUserWithPagination(pageNumber);
@@ -332,8 +336,10 @@ export const useOrganizationServices = () => {
         data = await fetchPaginatedOrganizations(pageNumber, [1]);
       }
       allOrganizations.value = [...allOrganizations.value, ...data];
+      loading.value = false
       return data;
     } catch (e) {
+      loading.value = false
       return data;
     }
   };

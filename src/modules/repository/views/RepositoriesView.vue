@@ -14,7 +14,7 @@
 
   const {user} = useUserStore();
   const {tags, selectedTags, fetchTags} = useTags();
-  const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
+  const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery, loading} = useRepositoryServices();
   const searchQuery = ref('');
   const repositoryItems = ref<Repository[]>([]);
   const repositoryData = ref<Repository[]>([]);
@@ -167,16 +167,24 @@
             <PhCaretDown weight="fill" class="ml-1"/>
           </p>
         </VRow>
-        <div v-if="searchedRepositories.length > 0">
-          <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
-          <div class="pa-3" v-if="reachEnd">
-            <p class="text-center">No more repositories to fetch!</p>
-          </div>
-          <div class="pa-3" v-else>
-            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
-          </div>
+        <div v-if="loading" class="loading-state-container">
+          <VProgressCircular
+              indeterminate
+              color="#23668b"
+          ></VProgressCircular>
         </div>
-        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+        <div v-else>
+          <div v-if="searchedRepositories.length > 0">
+            <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
+            <div class="pa-3" v-if="reachEnd">
+              <p class="text-center">No more repositories to fetch!</p>
+            </div>
+            <div class="pa-3" v-else>
+              <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
+            </div>
+          </div>
+          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+        </div>
       </div>
     </div>
   </MainLayout>
@@ -201,5 +209,4 @@
   color: #8C8C8C;
   --v-field-border-width: 1px !important;
 }
-
 </style>

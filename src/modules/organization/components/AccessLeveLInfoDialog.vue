@@ -16,8 +16,12 @@ const accessLevelInfoDialog = ref(false);
         <p>Below are the access levels that can be assigned to members of your organization:</p>
         <ul class="py-3">
           <li>
-            <strong>Admin:</strong> The Admin holds the highest access level within the organization. They have the ability to delete and edit content, add or remove users, and are the only role authorized to delete the organization.
+            <strong>Owner:</strong> The Owner holds the highest access level within the organization. They have full control over all aspects, including the ability to delete and edit content, manage users, and make high-level decisions such as deleting the entire organization. This role is exclusive to the creator of the organization.
           </li>
+          <li>
+            <strong>Admin:</strong> The Admin holds a high level of access, second only to the Owner. While they can delete and edit content, manage users, and perform most administrative functions, they do not have the authority to delete the organization.
+          </li>
+
           <li>
             <strong>Manager:</strong> Moderators can update organization details and manage users by adding or removing them, but they cannot delete the organization or modify access levels.
           </li>

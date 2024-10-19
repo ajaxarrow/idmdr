@@ -14,7 +14,7 @@ const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const {setSnackbarMessage} = useSnackbarStore()
 const {myOrganizations} = useOrganizationStore();
-const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
+const {fetchOrganizationByUserWithPagination, loading} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
 const organizationData = ref<Organization[]>([]);
@@ -105,18 +105,26 @@ onUnmounted(() => {
             <p>{{organizationData.length}} Organization<span v-if="organizationData.length > 1">s</span> Available</p>
           </p>
         </VRow>
-        <div v-if="organizationData.length > 0">
-          <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
-          <div class="pa-3" v-if="reachEnd">
-            <p class="text-center">No more organizations to fetch!</p>
-          </div>
-          <div class="pa-3" v-else>
-            <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
-          </div>
+        <div v-if="loading" class="loading-state-container">
+          <VProgressCircular
+              indeterminate
+              color="#23668b"
+          ></VProgressCircular>
         </div>
-        <p v-else class="d-flex align-center justify-center">
-          <PhInfo class="mr-1"/>No Organization Found
-        </p>
+        <div v-else>
+          <div v-if="organizationData.length > 0">
+            <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
+            <div class="pa-3" v-if="reachEnd">
+              <p class="text-center">No more organizations to fetch!</p>
+            </div>
+            <div class="pa-3" v-else>
+              <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
+            </div>
+          </div>
+          <p v-else class="d-flex align-center justify-center">
+            <PhInfo class="mr-1"/>No Organization Found
+          </p>
+        </div>
       </div>
     </div>
   </MainLayout>

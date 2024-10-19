@@ -101,3 +101,9 @@ ul {
     background-color: #F0F5F9 !important;
     border-radius: 10px !important;
 }
+
+.loading-state-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
