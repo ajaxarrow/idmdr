@@ -59,7 +59,7 @@ onMounted(async () => {
         <p class="text-title">Browse Latest Repositories</p>
         <RouterLink class="link" :to="{name: 'repositories'}">See All</RouterLink>
       </VRow>
-      <RepositoryItem v-for="repository in repositoryData.splice(0, 4)" :repository="repository" />
+      <RepositoryItem v-for="repository in repositoryData" :repository="repository" />
     </div>
   </MainLayout>
 </template>

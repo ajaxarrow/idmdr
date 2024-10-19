@@ -314,9 +314,9 @@ export const useRepositoryServices = () => {
   }
 
 
-  const fetchRepositoriesByUser = async(): Promise<Repository[]> => {
+  const fetchRepositoriesByUser = async(pageSize: number = 100): Promise<Repository[]> => {
     try{
-      const res = await server.get(`/repositories/?user=${userData.uid}`, {
+      const res = await server.get(`/repositories/?page_size=${pageSize}&user=${userData.uid}`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
@@ -374,7 +374,7 @@ export const useRepositoryServices = () => {
       let data: Repository[] = []
       if(user.value){
         const visibilityData = await fetchRepositoriesByVisibility([1, 4], pageSize);
-        const userRepo = await fetchRepositoriesByUser();
+        const userRepo = await fetchRepositoriesByUser(pageSize);
         let combinedData = [...visibilityData.flat(), ...userRepo];
         const uniqueData = Array.from(new Set(combinedData.map(repo => repo.slug)))
           .map(slug => combinedData.find(repo => repo.slug === slug));
