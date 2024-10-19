@@ -168,6 +168,7 @@ export const useOrganizationMembersServices = () => {
   };
 
   return {
+    mapOrgMembers,
     loading,
     fetchOrgMembers,
     addOrgMember,

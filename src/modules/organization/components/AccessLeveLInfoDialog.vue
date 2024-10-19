@@ -26,7 +26,7 @@ const accessLevelInfoDialog = ref(false);
             <strong>Manager:</strong> Moderators can update organization details and manage users by adding or removing them, but they cannot delete the organization or modify access levels.
           </li>
           <li>
-            <strong>Member:</strong> Members can add new users but can only assign them the "Member" role. They can also create repositories but do not have the ability to edit organization content.
+            <strong>Member:</strong> Members can add new users but can only assign them the "Viewer" role. They can also create repositories but do not have the ability to edit organization content.
           </li>
           <li>
             <strong>Viewer:</strong> The Viewer role is the lowest level of access. Viewers can see the list of organization members and download content, but they cannot make any changes.

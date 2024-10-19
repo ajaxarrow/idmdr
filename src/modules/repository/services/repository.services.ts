@@ -245,6 +245,7 @@ export const useRepositoryServices = () => {
         const ownerData = await fetchUser(repo.owner_id);
 
         return {
+          is_member: false,
           visibility: repo.visibility,
           affiliation: repo.affiliation || "",
           commodity: repo.commodity || "",

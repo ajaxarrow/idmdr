@@ -78,12 +78,12 @@ const fetchMembers = async () => {
 }
 
 onMounted(async () => {
-  const alluserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationByUser();
   path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
 
   if(organization.value){
-    if( isSlugInOrgList(organization.value, alluserOrg)){
+    if( isSlugInOrgList(organization.value, allUserOrg)){
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
@@ -163,7 +163,7 @@ onMounted(async () => {
                   </div>
                 </div>
                 <VMenu
-                    v-if="member.user.uid != userData.uid || (userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level) == 'moderator'"
+                    v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator')"
                     location="bottom"
                     v-model="memberActionMenu"
                     :close-on-content-click="false"
