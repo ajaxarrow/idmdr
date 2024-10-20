@@ -2,7 +2,7 @@
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {onMounted, reactive, ref} from "vue";
 import {
-  PhArrowLeft, PhCaretDown,
+  PhArrowLeft,
   PhEye,
   PhFile,
   PhFileDashed,
@@ -321,6 +321,16 @@ const scrollToFirstErrorMessage = () => {
 
 const addRepositoryData = async () => {
   if(validateAttachments()){
+    for (let i = 0; i < attachments.value.length; i++) {
+      if (attachments.value[i].name == '') {
+        attachments.value[i].name = attachments.value[i].file?.name!
+      } else if (attachments.value[i].description == ''){
+        attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
+      }
+    }
+    if(attachments.value.length > 0){
+      repositoryData.files = attachments.value
+    }
     previousTags.value = <string[]>repositoryData.tags
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
     if(file.value){
