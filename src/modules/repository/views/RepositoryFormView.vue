@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {
   PhArrowLeft,
   PhEye,
@@ -31,11 +31,17 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 import AttachmentsVisibilityInfoDialog from "../components/AttachmentsVisibilityInfoDialog.vue";
+import {useRepositoryAttachmentServices} from "../services/repository-attachments.services.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 
 
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
+const {fetchAttachmentsByRepository, deleteAttachment} = useRepositoryAttachmentServices()
+const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore()
 const {tags, fetchTags} = useTags();
 const {route} = useRouting();
@@ -137,9 +143,11 @@ const attachmentData = reactive<Attachment>({
   is_deleted: false,
   deleted_at: '',
   visibility: repositoryData.visibility,
-  type: '',
+  type: 'create',
   errorMessage: '',
   showFiles: false,
+  isDescriptionUpdated: false,
+  isFileUpdated: false
 })
 const active = ref(false)
 
@@ -162,7 +170,6 @@ const removeImage = () => {
   file.value = null;
   hasImage.value = false;
 }
-
 
 
 const handleUploadChange = (e: any) => {
@@ -197,9 +204,25 @@ const handleBulkAttachmentsUpload = (e: any) => {
 const handleIndividualAttachmentsUpload = (e: any, index: number) => {
   const target = e.target;
   if (target.files && target.files[0]) {
+    if(attachments.value[index].type === 'update'){
+      attachments.value[index].isFileUpdated = true
+    }
     attachments.value[index].file = target.files[0];
+    attachments.value[index].attachment = target.files[0];
   }
 }
+
+watch(
+    () => attachments.value.map(attachment => attachment.description),
+    (newDescriptions, oldDescriptions) => {
+      newDescriptions.forEach((description, index) => {
+        if (oldDescriptions[index] !== undefined && description !== oldDescriptions[index] && attachments.value[index].type === 'update') {
+          console.log('triggered')
+          attachments.value[index].isDescriptionUpdated = true
+        }
+      });
+    }
+);
 
 
 const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
@@ -243,15 +266,31 @@ const validateAttachments = () => {
   let isValid = true;
 
   for (let i = 0; i < attachments.value.length; i++) {
-    if (!attachments.value[i].file) {
-      attachments.value[i].errorMessage = 'File is required';
-      isValid = false;
+    if(attachments.value[i].type == 'update'){
+      isValid = true;
     } else {
-      attachments.value[i].errorMessage = '';
+      if (!attachments.value[i].file) {
+        attachments.value[i].errorMessage = 'File is required';
+        isValid = false;
+      } else {
+        attachments.value[i].errorMessage = '';
+      }
     }
+
   }
 
   return isValid;
+}
+
+const deleteAttachmentCallback = async (id: string, index: number) => {
+  await deleteAttachment(id);
+  attachments.value.splice(index, 1);
+  showSnackbarMessage('Attachment Deleted Successfully', Status.success)
+}
+
+const clearAttachment = (index: number) => {
+  attachments.value[index].file = null
+  attachments.value[index].attachment = ''
 }
 
 
@@ -354,12 +393,26 @@ const addRepositoryData = async () => {
 
 const updateRepositoryData = async () => {
   if(validateAttachments()){
+    for (let i = 0; i < attachments.value.length; i++) {
+      if (attachments.value[i].description == ''){
+        attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
+      }
+      if((!attachments.value[i].isFileUpdated && !attachments.value[i].isDescriptionUpdated && attachments.value[i].type == 'updated') || (!attachments.value[i].isFileUpdated && attachments.value[i].isDescriptionUpdated)){
+        delete attachments.value[i].attachment
+      }
+    }
+    if(attachments.value.length > 0){
+      repositoryData.files = attachments.value
+    }
+    console.log(repositoryData.files)
     if(file.value){
       //@ts-ignore
       repositoryData.image = file.value as File
     } else {
       delete repositoryData.image;
     }
+
+
     previousTags.value = <string[]>repositoryData.tags
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
     if(repositoryData.transfer_plan === 'Commercialization'){
@@ -390,6 +443,18 @@ onMounted( async () => {
     // console.log(repositoryData.tags)
     // repositoryData.tags = stringToArray(<string>repositoryData.tags)
     repositoryData.geojson = JSON.stringify(repositoryData.geojson)
+    const fetchedFiles = await fetchAttachmentsByRepository(<string>route.params.slug, 'update')
+    for(let i = 0; i < fetchedFiles.length; i++){
+      attachments.value.push({
+        ...fetchedFiles[i],
+        file: null,
+        attachment: fetchedFiles[i].attachment,
+        isDescriptionUpdated: false,
+        isFileUpdated: false
+      })
+    }
+
+
     previewImage.value = <string>repositoryData.image
     hasImage.value = true
   }
@@ -888,7 +953,7 @@ onMounted( async () => {
                 <PhImage class="mr-1"/>
                 {{
                   file ? file?.name :
-                      (typeof repositoryData?.image === 'string' ? repositoryData.image.split('/').pop() as string : '')
+                      (typeof repositoryData?.image === 'string' ? repositoryData.image.split('/').pop() as string : 'Image')
                 }}
 
               </p>
@@ -955,14 +1020,16 @@ onMounted( async () => {
               >
                 <VDivider  v-if="index != 0"/>
                 <div :class="{'mb-5': !attachment.showFiles}"  class="d-flex align-center justify-space-between mt-5">
-                  <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : 'New File'}}</p>
+                  <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : (attachment.attachment != '' ? attachment.name as string : 'New File')}}</p>
                   <div class="d-flex align-center justify-space-between ga-2">
-                    <VTooltip location="bottom" v-if="attachment.type == 'update'">
-                      <template v-slot:activator="{ props }">
-                        <PhTrash v-bind="props" class="cursor-pointer" />
-                      </template>
-                      <span>Delete Attachment</span>
-                    </VTooltip>
+                    <DeleteDialog v-if="attachment.type == 'update'" @callback="deleteAttachmentCallback(<string>attachment.uid, index)">
+                      <VTooltip location="bottom" >
+                        <template v-slot:activator="{ props }">
+                          <PhTrash v-bind="props" class="cursor-pointer" />
+                        </template>
+                        <span>Delete Attachment</span>
+                      </VTooltip>
+                    </DeleteDialog>
                     <VTooltip location="bottom" v-else>
                       <template v-slot:activator="{ props }">
                         <PhX v-bind="props" class="cursor-pointer" @click="removeAttachment(index)"/>
@@ -986,7 +1053,7 @@ onMounted( async () => {
                 <div v-if="attachment.showFiles">
                   <div class="mt-5 mb-3">
                     <label class="input-label">Attachment</label>
-                    <div v-if="attachment.file" class="my-3">
+                    <div v-if="attachment.file || attachment.attachment != ''" class="my-3">
                       <VDivider/>
                       <div class="d-flex align-center justify-space-between pa-2" >
                         <p class="dialog-boundary-title d-flex align-center">
@@ -996,7 +1063,7 @@ onMounted( async () => {
                         <div class="d-flex align-center ga-2">
                           <VTooltip location="bottom">
                             <template v-slot:activator="{ props }">
-                              <PhX v-bind="props" class="cursor-pointer" @click="attachment.file = null"/>
+                              <PhX v-bind="props" class="cursor-pointer" @click="clearAttachment(index)"/>
                             </template>
                             <span>Remove File</span>
                           </VTooltip>
@@ -1018,7 +1085,6 @@ onMounted( async () => {
                         chips
                         prepend-icon=""
                         :error-messages="attachments[index].errorMessage as string"
-                        accept="image/*"
                     >
                       <template v-slot:prepend-inner>
                         <PhFile/>

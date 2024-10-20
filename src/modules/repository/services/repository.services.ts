@@ -18,7 +18,7 @@ const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrganizationData} = useOrganizationServices()
 const {fetchUser, fetchOrgMembers} = useOrganizationMembersServices()
-const {fetchAttachmentsByRepository, addAttachment} = useRepositoryAttachmentServices()
+const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
 
 const stringToArray = (str: string): string[] =>
   str.length > 0 ? str.split(', ') : [];
@@ -143,13 +143,26 @@ export const useRepositoryServices = () => {
 
 
       } else if(type == 'update'){
+        // @ts-ignore
+        if(repository.files?.length > 0  && repository.files) {
+          for (let i = 0; i < repository.files.length; i++) {
+            repository.files[i].repository! = res.data.uid
+            if(repository.files[i].type == 'create') {
+              await addAttachment(repository.files[i]);
+            } else {
+              if(repository.files[i].isDescriptionUpdated || repository.files[i].isFileUpdated) {
+                await updateAttachment(repository.files[i]);
+              }
+            }
+          }
+        }
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Repository updated successfully',
           status: 'success'
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-repositories/${repository.slug}`;
+          window.location.href = `/my-repositories/${repository.uid}`;
         }, 3000);
       }
     } catch (e: any){

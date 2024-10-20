@@ -107,7 +107,9 @@ interface Attachment{
   visibility?: number,
   type: string,
   errorMessage?: string
-  showFiles?: boolean
+  showFiles?: boolean,
+  isDescriptionUpdated?: boolean
+  isFileUpdated?: boolean
 }
 
 
