@@ -95,7 +95,7 @@ interface Attachment{
   uid?: string,
   file: File | null,
   repository: string,
-  attachment: File | string,
+  attachment?: File | string,
   file_type?: string,
   mime_type?: string,
   name?: string,

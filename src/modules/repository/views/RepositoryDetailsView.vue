@@ -345,7 +345,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           <div class="pa-2">
             <VListItem
                 v-for="file in repository.files"
-                @click="selectFile(file.description!, file.name!, file.attachment!)">
+                @click="selectFile(file.description!, file.name!, file.attachment! as string)">
               <div
                   class="my-2 pa-1 d-flex align-center "
                   :class="{'selected-file': selectedFileDescription === file.description}"
