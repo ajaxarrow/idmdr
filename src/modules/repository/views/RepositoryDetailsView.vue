@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   // import {
   //   PhFile, PhFileArchive,
@@ -15,102 +15,105 @@
   import "quill/dist/quill.core.css"
   import "quill/dist/quill.snow.css"
   import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {
+  PhDownload,
+  PhFile,
+  PhFileArchive,
+  PhFileCsv,
+  PhFileDoc,
+  PhFileJpg,
+  PhFileJs,
+  PhFilePdf,
+  PhFilePng, PhFilePpt, PhFileVideo,
+  PhFileXls, PhInfo
+} from "@phosphor-icons/vue";
 
   const {route} = useRouting()
   const {repository} = useRepositoryStore();
   const {fetchRepositoryData} = useRepositoryServices();
   const {setSnackbarMessage} = useSnackbarStore()
-  // const selectedFileName = ref('');
-  // const selectedFileDescription = ref('');
+  const selectedFileName = ref('');
+  const selectedFileDescription = ref('');
+  const selectedFileAttachment= ref('');
 
-  // const downloadFiles = () => {
-  //   let fileContent = '';
-  //   if (repository.value) {
-  //     fileContent += `Repository Name: ${repository.value?.title}\n\n`;
-  //     if (repository.value?.files) {
-  //       repository.value?.files.forEach((file, index) => {
-  //         fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-  //       });
-  //     }
-  //   }
-  //
-  //   const blob = new Blob([fileContent], { type: 'text/plain' });
-  //
-  //   const url = URL.createObjectURL(blob);
-  //
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.download = `${repository.value?.slug}.txt`;
-  //
-  //   link.click();
-  //
-  //   URL.revokeObjectURL(url);
-  // }
+  const downloadFiles = () => {
+    let fileContent = '';
+    if (repository.value) {
+      fileContent += `Repository Name: ${repository.value?.title}\n\n`;
+      if (repository.value?.files) {
+        repository.value?.files.forEach((file, index) => {
+          fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+        });
+      }
+    }
 
-  // const downloadFile = (filename: string, description: string): void => {
-  //   let fileContent = '';
-  //   fileContent += `Name: ${filename}\nDescription: ${description}\n\n`;
-  //
-  //   const blob = new Blob([fileContent], { type: 'text/plain' });
-  //
-  //   const url = URL.createObjectURL(blob);
-  //
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.setAttribute('download', `${filename}.txt`);
-  //
-  //   document.body.appendChild(link);
-  //
-  //   link.click();
-  //
-  //   document.body.removeChild(link);
-  //
-  //   URL.revokeObjectURL(url);
-  // }
-  //
-  // const selectFile = (fileDesc: string, filename: string) => {
-  //   if(selectedFileDescription.value === fileDesc){
-  //     selectedFileDescription.value = ''
-  //     selectedFileName.value = ''
-  //   } else {
-  //     selectedFileDescription.value = fileDesc
-  //     selectedFileName.value = filename
-  //   }
-  // }
-  //
-  // const getFileExtension = (filename: string): string | null => {
-  //   const lastDotIndex = filename.lastIndexOf('.');
-  //   if (lastDotIndex === -1) {
-  //     return null;
-  //   }
-  //   const extension = filename.substring(lastDotIndex + 1);
-  //   return extension.toLowerCase();
-  // }
-  //
-  // interface FileIcon {
-  //   [key: string]: { icon: any, color: string };
-  // }
+    const blob = new Blob([fileContent], { type: 'text/plain' });
 
-  // const getIcon = (name: string) => {
-  //   const extension = getFileExtension(name);
-  //   if (extension) {
-  //     const iconMap: FileIcon = {
-  //       'json': {icon: PhFileJs, color: '#C43ED0'},
-  //       'csv': {icon: PhFileCsv, color: '#3291C7'},
-  //       'pdf': {icon: PhFilePdf, color: '#C83246'},
-  //       'docx': {icon: PhFileDoc, color: '#3291C7'},
-  //       'zip': {icon: PhFileArchive, color: '#3291C7'},
-  //       'xlsx': {icon: PhFileXls, color: '#033512'},
-  //       'jpg': {icon: PhFileJpg, color: '#97411c'},
-  //       'png': {icon: PhFilePng, color: '#1c7e97'},
-  //       'ppt': {icon: PhFilePpt, color: '#971c1c'},
-  //       'mp4': {icon: PhFileVideo, color: '#591c17'},
-  //     };
-  //     return iconMap[extension] || {icon: PhFile, color: '#32C8B4'};
-  //   } else {
-  //     return {icon: PhFile, color: '#32C8B4'};
-  //   }
-  // }
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${repository.value?.slug}.txt`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+const downloadFile = (attachment: string): void => {
+  if (attachment) {
+    window.open(attachment, '_blank');
+  } else {
+    console.error('Attachment URL is not valid.');
+  }
+};
+
+
+const selectFile = (fileDesc: string, filename: string, fileAttachment) => {
+    if(selectedFileDescription.value === fileDesc){
+      selectedFileAttachment.value = ''
+      selectedFileDescription.value = ''
+      selectedFileName.value = ''
+    } else {
+      selectedFileDescription.value = fileDesc
+      selectedFileName.value = filename
+      selectedFileAttachment.value = fileAttachment
+    }
+  }
+
+  const getFileExtension = (filename: string): string | null => {
+    const lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex === -1) {
+      return null;
+    }
+    const extension = filename.substring(lastDotIndex + 1);
+    return extension.toLowerCase();
+  }
+
+  interface FileIcon {
+    [key: string]: { icon: any, color: string };
+  }
+
+  const getIcon = (name: string) => {
+    const extension = getFileExtension(name);
+    if (extension) {
+      const iconMap: FileIcon = {
+        'json': {icon: PhFileJs, color: '#C43ED0'},
+        'csv': {icon: PhFileCsv, color: '#3291C7'},
+        'pdf': {icon: PhFilePdf, color: '#C83246'},
+        'docx': {icon: PhFileDoc, color: '#3291C7'},
+        'zip': {icon: PhFileArchive, color: '#3291C7'},
+        'xlsx': {icon: PhFileXls, color: '#033512'},
+        'jpg': {icon: PhFileJpg, color: '#97411c'},
+        'png': {icon: PhFilePng, color: '#1c7e97'},
+        'ppt': {icon: PhFilePpt, color: '#971c1c'},
+        'mp4': {icon: PhFileVideo, color: '#591c17'},
+      };
+      return iconMap[extension] || {icon: PhFile, color: '#32C8B4'};
+    } else {
+      return {icon: PhFile, color: '#32C8B4'};
+    }
+  }
 
   const formatDate = (date: string): string => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -231,8 +234,8 @@
         </VRow>
       </div>
       <VDivider/>
-      <div class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization'}">
-        <p class="text-about-heading py-3">Technology Details</p>
+      <div class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization' && repository.files?.length == 0}" >
+        <p class="text-about-heading py-3" >Technology Details</p>
         <VRow class="ma-0">
           <VCol v-if="repository.technology_category" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Category</p>
@@ -289,7 +292,7 @@
           </VRow>
         </div>
         <VDivider/>
-        <div class="px-7 py-5 mb-10">
+        <div class="px-7 py-5 mb-5" :class="{'mb-10': repository.files?.length == 0}">
           <p class="text-about-heading py-3">Commercialization Status</p>
           <VRow class="ma-0">
             <VCol v-if="repository.commercialization?.modeStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -307,59 +310,59 @@
           </VRow>
         </div>
       </div>
-
-<!--      <div class="px-8 py-4">-->
-<!--        <p class="text-about-heading">Files</p>-->
-<!--        <VSheet width="100%"  class="file-container">-->
-<!--          <div class="pa-4">-->
-<!--            <VRow justify="space-between" align="center" class="ma-0">-->
-<!--              <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>-->
-<!--              <PhDownload size="24" class="cursor-pointer download-icon" @click="downloadFiles">-->
-<!--                <VTooltip-->
-<!--                    activator="parent"-->
-<!--                    location="bottom"-->
-<!--                >Download Repository Files</VTooltip>-->
-<!--              </PhDownload>-->
-<!--            </VRow>-->
-<!--          </div>-->
-<!--          <VDivider v-if="selectedFileDescription" />-->
-<!--          <div class="px-6 py-4" v-if="selectedFileDescription">-->
-<!--            <VRow class="ma-0" justify="space-between">-->
-<!--              <div>-->
-<!--                <p class="text-data-subheading d-flex align-center">-->
-<!--                  <PhInfo size="20" class="mr-2"/>-->
-<!--                  About the selected file-->
-<!--                </p>-->
-<!--                <p class="text-data-description">{{selectedFileDescription}}</p>-->
-<!--              </div>-->
-<!--              <p class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileName, selectedFileDescription)">-->
-<!--                <PhDownload size="20" class="mr-2"/>-->
-<!--                Download File-->
-<!--              </p>-->
-<!--            </VRow>-->
-<!--          </div>-->
-<!--          <VDivider/>-->
-<!--          <div class="pa-2">-->
-<!--            <VListItem-->
-<!--                v-for="file in repository.files"-->
-<!--                @click="selectFile(file.description, file.name)">-->
-<!--              <div-->
-<!--                  class="my-2 pa-1 d-flex align-center "-->
-<!--                  :class="{'selected-file': selectedFileDescription === file.description}"-->
-<!--              >-->
-<!--                <component-->
-<!--                    :is="getIcon(file.name).icon"-->
-<!--                    class="mr-2"-->
-<!--                    size="24"-->
-<!--                    :color="getIcon(file.name).color"-->
-<!--                />-->
-<!--                {{file.name}}-->
-<!--              </div>-->
-<!--              <VDivider/>-->
-<!--            </VListItem>-->
-<!--          </div>-->
-<!--        </VSheet>-->
-<!--      </div>-->
+      <VDivider/>
+      <div v-if="repository.files?.length != 0" class="px-8 pt-4 mb-10" >
+        <p class="text-about-heading py-3">Files</p>
+        <VSheet width="100%"  class="file-container">
+          <div class="pa-4">
+            <VRow justify="space-between" align="center" class="ma-0">
+              <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>
+              <PhDownload size="24" class="cursor-pointer download-icon" @click="downloadFiles">
+                <VTooltip
+                    activator="parent"
+                    location="bottom"
+                >Download Repository Files</VTooltip>
+              </PhDownload>
+            </VRow>
+          </div>
+          <VDivider v-if="selectedFileDescription" />
+          <div class="px-6 py-4" v-if="selectedFileDescription">
+            <VRow class="ma-0" justify="space-between">
+              <div>
+                <p class="text-data-subheading d-flex align-center">
+                  <PhInfo size="20" class="mr-2"/>
+                  About the selected file
+                </p>
+                <p class="text-data-description">{{selectedFileDescription}}</p>
+              </div>
+              <p class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileAttachment)">
+                <PhDownload size="20" class="mr-2"/>
+                Download File
+              </p>
+            </VRow>
+          </div>
+          <VDivider/>
+          <div class="pa-2">
+            <VListItem
+                v-for="file in repository.files"
+                @click="selectFile(file.description!, file.name!, file.attachment!)">
+              <div
+                  class="my-2 pa-1 d-flex align-center "
+                  :class="{'selected-file': selectedFileDescription === file.description}"
+              >
+                <component
+                    :is="getIcon(file.name!).icon"
+                    class="mr-2"
+                    size="24"
+                    :color="getIcon(file.name!).color"
+                />
+                {{file.name}}
+              </div>
+              <VDivider/>
+            </VListItem>
+          </div>
+        </VSheet>
+      </div>
     </div>
   </RepositoryDetailsLayout>
 

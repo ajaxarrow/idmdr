@@ -188,6 +188,7 @@ const handleBulkAttachmentsUpload = (e: any) => {
       attachments.value.push({
         ...attachmentData,
         file: files[i],
+        attachment: files[i],
       });
     }
   }
@@ -322,9 +323,7 @@ const scrollToFirstErrorMessage = () => {
 const addRepositoryData = async () => {
   if(validateAttachments()){
     for (let i = 0; i < attachments.value.length; i++) {
-      if (attachments.value[i].name == '') {
-        attachments.value[i].name = attachments.value[i].file?.name!
-      } else if (attachments.value[i].description == ''){
+      if (attachments.value[i].description == ''){
         attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
       }
     }
@@ -1026,19 +1025,19 @@ onMounted( async () => {
                       </template>
                     </VFileInput>
                   </div>
-                  <div class="mb-3">
-                    <label class="input-label">Attachment Name</label>
-                    <VTextField
-                        v-model="attachments[index].name"
-                        label="Enter File Name"
-                        class="my-2"
-                        rounded="lg"
-                        density="comfortable"
-                        variant="outlined"
-                        color="primary"
-                        base-color="gs60"
-                    />
-                  </div>
+<!--                  <div class="mb-3">-->
+<!--                    <label class="input-label">Attachment Name</label>-->
+<!--                    <VTextField-->
+<!--                        v-model="attachments[index].name"-->
+<!--                        label="Enter File Name"-->
+<!--                        class="my-2"-->
+<!--                        rounded="lg"-->
+<!--                        density="comfortable"-->
+<!--                        variant="outlined"-->
+<!--                        color="primary"-->
+<!--                        base-color="gs60"-->
+<!--                    />-->
+<!--                  </div>-->
                   <div class="mb-3">
                     <label class="input-label">Attachment Description</label>
                     <VTextField

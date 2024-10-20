@@ -18,7 +18,7 @@ const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrganizationData} = useOrganizationServices()
 const {fetchUser, fetchOrgMembers} = useOrganizationMembersServices()
-const {fetchAttachmentsByRepository} = useRepositoryAttachmentServices()
+const {fetchAttachmentsByRepository, addAttachment} = useRepositoryAttachmentServices()
 
 const stringToArray = (str: string): string[] =>
   str.length > 0 ? str.split(', ') : [];
@@ -115,6 +115,14 @@ export const useRepositoryServices = () => {
         }
       );
       if(type == 'create'){
+        // @ts-ignore
+        if(repository.files?.length > 0  && repository.files) {
+          for (let i = 0; i < repository.files.length; i++) {
+            repository.files[i].repository! = res.data.uid
+            await addAttachment(repository.files[i]);
+          }
+        }
+
         await addRepositoryToOrganization(res.data.organization, res.data.uid);
         const orgMembers = await fetchOrgMembers(res.data.organization);
 
