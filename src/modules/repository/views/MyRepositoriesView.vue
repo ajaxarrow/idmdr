@@ -24,7 +24,7 @@ import FilterRepositoryDialog from "../components/FilterRepositoryDialog.vue";
 const {setSnackbarMessage} = useSnackbarStore()
 const {user} = useUserStore();
 const {tags, selectedTags, fetchTags} = useTags();
-const {fetchRepositoriesByUserWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery, loading} = useRepositoryServices();
+const {fetchRepositoriesByUserWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
 const searchQuery = ref('');
 const repositoryItems = ref<Repository[]>([]);
 const repositoryData = ref<Repository[]>([]);

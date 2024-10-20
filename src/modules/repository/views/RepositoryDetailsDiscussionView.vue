@@ -16,7 +16,7 @@ import {useRepositoryServices} from "../services/repository.services.ts";
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchDiscussionTopicsByRepository, loading} = useRepositoryDiscussionTopicServices();
+const {fetchDiscussionTopicsByRepository} = useRepositoryDiscussionTopicServices();
 const {repository} = useRepositoryStore()
 const {fetchRepositoryData} = useRepositoryServices()
 const searchedTopics = ref<Topic[]>([]);
