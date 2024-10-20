@@ -61,7 +61,7 @@ onMounted(() => {
           <VAutocomplete
               :menu-props="{ maxWidth: 0 }"
               v-model="selectedTags as string[]"
-              placeholder="Choose Appropriate Access Level"
+              placeholder="Select Tags to Filter the Repository"
               :items="tagItems"
               class="my-2"
               rounded="lg"
