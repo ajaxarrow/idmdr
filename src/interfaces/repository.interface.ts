@@ -43,7 +43,7 @@ interface Repository {
   owner_id?: string,
   owner?: User,
   organizationData?: Organization
-  files?: FileData[],
+  files?: Attachment[],
   sectors?: string[],
 }
 
@@ -91,12 +91,25 @@ interface Commercialization{
   currentStatus: string
 }
 
+interface Attachment{
+  uid?: string,
+  repository: string,
+  attachment: File | string,
+  file_type?: string,
+  mime_type?: string,
+  name?: string,
+  description?: string,
+  created_at?: string,
+  updated_at?: string,
+  is_deleted?: boolean,
+  deleted_at?: string,
+  visibility?: number,
+  type: string,
 
-interface FileData {
-  name: string,
-  description: string
+
 }
 
 
 
-export type {Repository, FileData, Commercialization};
+
+export type {Repository, Commercialization, Attachment};

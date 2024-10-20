@@ -8,6 +8,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
+import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
 
 
 const { userData, user } = useUserStore();
@@ -17,6 +18,7 @@ const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrganizationData} = useOrganizationServices()
 const {fetchUser, fetchOrgMembers} = useOrganizationMembersServices()
+const {fetchAttachmentsByRepository} = useRepositoryAttachmentServices()
 
 const stringToArray = (str: string): string[] =>
   str.length > 0 ? str.split(', ') : [];
@@ -198,52 +200,12 @@ export const useRepositoryServices = () => {
     await saveRepository(repository, `/repositories/${id}`, 'update')
   }
 
-  // const mapRepoData = async (rawData : any): Promise<Repository[]> => {
-  //   return rawData.map((repo: any) => {
-  //     return {
-  //       visibility: repo.visibility,
-  //       affiliation: repo.affiliation ? repo.affiliation : "",
-  //       commodity: repo.commodity ? repo.commodity : "",
-  //       description: repo.description ? repo.description : "",
-  //       end_date: repo.end_date ? repo.end_date : "",
-  //       funding_agency: repo.funding_agency ? repo.funding_agency : "",
-  //       industry: repo.industry ? repo.industry : "",
-  //       is_active: repo.is_active,
-  //       is_approved: repo.is_approved,
-  //       is_deleted: repo.is_deleted,
-  //       location: repo.location ? repo.location : "",
-  //       organization: repo.organization ? repo.organization : "",
-  //       priority_level: repo.priority_level ? repo.priority_level : "",
-  //       project_component: repo.project_component ? repo.project_component : "",
-  //       rpt: repo.rpt ? repo.rpt : "",
-  //       slug: repo.uid ? repo.uid : "",
-  //       start_date: repo.start_date ? repo.start_date : "",
-  //       tags: repo.tags ? stringToArray(repo.tags) : "",
-  //       tech_owner: repo.tech_owner ? repo.tech_owner : "",
-  //       technology_category: repo.technology_category ? repo.technology_category : '',
-  //       technology_generator: repo.technology_generator ? repo.technology_generator : "",
-  //       technology_readiness_level: repo.technology_readiness_level ? repo.technology_readiness_level : '',
-  //       technology_status: repo.technology_status ? repo.technology_status : "",
-  //       technology_transfer_status: repo.technology_transfer_status ? repo.technology_transfer_status : "",
-  //       title: repo.title ? repo.title : "",
-  //       transfer_plan: repo.transfer_plan ? repo.transfer_plan : "",
-  //       uid: repo.uid ? repo.uid : "",
-  //       adaptors: repo.adaptors ? repo.adaptors : "",
-  //       geojson: isEmptyObject(repo.geojson) ? {} : JSON.parse(repo.geojson),
-  //       com_extra: isEmptyObject(repo.com_extra) ? {} : JSON.parse(repo.com_extra),
-  //       image: 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
-  //       created_at: repo.created_at ? repo.created_at : "",
-  //       updated_at: repo.updated_at ? repo.updated_at : "",
-  //       owner_id: repo.owner_id ? repo.owner_id : "",
-  //     }
-  //   })
-  // }
-  const mapRepoData = async (rawData: any): Promise<Repository[]> => {
+  const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
     return Promise.all(
       rawData.map(async (repo: any) => {
         const orgData = await fetchOrganizationData(repo.organization);
         const ownerData = await fetchUser(repo.owner_id);
-
+        const attachments = await fetchAttachmentsByRepository(repo.uid, type)
         return {
           is_member: false,
           visibility: repo.visibility,
@@ -282,7 +244,8 @@ export const useRepositoryServices = () => {
           updated_at: repo.updated_at || "",
           owner_id: repo.owner_id || "",
           owner: ownerData,
-          organizationData: orgData
+          organizationData: orgData,
+          files: attachments
         };
       })
     );
@@ -509,13 +472,13 @@ export const useRepositoryServices = () => {
     return Promise.all(promises);
   };
 
-  const fetchRepositoryData = async (slug: string): Promise<Repository | null> => {
+  const fetchRepositoryData = async (slug: string,  type: string = 'create'): Promise<Repository | null> => {
     try{
       const res = await server.get(`/repositories/${slug}`, {
         headers: authorizationHeader
       });
       const rawData = [res.data];
-      const repositoryList = await mapRepoData(rawData);
+      const repositoryList = await mapRepoData(rawData, type);
       if (repositoryList) {
         repository.value = repositoryList[0];
         return repositoryList[0];

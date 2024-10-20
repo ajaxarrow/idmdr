@@ -271,7 +271,7 @@ onMounted( async () => {
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
-    await fetchRepositoryData(route.params.slug as string);
+    await fetchRepositoryData(route.params.slug as string, 'update');
     formType.value = FormType.edit
     Object.assign(repositoryData, {...repository.value});
     // console.log(repositoryData.tags)
@@ -851,12 +851,11 @@ onMounted( async () => {
           <div class="my-2 file-upload-container">
             <PhFileDashed size="50"/>
             <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
-            <VFileInput id="dropzoneFile" style="display: none"/>
+            <VFileInput multiple id="dropzoneFile" style="display: none"/>
           </div>
         </div>
         <div class="mb-10">
           <label class="input-label">Location/Area</label>
-
           <OrganizationFormMapPreview
               class="my-2"
               v-if="isMapPreview"
