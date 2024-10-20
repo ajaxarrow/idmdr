@@ -22,7 +22,7 @@ const searchQuery = ref('');
 const repositoryData = ref<Repository[]>([]);
 const repositoryItems = ref<Repository[]>([]);
 const searchedRepositories = ref<Repository[]>([]);
-const currentTags = ref([]);
+const currentTags = ref<string[]>([]);
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);

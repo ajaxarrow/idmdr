@@ -29,7 +29,7 @@ const searchQuery = ref('');
 const repositoryItems = ref<Repository[]>([]);
 const repositoryData = ref<Repository[]>([]);
 const searchedRepositories = ref<Repository[]>([]);
-const currentTags = ref([]);
+const currentTags = ref<string[]>([]);
 const {isSmall, isTablet} = useScreenStore();
 const {route} = useRouting();
 
