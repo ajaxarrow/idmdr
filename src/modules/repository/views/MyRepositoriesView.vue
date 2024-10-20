@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhCaretDown, PhCaretUp, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
+import {
+  PhCaretDown,
+  PhCaretUp,
+  PhFaders,
+  PhHardDrives,
+  PhInfo,
+  PhMagnifyingGlass,
+  PhPlus,
+  PhX
+} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
@@ -11,6 +20,7 @@ import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import FilterRepositoryDialog from "../components/FilterRepositoryDialog.vue";
 
 const {setSnackbarMessage} = useSnackbarStore()
 const {user} = useUserStore();
@@ -20,17 +30,21 @@ const searchQuery = ref('');
 const repositoryItems = ref<Repository[]>([]);
 const repositoryData = ref<Repository[]>([]);
 const searchedRepositories = ref<Repository[]>([]);
+const currentTags = ref([]);
 const {isSmall, isTablet} = useScreenStore();
-const showMoreChips = ref(false);
 const {route} = useRouting();
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
 
-const toggleShowMoreChips = () => {
-  showMoreChips.value =!showMoreChips.value;
-}
+const filterRepositoryCallback = (currentSelectedTags: String[]) => {
+  const newTags = currentSelectedTags.filter(tag =>
+      !selectedTags.value.includes(tag) && !currentTags.value.includes(tag)
+  );
+  selectedTags.value = [...selectedTags.value, ...newTags];
+  currentTags.value = [...currentTags.value, ...newTags];
+};
 
 watch(() => searchQuery.value, async () => {
   searchedRepositories.value = await filterRepositoriesBySearchQuery(searchQuery.value, repositoryData.value);
@@ -57,6 +71,7 @@ const fetchMoreRepositories = async () => {
 
 onMounted(async () => {
   fetchTags();
+  currentTags.value = tags.value.splice(0, 6)
   const fetchedData = await fetchRepositoriesByUserWithPagination(lastItemValue.value);
   repositoryData.value = [...fetchedData];
   repositoryItems.value = repositoryData.value;
@@ -137,7 +152,7 @@ onUnmounted(() => {
               <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
             </VChip>
             <VChip
-                v-for="(tag, index) in tags.slice(0, showMoreChips? tags.length : 5)"
+                v-for="(tag, index) in currentTags"
                 class="tag chip"
                 :class="{
                 'd-flex align-center mr-2 tag-chips' : !selectedTags.includes(tag)
@@ -149,15 +164,19 @@ onUnmounted(() => {
               <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
             </VChip>
           </VChipGroup>
-          <VChip
-              @click="toggleShowMoreChips"
-              class="tag d-flex align-center mr-2 show-chip chip"
-              variant="outlined"
-              key="Toggle Chips">
-            {{showMoreChips ? 'Show Less' : 'Show More'}}
-            <PhCaretUp v-if="showMoreChips" size="12" class="ml-1"/>
-            <PhCaretDown v-else size="12" class="ml-1"/>
-          </VChip>
+          <FilterRepositoryDialog
+              :tags="tags"
+              :selectedTags="selectedTags"
+              @callback="filterRepositoryCallback"
+          >
+            <VChip
+                class="tag d-flex align-center mr-2 show-chip chip"
+                variant="outlined"
+                key="Toggle Chips">
+              More Filtering Options
+              <PhFaders size="12" class="ml-1"/>
+            </VChip>
+          </FilterRepositoryDialog>
         </VRow>
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">

@@ -118,9 +118,6 @@ const closeDialog = () => {
   addMembersDialog.value = false
 }
 
-// watch(() => selectedAccessLevel.value, () => {
-//   console.log(selectedAccessLevel.value)
-// })
 
 const checkIfMember = (uid: string): OrgMember => {
   return <OrgMember>orgMembers.value.find(member => member.user.uid === uid);
