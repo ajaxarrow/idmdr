@@ -30,7 +30,6 @@ watch(() => selectedTags.value, () => {
 
 watch(() => filterDialog.value, (newValue) => {
     if(newValue){
-      console.log('Dialog opened');
       tagItems.value = props.tags as string[] || [];
       selectedTags.value = props.selectedTags as string[]|| [];
     }
