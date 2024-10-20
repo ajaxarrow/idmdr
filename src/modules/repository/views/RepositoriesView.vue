@@ -37,7 +37,7 @@
   const observerReady = ref(false)
 
 
-  const filterRepositoryCallback = (currentSelectedTags: String[]) => {
+  const filterRepositoryCallback = (currentSelectedTags: string[]) => {
     const newTags = currentSelectedTags.filter(tag =>
         !selectedTags.value.includes(tag) && !currentTags.value.includes(tag)
     );
