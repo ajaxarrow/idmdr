@@ -69,7 +69,7 @@ const downloadFile = (attachment: string): void => {
 };
 
 
-const selectFile = (fileDesc: string, filename: string, fileAttachment) => {
+const selectFile = (fileDesc: string, filename: string, fileAttachment: string) => {
     if(selectedFileDescription.value === fileDesc){
       selectedFileAttachment.value = ''
       selectedFileDescription.value = ''
