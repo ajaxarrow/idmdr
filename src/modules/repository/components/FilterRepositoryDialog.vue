@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {onMounted, ref, watch} from "vue";
-import RepoAccessLevelInfoDialog from "./RepoAccessLevelInfoDialog.vue";
 
 const emits = defineEmits(['callback']);
 const filterDialog = ref(false);
-const selectedTags = ref<String[]>([]);
-const tagItems = ref<String[]>([]);
+const selectedTags = ref<string[]>([]);
+const tagItems = ref<string[]>([]);
 const props = defineProps({
   tags: {
     type: Array,
@@ -62,7 +61,7 @@ onMounted(() => {
           </p>
           <VAutocomplete
               :menu-props="{ maxWidth: 0 }"
-              v-model="selectedTags"
+              v-model="selectedTags as string[]"
               placeholder="Choose Appropriate Access Level"
               :items="tagItems"
               class="my-2"

@@ -3,7 +3,7 @@ import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetails
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {PhCaretDown, PhCaretUp, PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
+import {PhCaretDown, PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
@@ -29,7 +29,7 @@ const lastItemValue = ref(1);
 const observerReady = ref(false)
 
 
-const filterRepositoryCallback = (currentSelectedTags: String[]) => {
+const filterRepositoryCallback = (currentSelectedTags: string[]) => {
   const newTags = currentSelectedTags.filter(tag =>
       !selectedTags.value.includes(tag) && !currentTags.value.includes(tag)
   );

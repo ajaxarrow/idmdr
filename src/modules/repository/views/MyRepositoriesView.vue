@@ -2,7 +2,6 @@
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {
   PhCaretDown,
-  PhCaretUp,
   PhFaders,
   PhHardDrives,
   PhInfo,
