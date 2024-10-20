@@ -26,6 +26,7 @@ const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
+const loading = ref(false)
 const {userData} = useUserStore();
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
@@ -315,6 +316,7 @@ const fetchMembers = async () => {
 }
 
 onMounted(async () => {
+  loading.value = true
   const allUserOrg = await fetchOrganizationByUser();
   path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
@@ -328,132 +330,141 @@ onMounted(async () => {
   }
   await fetchMembers()
   userOrgInfo.value = orgMembers.value.find(member => member.user.uid === userData.uid);
+  loading.value = false
 })
 </script>
 
 <template>
   <OrganizationDetailsLayout :organization="organization" activeTab="settings">
-    <div v-if="organization" class="py-6 px-7">
-      <VRow  class="ma-0" justify="space-between" align="center">
-        <div>
-          <p class="section-title">Download Organization Information</p>
-          <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Organization Information in PDF</p>
-        </div>
-        <VBtnPrimaryFilled
-            @click="downloadOrganizationDataPDF(organization)"
-            height="41px"
-            rounded="lg"
-            class="satoshi-md"
-            style="font-size: 14px !important;">
-          Download Organization Info
-        </VBtnPrimaryFilled>
-      </VRow>
-      <div v-if="organization.is_member">
-        <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
-        <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="mt-2">
-          <VRow  class="ma-0" justify="space-between" align="center">
-            <div>
-              <p class="section-title">Update Organization Information</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
-            </div>
-            <VBtnPrimaryFilled
-                :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization.slug}}"
-                height="41px"
-                rounded="lg"
-                class="satoshi-md"
-                style="font-size: 14px !important;">
-              Update Organization Info
-            </VBtnPrimaryFilled>
-          </VRow>
-        </div>
-        <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
-        <div class="mt-2">
-          <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
-            <div>
-              <p class="section-title">Organization Members</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
-            </div>
-            <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" @callback="fetchMembersCallback">
-              <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-                Add Member
-              </VBtnPrimaryFilled>
-            </AddMemberDialog>
-          </VRow>
-          <VTextField
-              class="my-3"
-              v-model="searchQuery"
-              hide-details
-              variant="outlined"
-              rounded="xl"
-              density="comfortable"
-              color="primary"
-              base-color="gs60"
-          >
-            <template v-slot:prepend-inner>
-              <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
-            </template>
-            <template v-slot:label>
-              <p class="text-gs20">Find members</p>
-            </template>
-          </VTextField>
-          <div class="my-5 mx-1" v-if="orgMembers.length > 0">
-            <div
-                v-for="member in orgMembers"
-                :key="member.membership_uid"
-            >
-              <VRow v-if="!member.is_deleted" class="ma-0 my-3" justify="space-between" align="center">
-                <div class="d-flex align-center">
-                  <VAvatar
-                      size="40"
-                      class="mr-1 cursor-pointer"
-                  >
-                    <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
-                  </VAvatar>
-                  <div class="mr-2">
-                    <p class="text-name text-container">{{member.user.username}}</p>
-                    <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
-                  </div>
-                </div>
-                <VMenu
-                    v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator')"
-                    location="bottom"
-                    v-model="memberActionMenu"
-                    :close-on-content-click="false"
-                >
-                  <template #activator="{ props }">
-                    <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
-                      Options
-                      <PhDotsThreeOutlineVertical weight="fill"/>
-                    </p>
-                  </template>
-                  <VSheet width="200" class="rounded-b-lg py-2">
-                    <AddMemberDialog
-                      :form-type="FormType.edit"
-                      :member="member"
-                      :user-access-level="userOrgInfo?.access_level"
-                      @callback="updateMembersCallback"
-                    >
-                      <p class="cursor-pointer action-menu-item">
-                        <PhPencil/>
-                        Edit Access
-                      </p>
-                    </AddMemberDialog>
-                    <DeleteDialog @callback="deleteMemberCallback(member)">
-                      <p class="cursor-pointer action-menu-item">
-                        <PhTrash/>
-                        Remove User
-                      </p>
-                    </DeleteDialog>
-                  </VSheet>
-                </VMenu>
-              </VRow>
-              <VDivider v-if="!member.is_deleted" class="mt-3"/>
-            </div>
+    <div v-if="loading" class="loading-state-container mt-15">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <div v-else>
+      <div v-if="organization" class="py-6 px-7">
+        <VRow  class="ma-0" justify="space-between" align="center">
+          <div>
+            <p class="section-title">Download Organization Information</p>
+            <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Organization Information in PDF</p>
           </div>
-          <div class="my-5 mx-1" v-else>
-            <p class="d-flex align-center justify-center">
-              <PhInfo class="mr-1"/>No Organization Members Found
-            </p>
+          <VBtnPrimaryFilled
+              @click="downloadOrganizationDataPDF(organization)"
+              height="41px"
+              rounded="lg"
+              class="satoshi-md"
+              style="font-size: 14px !important;">
+            Download Organization Info
+          </VBtnPrimaryFilled>
+        </VRow>
+        <div v-if="organization.is_member">
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="mt-2">
+            <VRow  class="ma-0" justify="space-between" align="center">
+              <div>
+                <p class="section-title">Update Organization Information</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
+              </div>
+              <VBtnPrimaryFilled
+                  :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization.slug}}"
+                  height="41px"
+                  rounded="lg"
+                  class="satoshi-md"
+                  style="font-size: 14px !important;">
+                Update Organization Info
+              </VBtnPrimaryFilled>
+            </VRow>
+          </div>
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
+          <div class="mt-2">
+            <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
+              <div>
+                <p class="section-title">Organization Members</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
+              </div>
+              <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" @callback="fetchMembersCallback">
+                <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                  Add Member
+                </VBtnPrimaryFilled>
+              </AddMemberDialog>
+            </VRow>
+            <VTextField
+                class="my-3"
+                v-model="searchQuery"
+                hide-details
+                variant="outlined"
+                rounded="xl"
+                density="comfortable"
+                color="primary"
+                base-color="gs60"
+            >
+              <template v-slot:prepend-inner>
+                <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
+              </template>
+              <template v-slot:label>
+                <p class="text-gs20">Find members</p>
+              </template>
+            </VTextField>
+            <div class="my-5 mx-1" v-if="orgMembers.length > 0">
+              <div
+                  v-for="member in orgMembers"
+                  :key="member.membership_uid"
+              >
+                <VRow v-if="!member.is_deleted" class="ma-0 my-3" justify="space-between" align="center">
+                  <div class="d-flex align-center">
+                    <VAvatar
+                        size="40"
+                        class="mr-1 cursor-pointer"
+                    >
+                      <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
+                    </VAvatar>
+                    <div class="mr-2">
+                      <p class="text-name text-container">{{member.user.username}}</p>
+                      <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
+                    </div>
+                  </div>
+                  <VMenu
+                      v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator')"
+                      location="bottom"
+                      v-model="memberActionMenu"
+                      :close-on-content-click="false"
+                  >
+                    <template #activator="{ props }">
+                      <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
+                        Options
+                        <PhDotsThreeOutlineVertical weight="fill"/>
+                      </p>
+                    </template>
+                    <VSheet width="200" class="rounded-b-lg py-2">
+                      <AddMemberDialog
+                          :form-type="FormType.edit"
+                          :member="member"
+                          :user-access-level="userOrgInfo?.access_level"
+                          @callback="updateMembersCallback"
+                      >
+                        <p class="cursor-pointer action-menu-item">
+                          <PhPencil/>
+                          Edit Access
+                        </p>
+                      </AddMemberDialog>
+                      <DeleteDialog @callback="deleteMemberCallback(member)">
+                        <p class="cursor-pointer action-menu-item">
+                          <PhTrash/>
+                          Remove User
+                        </p>
+                      </DeleteDialog>
+                    </VSheet>
+                  </VMenu>
+                </VRow>
+                <VDivider v-if="!member.is_deleted" class="mt-3"/>
+              </div>
+            </div>
+            <div class="my-5 mx-1" v-else>
+              <p class="d-flex align-center justify-center">
+                <PhInfo class="mr-1"/>No Organization Members Found
+              </p>
+            </div>
           </div>
         </div>
       </div>
