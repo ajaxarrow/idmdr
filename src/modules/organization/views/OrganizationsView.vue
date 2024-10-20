@@ -10,7 +10,7 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {user} = useUserStore();
-const {fetchOrganizationsWithPagination, loading} = useOrganizationServices();
+const {fetchOrganizationsWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
 const organizationData = ref<Organization[]>([]);
@@ -18,6 +18,7 @@ const organizationItem = ref<Organization[]>([]);
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
+const pageLoading = ref(false)
 
 
 const filterOrganizationsBySearchQuery = () => {
@@ -42,11 +43,13 @@ watch(() => searchQuery.value, () => {
 });
 
 onMounted(async () => {
+  pageLoading.value = true
   const fetchedData = await fetchOrganizationsWithPagination(lastItemValue.value);
   organizationData.value = [...fetchedData];
   organizationItem.value = organizationData.value;
   lastItemValue.value = lastItemValue.value + 1
   observerReady.value = true
+  pageLoading.value = false
 })
 
 onUnmounted(() => {
@@ -105,7 +108,7 @@ onUnmounted(() => {
             <p>{{organizationData.length}} Organization<span v-if="organizationData.length > 1">s</span> Available</p>
           </p>
         </VRow>
-        <div v-if="loading" class="loading-state-container">
+        <div v-if="pageLoading" class="loading-state-container">
           <VProgressCircular
               indeterminate
               color="#23668b"

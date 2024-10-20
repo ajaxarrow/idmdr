@@ -23,6 +23,7 @@ const searchedTopics = ref<Topic[]>([]);
 const topicList = ref<Topic[]>([]);
 const {route} = useRouting()
 const searchQuery = ref('');
+const pageLoading = ref(false)
 
 const fetchTopicList = async() => {
   topicList.value = await fetchDiscussionTopicsByRepository(<string>route.params.slug)
@@ -49,8 +50,10 @@ watch(() => searchQuery.value, () => {
 });
 
 onMounted(async() => {
+  pageLoading.value = true
   await fetchRepositoryData(route.params.slug as string);
   await fetchTopicList();
+  pageLoading.value = false
 })
 </script>
 
@@ -94,7 +97,7 @@ onMounted(async() => {
           </VBtnPrimaryFilled>
         </TopicFormDialog>
       </VRow>
-      <div v-if="loading" class="loading-state-container">
+      <div v-if="pageLoading" class="loading-state-container">
         <VProgressCircular
             indeterminate
             color="#23668b"

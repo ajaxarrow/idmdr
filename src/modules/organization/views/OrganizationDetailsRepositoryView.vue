@@ -15,7 +15,7 @@ const {organization} = useOrganizationStore();
 const {fetchOrganizationData} = useOrganizationServices();
 
 const {tags, selectedTags} = useTags();
-const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization, loading} = useRepositoryServices();
+const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
 
 const path = ref('organizations')
 const searchQuery = ref('');
@@ -23,6 +23,8 @@ const repositoryData = ref<Repository[]>([]);
 const repositoryItems = ref<Repository[]>([]);
 const searchedRepositories = ref<Repository[]>([]);
 const currentTags = ref<string[]>([]);
+const pageLoading = ref(false)
+
 
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
@@ -72,6 +74,7 @@ const getFirstPath = (url: string) => {
 
 
 onMounted(async () => {
+  pageLoading.value = true
   currentTags.value = tags.value.splice(0, 6)
   path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
@@ -83,6 +86,7 @@ onMounted(async () => {
     selectedTags.value.push(<string>route.query.tag);
     searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
   }
+  pageLoading.value = false
 })
 
 onUnmounted(() => {
@@ -167,7 +171,7 @@ onUnmounted(() => {
           <PhCaretDown weight="fill" class="ml-1"/>
         </p>
       </VRow>
-      <div v-if="loading" class="loading-state-container">
+      <div v-if="pageLoading" class="loading-state-container">
         <VProgressCircular
             indeterminate
             color="#23668b"

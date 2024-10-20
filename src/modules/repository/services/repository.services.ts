@@ -380,7 +380,6 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
     try{
-      loading.value = true;
       const res = await server.get(`/repositories/?user=${userData.uid}&page=${pageNumber}`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
@@ -391,10 +390,8 @@ export const useRepositoryServices = () => {
 
       const data = [...repositories];
       myRepositories.value = data
-      loading.value = false
       return data;
     } catch (e) {
-      loading.value = false
       return []
     }
   }
@@ -420,7 +417,6 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoriesWithPagination = async (pageNumber: number): Promise<Repository[]> => {
     try{
-      loading.value = true
       let data: Repository[] = []
       if(user.value){
         const publicRepo = await fetchPaginatedRepositories(pageNumber, [1, 4])
@@ -433,10 +429,8 @@ export const useRepositoryServices = () => {
       } else {
         data = await fetchPaginatedRepositories(pageNumber, [1])
       }
-      loading.value = false
       return data;
     } catch (e) {
-      loading.value = false
       return []
     }
   }

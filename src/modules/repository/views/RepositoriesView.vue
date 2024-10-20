@@ -23,7 +23,7 @@
 
   const {user} = useUserStore();
   const {tags, selectedTags, fetchTags} = useTags();
-  const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery, loading} = useRepositoryServices();
+  const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
   const searchQuery = ref('');
   const repositoryItems = ref<Repository[]>([]);
   const repositoryData = ref<Repository[]>([]);
@@ -35,6 +35,7 @@
   const reachEnd = ref(false)
   const lastItemValue = ref(1);
   const observerReady = ref(false)
+  const pageLoading = ref(false)
 
 
   const filterRepositoryCallback = (currentSelectedTags: string[]) => {
@@ -70,6 +71,7 @@
   }
 
   onMounted(async () => {
+    pageLoading.value = true
     fetchTags();
     currentTags.value = tags.value.splice(0, 6)
     const fetchedData = await fetchRepositoriesWithPagination(lastItemValue.value);
@@ -82,6 +84,7 @@
       selectedTags.value.push(<string>route.query.tag);
       searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
     }
+    pageLoading.value = false
   })
 
   onUnmounted(() => {
@@ -187,7 +190,7 @@
             <PhCaretDown weight="fill" class="ml-1"/>
           </p>
         </VRow>
-        <div v-if="loading" class="loading-state-container">
+        <div v-if="pageLoading" class="loading-state-container">
           <VProgressCircular
               indeterminate
               color="#23668b"

@@ -14,11 +14,12 @@ const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const {setSnackbarMessage} = useSnackbarStore()
 const {myOrganizations} = useOrganizationStore();
-const {fetchOrganizationByUserWithPagination, loading} = useOrganizationServices();
+const {fetchOrganizationByUserWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
 const searchQuery = ref('');
 const organizationData = ref<Organization[]>([]);
 const observerReady = ref(false)
+const pageLoading = ref(false)
 
 const filterOrganizationsBySearchQuery = () => {
   if(searchQuery.value) {
@@ -42,11 +43,13 @@ watch(() => searchQuery.value, () => {
 });
 
 onMounted(async () => {
+  pageLoading.value = true
   const fetchedData = await fetchOrganizationByUserWithPagination(lastItemValue.value);
   organizationData.value = [...fetchedData];
   lastItemValue.value = lastItemValue.value + 1
   observerReady.value = true
   await setSnackbarMessage()
+  pageLoading.value = false
 })
 
 onUnmounted(() => {
@@ -105,7 +108,7 @@ onUnmounted(() => {
             <p>{{organizationData.length}} Organization<span v-if="organizationData.length > 1">s</span> Available</p>
           </p>
         </VRow>
-        <div v-if="loading" class="loading-state-container">
+        <div v-if="pageLoading" class="loading-state-container">
           <VProgressCircular
               indeterminate
               color="#23668b"

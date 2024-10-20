@@ -112,7 +112,6 @@ export const useRepositoryDiscussionTopicServices = () => {
   
   const fetchDiscussionTopicsByRepository = async (slug: string): Promise<Topic[]> => {
     try{
-      loading.value = true;
       const res = await server.get(`/v1/discussions/?repo_id=${slug}`, {
           headers: authorizationHeader
       })
@@ -133,11 +132,8 @@ export const useRepositoryDiscussionTopicServices = () => {
         })
       )
     } catch (e) {
-      loading.value=false
       console.log(e);
       return [];
-    } finally {
-      loading.value=false
     }
   }
 
