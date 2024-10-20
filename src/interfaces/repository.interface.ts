@@ -93,6 +93,7 @@ interface Commercialization{
 
 interface Attachment{
   uid?: string,
+  file: File | null,
   repository: string,
   attachment: File | string,
   file_type?: string,
@@ -105,8 +106,8 @@ interface Attachment{
   deleted_at?: string,
   visibility?: number,
   type: string,
-
-
+  errorMessage?: string
+  showFiles?: boolean
 }
 
 

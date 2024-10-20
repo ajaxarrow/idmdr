@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhEye, PhFileDashed, PhFileImage, PhImage, PhPolygon, PhX} from "@phosphor-icons/vue";
+import {
+  PhArrowLeft, PhCaretDown,
+  PhEye,
+  PhFile,
+  PhFileDashed,
+  PhFileImage,
+  PhImage,
+  PhPolygon,
+  PhTrash,
+  PhX
+} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
-import {Commercialization, Repository} from "../../../interfaces/repository.interface.ts";
+import {Attachment, Commercialization, Repository} from "../../../interfaces/repository.interface.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {
   commodities, readinessLevel, technologyStatus, technologyCategories, agencies, industries,
@@ -20,6 +30,7 @@ import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import AttachmentsVisibilityInfoDialog from "../components/AttachmentsVisibilityInfoDialog.vue";
 
 
 const {isEmptyObject} = useObjectChecker()
@@ -29,6 +40,25 @@ const {repository} = useRepositoryStore()
 const {tags, fetchTags} = useTags();
 const {route} = useRouting();
 const {userData} = useUserStore();
+
+const visibilityInfo = [
+  {
+    name: 'Public',
+    value: 1
+  },
+  {
+    name: 'Private',
+    value: 2
+  },
+  {
+    name: 'Within Organization',
+    value: 3
+  },
+  {
+    name: 'Within All Organizations',
+    value: 4
+  }
+]
 
 const repositoryForm = ref(null);
 const isImagePreviewed = ref(false);
@@ -43,27 +73,6 @@ const organizations = ref<Organization[]>([]);
 const previousTags = ref<string[]>([])
 const formType = ref<FormType>(FormType.create);
 const file = ref<File | null>(null);
-
-const removeImage = () => {
-  file.value = null;
-  hasImage.value = false;
-}
-
-const handleUploadChange = (e: any) => {
-  const target = e.target;
-  if (target.files && target.files[0]) {
-    file.value = target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      previewImage.value = reader.result as string;
-    };
-
-    reader.readAsDataURL(<File>file.value);
-    hasImage.value = true;
-  }
-};
-
 const repositoryDataIntialState = reactive<Repository>({
   affiliation: "",
   commodity: "Abaca",
@@ -114,6 +123,83 @@ const commercializationIntialState = reactive<Commercialization>({
 const commercialization = reactive<Commercialization>({
   ...commercializationIntialState
 })
+const attachments = ref<Attachment[]>([])
+const attachmentData = reactive<Attachment>({
+  repository: '',
+  attachment: '',
+  file: null,
+  file_type: '',
+  mime_type: '',
+  name: '',
+  description: '',
+  created_at: '',
+  updated_at: '',
+  is_deleted: false,
+  deleted_at: '',
+  visibility: repositoryData.visibility,
+  type: '',
+  errorMessage: '',
+  showFiles: false,
+})
+const active = ref(false)
+
+const toggleActive = () => {
+  active.value = !active.value
+}
+
+const removeAttachment = (index: number) => {
+  attachments.value.splice(index, 1);
+  active.value = false
+}
+
+const addAttachment = () => {
+  attachments.value.push({
+    ...attachmentData
+  })
+}
+
+const removeImage = () => {
+  file.value = null;
+  hasImage.value = false;
+}
+
+
+
+const handleUploadChange = (e: any) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    file.value = target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      previewImage.value = reader.result as string;
+    };
+
+    reader.readAsDataURL(<File>file.value);
+    hasImage.value = true;
+  }
+};
+
+const handleBulkAttachmentsUpload = (e: any) => {
+  const files = e.target?.files || e.dataTransfer?.files;
+
+  if (files && files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      attachments.value.push({
+        ...attachmentData,
+        file: files[i],
+      });
+    }
+  }
+}
+
+const handleIndividualAttachmentsUpload = (e: any, index: number) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    attachments.value[index].file = target.files[0];
+  }
+}
+
 
 const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
   repositoryData.geojson = JSON.stringify(geojson)
@@ -152,6 +238,21 @@ const closePreview = () => {
   closeGeoJSONPreview()
 }
 
+const validateAttachments = () => {
+  let isValid = true;
+
+  for (let i = 0; i < attachments.value.length; i++) {
+    if (!attachments.value[i].file) {
+      attachments.value[i].errorMessage = 'File is required';
+      isValid = false;
+    } else {
+      attachments.value[i].errorMessage = '';
+    }
+  }
+
+  return isValid;
+}
+
 
 const handleGeoJSONFileInput = (e: any) => {
   const file = e.target.files[0]
@@ -179,7 +280,6 @@ const handleGeoJSONFileInput = (e: any) => {
 
 const formatDate = (): string=> {
   const now = new Date()
-
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
   const day = String(now.getDate()).padStart(2, '0')
@@ -220,45 +320,49 @@ const scrollToFirstErrorMessage = () => {
 }
 
 const addRepositoryData = async () => {
-  previousTags.value = <string[]>repositoryData.tags
-  repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
-  if(file.value){
-    //@ts-ignore
-    repositoryData.image = file.value as File
-  } else {
-    delete repositoryData.image;
-  }
-  if(repositoryData.transfer_plan === 'Commercialization'){
-    repositoryData.com_extra = JSON.stringify(commercialization)
-  }
-  repositoryData.owner_id = userData.uid
-  await addRepository(repositoryData)
-  if(hasErrorMessages(errorMessage)){
-    repositoryData.tags = previousTags.value
-    scrollToFirstErrorMessage()
-  } else {
-    clearFields();
+  if(validateAttachments()){
+    previousTags.value = <string[]>repositoryData.tags
+    repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
+    if(file.value){
+      //@ts-ignore
+      repositoryData.image = file.value as File
+    } else {
+      delete repositoryData.image;
+    }
+    if(repositoryData.transfer_plan === 'Commercialization'){
+      repositoryData.com_extra = JSON.stringify(commercialization)
+    }
+    repositoryData.owner_id = userData.uid
+    await addRepository(repositoryData)
+    if(hasErrorMessages(errorMessage)){
+      repositoryData.tags = previousTags.value
+      scrollToFirstErrorMessage()
+    } else {
+      clearFields();
+    }
   }
 }
 
 const updateRepositoryData = async () => {
-  if(file.value){
-    //@ts-ignore
-    repositoryData.image = file.value as File
-  } else {
-    delete repositoryData.image;
-  }
-  previousTags.value = <string[]>repositoryData.tags
-  repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
-  if(repositoryData.transfer_plan === 'Commercialization'){
-    repositoryData.com_extra = JSON.stringify(commercialization)
-  }
-  await updateRepository(repositoryData, repositoryData.slug)
-  if(hasErrorMessages(errorMessage)){
-    repositoryData.tags = previousTags.value
-    scrollToFirstErrorMessage()
-  } else {
-    clearFields();
+  if(validateAttachments()){
+    if(file.value){
+      //@ts-ignore
+      repositoryData.image = file.value as File
+    } else {
+      delete repositoryData.image;
+    }
+    previousTags.value = <string[]>repositoryData.tags
+    repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
+    if(repositoryData.transfer_plan === 'Commercialization'){
+      repositoryData.com_extra = JSON.stringify(commercialization)
+    }
+    await updateRepository(repositoryData, repositoryData.slug)
+    if(hasErrorMessages(errorMessage)){
+      repositoryData.tags = previousTags.value
+      scrollToFirstErrorMessage()
+    } else {
+      clearFields();
+    }
   }
 }
 
@@ -397,20 +501,6 @@ onMounted( async () => {
             </template>
           </VAutocomplete>
         </div>
-<!--        <div class="mb-3">-->
-<!--          <label class="input-label">Subtitle</label>-->
-<!--          <VTextField-->
-<!--              v-model="repositoryData.subtitle"-->
-<!--              placeholder="E.g. Unveiling the Global Tapestry of Soil Vitality and Agricultural Sustainability"-->
-<!--              class="my-2"-->
-<!--              rounded="lg"-->
-<!--              density="comfortable"-->
-<!--              variant="outlined"-->
-<!--              color="primary"-->
-<!--              base-color="gs60"-->
-<!--              hint="Short description about the project"-->
-<!--          />-->
-<!--        </div>-->
         <div class="mb-3" v-if="formType === FormType.edit">
           <label class="input-label">Abstract<span class="text-pink">*</span></label>
           <QuillRichTextEditor
@@ -429,20 +519,6 @@ onMounted( async () => {
           />
           <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
         </div>
-<!--        <div class="mb-5">-->
-<!--          <label class="input-label">Project Component</label>-->
-<!--          <VTextField-->
-<!--              v-model="repositoryData.project_component"-->
-<!--              placeholder="E.g. Project Component 1"-->
-<!--              class="my-2"-->
-<!--              rounded="lg"-->
-<!--              density="comfortable"-->
-<!--              variant="outlined"-->
-<!--              color="primary"-->
-<!--              base-color="gs60"-->
-<!--              :error-messages="errorMessage.project_component"-->
-<!--          />-->
-<!--        </div>-->
         <div class="mb-3">
           <label class="input-label">Location</label>
           <VTextField
@@ -827,7 +903,7 @@ onMounted( async () => {
           </div>
           <VFileInput
               v-else
-              @change="handleUploadChange"
+              @change="handleUploadChange($event)"
               label="Choose Repository Image by Clicking Here"
               class="my-2"
               rounded="lg"
@@ -847,11 +923,159 @@ onMounted( async () => {
           </VFileInput>
         </div>
         <div class="mb-10">
-          <label class="input-label">File</label>
-          <div class="my-2 file-upload-container">
-            <PhFileDashed size="50"/>
-            <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
-            <VFileInput multiple id="dropzoneFile" style="display: none"/>
+          <div v-if="attachments.length == 0">
+            <label class="input-label">File</label>
+            <div
+              class="my-2 file-upload-container"
+              :class="{'dropzone-active': active}"
+              @dragover.prevent
+              @dragenter.prevent="toggleActive"
+              @dragleave.prevent="toggleActive"
+              @drop.prevent="handleBulkAttachmentsUpload">
+              <PhFileDashed size="50"/>
+              <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
+            </div>
+          </div>
+          <div v-else>
+            <label class="input-label mb-5">Files</label>
+            <div class="attachments-container mt-2">
+              <div
+                  v-for="(attachment, index) in attachments"
+                  :key="index"
+              >
+                <VDivider  v-if="index != 0"/>
+                <div :class="{'mb-5': !attachment.showFiles}"  class="d-flex align-center justify-space-between mt-5">
+                  <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : 'New File'}}</p>
+                  <div class="d-flex align-center justify-space-between ga-2">
+                    <VTooltip location="bottom" v-if="attachment.type == 'update'">
+                      <template v-slot:activator="{ props }">
+                        <PhTrash v-bind="props" class="cursor-pointer" />
+                      </template>
+                      <span>Delete Attachment</span>
+                    </VTooltip>
+                    <VTooltip location="bottom" v-else>
+                      <template v-slot:activator="{ props }">
+                        <PhX v-bind="props" class="cursor-pointer" @click="removeAttachment(index)"/>
+                      </template>
+                      <span>Remove Attachment</span>
+                    </VTooltip>
+                    <VTooltip location="bottom">
+                    <template v-slot:activator="{ props }">
+                      <component
+                          :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
+                          v-bind="props"
+                          class="cursor-pointer"
+                          @click="attachment.showFiles = !attachment.showFiles"
+                      />
+                    </template>
+                    <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
+                  </VTooltip>
+                  </div>
+                </div>
+                <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
+                <div v-if="attachment.showFiles">
+                  <div class="mt-5 mb-3">
+                    <label class="input-label">Attachment</label>
+                    <div v-if="attachment.file" class="my-3">
+                      <VDivider/>
+                      <div class="d-flex align-center justify-space-between pa-2" >
+                        <p class="dialog-boundary-title d-flex align-center">
+                          <PhImage class="mr-1"/>
+                          {{attachment.file ? attachment.file.name : attachment.name }}
+                        </p>
+                        <div class="d-flex align-center ga-2">
+                          <VTooltip location="bottom">
+                            <template v-slot:activator="{ props }">
+                              <PhX v-bind="props" class="cursor-pointer" @click="attachment.file = null"/>
+                            </template>
+                            <span>Remove File</span>
+                          </VTooltip>
+                        </div>
+                      </div>
+                      <VDivider/>
+                      <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="attachment.errorMessage">{{attachment.errorMessage}}</p>
+                    </div>
+                    <VFileInput
+                        v-else
+                        @change="handleIndividualAttachmentsUpload($event, index)"
+                        label="Choose File by Clicking Here"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                        chips
+                        prepend-icon=""
+                        :error-messages="attachments[index].errorMessage as string"
+                        accept="image/*"
+                    >
+                      <template v-slot:prepend-inner>
+                        <PhFile/>
+                      </template>
+                    </VFileInput>
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Name</label>
+                    <VTextField
+                        v-model="attachments[index].name"
+                        label="Enter File Name"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Description</label>
+                    <VTextField
+                        v-model="attachments[index].description"
+                        label="Enter File Description"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label d-flex justify-space-between">
+                      Attachment Visibility
+                      <span style="font-size: 14px; font-weight: 400;">
+                    <AttachmentsVisibilityInfoDialog/>
+                  </span>
+                    </label>
+                    <VAutocomplete
+                        v-model="attachments[index].visibility"
+                        :items="visibilityInfo"
+                        :item-title="item => item.name"
+                        :item-value="item => item.value"
+                        label="Enter File Visibility"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                </div>
+                <VDivider v-if="index != attachments.length - 1 "/>
+              </div>
+              <div class="d-flex justify-end">
+                <VBtnPrimaryFilled
+                    @click="addAttachment"
+                    rounded="lg"
+                    style="font-size: 14px !important;"
+                >
+                  Add More File
+                </VBtnPrimaryFilled>
+              </div>
+            </div>
           </div>
         </div>
         <div class="mb-10">
@@ -925,6 +1149,14 @@ onMounted( async () => {
 </template>
 
 <style scoped>
+.attachments-container{
+  max-height: 400px;
+  overflow-y: scroll;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 20px 25px;
+  transition: height 1s ease;
+}
 :deep(.ql-toolbar){
   margin-top: 8px;
   border: 1.75px solid rgba(140, 140, 140, 0.2) !important;
@@ -992,6 +1224,12 @@ onMounted( async () => {
   background-color: #fff;
   transition: .3s ease all;
 }
+
+.dropzone-active{
+  border: 4px dashed #00838F !important;
+  background-color: #f2f2f2;
+}
+
 
 .text-dropzone{
   font-size: 14px;

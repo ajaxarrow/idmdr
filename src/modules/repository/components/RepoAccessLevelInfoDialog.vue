@@ -13,7 +13,7 @@ const accessLevelInfoDialog = ref(false);
       <p class="dialog-title pa-5">Access Levels Information</p>
       <VDivider/>
       <div class="pa-5">
-        <p>Below are the access levels that can be assigned to members of your repositrory:</p>
+        <p>Below are the access levels that can be assigned to members of your repository:</p>
         <ul class="py-3">
           <li>
             <strong>Owner:</strong> The Owner holds the highest access level within the repository. They have full control over all aspects, including the ability to delete and edit content, manage users, and make high-level decisions such as deleting the entire repository project. This role is exclusive to the creator of the repository.
