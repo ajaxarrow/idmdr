@@ -367,7 +367,7 @@ onMounted(async () => {
                 <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
               </div>
               <VBtnPrimaryFilled
-                  :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization.slug}}"
+                  :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization?.slug}}"
                   height="41px"
                   rounded="lg"
                   class="satoshi-md"
@@ -378,7 +378,7 @@ onMounted(async () => {
           </div>
           <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
           <div class="mt-2">
-            <VRow v-if="organization.is_member" class="ma-0" justify="space-between" align="center">
+            <VRow v-if="organization?.is_member" class="ma-0" justify="space-between" align="center">
               <div>
                 <p class="section-title">Organization Members</p>
                 <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>

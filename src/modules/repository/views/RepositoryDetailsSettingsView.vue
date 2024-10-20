@@ -382,7 +382,7 @@ onMounted(async () => {
          </div>
          <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'" class="my-5"/>
          <div class="mt-2">
-           <VRow v-if="repository.is_member" class="ma-0" justify="space-between" align="center">
+           <VRow v-if="repository?.is_member" class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Repository Members</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage repository members and their roles. <AccessLeveLInfoDialog/></p>
