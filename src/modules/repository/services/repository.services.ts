@@ -291,7 +291,7 @@ export const useRepositoryServices = () => {
 
   const filterRepositoriesBySearchQuery = async (searchQuery: string, repositoryData: Repository[]) : Promise<Repository[]> => {
     if (searchQuery) {
-      return repositoryData.filter(repository => repository.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      return repositoryData.filter(repository => repository.title.toLowerCase().trim().includes(searchQuery.toLowerCase().trim()));
     } else {
       return repositoryData
     }

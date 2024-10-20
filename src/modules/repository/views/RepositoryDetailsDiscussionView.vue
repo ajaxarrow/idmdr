@@ -37,7 +37,7 @@ const addTopicCallback = async () => {
 
 const filterTopicsBySearchQuery = (): Topic[] => {
   if (searchQuery.value) {
-    return topicList.value.filter(topic =>  topic.topic_title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return topicList.value.filter(topic =>  topic.topic_title.toLowerCase().trim().includes(searchQuery.value.toLowerCase().trim())
     )
   } else {
     return topicList.value
