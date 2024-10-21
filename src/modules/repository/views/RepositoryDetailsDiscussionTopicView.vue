@@ -84,7 +84,7 @@ const editComment = (comment: Comment) => {
   commentData.id = comment?.id!
   commentData.discussion = <string>route.params.topic
   if ("uid" in comment.user) {
-    commentData.user = comment.user?.uid!
+    commentData.user = comment.user?.uid as string
   }
 }
 

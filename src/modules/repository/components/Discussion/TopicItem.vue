@@ -41,11 +41,11 @@ onMounted(() => {
             cover
             height="40px"
             width="40px"
-            :src="props.topic?.user ? props.topic.user.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+            :src="typeof props.topic?.user === 'object' ? props.topic?.user?.profile_picture! : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
         />
         <div class="ml-2">
           <p class="topic-title">{{ props.topic?.topic_title }}</p>
-          <p class="topic-subtitle">{{ props.topic?.user?.username }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
+          <p class="topic-subtitle">{{ typeof props.topic?.user === 'object' ? props.topic?.user?.username : '' }} · {{totalComments}} comment<span v-if="totalComments > 1">s</span></p>
         </div>
       </div>
       <VBtn

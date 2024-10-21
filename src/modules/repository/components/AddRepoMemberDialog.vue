@@ -174,8 +174,8 @@ onUpdated(async () => {
                   :disabled="!!checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted"
                   v-bind="props"
                   :prepend-avatar="item.raw.profile_picture"
-                  :subtitle="checkIfMember(item.raw.uid) && !checkIfMember(item.raw.uid as string).is_deleted ? checkIfMember(item.raw.uid).access_level : item.raw.email"
-                  :title="item.raw.username"
+                  :subtitle="checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted ? checkIfMember(item.raw.uid as string).access_level : item.raw.email as string"
+                  :title="item.raw.username as string"
               ></VListItem>
             </template>
           </VAutocomplete>
