@@ -83,7 +83,9 @@ const editComment = (comment: Comment) => {
   commentContentEdit.value = comment.comment_content!
   commentData.id = comment?.id!
   commentData.discussion = <string>route.params.topic
+  //@ts-ignore
   if ("uid" in comment.user) {
+    //@ts-ignore
     commentData.user = comment.user?.uid as string
   }
 }

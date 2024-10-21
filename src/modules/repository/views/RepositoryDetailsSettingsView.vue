@@ -363,7 +363,7 @@ onMounted(async () => {
          </VBtnPrimaryFilled>
        </VRow>
        <div v-if="repository.is_member">
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'" class="my-5"/>
+         <VDivider v-if="repository?.is_member" class="my-5"/>
          <div class="mt-2">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
@@ -380,7 +380,7 @@ onMounted(async () => {
              </VBtnPrimaryFilled>
            </VRow>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'" class="my-5"/>
+         <VDivider v-if="repository?.is_member" class="my-5"/>
          <div class="mt-2">
            <VRow v-if="repository?.is_member" class="ma-0" justify="space-between" align="center">
              <div>
