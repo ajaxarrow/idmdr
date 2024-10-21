@@ -217,7 +217,6 @@ watch(
     (newDescriptions, oldDescriptions) => {
       newDescriptions.forEach((description, index) => {
         if (oldDescriptions[index] !== undefined && description !== oldDescriptions[index] && attachments.value[index].type === 'update') {
-          console.log('triggered')
           attachments.value[index].isDescriptionUpdated = true
         }
       });
@@ -264,8 +263,11 @@ const closePreview = () => {
 
 const validateAttachments = () => {
   let isValid = true;
-
   for (let i = 0; i < attachments.value.length; i++) {
+    if(attachments.value[i].type == 'update' && !attachments.value[i].file && attachments.value[i].attachment == ''){
+      attachments.value[i].errorMessage = 'File is required';
+      return false;
+    }
     if(attachments.value[i].type == 'update'){
       isValid = true;
     } else {
@@ -400,11 +402,11 @@ const updateRepositoryData = async () => {
       if((!attachments.value[i].isFileUpdated && !attachments.value[i].isDescriptionUpdated && attachments.value[i].type == 'updated') || (!attachments.value[i].isFileUpdated && attachments.value[i].isDescriptionUpdated)){
         delete attachments.value[i].attachment
       }
+
     }
     if(attachments.value.length > 0){
       repositoryData.files = attachments.value
     }
-    console.log(repositoryData.files)
     if(file.value){
       //@ts-ignore
       repositoryData.image = file.value as File
@@ -487,7 +489,7 @@ onMounted( async () => {
        </div>
           <div>
             <p class="text-heading d-flex align-center">
-              {{formType === FormType.edit ? 'Edit Repositopry' : 'Create New Repository'}}
+              {{formType === FormType.edit ? 'Edit Repository' : 'Create New Repository'}}
             </p>
             <p class="text-subtitle">
               A repository contain all related project of a certain project of the organization

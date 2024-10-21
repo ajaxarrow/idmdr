@@ -156,14 +156,14 @@ export const useRepositoryServices = () => {
             }
           }
         }
-        await localStorage.setItem('snackbarmessage', JSON.stringify({
-          message: 'Repository updated successfully',
-          status: 'success'
-        }))
-        setTimeout(async function() {
-          loading.value = false;
-          window.location.href = `/my-repositories/${repository.uid}`;
-        }, 3000);
+        // await localStorage.setItem('snackbarmessage', JSON.stringify({
+        //   message: 'Repository updated successfully',
+        //   status: 'success'
+        // }))
+        // setTimeout(async function() {
+        //   loading.value = false;
+        //   window.location.href = `/my-repositories/${repository.uid}`;
+        // }, 3000);
       }
     } catch (e: any){
       console.log(e)
