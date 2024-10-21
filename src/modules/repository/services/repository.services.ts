@@ -128,7 +128,7 @@ export const useRepositoryServices = () => {
 
         for (const member of orgMembers) {
           if(member.user.uid != userData.uid) {
-            await addUserToRepository(res.data.uid, member.user.uid, member.access_level);
+            await addUserToRepository(res.data.uid, member.user.uid as string, member.access_level);
           }
         }
 
@@ -156,14 +156,14 @@ export const useRepositoryServices = () => {
             }
           }
         }
-        // await localStorage.setItem('snackbarmessage', JSON.stringify({
-        //   message: 'Repository updated successfully',
-        //   status: 'success'
-        // }))
-        // setTimeout(async function() {
-        //   loading.value = false;
-        //   window.location.href = `/my-repositories/${repository.uid}`;
-        // }, 3000);
+        await localStorage.setItem('snackbarmessage', JSON.stringify({
+          message: 'Repository updated successfully',
+          status: 'success'
+        }))
+        setTimeout(async function() {
+          loading.value = false;
+          window.location.href = `/my-repositories/${repository.uid}`;
+        }, 3000);
       }
     } catch (e: any){
       console.log(e)

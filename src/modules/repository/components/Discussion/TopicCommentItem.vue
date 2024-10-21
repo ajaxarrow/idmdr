@@ -59,16 +59,17 @@ const handleDelete = (comment: Comment) => {
           cover
           height="40px"
           width="40px"
-          :src="props.comment?.userData ? props.comment.userData.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+          :src="typeof props.comment?.user === 'object' ? props.comment?.user?.profile_picture! : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
       />
       <div class="ml-2 owner-area">
         <div style="line-height: 20px">
-          <p class="topic-subtitle">{{ props.comment?.userData?.username }}</p>
+          <p class="topic-subtitle">{{ typeof props.comment?.user === 'object' ? props.comment?.user?.username : ''}}</p>
           <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(props.comment?.date_updated as string)}}</p>
         </div>
       </div>
       <p class="mb-3 ml-2 content-area">{{props.comment?.comment_content}}</p>
-      <VMenu v-if="user && userData.uid === props.comment?.user" v-model="commentActionMenu" :close-on-content-click="false" class="action-area">
+      <VMenu v-if="user && typeof props.comment?.user === 'object' && userData.uid === props.comment.user.uid"
+             v-model="commentActionMenu" :close-on-content-click="false" class="action-area">
         <template #activator="{ props }">
           <PhDotsThreeOutlineVertical v-bind="props" weight="fill" class="cursor-pointer action-icon"/>
         </template>

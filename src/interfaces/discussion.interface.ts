@@ -5,7 +5,7 @@ interface Topic{
   topic_title: string,
   topic_content: string,
   id?: string,
-  user: string,
+  user: User | string,
   userData?: User,
   date_created?: string,
   date_updated?: string,
@@ -17,7 +17,7 @@ interface Comment {
   id?: string,
   date_created?: string,
   date_updated?: string,
-  user: string,
+  user: User | string,
   userData?: User,
   discussion: string,
 }

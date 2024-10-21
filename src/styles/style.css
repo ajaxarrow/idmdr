@@ -107,3 +107,12 @@ ul {
     justify-content: center;
     align-items: center;
 }
+
+.data-list-item{
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.data-list-item:hover{
+    background-color: #F0F5F9;
+}

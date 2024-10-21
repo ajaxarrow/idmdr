@@ -4,9 +4,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {server} from "../../../plugins/axios.ts";
-import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 
-const {fetchUser} = useOrganizationMembersServices()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
@@ -115,22 +113,19 @@ export const useRepositoryDiscussionTopicServices = () => {
       const res = await server.get(`/v1/discussions/?repo_id=${slug}`, {
           headers: authorizationHeader
       })
-      return Promise.all(
-        res.data.map(async (topic: any) => {
-          const ownerData = await fetchUser(topic.user)
+      return res.data.map((topic: any) => {
           return {
             repo_id: topic.repo_id,
             topic_title: topic.topic_title,
             topic_content: topic.topic_content,
             id: topic.id,
             user: topic.user,
-            userData: ownerData,
             date_created: topic.date_created,
             date_updated: topic.date_updated,
             comments: topic.comments
           }
         })
-      )
+
     } catch (e) {
       console.log(e);
       return [];
@@ -142,15 +137,12 @@ export const useRepositoryDiscussionTopicServices = () => {
       const res = await server.get(`/v1/discussions/${id}/`, {
         headers: authorizationHeader
       })
-      const ownerData = await fetchUser(res.data.user)
       return {
         repo_id: res.data.repo_id,
         topic_title: res.data.topic_title,
         topic_content: res.data.topic_content,
         id: res.data.id,
         user: res.data.user,
-        //@ts-ignore
-        userData: ownerData,
         date_created: res.data.date_created,
         date_updated: res.data.date_updated,
         comments: res.data.comments

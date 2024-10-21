@@ -42,7 +42,7 @@ const errorMessageEdit = ref('');
 const commentDataInitialState = reactive<Comment>({
   id: '',
   comment_content: '',
-  user: '',
+  user: userData.uid,
   discussion: ''
 })
 
@@ -64,7 +64,6 @@ const handleComment = async () => {
     errorMessage.value = '';
     commentData.comment_content = commentContent.value;
     commentData.discussion = <string>route.params.topic;
-    commentData.user = userData.uid;
     await addDiscussionTopicComment(commentData, <string>route.params.topic);
     await fetchCommentList()
     clearCommentData()
@@ -83,8 +82,10 @@ const editComment = (comment: Comment) => {
   selectedCommentID.value = comment?.id!
   commentContentEdit.value = comment.comment_content!
   commentData.id = comment?.id!
-  commentData.discussion = comment.discussion
-  commentData.user = comment.user
+  commentData.discussion = <string>route.params.topic
+  if ("uid" in comment.user) {
+    commentData.user = comment.user?.uid!
+  }
 }
 
 const updateCommentData = async (comment: Comment) => {
@@ -164,10 +165,10 @@ onMounted(async () => {
                   cover
                   height="40px"
                   width="40px"
-                  :src="topic.userData ? topic.userData.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+                  :src="typeof topic.user === 'object' ? topic.user?.profile_picture!  : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
               />
               <div class="ml-2" style="line-height: 20px">
-                <p class="topic-subtitle">{{ topic.userData?.username }}</p>
+                <p class="topic-subtitle">{{ typeof topic.user === 'object' ? topic.user?.username : ''}}</p>
                 <p class="text-gs60" style="font-size: 14px"> {{ new Date(topic?.date_updated as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
               </div>
             </div>
@@ -184,7 +185,7 @@ onMounted(async () => {
                 <PhChat/>
                 Comment on Topic
               </p>
-              <div v-if="user && userData.uid === topic?.user">
+              <div v-if="user && typeof topic?.user === 'object' && userData.uid === topic.user.uid">
                 <TopicFormDialog
                     :form-type="FormType.edit"
                     :topic="topic"
@@ -223,7 +224,7 @@ onMounted(async () => {
                   class="mr-2 mt-2"
                   size="40"
               >
-                <VImg :src="comment.userData?.profile_picture!"></VImg>
+                <VImg :src="typeof comment.user === 'object' ? comment.user?.profile_picture! : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"></VImg>
               </VAvatar>
               <VTextField
                   autofocus

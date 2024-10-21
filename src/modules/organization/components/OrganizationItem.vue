@@ -28,7 +28,7 @@ onMounted(() => {
 
 <template>
   <div class="mb-2 cursor-pointer" @click="goToOrganizationDetails()">
-    <VRow justify="space-between" align="center" class="ma-0" >
+    <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
       <div class="d-flex align-center">
         <VImg
             style="border-radius: 8px"

@@ -15,10 +15,10 @@ interface OrgMember {
 }
 
 interface User{
-  uid: string,
+  uid?: string,
   username: string,
   email: string,
-  profile_picture: string
+  profile_picture?: string
 }
 
 export type {Member, OrgMember, User}
