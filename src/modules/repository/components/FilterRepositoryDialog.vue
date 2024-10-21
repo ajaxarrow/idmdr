@@ -84,11 +84,10 @@ onMounted(() => {
           Close
         </VBtnPrimaryAlt>
         <VBtnPrimaryAlt
-            width="86"
             class="action-button"
             @click="emitCallback"
         >
-          Save
+          Save Filtering Options
         </VBtnPrimaryAlt>
       </VRow>
       </div>
