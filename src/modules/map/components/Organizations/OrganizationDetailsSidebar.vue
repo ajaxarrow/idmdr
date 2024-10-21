@@ -58,12 +58,12 @@ onUnmounted(() => {
           </div>
           <div v-else>
             <RouterLink
-                class="text-decoration-none"
+                class="text-decoration-none "
                 v-if="repositoryData.length > 0"
                 v-for="repository in repositoryData"
                 :to="{name: 'repository-data', params: { slug: repository.slug  }}">
               <div
-                  class="d-flex align-center my-1 cursor-pointer"
+                  class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
               >
                 <VImg
                     style="border-radius: 8px; flex: none;"
@@ -73,7 +73,8 @@ onUnmounted(() => {
                     :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
                 />
                 <div class="ml-2">
-                  <p class="default">{{ repository.title }}</p>
+                  <p class="default" style="font-size: 15px; font-weight: 600;">{{ repository.title }}</p>
+                  <p class="default" style="font-size: 13px; ">{{ repository.owner?.email }}</p>
                 </div>
               </div>
             </RouterLink>
@@ -90,6 +91,13 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.repo-item{
+  border-radius: 8px;
+}
+.repo-item:hover{
+  background-color: #F0F5F9;
+  transition: background-color 0.3s ease;
+}
 .sector-details-sidebar{
   border-radius: 24px;
   z-index: 5;
