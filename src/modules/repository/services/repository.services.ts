@@ -301,12 +301,13 @@ export const useRepositoryServices = () => {
     orgID: string,
     isForUser: boolean,
     isPaginated: boolean = false,  // Optional pagination flag
-    pageSize?: number               // Optional page size parameter
+    pageSize: number = 100,
+    pageCount: number = 1
   ): Promise<Repository[]> => {
     try {
-      let endpoint = `/org_repo/${orgID}/?page_size=${5}`;
+      let endpoint = `/org_repo/${orgID}/?page_size=${pageSize}`;
       if (isPaginated && pageSize) {
-        endpoint += `&page=${pageSize}`;
+        endpoint += `&page=${pageCount}`;
       }
 
       const res = await server.get(endpoint, {

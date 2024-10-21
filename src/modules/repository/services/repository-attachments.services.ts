@@ -6,7 +6,7 @@ const { userData } = useUserStore();
 export const useRepositoryAttachmentServices = () => {
   const saveAttachment = async (attachment: Attachment, endpoint: string, type: string) => {
     try {
-      await (type === 'create' ? server.post : server.patch)(endpoint, attachment, {
+      await (type === 'create' ? server.post : server.put)(endpoint, attachment, {
         headers: {
           Authorization: `Bearer ${userData.accessToken}`,
           "Content-Type": "multipart/form-data"
