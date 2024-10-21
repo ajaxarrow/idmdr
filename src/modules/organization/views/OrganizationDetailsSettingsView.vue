@@ -359,7 +359,7 @@ onMounted(async () => {
           </VBtnPrimaryFilled>
         </VRow>
         <div v-if="organization.is_member">
-          <VDivider v-if="organization?.is_member" class="my-5"/>
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
           <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
