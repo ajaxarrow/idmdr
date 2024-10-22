@@ -36,7 +36,7 @@ const sectorTaggingDialog = ref<boolean>(false);
       <div class="d-flex justify-end ga-2 pa-2">
         <VBtnPrimaryFilled
             class="my-2"
-            style="font-size: 14px !important;"
+            style="font-size: 14px !important; font-weight: 500 !important;"
             variant="outlined"
             rounded="lg"
             :to="{ name: 'new-sector' }"
@@ -45,7 +45,7 @@ const sectorTaggingDialog = ref<boolean>(false);
         </VBtnPrimaryFilled>
         <VBtnPrimaryFilled
             class="my-2"
-            style="font-size: 14px !important;"
+            style="font-size: 14px !important; font-weight: 500 !important;"
             rounded="lg"
             @click="sectorTaggingDialog = false"
         >
