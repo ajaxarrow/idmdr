@@ -160,6 +160,33 @@ export const useOrganizationServices = () => {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
         {
+          tel_phone: organization.tel_phone,
+          sub_org_type: organization.sub_org_type,
+          description: organization.description,
+          president: organization.president,
+          visibility: organization.visibility,
+          org_type: organization.org_type,
+          name: organization.name,
+          acronym: organization.acronym,
+          address: organization.address,
+          phone: organization.phone,
+          email: organization.email,
+          website: organization.website,
+          rdc_rep: organization.rd_rep,
+          ttc_rep: organization.tt_rep,
+          icc_rep: organization.ic_rep,
+          scc_rep: organization.sc_rep,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken}`,
+          }
+        }
+      );
+
+      await server.put(
+        `/v1/organization/${res.data.uid}/update`,
+        {
           image: organization.image,
           tel_phone: organization.tel_phone,
           sub_org_type: organization.sub_org_type,
@@ -174,10 +201,6 @@ export const useOrganizationServices = () => {
           email: organization.email,
           website: organization.website,
           geojson: organization.geojson,
-          rdc_rep: organization.rd_rep,
-          ttc_rep: organization.tt_rep,
-          icc_rep: organization.ic_rep,
-          scc_rep: organization.sc_rep,
         },
         {
           headers: {
@@ -215,8 +238,8 @@ export const useOrganizationServices = () => {
       loading.value = false;
       showSnackbarMessage('OOPS! Something went wrong', Status.error);
       clearErrorMessage();
+      console.log(e);
       handleDynamicErrorMapping(e.response?.data, errorMessage, keyMapping);
-
       return;
     }
   };

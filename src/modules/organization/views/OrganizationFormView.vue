@@ -433,7 +433,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Organization Acronym</label>
+          <label class="input-label">Organization Acronym<span class="text-pink">*</span></label>
           <VTextField
               v-model="organizationData.acronym"
               placeholder="E.g. CMU"
