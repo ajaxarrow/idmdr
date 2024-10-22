@@ -2,18 +2,17 @@
 import {PhInfo, PhUsersThree} from "@phosphor-icons/vue";
 import {useMapStore} from "../../stores/map.store.ts";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted} from "vue";
 import {Organization} from "../../../../interfaces/organization.interface.ts";
 import {useOrganizationServices} from "../../../organization/services/organization.services.ts";
 
-const {mapOrganizations} = useOrganizationStore();
+const {searchedMapOrganizations} = useOrganizationStore();
 const {fetchOrganizations} = useOrganizationServices();
 const {clickOrganization, clickedBoundary, resetToDefault} = useMapStore();
 
-const organizationData = ref<Organization[]>(mapOrganizations.value);
 
 onMounted(async() => {
-  organizationData.value = await fetchOrganizations();
+  await fetchOrganizations();
 })
 
 onUnmounted(() => {
@@ -23,7 +22,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="organizationData.length === 0">
+  <div v-if="searchedMapOrganizations.length === 0">
     <p class="justify-center d-flex align-center">
       No Organizations Found <PhInfo size="19" class="ml-1"/>
     </p>
@@ -34,7 +33,7 @@ onUnmounted(() => {
       nav
   >
     <VListItem
-      v-for="organization in organizationData"
+      v-for="organization in searchedMapOrganizations"
       @click="clickOrganization(organization)"
       class="map-item"
       :class="{

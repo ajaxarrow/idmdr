@@ -23,7 +23,7 @@ const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.acc
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker()
 // const {router} = useRouting()
-const {myOrganizations, allOrganizations, mapOrganizations, organization} = useOrganizationStore();
+const {myOrganizations, allOrganizations, mapOrganizations, organization, searchedMapOrganizations} = useOrganizationStore();
 
 export const useOrganizationServices = () => {
   const errorMessageIntialState = reactive({
@@ -409,6 +409,7 @@ export const useOrganizationServices = () => {
 
       mapOrganizations.value = data;
       allOrganizations.value = data;
+      searchedMapOrganizations.value = data;
       return data;
     } catch (e) {
       return [];
