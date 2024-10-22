@@ -17,10 +17,7 @@ import Sector from "../../../assets/images/sector-img.jpg";
           class="my-2"
           rounded="lg"
           :to="{
-            name: 'sector-tagging',
-            query: {
-              dialog: true
-            }
+            name: 'new-sector'
           }"
         >
           Tag a Sector Now!

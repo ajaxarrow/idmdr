@@ -349,8 +349,8 @@ onMounted(async () => {
             <template v-slot:item="{ props, item }">
               <VListItem
                   v-bind="props"
-                  :prepend-avatar="item.raw.image"
-                  :subtitle="item.raw.owner.username"
+                  :prepend-avatar="item.raw.image as string"
+                  :subtitle="item.raw.owner?.username!"
                   :title="`${item.raw.title}`"
               ></VListItem>
             </template>
