@@ -363,8 +363,8 @@ onMounted(async () => {
          </VBtnPrimaryFilled>
        </VRow>
        <div v-if="repository.is_member">
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'" class="my-5"/>
-         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Update Repository Information</p>

@@ -359,8 +359,8 @@ onMounted(async () => {
           </VBtnPrimaryFilled>
         </VRow>
         <div v-if="organization.is_member">
-          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="my-5"/>
-          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" class="mt-2">
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
                 <p class="section-title">Update Organization Information</p>
@@ -383,7 +383,7 @@ onMounted(async () => {
                 <p class="section-title">Organization Members</p>
                 <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
               </div>
-              <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator'" @callback="fetchMembersCallback">
+              <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
                 <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                   Add Member
                 </VBtnPrimaryFilled>
@@ -425,7 +425,7 @@ onMounted(async () => {
                     </div>
                   </div>
                   <VMenu
-                      v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'moderator')"
+                      v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager')"
                       location="bottom"
                       v-model="memberActionMenu"
                       :close-on-content-click="false"
