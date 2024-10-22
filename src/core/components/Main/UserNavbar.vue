@@ -52,7 +52,7 @@ const appBarWidthStyle = computed(() => {
             <PhBell size="24"/>
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">
-              <p class="text-name text-container">{{userData.username}}</p>
+              <p class="text-name text-container mb-1">{{userData.username}}</p>
               <p class="text-right text-name-subtitle">{{ userData.email }}</p>
             </div>
             <VAvatar
