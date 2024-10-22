@@ -11,7 +11,7 @@ import {onMounted, ref} from "vue";
 
 const {fetchRepositories} = useRepositoryServices()
 const repositoryData = ref<Repository[]>([]);
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 const dataCards = [
   {
     name: 'Sectors',
@@ -39,7 +39,7 @@ onMounted(async () => {
   <MainLayout title="Dashboard">
     <div class="pa-6">
       <p class="text-heading d-flex align-center">
-        Hello, Jiu Axl! <PhHandWaving weight="bold" class="flip-horizontal ml-2"/>
+        Hello, {{user ? userData.username : 'Guest User'}}! <PhHandWaving weight="bold" class="flip-horizontal ml-2"/>
       </p>
       <p class="text-subtitle">Welcome back to your dashboard</p>
     </div>
