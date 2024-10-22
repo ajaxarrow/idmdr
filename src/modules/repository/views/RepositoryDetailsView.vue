@@ -192,11 +192,11 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
         <VRow class="ma-0">
           <VCol v-if="repository.organizationData" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization</p>
-            <p class="text-subtitle">{{ repository.organizationData.name}} ({{repository.organizationData.acronym}})</p>
+            <p class="text-subtitle pr-2">{{ repository.organizationData.name}} ({{repository.organizationData.acronym}})</p>
           </VCol>
           <VCol v-if="repository.location" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Location</p>
-            <p class="text-subtitle">{{ repository.location}}</p>
+            <p class="text-subtitle pr-2">{{ repository.location}}</p>
           </VCol>
           <VCol v-if="repository.start_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Start Date</p>
@@ -208,19 +208,19 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           </VCol>
           <VCol v-if="repository.funding_agency" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Funding Agency</p>
-            <p class="text-subtitle">{{repository.funding_agency}}</p>
+            <p class="text-subtitle pr-2">{{repository.funding_agency}}</p>
           </VCol>
           <VCol v-if="repository.affiliation" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Affiliation</p>
-            <p class="text-subtitle">{{ repository.affiliation}}</p>
+            <p class="text-subtitle pr-2">{{ repository.affiliation}}</p>
           </VCol>
           <VCol v-if="repository.commodity" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Commodity</p>
-            <p class="text-subtitle">{{repository.commodity}}</p>
+            <p class="text-subtitle pr-2">{{repository.commodity}}</p>
           </VCol>
           <VCol v-if="repository.industry" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Industry</p>
-            <p class="text-subtitle">{{repository.industry}}</p>
+            <p class="text-subtitle pr-2">{{repository.industry}}</p>
           </VCol>
           <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Research Project/s Conducted</p>
@@ -239,35 +239,35 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
         <VRow class="ma-0">
           <VCol v-if="repository.technology_category" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Category</p>
-            <p class="text-subtitle">{{ repository.technology_category}}</p>
+            <p class="text-subtitle pr-2">{{ repository.technology_category}}</p>
           </VCol>
           <VCol v-if="repository.technology_status" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Status</p>
-            <p class="text-subtitle">{{ repository.technology_status}}</p>
+            <p class="text-subtitle pr-2">{{ repository.technology_status}}</p>
           </VCol>
           <VCol v-if="repository.technology_readiness_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Readiness Level</p>
-            <p class="text-subtitle">{{ repository.technology_readiness_level}}</p>
+            <p class="text-subtitle pr-2">{{ repository.technology_readiness_level}}</p>
           </VCol>
           <VCol v-if="repository.technology_generator" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Generator</p>
-            <p class="text-subtitle">{{ repository.technology_generator}}</p>
+            <p class="text-subtitle pr-2">{{ repository.technology_generator}}</p>
           </VCol>
           <VCol v-if="repository.tech_owner" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Owner</p>
-            <p class="text-subtitle">{{repository.tech_owner}}</p>
+            <p class="text-subtitle pr-2">{{repository.tech_owner}}</p>
           </VCol>
           <VCol v-if="repository.adaptors" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Existing or Potential Adopters</p>
-            <p class="text-subtitle">{{repository.adaptors}}</p>
+            <p class="text-subtitle pr-2">{{repository.adaptors}}</p>
           </VCol>
           <VCol v-if="repository.transfer_plan" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Transfer Plan</p>
-            <p class="text-subtitle">{{ repository.transfer_plan}}</p>
+            <p class="text-subtitle pr-2">{{ repository.transfer_plan}}</p>
           </VCol>
           <VCol v-if="repository.technology_transfer_status" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Transfer Status</p>
-            <p class="text-subtitle">{{ repository.technology_transfer_status}}</p>
+            <p class="text-subtitle pr-2">{{ repository.technology_transfer_status}}</p>
           </VCol>
         </VRow>
       </div>
@@ -297,15 +297,15 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           <VRow class="ma-0">
             <VCol v-if="repository.commercialization?.modeStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Mode Status</p>
-              <p class="text-subtitle">{{ repository.commercialization.modeStatus}}</p>
+              <p class="text-subtitle pr-2">{{ repository.commercialization.modeStatus}}</p>
             </VCol>
             <VCol v-if="repository.commercialization?.currentStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Current Status</p>
-              <p class="text-subtitle">{{ repository.commercialization.currentStatus}}</p>
+              <p class="text-subtitle pr-2">{{ repository.commercialization.currentStatus}}</p>
             </VCol>
             <VCol v-if="repository.commercialization?.adopterStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Adopter Status</p>
-              <p class="text-subtitle">{{ repository.commercialization.adopterStatus}}</p>
+              <p class="text-subtitle pr-2">{{ repository.commercialization.adopterStatus}}</p>
             </VCol>
           </VRow>
         </div>
