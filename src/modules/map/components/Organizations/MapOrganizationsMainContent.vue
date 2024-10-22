@@ -3,7 +3,6 @@ import {PhInfo, PhUsersThree} from "@phosphor-icons/vue";
 import {useMapStore} from "../../stores/map.store.ts";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
 import {onMounted, onUnmounted} from "vue";
-import {Organization} from "../../../../interfaces/organization.interface.ts";
 import {useOrganizationServices} from "../../../organization/services/organization.services.ts";
 
 const {searchedMapOrganizations} = useOrganizationStore();
