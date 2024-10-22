@@ -552,7 +552,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-5">
-          <label class="input-label">Organization</label>
+          <label class="input-label">Organization<span class="text-pink">*</span></label>
           <VAutocomplete
               v-model="repositoryData.organization"
               placeholder="Select Organization"
@@ -587,7 +587,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-5" v-else>
-          <label class="input-label">Abstract</label>
+          <label class="input-label">Abstract<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="repositoryData.description"
               @update:modelValue="$event => (repositoryData.description = $event)"
