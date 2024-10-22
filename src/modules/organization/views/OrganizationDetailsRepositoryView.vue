@@ -63,6 +63,7 @@ const fetchMoreRepositories = async () => {
       lastItemValue.value
   );
   repositoryData.value = [...repositoryData.value, ...data];
+  searchedRepositories.value = repositoryData.value;
   lastItemValue.value = lastItemValue.value + 1
   if(data.length === 0){
     reachEnd.value = true
@@ -179,7 +180,7 @@ onUnmounted(() => {
         ></VProgressCircular>
       </div>
       <div v-else>
-        <p v-if="repositoryItems.length == 0" class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+        <p v-if="searchedRepositories.length == 0" class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
         <div v-else>
           <RepositoryItem
               v-if="searchedRepositories.length > 0"

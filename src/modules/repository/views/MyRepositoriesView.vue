@@ -63,6 +63,7 @@ watch(() => selectedTags.value, (newVal) => {
 const fetchMoreRepositories = async () => {
   const data = await fetchRepositoriesByUserWithPagination(lastItemValue.value);
   repositoryData.value = [...repositoryData.value, ...data];
+  searchedRepositories.value = repositoryData.value;
   lastItemValue.value = lastItemValue.value + 1
   if(data.length === 0){
     reachEnd.value = true
