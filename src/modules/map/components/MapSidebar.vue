@@ -12,10 +12,10 @@ import {ref, computed, defineComponent, markRaw, onMounted, watch} from 'vue';
   import MapSectorsMainContent from "./Sectors/MapSectorsMainContent.vue";
 import MapFiltersHeader from "./Filters/MapFiltersHeader.vue";
 import MapFiltersMainContent from "./Filters/MapFiltersMainContent.vue";
-import SectorTaggingDialog from "../../sector/components/SectorTaggingDialog.vue";
 import MapOrganizationsHeader from "./Organizations/MapOrganizationsHeader.vue";
 import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainContent.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
+import SectorTaggingGuideDialog from "../../sector/components/SectorTaggingGuideDialog.vue";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -146,7 +146,8 @@ watch(() => route.query.dialog, () => {
                      />
                      Import GeoJson
                    </p>
-                   <SectorTaggingDialog :show-dialog="showDialog"/>
+                   <SectorTaggingGuideDialog/>
+<!--                   <SectorTaggingDialog :show-dialog="showDialog"/>-->
                  </div>
                </VSheet>
              </VMenu>
