@@ -11,6 +11,7 @@ import {onMounted, ref} from "vue";
 
 const {fetchRepositories} = useRepositoryServices()
 const repositoryData = ref<Repository[]>([]);
+const pageLoading = ref(false)
 const {user, userData} = useUserStore()
 const dataCards = [
   {
@@ -31,7 +32,9 @@ const dataCards = [
 ]
 
 onMounted(async () => {
+  pageLoading.value = true
   repositoryData.value = await fetchRepositories(3)
+  pageLoading.value = false
 })
 </script>
 
@@ -59,7 +62,16 @@ onMounted(async () => {
         <p class="text-title">Browse Latest Repositories</p>
         <RouterLink class="link" :to="{name: 'repositories'}">See All</RouterLink>
       </VRow>
-      <RepositoryItem v-for="repository in repositoryData" :repository="repository" />
+      <div v-if="pageLoading" class="loading-state-container">
+        <VProgressCircular
+            indeterminate
+            color="#23668b"
+        ></VProgressCircular>
+      </div>
+      <RepositoryItem
+        v-else
+        v-for="repository in repositoryData"
+        :repository="repository" />
     </div>
   </MainLayout>
 </template>
