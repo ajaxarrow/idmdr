@@ -30,7 +30,7 @@ export const navLinks = [
   },
   {
     name: 'Sector Tagging',
-    link: '/sectors',
+    link: '/sector-tagging',
     icon: PhTag
   },
   {

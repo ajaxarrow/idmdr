@@ -17,7 +17,7 @@ import Sector from "../../../assets/images/sector-img.jpg";
           class="my-2"
           rounded="lg"
           :to="{
-            name: 'sectors',
+            name: 'sector-tagging',
             query: {
               dialog: true
             }

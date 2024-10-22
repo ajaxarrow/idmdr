@@ -1,6 +1,7 @@
 import authRoutes from "./routes/auth.routes.ts";
 import repositoryRoutes from "./routes/repository.routes.ts";
 import organizationRoutes from "./routes/organization.routes.ts";
+import sectorRoutes from "./routes/sector.routes.ts";
 
 export const routes = [
   {
@@ -82,12 +83,6 @@ export const routes = [
     component: () => import('../modules/map/views/MapView.vue')
   },
   {
-    path: '/sectors',
-    name: 'sectors',
-    // @ts-ignore
-    component: () => import('../modules/sector/views/SectorView.vue')
-  },
-  {
     path: '/:pathMatch(.*)*',
     name: 'error404',
     // @ts-ignore
@@ -101,5 +96,6 @@ export const routes = [
   },
   ...authRoutes,
   ...repositoryRoutes,
-  ...organizationRoutes
+  ...organizationRoutes,
+  ...sectorRoutes
 ]
