@@ -387,7 +387,7 @@ onMounted(async () => {
                <p class="section-title">Repository Members</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage repository members and their roles. <AccessLeveLInfoDialog/></p>
              </div>
-             <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator'" @callback="fetchMembersCallback">
+             <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
                <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                  Add Member
                </VBtnPrimaryFilled>
@@ -429,9 +429,8 @@ onMounted(async () => {
                    </div>
                  </div>
                  <VMenu
-                     v-if="member.user.uid != userData.uid && (userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'moderator')"
+                     v-if="member.user.uid != userData.uid && (userRepoInfo?.access_level == 'owner' || userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userRepoInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin'))"
                      location="bottom"
-                     v-model="memberActionMenu"
                      :close-on-content-click="false"
                  >
                    <template #activator="{ props }">
