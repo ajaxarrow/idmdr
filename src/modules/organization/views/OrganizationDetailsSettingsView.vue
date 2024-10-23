@@ -427,7 +427,6 @@ onMounted(async () => {
                   <VMenu
                       v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userOrgInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin'))"
                       location="bottom"
-                      v-model="memberActionMenu"
                       :close-on-content-click="false"
                   >
                     <template #activator="{ props }">

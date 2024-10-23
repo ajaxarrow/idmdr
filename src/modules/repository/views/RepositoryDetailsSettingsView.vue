@@ -442,9 +442,7 @@ onMounted(async () => {
                    <VSheet width="200" class="rounded-b-lg py-2">
                      <AddRepoMemberDialog
                          :form-type="FormType.edit"
-                         :member="member"
-                         :user-access-level="userRepoInfo?.access_level"
-                         @callback="updateMembersCallback"
+                         :member="member" :user-access-level="userRepoInfo?.access_level" @callback="updateMembersCallback"
                      >
                        <p class="cursor-pointer action-menu-item">
                          <PhPencil/>
