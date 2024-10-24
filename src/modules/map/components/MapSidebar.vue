@@ -16,6 +16,8 @@ import MapOrganizationsHeader from "./Organizations/MapOrganizationsHeader.vue";
 import MapOrganizationsMainContent from "./Organizations/MapOrganizationsMainContent.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import SectorTaggingGuideDialog from "../../sector/components/SectorTaggingGuideDialog.vue";
+import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
+import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.vue";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -26,13 +28,14 @@ import SectorTaggingGuideDialog from "../../sector/components/SectorTaggingGuide
     },
   });
 
-  const {route} = useRouting();
+
+  const {route, router} = useRouting();
+  const {storedGeoJSON, handleGeoJSON, confirmDialog} = useSectorMapStore();
   const addSectorDialogMenu = ref(false);
   const showAdditionalContent = ref(false);
   const header = ref<CustomComponent | null>(null);
   const mainContent = ref<CustomComponent | null>(null);
   const activeNav = ref('');
-  const showDialog = ref(false);
 
   const sidebarStyle = computed(() => {
     if(showAdditionalContent.value){
@@ -91,30 +94,37 @@ import SectorTaggingGuideDialog from "../../sector/components/SectorTaggingGuide
     mainContent.value = mainContentComponent;
   };
 
-  onMounted(() => {
-    if(route.query.dialog){
-      if(<string>route.query.dialog == 'true'){
-        addSectorDialogMenu.value = true;
-        showDialog.value = true
-      } else {
-        showDialog.value = false;
 
-      }
+  const confirmCallback = () => {
+    router.push({name: 'new-sector'});
+  }
+
+  const cancelCallback = () => {
+    storedGeoJSON.value = {};
+    setTimeout(() => {
+      confirmDialog.value = false
+    }, 100);
+  }
+
+  watch(()=> storedGeoJSON.value, () => {
+    if(Object.keys(storedGeoJSON.value).length !== 0){
+      confirmDialog.value = true
     }
   })
 
-watch(() => route.query.dialog, () => {
-  if(route.query.dialog){
-    if(<string>route.query.dialog == 'false'){
-      showDialog.value = false;
-    }
-  }
-})
+  onMounted(() => {
+    confirmDialog.value = false
+  })
+
 
 
 </script>
 
 <template>
+  <ConfirmGeoJSONDialog
+    @cancelCallback="cancelCallback"
+    @confirmCallback="confirmCallback"
+  />
   <VSheet class="sidebar ma-4 d-flex flex-column justify-start" rounded="xl" v-bind:style="sidebarStyle">
    <div class="d-flex">
      <div class="sidebar-main-container d-flex flex-column">
@@ -137,15 +147,16 @@ watch(() => route.query.dialog, () => {
                  <p class="text-center font-weight-bold pa-2 add-sector-menu-title">Add New Sector</p>
                  <VDivider/>
                  <div class="pa-2">
-                   <p class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
+                   <label for="dropzoneFileGeoJSON"  class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
                      <PhFileArrowUp
                        class="mb-1 mr-1"
                        color="#3291C7"
                        weight="fill"
                        size="14"
                      />
-                     Import GeoJson
-                   </p>
+                       Import GeoJson
+                    </label>
+                   <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSON" accept="application/json"/>
                    <SectorTaggingGuideDialog/>
 <!--                   <SectorTaggingDialog :show-dialog="showDialog"/>-->
                  </div>

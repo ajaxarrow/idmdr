@@ -10,8 +10,8 @@ import {useRepositoryServices} from "../../repository/services/repository.servic
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import FilterRepositoryDialog from "../../repository/components/FilterRepositoryDialog.vue";
+import {Organization} from "../../../interfaces/organization.interface.ts";
 const {route} = useRouting()
-const {organization} = useOrganizationStore();
 const {fetchOrganizationData} = useOrganizationServices();
 
 const {tags, selectedTags} = useTags();
@@ -22,10 +22,9 @@ const searchQuery = ref('');
 const repositoryData = ref<Repository[]>([]);
 const repositoryItems = ref<Repository[]>([]);
 const searchedRepositories = ref<Repository[]>([]);
+const organization = ref<Organization | null>();
 const currentTags = ref<string[]>([]);
 const pageLoading = ref(false)
-
-
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
@@ -63,7 +62,7 @@ const fetchMoreRepositories = async () => {
       lastItemValue.value
   );
   repositoryData.value = [...repositoryData.value, ...data];
-  searchedRepositories.value = repositoryData.value;
+  searchedRepositories.value = [...searchedRepositories.value, ...data];
   lastItemValue.value = lastItemValue.value + 1
   if(data.length === 0){
     reachEnd.value = true
@@ -79,7 +78,7 @@ onMounted(async () => {
   pageLoading.value = true
   currentTags.value = tags.value.splice(0, 6)
   path.value = getFirstPath(<string>route.path)
-  await fetchOrganizationData(route.params.slug as string);
+  organization.value = await fetchOrganizationData(route.params.slug as string);
   await fetchMoreRepositories();
   repositoryItems.value = repositoryData.value;
   searchedRepositories.value = repositoryData.value;

@@ -9,7 +9,7 @@ import {
   PhX
 } from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, onUnmounted, reactive, ref} from "vue";
 import {SectorInfo} from "../../../interfaces/sector.interface.ts";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
@@ -18,8 +18,10 @@ import {useRepositoryServices} from "../../repository/services/repository.servic
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
 
 const {fetchOrganizationByUser} = useOrganizationServices();
+const {storedGeoJSON, confirmDialog} = useSectorMapStore();
 const {fetchRepositoriesByUser} = useRepositoryServices();
 const {isEmptyObject} = useObjectChecker()
 const {tags, fetchTags} = useTags();
@@ -172,8 +174,16 @@ onMounted(async () => {
   if (type === 'edit') {
     formType.value = FormType.edit
   }
+  if (Object.keys(storedGeoJSON.value).length !== 0) {
+    setGeoJSON(storedGeoJSON.value, true);
+  }
+
 })
 
+onUnmounted(() => {
+  storedGeoJSON.value = {}
+  confirmDialog.value = false
+})
 
 </script>
 

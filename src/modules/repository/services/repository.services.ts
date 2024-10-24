@@ -342,14 +342,13 @@ export const useRepositoryServices = () => {
       const filteredData = await Promise.all(
         rawData.map(async (data: any) => {
           if (isForUser) {
-            // For user-specific filtering
             if (data.repo.visibility === 2) {
               return data.repo.user === userData.uid ? data : null;
             }
             return data;
           } else {
             if (user.value) {
-              const userRepo = await fetchRepositoriesByUser(userData.uid);
+              const userRepo = await fetchRepositoriesByUser();
               const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
               //this part
               return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data : null;
