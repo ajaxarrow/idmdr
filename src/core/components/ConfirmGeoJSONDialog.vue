@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {PhQuestion, PhWarning} from "@phosphor-icons/vue";
+import {PhQuestion} from "@phosphor-icons/vue";
 import {useSectorMapStore} from "../stores/sector-map.store.ts";
 
 const {confirmDialog} = useSectorMapStore()

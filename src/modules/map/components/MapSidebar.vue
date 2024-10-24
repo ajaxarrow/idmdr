@@ -29,7 +29,7 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
   });
 
 
-  const {route, router} = useRouting();
+  const {router} = useRouting();
   const {storedGeoJSON, handleGeoJSON, confirmDialog} = useSectorMapStore();
   const addSectorDialogMenu = ref(false);
   const showAdditionalContent = ref(false);
