@@ -57,7 +57,7 @@ const fetchMoreRepositories = async () => {
       route.params.slug as string,
       path.value !== 'organizations',
       true,
-      5,
+      20,
       lastItemValue.value
   );
   repositoryData.value = [...repositoryData.value, ...data];
