@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {markRaw, onMounted, onUnmounted, shallowRef, watch} from "vue";
+import {markRaw, onMounted, onUnmounted, ref, shallowRef, watch} from "vue";
 import {Map, NavigationControl} from "maplibre-gl";
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
@@ -13,13 +13,18 @@ import OrganizationDetailsSidebar from "../../map/components/Organizations/Organ
 import {useSectorsStore} from "../stores/sectors.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
+import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
+import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.vue";
 
 const {fetchOrganizations} = useOrganizationServices()
+const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
 const {removeSelectedSector} = useSectorsStore();
+const {router} = useRouting();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
-
+const coords = ref([])
 
 const bounds: [number, number, number, number] = [
   120.5, 4.0,
@@ -35,6 +40,45 @@ const draw = new MapboxDraw({
   },
 })
 
+
+const handleDrawEvent = (event: any) => {
+  const feature = event.features[0];
+  const coordinates = feature.geometry.coordinates;
+  coords.value = coordinates
+
+};
+
+const deleteBoundary = () => {
+  const allDrawnFeatures = draw.getAll();
+  if (allDrawnFeatures.features.length > 0) {
+    draw.deleteAll();
+    coords.value = [];
+  }
+};
+
+const confirmCallback = () => {
+  router.push({name: 'new-sector'});
+}
+
+const saveGeoJSON = () => {
+  setGeoJSONData({
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: coords.value
+    },
+    properties: {
+    }
+  });
+  confirmDialog.value = true
+}
+
+const cancelCallback = () => {
+  storedGeoJSON.value = {};
+  setTimeout(() => {
+    confirmDialog.value = false
+  }, 100);
+}
 
 const initMap = () => {
   if (mapContainer.value) {
@@ -70,12 +114,10 @@ onMounted(async () => {
   initMap();
   map.value?.addControl(new NavigationControl(), 'bottom-right');
   // @ts-ignore
-  map.value?.addControl(draw);
+  map.value.addControl(draw);
   ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
-    // @ts-ignore
-    map.value?.on(eventName, () => {
-      console.log(eventName);
-    });
+    //@ts-ignore
+    map.value.on(eventName, handleDrawEvent);
   });
 
   // @ts-ignore
@@ -94,12 +136,13 @@ onUnmounted(()=> {
 
 
 
-
-
-
 </script>
 
 <template>
+  <ConfirmGeoJSONDialog
+      @cancelCallback="cancelCallback"
+      @confirmCallback="confirmCallback"
+  />
   <transition name="fade">
     <OrganizationDetailsSidebar/>
   </transition>
@@ -114,6 +157,13 @@ onUnmounted(()=> {
     <a href="https://www.maptiler.com" class="watermark"><img
         src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"/></a>
     <div class="map" ref="mapContainer">
+    </div>
+  </div>
+  <div v-if="coords.length > 0" class="calculation-box">
+    <p class="ml-3 my-2">You have created a polygon! Want to tag it to an entity?</p>
+    <div  class="action-buttons">
+      <button type="button" class="convert-button" @click="saveGeoJSON">Tag Boundary</button>
+      <button type="button" class="delete-button" @click="deleteBoundary">Delete Boundary</button>
     </div>
   </div>
 </template>
@@ -141,4 +191,43 @@ onUnmounted(()=> {
   position: absolute;
 
 }
+
+.calculation-box {
+  border-radius: 10px;
+  border: 2px solid #e4e4e4;
+  height: 150px;
+  width: 400px;
+  position: absolute;
+  bottom: 25px;
+  left: 125px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  box-shadow: 0px 0px 7px 0px #5d6e87;
+}
+
+button{
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin: 0 5px;
+}
+
+.convert-button {
+  background-color: #00838F;
+  transition: background-color 0.3s ease;
+}
+
+.convert-button:hover {
+  background-color: #006973; /* Darker teal */
+}
+
+.delete-button {
+  background-color: #F15F79;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #c94b63; /* Darker pink */
+}
+
 </style>

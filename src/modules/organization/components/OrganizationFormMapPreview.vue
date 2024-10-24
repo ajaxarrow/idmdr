@@ -268,13 +268,15 @@ button{
   margin: 0 5px;
 }
 
-.convert-button{
+.convert-button {
   background-color: #00838F;
+  transition: background-color 0.3s ease;
 }
 
-.delete-button{
-  background-color: #F15F79;
+.convert-button:hover {
+  background-color: #006973; /* Darker teal */
 }
+
 
 
 </style>
