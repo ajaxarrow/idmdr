@@ -259,6 +259,11 @@ onMounted(() => {
   top: 5px;
   left: 5px;
   background-color: rgba(255, 255, 255, 0.9);
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  background-color: rgba(225, 225, 225, 0.9);
 }
 
 button{

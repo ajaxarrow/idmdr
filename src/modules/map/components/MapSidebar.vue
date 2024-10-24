@@ -30,7 +30,7 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
 
 
   const {router} = useRouting();
-  const {storedGeoJSON, handleGeoJSON, confirmDialog} = useSectorMapStore();
+  const {storedGeoJSON, handleGeoJSON, confirmDialog, fileName} = useSectorMapStore();
   const addSectorDialogMenu = ref(false);
   const showAdditionalContent = ref(false);
   const header = ref<CustomComponent | null>(null);
@@ -101,6 +101,7 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
 
   const cancelCallback = () => {
     storedGeoJSON.value = {};
+    fileName.value = '';
     setTimeout(() => {
       confirmDialog.value = false
     }, 100);

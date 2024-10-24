@@ -21,7 +21,7 @@ import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
 
 const {fetchOrganizationByUser} = useOrganizationServices();
-const {storedGeoJSON, confirmDialog} = useSectorMapStore();
+const {storedGeoJSON, confirmDialog, fileName} = useSectorMapStore();
 const {fetchRepositoriesByUser} = useRepositoryServices();
 const {isEmptyObject} = useObjectChecker()
 const {tags, fetchTags} = useTags();
@@ -177,11 +177,15 @@ onMounted(async () => {
   if (Object.keys(storedGeoJSON.value).length !== 0) {
     setGeoJSON(storedGeoJSON.value, true);
   }
-
+  if(fileName.value !== '') {
+    isGeoJSONDrawn.value = false
+    geoJSONFileName.value = fileName.value
+  }
 })
 
 onUnmounted(() => {
   storedGeoJSON.value = {}
+  fileName.value = ''
   confirmDialog.value = false
 })
 
