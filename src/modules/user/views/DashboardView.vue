@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhCloud, PhFactory, PhHandWaving, PhUsersThree} from "@phosphor-icons/vue";
+import {PhCloud, PhFactory, PhHandWaving, PhInfo, PhUsersThree} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import HeadlineCard from "../../../core/components/Dashboard/HeadlineCard.vue";
 import DataCard from "../../../core/components/Dashboard/DataCard.vue";
@@ -68,10 +68,13 @@ onMounted(async () => {
             color="#23668b"
         ></VProgressCircular>
       </div>
-      <RepositoryItem
-        v-else
-        v-for="repository in repositoryData"
-        :repository="repository" />
+      <div v-else>
+        <RepositoryItem
+            v-if="repositoryData.length > 0"
+            v-for="repository in repositoryData"
+            :repository="repository" />
+        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+      </div>
     </div>
   </MainLayout>
 </template>
