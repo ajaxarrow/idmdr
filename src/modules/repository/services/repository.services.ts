@@ -475,6 +475,26 @@ export const useRepositoryServices = () => {
     }
   }
 
+  // const fetchRepoAccessByRepo = async(id: string) : Promise<RepoMemberAccess[]> =>  {
+  //   try{
+  //     const res = await server.get(`/repo-users/${id}`, {
+  //       headers: authorizationHeader
+  //     })
+  //     return res.data.results.map((repomember: any) => {
+  //       return {
+  //         membership_uid: repomember.membership_uid,
+  //         user: repomember.user.uid,
+  //         repo: repomember.repo.uid,
+  //         access_level: repomember.access_level,
+  //         is_deleted: repomember.is_deleted,
+  //       }
+  //     }).filter((repo: any) => !repo.is_deleted)
+  //   } catch (e: any) {
+  //     console.log(e)
+  //     return [];
+  //   }
+  // }
+
 
 
   const fetchRepositoriesByVisibility = async (visibilities: number[], pageSize: number = 100): Promise<Repository[][]> => {

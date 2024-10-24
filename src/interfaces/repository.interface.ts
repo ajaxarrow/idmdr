@@ -47,6 +47,14 @@ interface Repository {
   sectors?: string[],
 }
 
+interface RepoMemberAccess {
+  membership_uid: string,
+  user: string,
+  repo: string,
+  access_level: string,
+  is_deleted: string,
+}
+
 // interface RepositoryData {
 //   visibility: number,
 //   uid: string,
@@ -115,4 +123,4 @@ interface Attachment{
 
 
 
-export type {Repository, Commercialization, Attachment};
+export type {Repository, Commercialization, Attachment, RepoMemberAccess};

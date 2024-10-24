@@ -6,7 +6,7 @@ import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayo
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
 import {OrgMember} from "../../../interfaces/member.interface.ts";
-import {Repository} from "../../../interfaces/repository.interface.ts";
+import {RepoMemberAccess, Repository} from "../../../interfaces/repository.interface.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
