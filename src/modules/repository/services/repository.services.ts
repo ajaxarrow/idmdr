@@ -300,15 +300,11 @@ export const useRepositoryServices = () => {
   const fetchRepositoriesByOrganization = async (
     orgID: string,
     isForUser: boolean,
-    isPaginated: boolean = false,  // Optional pagination flag
     pageSize: number = 100,
     pageCount: number = 1
   ): Promise<Repository[]> => {
     try {
-      let endpoint = `/org_repo/${orgID}/?page_size=${pageSize}`;
-      if (isPaginated && pageSize) {
-        endpoint += `&page=${pageCount}`;
-      }
+      let endpoint = `/org_repo/${orgID}/?page_size=${pageSize}&page=${pageCount}`;
 
       const res = await server.get(endpoint, {
         headers: {

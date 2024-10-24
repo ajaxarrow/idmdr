@@ -10,6 +10,7 @@ import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import FilterRepositoryDialog from "../../repository/components/FilterRepositoryDialog.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
+import Observer from "../../../core/components/Observer.vue";
 const {route} = useRouting()
 const {fetchOrganizationData} = useOrganizationServices();
 
@@ -56,14 +57,15 @@ const fetchMoreRepositories = async () => {
   const data = await fetchRepositoriesByOrganization(
       route.params.slug as string,
       path.value !== 'organizations',
-      true,
-      20,
+      5,
       lastItemValue.value
   );
+  console.log(data)
   repositoryData.value = [...repositoryData.value, ...data];
-  searchedRepositories.value = [...searchedRepositories.value, ...data];
+  searchedRepositories.value = repositoryData.value
   lastItemValue.value = lastItemValue.value + 1
   if(data.length === 0){
+    console.log('yes')
     reachEnd.value = true
   }
 }
@@ -178,15 +180,20 @@ onUnmounted(() => {
         ></VProgressCircular>
       </div>
       <div v-else>
-        <p v-if="searchedRepositories.length == 0" class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
-        <div v-else>
+        <div v-if="searchedRepositories.length > 0">
           <RepositoryItem
               v-if="searchedRepositories.length > 0"
               v-for="repository in searchedRepositories"
               :repository="repository"
           />
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+          <div class="pa-3" v-if="reachEnd">
+            <p class="text-center">No more repositories to fetch!</p>
+          </div>
+          <div class="pa-3" v-else>
+            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
+          </div>
         </div>
+        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
       </div>
     </div>
   </OrganizationDetailsLayout>

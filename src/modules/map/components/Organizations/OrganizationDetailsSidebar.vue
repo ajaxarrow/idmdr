@@ -14,7 +14,7 @@ const repositoryData = ref<Repository[]>([]);
 
 watch(() => selectedOrganization.value, async () => {
   pageLoading.value = true;
-  repositoryData.value = await fetchRepositoriesByOrganization(selectedOrganization.value?.uid!, false, false, 100);
+  repositoryData.value = await fetchRepositoriesByOrganization(selectedOrganization.value?.uid!, false, 100, );
   pageLoading.value = false;
 })
 
