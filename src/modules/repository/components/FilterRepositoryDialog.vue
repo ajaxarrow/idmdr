@@ -53,7 +53,6 @@ onMounted(() => {
       <VDivider/>
       <div class="pa-5">
         <div>
-        <div>
           <p class="dialog-label mb-2 d-flex justify-space-between">
             Tags
           </p>
@@ -70,6 +69,7 @@ onMounted(() => {
               base-color="gs60"
               multiple
               chips
+              hide-details
           />
         </div>
       </div>
@@ -90,7 +90,6 @@ onMounted(() => {
           Save Filtering Options
         </VBtnPrimaryAlt>
       </VRow>
-      </div>
     </VSheet>
   </VDialog>
 </template>
