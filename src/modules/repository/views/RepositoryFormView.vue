@@ -35,8 +35,6 @@ import {useRepositoryAttachmentServices} from "../services/repository-attachment
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
-
-
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
@@ -147,7 +145,8 @@ const attachmentData = reactive<Attachment>({
   errorMessage: '',
   showFiles: false,
   isDescriptionUpdated: false,
-  isFileUpdated: false
+  isFileUpdated: false,
+  isNameUpdated: false
 })
 const active = ref(false)
 
@@ -218,6 +217,17 @@ watch(
       newDescriptions.forEach((description, index) => {
         if (oldDescriptions[index] !== undefined && description !== oldDescriptions[index] && attachments.value[index].type === 'update') {
           attachments.value[index].isDescriptionUpdated = true
+        }
+      });
+    }
+);
+
+watch(
+    () => attachments.value.map(attachment => attachment.name),
+    (newName, oldName) => {
+      newName.forEach((name, index) => {
+        if (oldName[index] !== undefined && name !== oldName[index] && attachments.value[index].type === 'update') {
+          attachments.value[index].isNameUpdated = true
         }
       });
     }
@@ -367,6 +377,9 @@ const addRepositoryData = async () => {
       if (attachments.value[i].description == ''){
         attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
       }
+      if(attachments.value[i].type == 'create'){
+        attachments.value[i].name = attachments.value[i].file?.name!
+      }
     }
     if(attachments.value.length > 0){
       repositoryData.files = attachments.value
@@ -399,7 +412,7 @@ const updateRepositoryData = async () => {
       if (attachments.value[i].description == ''){
         attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
       }
-      if((!attachments.value[i].isFileUpdated && !attachments.value[i].isDescriptionUpdated && attachments.value[i].type == 'updated') || (!attachments.value[i].isFileUpdated && attachments.value[i].isDescriptionUpdated)){
+      if((!attachments.value[i].isFileUpdated && (!attachments.value[i].isDescriptionUpdated || !attachments.value[i].isNameUpdated) && attachments.value[i].type == 'updated') || (!attachments.value[i].isFileUpdated && (attachments.value[i].isDescriptionUpdated || attachments.value[i].isNameUpdated))){
         delete attachments.value[i].attachment
       }
 
@@ -1093,19 +1106,19 @@ onMounted( async () => {
                       </template>
                     </VFileInput>
                   </div>
-<!--                  <div class="mb-3">-->
-<!--                    <label class="input-label">Attachment Name</label>-->
-<!--                    <VTextField-->
-<!--                        v-model="attachments[index].name"-->
-<!--                        label="Enter File Name"-->
-<!--                        class="my-2"-->
-<!--                        rounded="lg"-->
-<!--                        density="comfortable"-->
-<!--                        variant="outlined"-->
-<!--                        color="primary"-->
-<!--                        base-color="gs60"-->
-<!--                    />-->
-<!--                  </div>-->
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Name</label>
+                    <VTextField
+                        v-model="attachments[index].name"
+                        label="Enter File Name"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
                   <div class="mb-3">
                     <label class="input-label">Attachment Description</label>
                     <VTextField

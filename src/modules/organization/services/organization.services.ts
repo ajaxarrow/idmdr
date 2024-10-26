@@ -316,7 +316,6 @@ export const useOrganizationServices = () => {
         president: organization?.president ?? '',
         slug: organization?.uid ?? '',
         description: organization?.description ?? ''
-
       };
     });
   };
