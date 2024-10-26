@@ -41,8 +41,8 @@ interface Repository {
   created_at?: string,
   updated_at?: string,
   owner_id?: string,
-  owner?: User,
-  organizationData?: Organization
+  owner_data?: User,
+  org_data?: Organization
   files?: Attachment[],
   sectors?: string[],
 }
@@ -118,6 +118,7 @@ interface Attachment{
   showFiles?: boolean,
   isDescriptionUpdated?: boolean
   isFileUpdated?: boolean
+  isNameUpdated?: boolean
 }
 
 
