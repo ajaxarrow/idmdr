@@ -180,7 +180,7 @@ const adopters = [
 
 
 const ipType = [
-  'Copyrigth & Related Rights',
+  'Copyright & Related Rights',
   'Geographical Indications',
   'Industrial Design',
   'Layout Design',

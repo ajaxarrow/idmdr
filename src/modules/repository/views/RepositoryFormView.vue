@@ -119,8 +119,8 @@ const commercializationIntialState = reactive<Commercialization>({
   adopterStatus: "",
   currentStatus: "Applied Fairness Opinion Report",
   ipStatus: "For filing",
-  ipType: "Copyrigth & Related Rights",
-  modeStatus: "Direct Sakes",
+  ipType: "Copyright & Related Rights",
+  modeStatus: "Direct Sales",
   regNo: ""
 })
 
