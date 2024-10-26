@@ -364,7 +364,7 @@ onUnmounted(() => {
               <VListItem
                   v-bind="props"
                   :prepend-avatar="item.raw.image as string"
-                  :subtitle="item.raw.owner?.username!"
+                  :subtitle="item.raw.owner_data?.username!"
                   :title="`${item.raw.title}`"
               ></VListItem>
             </template>

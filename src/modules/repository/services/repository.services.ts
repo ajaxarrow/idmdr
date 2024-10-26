@@ -6,7 +6,6 @@ import {reactive, ref} from "vue";
 import {server} from "../../../plugins/axios.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
-import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
 
@@ -16,8 +15,7 @@ const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.acc
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
-const {fetchOrganizationData} = useOrganizationServices()
-const {fetchUser, fetchOrgMembers} = useOrganizationMembersServices()
+const {fetchOrgMembers} = useOrganizationMembersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
 
 const stringToArray = (str: string): string[] =>
@@ -224,8 +222,6 @@ export const useRepositoryServices = () => {
   const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
     return Promise.all(
       rawData.map(async (repo: any) => {
-        const orgData = await fetchOrganizationData(repo.organization);
-        const ownerData = await fetchUser(repo.owner_id);
         const attachments = await fetchAttachmentsByRepository(repo.uid, type)
         return {
           is_member: false,
@@ -264,8 +260,8 @@ export const useRepositoryServices = () => {
           created_at: repo.created_at || "",
           updated_at: repo.updated_at || "",
           owner_id: repo.owner_id || "",
-          owner: ownerData,
-          organizationData: orgData,
+          owner_data: repo.owner_data || {},
+          org_data: repo.org_data || {},
           files: attachments
         };
       })

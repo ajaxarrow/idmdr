@@ -136,8 +136,8 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   doc.setFont('helvetica', 'normal');
 
   const basicInfo = [
-    `Owner: ${repository.owner?.username || 'N/A'}`,
-    `Organization: ${repository.organizationData?.name || 'N/A'} (${repository.organizationData?.acronym || 'N/A'})`,
+    `Owner: ${repository.owner_data?.username || 'N/A'}`,
+    `Organization: ${repository.org_data?.name || 'N/A'} (${repository.org_data?.acronym || 'N/A'})`,
     `Last Updated: ${formatDate(<string>repository.updated_at)}`,
   ];
 

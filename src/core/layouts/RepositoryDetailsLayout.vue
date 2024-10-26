@@ -121,7 +121,7 @@ onMounted(()=>{
               {{repository.title}}
             </p>
 <!--            <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>-->
-            <p class="text-subtitle">{{ repository?.owner?.username }} · {{ repository?.organizationData?.name }} ({{ repository?.organizationData?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
+            <p class="text-subtitle">{{ repository?.owner_data?.username }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
           </div>
           <VBtnPrimaryFilled width="151px" height="45px" rounded="lg" class="satoshi-md" @click="downloadFiles">
             <PhDownload size="20" class="mr-2"/>

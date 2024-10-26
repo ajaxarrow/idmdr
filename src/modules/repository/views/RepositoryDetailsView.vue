@@ -190,9 +190,9 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">Project Components</p>
         <VRow class="ma-0">
-          <VCol v-if="repository.organizationData" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.org_data" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization</p>
-            <p class="text-subtitle pr-3">{{ repository.organizationData.name}} ({{repository.organizationData.acronym}})</p>
+            <p class="text-subtitle pr-3">{{ repository.org_data.name}} ({{repository.org_data.acronym}})</p>
           </VCol>
           <VCol v-if="repository.location" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Location</p>
