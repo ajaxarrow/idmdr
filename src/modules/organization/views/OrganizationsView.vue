@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import OrganizationItem from "../components/OrganizationItem.vue";
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhInfo, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
