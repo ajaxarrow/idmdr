@@ -16,7 +16,7 @@ import {onMounted, ref} from "vue";
   import "quill/dist/quill.snow.css"
   import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {
-  PhDownload, PhEye,
+  PhDownload,
   PhFile,
   PhFileArchive,
   PhFileCsv,
@@ -63,7 +63,6 @@ import {
 const downloadRepoFiles = (): void => {
   window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${repository.value?.slug}`, '_blank');
 };
-
 
 
 const downloadFile = (attachment: string): void => {
