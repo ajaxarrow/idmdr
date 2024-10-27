@@ -38,7 +38,7 @@
           :cover="true"
           height="174"
           width="328"
-          :src="selectedSector.image ? selectedSector.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+          :src="selectedSector.image ? selectedSector.image as string : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
       />
       <div class="pa-4 scrollable-container">
         <p class="sector-title">{{selectedSector.title}}</p>
@@ -47,8 +47,8 @@
           <p class="section-title mb-2">Repositories</p>
           <RouterLink
               class="text-decoration-none"
-              v-if="getRepositoriesBySector(selectedSector.slug)"
-              v-for="repository in getRepositoriesBySector(selectedSector.slug)"
+              v-if="getRepositoriesBySector(selectedSector.slug as string)"
+              v-for="repository in getRepositoriesBySector(selectedSector.slug as string)"
               :to="{name: 'repository-data', params: { slug: repository.slug  }}">
             <div
                 class="d-flex align-center my-1 cursor-pointer"

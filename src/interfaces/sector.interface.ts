@@ -21,7 +21,7 @@ interface Sector {
   object_id?: string,
   organization?: string | null,
   repository?: string | null,
-  [key: string]: any;
+  slug?: string
 }
 
 export type {Sector}

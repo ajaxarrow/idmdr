@@ -13,7 +13,7 @@ const sectors: Sector[] = [
       "Agricultural Innovation",
       "Sustainable Farming"
     ],
-    bbox: [125.04945310510442, 7.857776158468681, 125.05006067326354, 7.858584911607338],
+    // bbox: [125.04945310510442, 7.857776158468681, 125.05006067326354, 7.858584911607338],
     geojson: {
       type: 'Feature',
       geometry: {
@@ -59,7 +59,7 @@ const sectors: Sector[] = [
       "Local Delicacy",
       "Agricultural Excellence"
     ],
-    bbox: [124.74859881165821, 7.745382003639904, 124.75040990896747, 7.746103037315137],
+    // bbox: [124.74859881165821, 7.745382003639904, 124.75040990896747, 7.746103037315137],
     geojson: {
       type: 'Feature',
       geometry: {
@@ -151,7 +151,7 @@ const sectors: Sector[] = [
       "Sugar Production",
       "Rural Economy"
     ],
-    bbox: [125.12522930805017, 8.068693364406684, 125.13351791712404, 8.07804631626631],
+    // bbox: [125.12522930805017, 8.068693364406684, 125.13351791712404, 8.07804631626631],
     geojson: {
       type: 'Feature',
       geometry: {

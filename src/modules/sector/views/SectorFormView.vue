@@ -10,7 +10,7 @@ import {
 } from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import {onMounted, onUnmounted, reactive, ref} from "vue";
-import {SectorInfo} from "../../../interfaces/sector.interface.ts";
+import {Sector} from "../../../interfaces/sector.interface.ts";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
@@ -42,7 +42,7 @@ const geoJSONFileName = ref('')
 const formType = ref<FormType>(FormType.create);
 
 
-const sectorDataInitialState = reactive<SectorInfo>({
+const sectorDataInitialState = reactive<Sector>({
   description: "",
   geojson: {},
   object_id: "",
