@@ -32,6 +32,7 @@ const fetchMoreRepositories = async () => {
 }
 
 watch(() => selectedOrganization.value, async () => {
+  observerReady.value = false
   pageLoading.value = true;
   repositoryData.value = [];
   lastItemValue.value = 1;
@@ -49,6 +50,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   removeSelectedOrganization()
+  observerReady.value = false
 })
 
 </script>
