@@ -13,6 +13,7 @@
 interface Sector {
   uid?: string,
   name: string,
+  address?: string,
   description?: string,
   geojson?: any,
   image?: File | string

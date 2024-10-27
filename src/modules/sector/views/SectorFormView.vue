@@ -4,7 +4,7 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import OrganizationFormMapPreview from "../../organization/components/OrganizationFormMapPreview.vue";
 import {
   PhEye,
-  PhFileDashed,
+  PhFileDashed, PhFileImage, PhImage,
   PhPolygon,
   PhX
 } from "@phosphor-icons/vue";
@@ -19,7 +19,13 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
+import {useSectorServices} from "../services/sector.services.ts";
+import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
+const {userData} = useUserStore();
+const {addSector, hasErrorMessages, errorMessage, loading} = useSectorServices()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {storedGeoJSON, confirmDialog, fileName} = useSectorMapStore();
 const {fetchRepositoriesByUser} = useRepositoryServices();
@@ -40,7 +46,11 @@ const isGeoJSONDrawn = ref(true);
 const isGeoJSONPreview = ref(false);
 const geoJSONFileName = ref('')
 const formType = ref<FormType>(FormType.create);
-
+const previewImage = ref('');
+const isImagePreviewed = ref(false);
+const hasImage = ref(false);
+const file = ref<File | null>(null);
+const previousTags = ref<string[]>([])
 
 const sectorDataInitialState = reactive<Sector>({
   description: "",
@@ -48,10 +58,12 @@ const sectorDataInitialState = reactive<Sector>({
   object_id: "",
   object_type: "",
   tags: [],
-  title: "",
+  name: "",
   uid: "",
   organization: null,
-  repository: null
+  repository: null,
+  visibility: 1,
+  address: "",
 })
 
 const sectorData = reactive({
@@ -116,30 +128,51 @@ const handleGeoJSONFileInput = (e: any) => {
   }
 }
 
-// const arrayToString = (arr: string[]): string =>
-//     arr.length > 0 ? arr.join(', ') : '';
+const handleUploadChange = (e: any) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    file.value = target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      previewImage.value = reader.result as string;
+    };
+
+    reader.readAsDataURL(<File>file.value);
+    hasImage.value = true;
+  }
+};
+
+const removeImage = () => {
+  file.value = null;
+  hasImage.value = false;
+}
+
+const arrayToString = (arr: string[]): string =>
+    arr.length > 0 ? arr.join(', ') : '';
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
 
-// const clearFields = ( ) => {
-//   Object.assign(sectorData, {...sectorDataInitialState})
-// }
+const clearFields = ( ) => {
+  Object.assign(sectorData, {...sectorDataInitialState})
+}
 
-// const scrollToFirstErrorMessage = () => {
-//   //@ts-ignore
-//   const fields = sectorForm.value.items
-//   const firstErrorField = fields.find((field: any) => field.errorMessages.length > 0);
-//   const element = document.getElementById(firstErrorField.id);
-//   if (element) {
-//     element.scrollIntoView({
-//       behavior: 'smooth',
-//       block: 'center',
-//       inline: 'nearest'
-//     });
-//   }
-// }
+const scrollToFirstErrorMessage = () => {
+  //@ts-ignore
+  const fields = sectorForm.value.items
+  const firstErrorField = fields.find((field: any) => field.errorMessages.length > 0);
+  const element = document.getElementById(firstErrorField.id);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
+  }
+}
+
 
 const formatDate = (): string=> {
   const now = new Date()
@@ -154,6 +187,28 @@ const formatDate = (): string=> {
 }
 
 const addSectorData = async () => {
+  if(file.value){
+    //@ts-ignore
+    sectorData.image = file.value as File
+  } else {
+    delete sectorData.image;
+  }
+  previousTags.value = <string[]>sectorData.tags
+  sectorData.tags = arrayToString(<string[]>sectorData.tags)
+  sectorData.parent = selectedObjectType.value
+  sectorData.owner_id = userData.uid
+  if(selectedObjectType.value === 'Repository'){
+    sectorData.parent_id = sectorData.repository as string
+  } else {
+    sectorData.parent_id = sectorData.organization as string
+  }
+  await addSector(sectorData)
+  if(hasErrorMessages(errorMessage)){
+    sectorData.tags = previousTags.value
+    scrollToFirstErrorMessage()
+  } else {
+    clearFields();
+  }
 
 }
 
@@ -192,7 +247,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-<!--  <LoadingOverlay :overlay="loading"/>-->
+  <LoadingOverlay :overlay="loading"/>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <MainLayout :title="formType === FormType.edit ? 'Edit Sector' : 'New Sector'">
     <VForm id="form" ref="sectorForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
@@ -220,6 +280,43 @@ onUnmounted(() => {
       <VDivider/>
       <p class="mx-6 my-3 text-note">Required fields are marked with an asterisk (<span class="text-red">*</span>).</p>
       <VDivider/>
+      <div class="px-6 py-3">
+        <VRadioGroup  v-model="sectorData.visibility">
+          <VRadio color="bs50" :value="1" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Public</p>
+                <p class="radio-text-subtitle">The sector is accessible to the general public for content exploration.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="2" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Private</p>
+                <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the sector.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="3" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Within Organization</p>
+                <p class="radio-text-subtitle">The sector's information is exclusively visible to members within the organization.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="4" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Within All Organization</p>
+                <p class="radio-text-subtitle">The sector's information is visible to all members of any organization</p>
+              </div>
+            </template>
+          </VRadio>
+        </VRadioGroup>
+      </div>
+      <VDivider/>
       <div class="pa-6">
         <div class="mb-10">
           <label class="input-label">Boundary</label>
@@ -230,7 +327,7 @@ onUnmounted(() => {
               @closeMapPreview="isMapPreview = false"
           />
           <div v-else>
-            <div class="my-2 file-upload-container" v-if="isEmptyObject(sectorData.geojson)">
+            <div class="my-2 file-upload-container" :class="{'error-file-container': errorMessage.geojson}" v-if="isEmptyObject(sectorData.geojson)">
               <PhFileDashed size="50"/>
               <p class="text-dropzone text-center">
                 Submit a geometric representation of the area by
@@ -273,12 +370,13 @@ onUnmounted(() => {
                 <VDivider/>
               </div>
             </div>
+            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.geojson">{{errorMessage.geojson}}</p>
           </div>
         </div>
         <div class="mb-3">
           <label class="input-label">Sector Title<span class="text-pink">*</span></label>
           <VTextField
-              v-model="sectorData.title"
+              v-model="sectorData.name"
               placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
               class="my-2"
               rounded="lg"
@@ -286,10 +384,25 @@ onUnmounted(() => {
               variant="outlined"
               color="primary"
               base-color="gs60"
+              :error-messages="errorMessage.name"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">Sector Location<span class="text-pink">*</span></label>
+          <VTextField
+              v-model="sectorData.address"
+              placeholder="E.g. Musuan, Bukidnon"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.address"
           />
         </div>
         <div class="mb-3" v-if="formType === FormType.edit">
-          <label class="input-label">Sector Description<span class="text-pink">*</span></label>
+          <label class="input-label">Sector Description</label>
           <QuillRichTextEditor
               v-if="sectorData.description"
               :modelValue="sectorData.description"
@@ -387,6 +500,57 @@ onUnmounted(() => {
               closable-chips
           />
         </div>
+        <div class="mb-5">
+          <label class="input-label">Image</label>
+          <div v-if="hasImage" class="my-3">
+            <VDivider/>
+            <div class="d-flex align-center justify-space-between pa-2" >
+              <p class="dialog-boundary-title d-flex align-center">
+                <PhImage class="mr-1"/>
+                {{
+                  file ? file?.name :
+                      (typeof sectorData?.image === 'string' ? sectorData.image.split('/').pop() as string : 'Image')
+                }}
+
+              </p>
+              <div class="d-flex align-center ga-2">
+                <VTooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <PhEye v-bind="props" class="cursor-pointer" @click="isImagePreviewed = true"/>
+                  </template>
+                  <span>Preview Image</span>
+                </VTooltip>
+                <VTooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <PhX v-bind="props" class="cursor-pointer" @click="removeImage"/>
+                  </template>
+                  <span>Remove Saved Image</span>
+                </VTooltip>
+              </div>
+            </div>
+            <VDivider/>
+<!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.image">{{errorMessage.image}}</p>-->
+          </div>
+          <VFileInput
+              v-else
+              @change="handleUploadChange($event)"
+              label="Choose Repository Image by Clicking Here"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              chips
+              prepend-icon=""
+              hint="Choose an image that will represent your project and be visible in the repository."
+              accept="image/*"
+          >
+            <template v-slot:prepend-inner>
+              <PhFileImage/>
+            </template>
+          </VFileInput>
+        </div>
         <VRow class="ma-0" justify="end">
           <VBtnPrimaryFilled
               @click="formType === FormType.edit ? updateSectorData() : addSectorData()"
@@ -441,6 +605,19 @@ onUnmounted(() => {
   font-style: italic;
 }
 
+.radio-text-heading{
+  margin-top: 3px;
+  font-size: 16px;
+  font-weight: 600;
+  color: black !important;
+  line-height: 1;
+}
+
+.radio-text-subtitle{
+  font-size: 14px;
+  font-weight: 350;
+}
+
 
 .input-label{
   font-weight: 600;
@@ -458,6 +635,11 @@ onUnmounted(() => {
   border: 2px dashed #E6E6E6;
   background-color: #fff;
   transition: .3s ease all;
+}
+
+.error-file-container{
+  border: 2px dashed #b00020;
+  background-color: #ffeeee;
 }
 
 .dropzone-active{
