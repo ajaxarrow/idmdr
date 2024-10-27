@@ -116,3 +116,7 @@ ul {
 .data-list-item:hover{
     background-color: #F0F5F9;
 }
+
+.scroll-top-link:hover{
+    text-decoration: underline;
+}

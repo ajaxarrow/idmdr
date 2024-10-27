@@ -19,11 +19,13 @@
   import {useUserStore} from "../../../core/stores/user.store.ts";
   import Observer from "../../../core/components/Observer.vue";
   import FilterRepositoryDialog from "../components/FilterRepositoryDialog.vue";
+  import {useScroll} from "../../../core/composables/useScroll.ts";
 
 
   const {user} = useUserStore();
   const {tags, selectedTags, fetchTags} = useTags();
   const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery} = useRepositoryServices();
+  const {scrollTop} = useScroll()
   const searchQuery = ref('');
   const repositoryItems = ref<Repository[]>([]);
   const repositoryData = ref<Repository[]>([]);
@@ -201,7 +203,15 @@
           <div v-if="searchedRepositories.length > 0">
             <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
             <div class="pa-3" v-if="reachEnd">
-              <p class="text-center">No more repositories to fetch!</p>
+              <p class="text-center">
+                All repositories are loaded!
+                <span
+                  @click="scrollTop"
+                  class="text-bs50 cursor-pointer scroll-top-link"
+                >
+                  Jump back to the top?
+                </span>
+              </p>
             </div>
             <div class="pa-3" v-else>
               <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>

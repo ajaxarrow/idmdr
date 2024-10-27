@@ -9,13 +9,20 @@ import Observer from "../../../../core/components/Observer.vue";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
 const {resetToDefault} = useMapStore();
 const {fetchRepositoriesByOrganization} = useRepositoryServices()
-const pageLoading = ref(false);
 
+const pageLoading = ref(false);
 const repositoryData = ref<Repository[]>([]);
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
-
+const scrollableContainer = ref<HTMLElement | null>(null);
+const scrollToTop = () => {
+  if (scrollableContainer.value) {
+    if ("scrollTo" in scrollableContainer.value) {
+      scrollableContainer.value.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  }
+};
 
 const fetchMoreRepositories = async () => {
   const data = await fetchRepositoriesByOrganization(
@@ -70,7 +77,7 @@ onUnmounted(() => {
           width="328"
           :src="selectedOrganization.image ? selectedOrganization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
       />
-      <div class="pa-4 scrollable-container">
+      <div ref="scrollableContainer" class="pa-4 scrollable-container">
         <p class="sector-title">{{selectedOrganization.name}}</p>
         <p class="sector-description ">{{selectedOrganization.address}}</p>
         <div class="my-3">
@@ -105,7 +112,15 @@ onUnmounted(() => {
                 </div>
               </RouterLink>
               <div class="pa-3" v-if="reachEnd">
-                <p class="text-center">No more repositories to fetch!</p>
+                <p class="text-center">
+                  All {{selectedOrganization.acronym}}'s repositories are loaded!
+                  <span
+                      @click="scrollToTop"
+                      class="text-bs50 cursor-pointer scroll-top-link"
+                  >
+                  Jump back to the top?
+                </span>
+                </p>
               </div>
               <div class="pa-3" v-else>
                 <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>

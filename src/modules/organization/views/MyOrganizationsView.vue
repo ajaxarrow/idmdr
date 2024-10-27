@@ -9,7 +9,9 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
+import {useScroll} from "../../../core/composables/useScroll.ts";
 
+const {scrollTop} = useScroll()
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const {setSnackbarMessage} = useSnackbarStore()
@@ -118,7 +120,15 @@ onUnmounted(() => {
           <div v-if="organizationData.length > 0">
             <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
             <div class="pa-3" v-if="reachEnd">
-              <p class="text-center">No more organizations to fetch!</p>
+              <p class="text-center">
+                All organizations are loaded!
+                <span
+                    @click="scrollTop"
+                    class="text-bs50 cursor-pointer scroll-top-link"
+                >
+                  Jump back to the top?
+                </span>
+              </p>
             </div>
             <div class="pa-3" v-else>
               <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>

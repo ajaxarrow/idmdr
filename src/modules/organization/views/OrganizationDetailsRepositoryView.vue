@@ -11,6 +11,9 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import FilterRepositoryDialog from "../../repository/components/FilterRepositoryDialog.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import Observer from "../../../core/components/Observer.vue";
+import {useScroll} from "../../../core/composables/useScroll.ts";
+
+const {scrollTop} = useScroll()
 const {route} = useRouting()
 const {fetchOrganizationData} = useOrganizationServices();
 
@@ -187,7 +190,15 @@ onUnmounted(() => {
               :repository="repository"
           />
           <div class="pa-3" v-if="reachEnd">
-            <p class="text-center">No more repositories to fetch!</p>
+            <p class="text-center">
+              All {{organization.acronym}}'s repositories are loaded!
+              <span
+                  @click="scrollTop"
+                  class="text-bs50 cursor-pointer scroll-top-link"
+              >
+                  Jump back to the top?
+                </span>
+            </p>
           </div>
           <div class="pa-3" v-else>
             <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>

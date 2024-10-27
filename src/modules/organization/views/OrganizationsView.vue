@@ -2,13 +2,14 @@
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhInfo, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import OrganizationItem from "../components/OrganizationItem.vue";
 import {onMounted, ref, watch, onUnmounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useScroll} from "../../../core/composables/useScroll.ts";
 
+const {scrollTop} = useScroll()
 const {user} = useUserStore();
 const {fetchOrganizationsWithPagination} = useOrganizationServices();
 const {isSmall, isTablet} = useScreenStore();
@@ -118,7 +119,15 @@ onUnmounted(() => {
           <div v-if="organizationData.length > 0">
             <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
             <div class="pa-3" v-if="reachEnd">
-              <p class="text-center">No more organizations to fetch!</p>
+              <p class="text-center">
+                All organizations are loaded!
+                <span
+                    @click="scrollTop"
+                    class="text-bs50 cursor-pointer scroll-top-link"
+                >
+                  Jump back to the top?
+                </span>
+              </p>
             </div>
             <div class="pa-3" v-else>
               <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
