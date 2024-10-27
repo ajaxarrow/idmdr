@@ -300,7 +300,7 @@ export const useRepositoryServices = () => {
     pageCount: number = 1
   ): Promise<Repository[]> => {
     try {
-      let endpoint = `/org_repo/${orgID}/?page_size=${pageSize}&page=${pageCount}`;
+      let endpoint = `/org_repo/${orgID}/?ordering=-updated_at&page_size=${pageSize}&page=${pageCount}`;
 
       const res = await server.get(endpoint, {
         headers: {
@@ -372,7 +372,7 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
     try{
-      const res = await server.get(`/repositories/?user=${userData.uid}&page=${pageNumber}`, {
+      const res = await server.get(`/repositories/?ordering=-updated_at&user=${userData.uid}&page=${pageNumber}`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
@@ -391,7 +391,7 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoriesByUser = async(pageSize: number = 100): Promise<Repository[]> => {
     try{
-      const res = await server.get(`/repositories/?page_size=${pageSize}&user=${userData.uid}`, {
+      const res = await server.get(`/repositories/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
@@ -431,7 +431,7 @@ export const useRepositoryServices = () => {
   const fetchPaginatedRepositories = async (pageNumber: number, visibilities: number[]): Promise<Repository[]> => {
     try{
       const promises = visibilities.map(async (visibility) => {
-        const res = await server.get(`/repositories/?page=${pageNumber}&page_size=5&visibility=${visibility}`, {
+        const res = await server.get(`/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=5&visibility=${visibility}`, {
           headers: authorizationHeader
         });
         return await mapRepoData(res.data.results);
@@ -491,7 +491,7 @@ export const useRepositoryServices = () => {
   const fetchRepositoriesByVisibility = async (visibilities: number[], pageSize: number = 100): Promise<Repository[][]> => {
 
     const promises = visibilities.map(async (visibility) => {
-      const res = await server.get(`/repositories/?page_size=${pageSize}&visibility=${visibility}`, {
+      const res = await server.get(`/repositories/?ordering=-updated_at&page_size=${pageSize}&visibility=${visibility}`, {
         headers: authorizationHeader
       });
       return mapRepoData(res.data.results);
