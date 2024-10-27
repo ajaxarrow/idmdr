@@ -5,18 +5,43 @@ import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
 import {useMapStore} from "../../stores/map.store.ts";
 import {useRepositoryServices} from "../../../repository/services/repository.services.ts";
+import Observer from "../../../../core/components/Observer.vue";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
 const {resetToDefault} = useMapStore();
 const {fetchRepositoriesByOrganization} = useRepositoryServices()
 const pageLoading = ref(false);
 
 const repositoryData = ref<Repository[]>([]);
+const reachEnd = ref(false)
+const lastItemValue = ref(1);
+const observerReady = ref(false)
+
+
+const fetchMoreRepositories = async () => {
+  const data = await fetchRepositoriesByOrganization(
+      selectedOrganization.value?.slug as string,
+      false,
+      5,
+      lastItemValue.value
+  );
+  repositoryData.value = [...repositoryData.value, ...data];
+  lastItemValue.value = lastItemValue.value + 1;
+  if(data.length === 0){
+    reachEnd.value = true
+  }
+}
 
 watch(() => selectedOrganization.value, async () => {
   pageLoading.value = true;
-  repositoryData.value = await fetchRepositoriesByOrganization(selectedOrganization.value?.uid!, false, 100, );
+  repositoryData.value = [];
+  lastItemValue.value = 1;
+  reachEnd.value = false
+  await fetchMoreRepositories()
+  observerReady.value = true
   pageLoading.value = false;
 })
+
+
 
 onMounted(async () => {
   removeSelectedOrganization()
@@ -25,8 +50,6 @@ onMounted(async () => {
 onUnmounted(() => {
   removeSelectedOrganization()
 })
-
-
 
 </script>
 
@@ -57,28 +80,36 @@ onUnmounted(() => {
             ></VProgressCircular>
           </div>
           <div v-else>
-            <RouterLink
-                class="text-decoration-none "
-                v-if="repositoryData.length > 0"
-                v-for="repository in repositoryData"
-                :to="{name: 'repository-data', params: { slug: repository.slug  }}">
-              <div
-                  class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
-              >
-                <VImg
-                    style="border-radius: 8px; flex: none;"
-                    cover
-                    height="40px"
-                    width="40px"
-                    :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
-                />
-                <div class="ml-2">
-                  <p class="default" style="font-size: 15px; font-weight: 600;">{{ repository.title }}</p>
-                  <p class="default" style="font-size: 13px; ">{{ repository.owner_data?.email }}</p>
+            <div v-if="repositoryData.length > 0">
+              <RouterLink
+                  v-if="repositoryData.length > 0"
+                  class="text-decoration-none "
+                  v-for="repository in repositoryData"
+                  :to="{name: 'repository-data', params: { slug: repository.slug  }}">
+                <div
+                    class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
+                >
+                  <VImg
+                      style="border-radius: 8px; flex: none;"
+                      cover
+                      height="40px"
+                      width="40px"
+                      :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                  />
+                  <div class="ml-2">
+                    <p class="default" style="font-size: 15px; font-weight: 600;">{{ repository.title }}</p>
+                    <p class="default" style="font-size: 13px; ">{{ repository.owner_data?.email }}</p>
+                  </div>
                 </div>
+              </RouterLink>
+              <div class="pa-3" v-if="reachEnd">
+                <p class="text-center">No more repositories to fetch!</p>
               </div>
-            </RouterLink>
-            <p v-else class="my-1  d-flex align-center">
+              <div class="pa-3" v-else>
+                <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
+              </div>
+            </div>
+            <p v-else class="my-1 d-flex justify-center align-center">
               <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
             </p>
           </div>
