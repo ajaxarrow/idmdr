@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Repository} from "../../../../interfaces/repository.interface.ts";
-import {PhInfo, PhX} from "@phosphor-icons/vue";
+import {PhDownload, PhInfo, PhX} from "@phosphor-icons/vue";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
 import {useMapStore} from "../../stores/map.store.ts";
@@ -78,7 +78,14 @@ onUnmounted(() => {
           :src="selectedOrganization.image ? selectedOrganization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
       />
       <div ref="scrollableContainer" class="pa-4 scrollable-container">
-        <p class="sector-title">{{selectedOrganization.name}}</p>
+        <VTooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <RouterLink v-bind="props" :to="{name: 'organization-data', params: { slug: selectedOrganization.slug  }}" class="text-decoration-none ">
+              <p class="sector-title">{{selectedOrganization.name}}</p>
+            </RouterLink>
+          </template>
+          <span>Visit Organization</span>
+        </VTooltip>
         <p class="sector-description ">{{selectedOrganization.address}}</p>
         <div class="my-3">
           <p class="section-title mb-2">Repositories</p>
@@ -174,8 +181,13 @@ onUnmounted(() => {
 }
 
 .sector-title{
+  color: #000 !important;
   font-size: 20px;
   font-weight: 700;
+}
+
+.sector-title:hover{
+  text-decoration: underline;
 }
 
 .sector-description{
