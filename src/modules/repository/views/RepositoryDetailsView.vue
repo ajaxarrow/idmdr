@@ -16,7 +16,7 @@ import {onMounted, ref} from "vue";
   import "quill/dist/quill.snow.css"
   import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {
-  PhDownload,
+  PhDownload, PhEye,
   PhFile,
   PhFileArchive,
   PhFileCsv,
@@ -36,29 +36,35 @@ import {
   const selectedFileDescription = ref('');
   const selectedFileAttachment= ref('');
 
-  const downloadFiles = () => {
-    let fileContent = '';
-    if (repository.value) {
-      fileContent += `Repository Name: ${repository.value?.title}\n\n`;
-      if (repository.value?.files) {
-        repository.value?.files.forEach((file, index) => {
-          fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-        });
-      }
-    }
+  // const downloadFiles = () => {
+  //   let fileContent = '';
+  //   if (repository.value) {
+  //     fileContent += `Repository Name: ${repository.value?.title}\n\n`;
+  //     if (repository.value?.files) {
+  //       repository.value?.files.forEach((file, index) => {
+  //         fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+  //       });
+  //     }
+  //   }
+  //
+  //   const blob = new Blob([fileContent], { type: 'text/plain' });
+  //
+  //   const url = URL.createObjectURL(blob);
+  //
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.download = `${repository.value?.slug}.txt`;
+  //
+  //   link.click();
+  //
+  //   URL.revokeObjectURL(url);
+  // }
 
-    const blob = new Blob([fileContent], { type: 'text/plain' });
+const downloadRepoFiles = (): void => {
+  window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${repository.value?.slug}`, '_blank');
+};
 
-    const url = URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${repository.value?.slug}.txt`;
-
-    link.click();
-
-    URL.revokeObjectURL(url);
-  }
 
 const downloadFile = (attachment: string): void => {
   if (attachment) {
@@ -317,12 +323,13 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           <div class="pa-4">
             <VRow justify="space-between" align="center" class="ma-0">
               <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>
-              <PhDownload size="24" class="cursor-pointer download-icon" @click="downloadFiles">
-                <VTooltip
-                    activator="parent"
-                    location="bottom"
-                >Download Repository Files</VTooltip>
-              </PhDownload>
+              <VTooltip location="bottom">
+                <template v-slot:activator="{ props }">
+                  <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>
+                </template>
+                <span>Download Repository Files</span>
+              </VTooltip>
+
             </VRow>
           </div>
           <VDivider v-if="selectedFileDescription" />

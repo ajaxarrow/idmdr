@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import MainLayout from "./MainLayout.vue";
-import {PhArrowLeft, PhDownload} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhDownload, PhFolderSimpleLock} from "@phosphor-icons/vue";
 import NotFound from "../../assets/images/404.svg";
 import {computed, PropType} from "vue";
 import {Repository} from "../../interfaces/repository.interface.ts";
 import {onMounted, ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {useUserStore} from "../stores/user.store.ts";
+import {useRepositoryServices} from "../../modules/repository/services/repository.services.ts";
 
+const {fetchRepositoriesByUser} = useRepositoryServices();
 const {user} = useUserStore();
 const tab = ref("data");
 const path = ref('repositories')
 const {router, route} = useRouting()
+const isMember = ref(false)
+const buttonLoading = ref(false)
 const props = defineProps({
   repository: {
     type: Object as PropType<Repository | null | undefined>,
@@ -21,29 +25,33 @@ const props = defineProps({
   }
 });
 
-const downloadFiles = () => {
-  let fileContent = '';
-    if (props.repository) {
-      fileContent += `Repository Name: ${props.repository.title}\n\n`;
-      if (props.repository.files) {
-        props.repository.files.forEach((file, index) => {
-          fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-        });
-      }
-    }
+const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
+  return repoList.some(org => org.slug === repository?.slug);
+};
 
-  const blob = new Blob([fileContent], { type: 'text/plain' });
-
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${props.repository?.slug}.txt`;
-
-  link.click();
-
-  URL.revokeObjectURL(url);
-}
+// const downloadFiles = () => {
+//   let fileContent = '';
+//     if (props.repository) {
+//       fileContent += `Repository Name: ${props.repository.title}\n\n`;
+//       if (props.repository.files) {
+//         props.repository.files.forEach((file, index) => {
+//           fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
+//         });
+//       }
+//     }
+//
+//   const blob = new Blob([fileContent], { type: 'text/plain' });
+//
+//   const url = URL.createObjectURL(blob);
+//
+//   const link = document.createElement('a');
+//   link.href = url;
+//   link.download = `${props.repository?.slug}.txt`;
+//
+//   link.click();
+//
+//   URL.revokeObjectURL(url);
+// }
 
 
 const tabs = [
@@ -82,6 +90,10 @@ const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
 
+const downloadRepoFiles = (): void => {
+    window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${props.repository?.slug}`, '_blank');
+};
+
 
 const navigateTo = (linkName: string) => {
   router.push({
@@ -89,11 +101,18 @@ const navigateTo = (linkName: string) => {
   });
 }
 
-onMounted(()=>{
+onMounted(async ()=>{
+  buttonLoading.value = true
   if(props.activeTab){
     tab.value = props.activeTab
   }
   path.value = getFirstPath(<string>route.path)
+  const allUserRepo = await fetchRepositoriesByUser();
+  if(isSlugInRepoList(props.repository, allUserRepo)) {
+      isMember.value = true;
+  }
+  buttonLoading.value = false
+
 })
 
 
@@ -123,9 +142,13 @@ onMounted(()=>{
 <!--            <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>-->
             <p class="text-subtitle">{{ repository?.owner_data?.username }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
           </div>
-          <VBtnPrimaryFilled width="151px" height="45px" rounded="lg" class="satoshi-md" @click="downloadFiles">
-            <PhDownload size="20" class="mr-2"/>
+          <VBtnPrimaryFilled v-if="isMember" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">
+            <PhDownload size="16" class="mr-2"/>
             Download
+          </VBtnPrimaryFilled>
+          <VBtnPrimaryFilled :loading="buttonLoading" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+            <PhFolderSimpleLock size="16" class="mr-2"/>
+            Request Access
           </VBtnPrimaryFilled>
         </VRow>
       </div>
