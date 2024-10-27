@@ -1,25 +1,27 @@
 
-interface Sector {
-  title: string
-  description?: string
-  geojson?: any
-  tags: string[]
-  image?: string
-  slug: string
-  bbox?: [number, number, number, number]
-  [key: string]: any;
-}
+// interface Sector {
+//   title: string
+//   description?: string
+//   geojson?: any
+//   tags: string[]
+//   image?: string
+//   slug: string
+//   bbox?: [number, number, number, number]
+//   [key: string]: any;
+// }
 
-interface SectorInfo {
-  uid: string,
+interface Sector {
+  uid?: string,
   title: string,
   description?: string,
   geojson?: any,
+  image?: File | string
   tags?: string[] | string,
   object_type?: string,
   object_id?: string,
   organization?: string | null,
-  repository?: string | null
+  repository?: string | null,
+  [key: string]: any;
 }
 
-export type {Sector, SectorInfo}
+export type {Sector}
