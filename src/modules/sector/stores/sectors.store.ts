@@ -17,8 +17,8 @@ const selectSector = (sector: Sector, name: string) => {
 }
 
 
-const filterSectors = (title: string) => {
-  sectors.value = sectorData.filter(sector => sector.title.toLowerCase().includes(title.toLowerCase().trim()));
+const filterSectors = (name: string) => {
+  sectors.value = sectorData.filter(sector => sector.name.toLowerCase().includes(name.toLowerCase().trim()));
 }
 
 const removeSelectedSector = () => {
