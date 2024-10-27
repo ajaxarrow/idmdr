@@ -401,7 +401,7 @@ onUnmounted(() => {
               :error-messages="errorMessage.address"
           />
         </div>
-        <div class="mb-3" v-if="formType === FormType.edit">
+        <div class="mb-5" v-if="formType === FormType.edit">
           <label class="input-label">Sector Description</label>
           <QuillRichTextEditor
               v-if="sectorData.description"
@@ -419,7 +419,7 @@ onUnmounted(() => {
           />
 <!--          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
         </div>
-        <div class="mb-5">
+        <div class="mb-3">
           <label class="input-label">Tagged Entity<span class="text-pink">*</span></label>
           <VAutocomplete
               v-model="selectedObjectType"
@@ -433,7 +433,7 @@ onUnmounted(() => {
               :items="objectTypes"
           />
         </div>
-        <div class="mb-5" v-if="selectedObjectType === 'Organization'">
+        <div class="mb-3" v-if="selectedObjectType === 'Organization'">
           <label class="input-label">Organization<span class="text-pink">*</span></label>
           <VAutocomplete
               v-model="sectorData.organization"
@@ -458,7 +458,7 @@ onUnmounted(() => {
             </template>
           </VAutocomplete>
         </div>
-        <div class="mb-5" v-else>
+        <div class="mb-3" v-else>
           <label class="input-label">Repository<span class="text-pink">*</span></label>
           <VAutocomplete
               v-model="sectorData.repository"
