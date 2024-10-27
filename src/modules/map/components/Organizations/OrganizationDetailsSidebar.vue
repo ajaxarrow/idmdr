@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Repository} from "../../../../interfaces/repository.interface.ts";
-import {PhDownload, PhInfo, PhX} from "@phosphor-icons/vue";
+import {PhInfo, PhX} from "@phosphor-icons/vue";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
 import {useMapStore} from "../../stores/map.store.ts";
