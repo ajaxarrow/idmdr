@@ -9,7 +9,7 @@ import {Sector} from "../interfaces/sector.interface.ts";
 
 const boundaries: Sector[] = [
   {
-    title: "Bukidnon",
+    name: "Bukidnon",
     slug: "bukidnon",
     image: 'https://lh4.googleusercontent.com/-v1sBL5M3eliGraWwH1BGBJhrGYel95oJ8lbDoofFRjaeLtpYRF-caWRPZuUpg88ySN50YNorMB6zj4laLm7kS34ghJpsKuGY6ywD0IcTp8Isjxhl9ISUqLt7l4pr2Mq2-6OX4oC',
     geojson: bukidnon,
@@ -29,7 +29,7 @@ const boundaries: Sector[] = [
     ]
   },
   {
-    title: "Camiguin",
+    name: "Camiguin",
     slug: "camiguin",
     image: 'https://nolisoli.ph/wp-content/uploads/2023/09/camiguin-White-Island-with-Hibok-Hibok-as-background.jpeg',
     geojson: camiguin,
@@ -47,7 +47,7 @@ const boundaries: Sector[] = [
     ]
   },
   {
-    title: "Lanao del Norte",
+    name: "Lanao del Norte",
     slug: "lanao-del-norte",
     image: 'https://thumbs.dreamstime.com/b/fish-farm-lala-lanao-del-norte-near-panguil-bay-183855207.jpg',
     geojson: lanaodelnorte,
@@ -65,7 +65,7 @@ const boundaries: Sector[] = [
     ]
   },
   {
-    title: "Misamis Occidental",
+    name: "Misamis Occidental",
     slug: "misamis-occidental",
     image: 'https://www.judethetourist.com/wp-content/uploads/2023/04/misamis-tourist-spots-2023.jpeg',
     geojson: misamisoccidental,
@@ -83,7 +83,7 @@ const boundaries: Sector[] = [
     ]
   },
   {
-    title: "Misamis Oriental",
+    name: "Misamis Oriental",
     slug: "misamis-oriental",
     image: 'https://www.projectlupad.com/wp-content/uploads/2018/03/Red-Sand-Beach-in-Talisayan-Misamis-Oriental-Aerial-View-Project-LUPAD.jpeg',
     geojson: misamisoriental,
@@ -104,7 +104,7 @@ const boundaries: Sector[] = [
 
 const boundariesWithTaglines = boundaries.map(boundary => ({
   ...boundary,
-  description: tagline[boundary.title] || "Default Tagline",
+  description: tagline[boundary.name] || "Default Tagline",
 }));
 
 export default boundariesWithTaglines;

@@ -41,7 +41,7 @@
           :src="selectedSector.image ? selectedSector.image as string : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
       />
       <div class="pa-4 scrollable-container">
-        <p class="sector-title">{{selectedSector.title}}</p>
+        <p class="sector-title">{{selectedSector.name}}</p>
         <p class="sector-description">{{selectedSector.description}}</p>
         <div class="my-3">
           <p class="section-title mb-2">Repositories</p>

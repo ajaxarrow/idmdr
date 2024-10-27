@@ -12,7 +12,7 @@
 
 interface Sector {
   uid?: string,
-  title: string,
+  name: string,
   description?: string,
   geojson?: any,
   image?: File | string
@@ -22,7 +22,15 @@ interface Sector {
   organization?: string | null,
   repository?: string | null,
   slug?: string,
-  bbox?: [number, number, number, number]
+  bbox?: [number, number, number, number],
+  visibility?: number,
+  created_at?: string,
+  updated_at?: string
+  parent?: string,
+  parent_id?: string,
+  owner_id?: string,
+  owner?: string,
+  parent_obj?: string
 }
 
 export type {Sector}

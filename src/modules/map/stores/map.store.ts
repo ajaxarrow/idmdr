@@ -32,7 +32,7 @@ const lnglat: LngLatLike = [124.6, 7.858930800481815];
 // }
 
 const clickProvince = (boundary: Sector, type: string) => {
-  if (boundary.title !== clickedBoundary.value) {
+  if (boundary.name !== clickedBoundary.value) {
     selectSector(boundary, type)
     if (clickedBoundary.value) {
       map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
@@ -49,10 +49,10 @@ const clickProvince = (boundary: Sector, type: string) => {
       {padding: 30, duration: 2000}
     )
 
-    map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
-    map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
+    map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-opacity', .5);
+    map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', color.value);
 
-    clickedBoundary.value = boundary.title;
+    clickedBoundary.value = boundary.name;
 
   } else {
     resetToDefault('Sector')
@@ -115,15 +115,15 @@ const resetToDefault = (type: string) => {
 const setupBoundaries = (boundaries: Sector[], type: string) => {
   boundaries.forEach((boundary: Sector) => {
     // @ts-ignore
-    map.value?.addSource(boundary.title, {
+    map.value?.addSource(boundary.name, {
       type: 'geojson',
       data: boundary.geojson,
     });
 
     map.value?.addLayer({
-      id: `id-${boundary.title}`,
+      id: `id-${boundary.name}`,
       type: 'fill',
-      source: boundary.title,
+      source: boundary.name,
       layout: {},
       paint: {
         'fill-opacity': 0,
@@ -132,13 +132,13 @@ const setupBoundaries = (boundaries: Sector[], type: string) => {
     });
 
     // @ts-ignore
-    map.value?.on('mouseover', `id-${boundary.title}`, (e) => {
-      if (boundary.title !== clickedBoundary.value) {
-        map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
-        map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', color.value);
+    map.value?.on('mouseover', `id-${boundary.name}`, (e) => {
+      if (boundary.name !== clickedBoundary.value) {
+        map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-opacity', .5);
+        map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', color.value);
       }
 
-      const popupContent = `<h4>${boundary.title}</h4>
+      const popupContent = `<h4>${boundary.name}</h4>
                               <p>${boundary.description}</p>`
       popup.value?.setHTML(popupContent);
       // @ts-ignore
@@ -148,16 +148,16 @@ const setupBoundaries = (boundaries: Sector[], type: string) => {
     });
 
     // @ts-ignore
-    map.value?.on('mouseleave', `id-${boundary.title}`, () => {
-      if (boundary.title !== clickedBoundary.value) {
-        map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', 0);
+    map.value?.on('mouseleave', `id-${boundary.name}`, () => {
+      if (boundary.name !== clickedBoundary.value) {
+        map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-opacity', 0);
       }
       popup.value?.remove();
     });
 
 
     // @ts-ignore
-    map.value?.on('click', `id-${boundary.title}`, (e) => {
+    map.value?.on('click', `id-${boundary.name}`, (e) => {
       // @ts-ignore
       if (map.value?.getZoom() < 6.25){
         // @ts-ignore

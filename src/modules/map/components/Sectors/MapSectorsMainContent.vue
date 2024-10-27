@@ -29,13 +29,13 @@ onUnmounted(() => {
       @click="clickProvince(sector, 'Sector')"
       class="map-item"
       :class="{
-        'active-map-item': sector.title === clickedBoundary
+        'active-map-item': sector.name === clickedBoundary
       }"
     >
       <VListItemTitle class="cursor-pointer">
         <div class="d-flex align-center">
           <PhPlant size="18" color="#3E454D" weight="fill"/>
-          <span class="mx-2 me-1 province-title">{{sector.title}}</span>
+          <span class="mx-2 me-1 province-title">{{sector.name}}</span>
         </div>
       </VListItemTitle>
     </VListItem>

@@ -5,8 +5,8 @@ import {createGlobalState} from "@vueuse/core";
 const provinces = ref(boundaries);
 
 
-const filterProvinces = (title: string) => {
-  provinces.value = boundaries.filter(province => province.title.toLowerCase().includes(title.toLowerCase().trim()));
+const filterProvinces = (name: string) => {
+  provinces.value = boundaries.filter(province => province.name.toLowerCase().includes(name.toLowerCase().trim()));
 }
 
 export const useProvincesStore = createGlobalState(() => ({provinces, filterProvinces}));
