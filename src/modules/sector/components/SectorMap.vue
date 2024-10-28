@@ -6,7 +6,6 @@ import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import MapSidebar from "../../map/components/MapSidebar.vue";
 import SectorDetailsSidebar from "./SectorDetailsSidebar.vue";
 import {useMapStore} from "../../map/stores/map.store.ts";
-import sectors from "../../../data/sectors.ts";
 import boundaries from "../../../data/boundaries.ts";
 import MapProductionDetails from "../../map/components/Filters/MapFiltersDetails.vue";
 import OrganizationDetailsSidebar from "../../map/components/Organizations/OrganizationDetailsSidebar.vue";

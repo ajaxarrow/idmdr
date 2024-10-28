@@ -2,7 +2,7 @@
   import {repositories} from "../../../data/repository.ts";
   import {useSectorsStore} from "../stores/sectors.store.ts";
   import {Repository} from "../../../interfaces/repository.interface.ts";
-  import {PhDotsThreeOutlineVertical, PhInfo, PhPencil, PhTrash, PhX} from "@phosphor-icons/vue";
+  import {PhDotsThreeOutlineVertical, PhPencil, PhTrash, PhX} from "@phosphor-icons/vue";
   import {onMounted, onUnmounted, ref, watch} from "vue";
   import {useMapStore} from "../../map/stores/map.store.ts";
   import DeleteDialog from "../../../core/components/DeleteDialog.vue";
@@ -22,10 +22,10 @@
 
   const sectorActionMenu = ref(false);
   const loading = ref(false)
-  const getRepositoriesBySector = (sector: string): Repository[] | null => {
-    const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
-    return foundRepositories.length > 0 ? foundRepositories : null;
-  }
+  // const getRepositoriesBySector = (sector: string): Repository[] | null => {
+  //   const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
+  //   return foundRepositories.length > 0 ? foundRepositories : null;
+  // }
 
   const deleteCallback = async (id: string) => {
     loading.value = true
@@ -113,9 +113,11 @@
                 </DeleteDialog>
             </VSheet>
           </VMenu>
-        </VRow>        <p class="sector-title">{{selectedSector.name}}</p>
+        </VRow>
+        <p class="sector-title">{{selectedSector.name}}</p>
+        <div class="sector-description">{{selectedSector.address}}</div>
         <div class="ql-snow">
-          <div v-html="selectedSector.description" class="ql-editor sector-description"></div>
+          <div v-html="selectedSector.description" class="ql-editor"></div>
         </div>
         <div class="my-3">
           <p class="section-title mb-2">Tagged Entity</p>
