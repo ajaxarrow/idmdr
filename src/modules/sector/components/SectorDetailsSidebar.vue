@@ -22,10 +22,10 @@
 
   const sectorActionMenu = ref(false);
   const loading = ref(false)
-  // const getRepositoriesBySector = (sector: string): Repository[] | null => {
-  //   const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
-  //   return foundRepositories.length > 0 ? foundRepositories : null;
-  // }
+  const getRepositoriesBySector = (sector: string): Repository[] | null => {
+    const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
+    return foundRepositories.length > 0 ? foundRepositories : null;
+  }
 
   const deleteCallback = async (id: string) => {
     loading.value = true
@@ -120,7 +120,7 @@
           <div v-html="selectedSector.description" class="ql-editor"></div>
         </div>
         <div class="my-3">
-          <p class="section-title mb-2">Tagged Entity</p>
+          <p class="section-title mb-2">{{selectedSector.parent == 'Province' ? 'Repositories' : 'Tagged Entity'}}</p>
           <RouterLink
               v-if="selectedSector.repoData && selectedSector.parent === 'Repository'"
               class="text-decoration-none "
@@ -161,29 +161,29 @@
               </div>
             </div>
           </RouterLink>
-<!--          <RouterLink-->
-<!--              class="text-decoration-none"-->
-<!--              v-if="getRepositoriesBySector(selectedSector.slug as string)"-->
-<!--              v-for="repository in getRepositoriesBySector(selectedSector.slug as string)"-->
-<!--              :to="{name: 'repository-data', params: { slug: repository.slug  }}">-->
-<!--            <div-->
-<!--                class="d-flex align-center my-1 cursor-pointer"-->
-<!--            >-->
-<!--              <VImg-->
-<!--                  style="border-radius: 8px"-->
-<!--                  cover-->
-<!--                  height="40px"-->
-<!--                  width="40px"-->
-<!--                  :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"-->
-<!--              />-->
-<!--              <div class="ml-2">-->
-<!--                <p class="default">{{ repository.title }}</p>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </RouterLink>-->
-<!--          <p v-else class="my-1  d-flex align-center">-->
-<!--            <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found-->
-<!--          </p>-->
+          <RouterLink
+              class="text-decoration-none"
+              v-if="getRepositoriesBySector(selectedSector.slug as string)"
+              v-for="repository in getRepositoriesBySector(selectedSector.slug as string)"
+              :to="{name: 'repository-data', params: { slug: repository.slug  }}">
+            <div
+                class="d-flex align-center my-1 cursor-pointer"
+            >
+              <VImg
+                  style="border-radius: 8px"
+                  cover
+                  height="40px"
+                  width="40px"
+                  :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+              />
+              <div class="ml-2">
+                <p class="default">{{ repository.title }}</p>
+              </div>
+            </div>
+          </RouterLink>
+          <p v-else class="my-1  d-flex align-center justify-center">
+            <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
+          </p>
         </div>
         <div class="my-3">
           <p class="section-title mb-2">Tags</p>
