@@ -10,6 +10,7 @@ import {useOrganizationStore} from "../../organization/stores/organization.store
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+import boundaries from "../../../data/boundaries.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const {selectSector, removeSelectedSector} = useSectorsStore();
@@ -33,6 +34,9 @@ const lnglat: LngLatLike = [124.6, 7.858930800481815];
 
 const clickProvince = (boundary: Sector, type: string) => {
   if (boundary.name !== clickedBoundary.value) {
+    if(type === 'Sector') {
+      removeBoundaries(boundaries);
+    }
     selectSector(boundary, type)
     if (clickedBoundary.value) {
       map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
@@ -56,6 +60,9 @@ const clickProvince = (boundary: Sector, type: string) => {
 
   } else {
     resetToDefault('Sector')
+    if(type === 'Sector') {
+      setupBoundaries(boundaries, 'Province');
+    }
   }
 }
 
@@ -66,6 +73,7 @@ const clickOrganization = (boundary: Organization) => {
     showSnackbarMessage('No location data available for this organization', Status.error)
   }
   if (boundary.name !== clickedBoundary.value) {
+    removeBoundaries(boundaries);
     selectOrganization(boundary);
     if (clickedBoundary.value) {
       map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
@@ -89,6 +97,7 @@ const clickOrganization = (boundary: Organization) => {
 
   } else {
     resetToDefault('Organization')
+    setupBoundaries(boundaries, 'Province');
   }
 }
 
@@ -181,6 +190,28 @@ const setupBoundaries = (boundaries: Sector[], type: string) => {
 
   });
 }
+
+const removeBoundaries = (boundaries: Sector[]) => {
+  boundaries.forEach((boundary: Sector) => {
+    const layerId = `id-${boundary.name}`;
+
+    if (map.value?.getLayer(layerId)) {
+      // Remove event listeners first
+      // map.value?.off('mouseover', layerId);
+      // // @ts-ignore
+      // map.value?.off('mouseleave', layerId);
+      // map.value?.off('click', layerId);
+
+      // Remove the layer and source from the map
+      map.value?.removeLayer(layerId);
+      map.value?.removeSource(boundary.name);
+    }
+  });
+
+  // Optional: Reset clicked boundary if needed
+  clickedBoundary.value = '';
+};
+
 
 
 const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
@@ -357,4 +388,4 @@ const loadRandomCoordinates = (boundaries: Sector[]) => {
 
 
 
-export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, resetToDefault, setupBoundariesforOrganization, clickOrganization}))
+export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, removeBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, resetToDefault, setupBoundariesforOrganization, clickOrganization}))

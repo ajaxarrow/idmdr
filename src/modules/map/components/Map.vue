@@ -11,11 +11,13 @@ import sectors from "../../../data/sectors.ts";
 import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSidebar.vue";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
+import {useSectorServices} from "../../sector/services/sector.services.ts";
 
   const {fetchOrganizations} = useOrganizationServices()
   const {mapOrganizations} = useOrganizationStore();
   const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
-  const {removeSelectedSector} = useSectorsStore();
+  const {removeSelectedSector, allSectors} = useSectorsStore();
+  const {fetchSectors} = useSectorServices()
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
 
@@ -52,6 +54,7 @@ import {useOrganizationStore} from "../../organization/stores/organization.store
 
   onMounted(async () => {
     await fetchOrganizations();
+    await fetchSectors()
     initMap();
     map.value?.addControl(new NavigationControl(), 'top-right');
 
@@ -59,7 +62,7 @@ import {useOrganizationStore} from "../../organization/stores/organization.store
     map.value?.on('style.load', async () => {
       await setupBoundariesforOrganization(mapOrganizations.value);
       setupBoundaries(boundaries, 'Province');
-      setupBoundaries(sectors, 'Sector');
+      setupBoundaries(allSectors.value, 'Sector');
       loadRandomCoordinates(boundaries);
     })
 

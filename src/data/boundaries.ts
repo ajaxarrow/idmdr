@@ -11,6 +11,7 @@ const boundaries: Sector[] = [
   {
     name: "Bukidnon",
     slug: "bukidnon",
+    parent: 'Province',
     image: 'https://lh4.googleusercontent.com/-v1sBL5M3eliGraWwH1BGBJhrGYel95oJ8lbDoofFRjaeLtpYRF-caWRPZuUpg88ySN50YNorMB6zj4laLm7kS34ghJpsKuGY6ywD0IcTp8Isjxhl9ISUqLt7l4pr2Mq2-6OX4oC',
     geojson: bukidnon,
     bbox: [
@@ -31,6 +32,7 @@ const boundaries: Sector[] = [
   {
     name: "Camiguin",
     slug: "camiguin",
+    parent: 'Province',
     image: 'https://nolisoli.ph/wp-content/uploads/2023/09/camiguin-White-Island-with-Hibok-Hibok-as-background.jpeg',
     geojson: camiguin,
     bbox: [
@@ -49,6 +51,7 @@ const boundaries: Sector[] = [
   {
     name: "Lanao del Norte",
     slug: "lanao-del-norte",
+    parent: 'Province',
     image: 'https://thumbs.dreamstime.com/b/fish-farm-lala-lanao-del-norte-near-panguil-bay-183855207.jpg',
     geojson: lanaodelnorte,
     bbox: [
@@ -67,6 +70,7 @@ const boundaries: Sector[] = [
   {
     name: "Misamis Occidental",
     slug: "misamis-occidental",
+    parent: 'Province',
     image: 'https://www.judethetourist.com/wp-content/uploads/2023/04/misamis-tourist-spots-2023.jpeg',
     geojson: misamisoccidental,
     bbox: [
@@ -84,6 +88,7 @@ const boundaries: Sector[] = [
   },
   {
     name: "Misamis Oriental",
+    parent: 'Province',
     slug: "misamis-oriental",
     image: 'https://www.projectlupad.com/wp-content/uploads/2018/03/Red-Sand-Beach-in-Talisayan-Misamis-Oriental-Aerial-View-Project-LUPAD.jpeg',
     geojson: misamisoriental,

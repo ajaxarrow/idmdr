@@ -18,17 +18,12 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import SectorTaggingGuideDialog from "../../sector/components/SectorTaggingGuideDialog.vue";
 import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
 import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
-  const props = defineProps({
-    useSectorDesign: {
-      type: Boolean,
-      default: false,
-    },
-  });
 
-
+  const {user} = useUserStore()
   const {router} = useRouting();
   const {storedGeoJSON, handleGeoJSON, confirmDialog, fileName} = useSectorMapStore();
   const addSectorDialogMenu = ref(false);
@@ -70,14 +65,6 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
       mainContent: markRaw(MapFiltersMainContent)
     },
   ];
-
-  const filteredNavLinks = computed(() => {
-    if (props.useSectorDesign) {
-      return navLinks.filter(link => link.name !== 'Provinces');
-    } else {
-      return navLinks;
-    }
-  });
 
 
   const assignContent = (headerComponent: CustomComponent, mainContentComponent: CustomComponent, activeNavTitle: string) => {
@@ -137,7 +124,7 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
        <VDivider/>
        <div class="mt-2">
          <VList>
-           <VRow v-if="props.useSectorDesign" class="ma-0 justify-center mt-2 mb-4">
+           <VRow v-if="user" class="ma-0 justify-center mt-2 mb-4">
              <VMenu v-model="addSectorDialogMenu" :close-on-content-click="false">
                <template #activator="{ props }">
                  <PhPlusCircle
@@ -167,7 +154,7 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
            </VRow>
            <VListItem
                :class="{'active-nav': activeNav === navLink.name}"
-               v-for="navLink in filteredNavLinks"
+               v-for="navLink in navLinks"
                variant="plain"
                class="nav-item cursor-pointer navigation-item "
                @click="assignContent(navLink.header, navLink.mainContent, navLink.name)"

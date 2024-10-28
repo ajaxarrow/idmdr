@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import {PhMagnifyingGlass} from "@phosphor-icons/vue";
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {useSectorsStore} from "../../../sector/stores/sectors.store.ts";
+import {Sector} from "../../../../interfaces/sector.interface.ts";
 
 const searchedSector = ref("");
-const {filterSectors} = useSectorsStore();
+const sectorData = ref<Sector[]>([])
+const {filterSectorsbySearchQuery, allSectors} = useSectorsStore();
 
 watch(() => searchedSector.value, () => {
-  filterSectors(searchedSector.value)
+  filterSectorsbySearchQuery(searchedSector.value, sectorData.value)
+})
+
+onMounted(() => {
+  sectorData.value = allSectors.value
 })
 
 </script>

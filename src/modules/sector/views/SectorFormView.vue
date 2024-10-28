@@ -25,7 +25,7 @@ import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vu
 import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {userData} = useUserStore();
-const {addSector, hasErrorMessages, errorMessage, loading} = useSectorServices()
+const {addSector, updateSector, fetchSectorData, hasErrorMessages, errorMessage, loading} = useSectorServices()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {storedGeoJSON, confirmDialog, fileName} = useSectorMapStore();
 const {fetchRepositoriesByUser} = useRepositoryServices();
@@ -213,7 +213,28 @@ const addSectorData = async () => {
 }
 
 const updateSectorData = async () => {
-
+  if(file.value){
+    //@ts-ignore
+    sectorData.image = file.value as File
+  } else {
+    delete sectorData.image;
+  }
+  previousTags.value = <string[]>sectorData.tags
+  sectorData.tags = arrayToString(<string[]>sectorData.tags)
+  sectorData.parent = selectedObjectType.value
+  sectorData.owner_id = userData.uid
+  if(selectedObjectType.value === 'Repository'){
+    sectorData.parent_id = sectorData.repository as string
+  } else {
+    sectorData.parent_id = sectorData.organization as string
+  }
+  await updateSector(sectorData, sectorData.uid as string)
+  if(hasErrorMessages(errorMessage)){
+    sectorData.tags = previousTags.value
+    scrollToFirstErrorMessage()
+  } else {
+    clearFields();
+  }
 }
 
 onMounted(async () => {
@@ -228,6 +249,17 @@ onMounted(async () => {
 
   if (type === 'edit') {
     formType.value = FormType.edit
+    const fetchedData = await fetchSectorData(route.params.slug as string)
+    Object.assign(sectorData, {...fetchedData})
+    sectorData.geojson = JSON.stringify(fetchedData?.geojson)
+    selectedObjectType.value = fetchedData?.parent as string
+    if(selectedObjectType.value == 'Repository'){
+      sectorData.repository = fetchedData?.parent_id
+    } else {
+      sectorData.organization = fetchedData?.parent_id
+    }
+    previewImage.value = <string>sectorData.image
+    hasImage.value = true
   }
   if (Object.keys(storedGeoJSON.value).length !== 0) {
     setGeoJSON(storedGeoJSON.value, true);

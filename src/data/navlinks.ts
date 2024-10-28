@@ -4,7 +4,6 @@ import {
   PhHouse,
   PhMapPinLine,
   PhSignOut,
-  PhTag,
   PhUsersFour,
   PhUsersThree,
   PhAirplaneLanding
@@ -27,11 +26,6 @@ export const navLinks = [
     name: 'Organizations',
     link: '/organizations',
     icon: PhUsersThree
-  },
-  {
-    name: 'Sector Tagging',
-    link: '/sector-tagging',
-    icon: PhTag
   },
   {
     name: 'Map',

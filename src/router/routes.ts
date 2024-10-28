@@ -80,7 +80,7 @@ export const routes = [
     path: '/map',
     name: 'map',
     // @ts-ignore
-    component: () => import('../modules/map/views/MapView.vue')
+    component: () => import('../modules/sector/views/SectorView.vue')
   },
   {
     path: '/:pathMatch(.*)*',

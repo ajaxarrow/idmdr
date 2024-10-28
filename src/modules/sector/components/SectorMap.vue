@@ -16,15 +16,20 @@ import {useOrganizationStore} from "../../organization/stores/organization.store
 import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.vue";
+import {useSectorServices} from "../services/sector.services.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {fetchOrganizations} = useOrganizationServices()
+const {user} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
-const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
-const {removeSelectedSector} = useSectorsStore();
+const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
+const {removeSelectedSector, allSectors} = useSectorsStore();
+const {fetchSectors} = useSectorServices()
 const {router} = useRouting();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const coords = ref([])
+
 
 const bounds: [number, number, number, number] = [
   120.5, 4.0,
@@ -106,28 +111,46 @@ watch(dotDensityLayer, (newValue) => {
 
 onMounted(async () => {
   await fetchOrganizations();
-  (MapboxDraw as any).constants = MapboxDraw.constants || {};
-  (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
-  (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
-  (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
-
+  await fetchSectors();
   initMap();
-  map.value?.addControl(new NavigationControl(), 'bottom-right');
-  // @ts-ignore
-  map.value.addControl(draw);
-  ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
-    //@ts-ignore
-    map.value.on(eventName, handleDrawEvent);
-  });
+  if(user.value){
+    (MapboxDraw as any).constants = MapboxDraw.constants || {};
+    (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
+    (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
+    (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
+    map.value?.addControl(new NavigationControl(), 'bottom-right');
+    // @ts-ignore
+    map.value.addControl(draw);
+    ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
+      //@ts-ignore
+      map.value.on(eventName, handleDrawEvent);
+    });
+  } else {
+    map.value?.addControl(new NavigationControl(), 'top-right');
+  }
+
 
   // @ts-ignore
   map.value?.on('style.load', async () => {
     await setupBoundariesforOrganization(mapOrganizations.value);
-    setupBoundaries(sectors, 'Sector');
+    setupBoundaries(boundaries, 'Province');
+    setupBoundaries(allSectors.value, 'Sector');
     loadRandomCoordinates(boundaries)
   })
 
+  // @ts-ignore
+  map.value?.on('draw.modechange', (event) => {
+    const { mode } = event;
+    if (mode === 'draw_polygon' || mode === 'draw_line_string') {
+      removeBoundaries(boundaries);
+    } else {
+      setupBoundaries(boundaries, 'Province');
+    }
+  });
+
+
 })
+
 
 onUnmounted(()=> {
   removeSelectedSector();
@@ -152,7 +175,7 @@ onUnmounted(()=> {
   <transition name="fade">
     <MapProductionDetails/>
   </transition>
-  <MapSidebar :useSectorDesign="true"/>
+  <MapSidebar/>
   <div class="map-wrap">
     <a href="https://www.maptiler.com" class="watermark"><img
         src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"/></a>

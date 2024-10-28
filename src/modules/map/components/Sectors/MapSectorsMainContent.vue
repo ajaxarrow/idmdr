@@ -2,10 +2,16 @@
 import {PhInfo, PhPlant} from "@phosphor-icons/vue";
 import {useSectorsStore} from "../../../sector/stores/sectors.store.ts";
 import {useMapStore} from "../../stores/map.store.ts";
-import {onUnmounted} from "vue";
+import {onMounted, onUnmounted} from "vue";
+import {useSectorServices} from "../../../sector/services/sector.services.ts";
 
-const {sectors} = useSectorsStore();
+const {allSectors} = useSectorsStore();
 const {clickProvince, clickedBoundary, resetToDefault} = useMapStore();
+const {fetchSectors} = useSectorServices()
+
+onMounted(async() => {
+  await fetchSectors()
+})
 
 onUnmounted(() => {
   resetToDefault('Sector')
@@ -14,7 +20,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="sectors.length === 0">
+  <div v-if="allSectors.length === 0">
     <p class="justify-center d-flex align-center">
       No Sectors Found <PhInfo size="19" class="ml-1"/>
     </p>
@@ -25,7 +31,7 @@ onUnmounted(() => {
       nav
   >
     <VListItem
-      v-for="sector in sectors"
+      v-for="sector in allSectors"
       @click="clickProvince(sector, 'Sector')"
       class="map-item"
       :class="{

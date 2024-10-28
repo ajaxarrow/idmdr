@@ -1,14 +1,6 @@
-
-// interface Sector {
-//   title: string
-//   description?: string
-//   geojson?: any
-//   tags: string[]
-//   image?: string
-//   slug: string
-//   bbox?: [number, number, number, number]
-//   [key: string]: any;
-// }
+import {Organization} from "./organization.interface.ts";
+import {Repository} from "./repository.interface.ts";
+import {User} from "./member.interface.ts";
 
 interface Sector {
   uid?: string,
@@ -30,8 +22,10 @@ interface Sector {
   parent?: string,
   parent_id?: string,
   owner_id?: string,
-  owner?: string,
-  parent_obj?: string
+  owner?: User,
+  parent_obj?: Organization | Repository
+  orgData?: Organization
+  repoData?: Repository
 }
 
 export type {Sector}
