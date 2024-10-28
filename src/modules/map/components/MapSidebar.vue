@@ -129,27 +129,31 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
                <template #activator="{ props }">
                  <PhPlusCircle
                      class="cursor-pointer add-sector-button"
-                     v-bind="props" weight="fill" size="62" color="#3291C7" />
+                     v-bind="props"
+                     weight="fill"
+                     size="62"
+                 />
                </template>
+
                <VSheet width="220" height="140" class="add-sector-menu">
                  <p class="text-center font-weight-bold pa-2 add-sector-menu-title">Add New Sector</p>
-                 <VDivider/>
+                 <VDivider />
                  <div class="pa-2">
-                   <label for="dropzoneFileGeoJSON"  class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
+                   <label for="dropzoneFileGeoJSON" class="add-sector-menu-item cursor-pointer d-flex align-center my-2">
                      <PhFileArrowUp
-                       class="mb-1 mr-1"
-                       color="#3291C7"
-                       weight="fill"
-                       size="14"
+                         class="mb-1 mr-1"
+                         color="#3291C7"
+                         weight="fill"
+                         size="14"
                      />
-                       Import GeoJson
-                    </label>
-                   <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSON" accept="application/json"/>
-                   <SectorTaggingGuideDialog/>
-<!--                   <SectorTaggingDialog :show-dialog="showDialog"/>-->
+                     Import GeoJson
+                   </label>
+                   <VFileInput id="dropzoneFileGeoJSON" style="display: none" @change="handleGeoJSON" accept="application/json" />
+                   <SectorTaggingGuideDialog />
                  </div>
                </VSheet>
              </VMenu>
+
 
            </VRow>
            <VListItem
@@ -206,9 +210,12 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
   border-radius: 15px !important;
   box-shadow: 0px 4px 10px 0px #5d6e87;
 }
-
+.add-sector-button{
+  color: #3291C7;
+}
 .add-sector-button:hover{
   border-radius: 50% !important;
+  color: #28749F;
 }
 
 .add-sector-menu-title{
