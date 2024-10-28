@@ -2,7 +2,7 @@
   import {repositories} from "../../../data/repository.ts";
   import {useSectorsStore} from "../stores/sectors.store.ts";
   import {Repository} from "../../../interfaces/repository.interface.ts";
-  import {PhDotsThreeOutlineVertical, PhPencil, PhTrash, PhX} from "@phosphor-icons/vue";
+  import {PhDotsThreeOutlineVertical, PhInfo, PhPencil, PhTrash, PhX} from "@phosphor-icons/vue";
   import {onMounted, onUnmounted, ref, watch} from "vue";
   import {useMapStore} from "../../map/stores/map.store.ts";
   import DeleteDialog from "../../../core/components/DeleteDialog.vue";
@@ -142,7 +142,7 @@
             </div>
           </RouterLink>
           <RouterLink
-              v-if="selectedSector.orgData && selectedSector.parent === 'Organization'"
+              v-else-if="selectedSector.orgData && selectedSector.parent === 'Organization'"
               class="text-decoration-none "
               :to="{name: 'organization-data', params: { slug: selectedSector.orgData?.uid }}">
             <div
@@ -161,29 +161,31 @@
               </div>
             </div>
           </RouterLink>
-          <RouterLink
-              class="text-decoration-none"
-              v-if="getRepositoriesBySector(selectedSector.slug as string)"
-              v-for="repository in getRepositoriesBySector(selectedSector.slug as string)"
-              :to="{name: 'repository-data', params: { slug: repository.slug  }}">
-            <div
-                class="d-flex align-center my-1 cursor-pointer"
-            >
-              <VImg
-                  style="border-radius: 8px"
-                  cover
-                  height="40px"
-                  width="40px"
-                  :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
-              />
-              <div class="ml-2">
-                <p class="default">{{ repository.title }}</p>
+          <div v-else>
+            <RouterLink
+                class="text-decoration-none"
+                v-if="getRepositoriesBySector(selectedSector.slug as string)"
+                v-for="repository in getRepositoriesBySector(selectedSector.slug as string)"
+                :to="{name: 'repository-data', params: { slug: repository.slug  }}">
+              <div
+                  class="d-flex align-center my-1 cursor-pointer"
+              >
+                <VImg
+                    style="border-radius: 8px"
+                    cover
+                    height="40px"
+                    width="40px"
+                    :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                />
+                <div class="ml-2">
+                  <p class="default">{{ repository.title }}</p>
+                </div>
               </div>
-            </div>
-          </RouterLink>
-          <p v-else class="my-1  d-flex align-center justify-center">
-            <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
-          </p>
+            </RouterLink>
+            <p v-else class="my-1  d-flex align-center justify-center">
+              <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
+            </p>
+          </div>
         </div>
         <div class="my-3">
           <p class="section-title mb-2">Tags</p>
