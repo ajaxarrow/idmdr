@@ -42,9 +42,20 @@
     if (selectedSector.value?.parent === 'Repository' && selectedSector.value) {
       // @ts-ignore
       selectedSector.value.repoData = selectedSector.value?.parent_obj
+      // @ts-ignore
+      if (selectedSector.value.repoData?.image) {
+        // @ts-ignore
+        selectedSector.value.repoData.image = `${import.meta.env.VITE_BASE_API_URL_DJANGO}${selectedSector.value.repoData.image}`;
+      }
+
     } else if (selectedSector.value?.parent === 'Organization' && selectedSector.value) {
       // @ts-ignore
       selectedSector.value.orgData = selectedSector.value?.parent_obj
+      // @ts-ignore
+      if (selectedSector.value.orgData?.image) {
+        // @ts-ignore
+        selectedSector.value.orgData.image = `${import.meta.env.VITE_BASE_API_URL_DJANGO}${selectedSector.value.orgData.image}`;
+      }
     }
   })
 
