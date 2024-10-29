@@ -112,19 +112,22 @@ const downloadOrganizationDataPDF = async (organization: Organization) => {
   const contentWidth = pageWidth - (margin * 2);
   let currentY = margin;
 
-  // Header Section with blue background
+// Header Section with blue background
   doc.setFillColor(0, 123, 255);
-  doc.rect(0, 0, pageWidth, 40, 'F');
+  doc.rect(0, 0, doc.internal.pageSize.width, 50, 'F'); // Draws a filled rectangle for the header
 
-  // Organization name in white
-  doc.setTextColor(255, 255, 255);
+// Repository title in white
+  doc.setTextColor(255, 255, 255); // Set text color to white
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(24);
-  doc.text(`${organization.name} (${organization.acronym})`, margin, 25);
+  doc.setFontSize(20);
 
-  // Reset text color for body
+// Split text to fit within the page width for wrapping
+  const titleLines = doc.splitTextToSize(`${organization.name} (${organization.acronym})`, doc.internal.pageSize.width - 2 * margin);
+  doc.text(titleLines, margin, 25);
+
+// Reset text color for body
   doc.setTextColor(0, 0, 0);
-  currentY = 50;
+  currentY = 60;
 
   // Contact Information Section
   doc.setFontSize(12);
