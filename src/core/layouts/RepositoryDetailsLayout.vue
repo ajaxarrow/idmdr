@@ -134,7 +134,7 @@ onMounted(async ()=>{
            </p>
          </RouterLink>
        </div>
-        <VRow justify="space-between" align="center" class="ma-0">
+        <VRow justify="space-between" align="center" class="ma-0 ga-4">
           <div>
             <p class="text-repository-heading d-flex align-center">
               {{repository.title}}
