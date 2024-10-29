@@ -241,15 +241,15 @@ onUnmounted(() => {
               <p>
                 Sector tagging directly addresses the challenge of monitoring data within specific entities. By implementing sector tagging, each project is clearly associated with the relevant entity or sector, allowing for more effective tracking of progress and development within that specific area. This system not only enhances the ability to monitor contributions and advancements by individual sectors but also enables filtering of projects to display only those related to a particular sector. As a result, sector tagging facilitates more targeted analysis and reporting, ensuring that data management is both organized and efficient.
               </p>
-              <img class="developer-image" :src="p3Proposed"  alt="proposed-process-3"/>
-            </section>
 
+            </section>
+              <img class="developer-image" :src="p4Proposed"  alt="proposed-process-4"/>
             <section id="solution-visualization">
               <h3>Map Visualization</h3>
               <p>
                 This platform provides map visualization capabilities, allowing users to visualize data and information for each project and repository geographically. Map visualization plays a crucial role in monitoring and tracking data related to specific locations where sectors have conducted their research and development activities. The map visualization module enables users to view repositories situated within designated areas, including predefined regions such as the provinces of Region X, as well as custom boundaries created by users. This feature enhances the ability to analyze geographic trends, assess the impact of projects in particular areas, and support strategic decision-making based on location-specific data.
               </p>
-              <img class="developer-image" :src="p4Proposed"  alt="proposed-process-4"/>
+              <img class="developer-image" :src="p3Proposed"  alt="proposed-process-3"/>
             </section>
             </section>
           </article>
