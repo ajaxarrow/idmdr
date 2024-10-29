@@ -29,30 +29,6 @@ const isSlugInRepoList = (repository: Repository | null | undefined, repoList: R
   return repoList.some(org => org.slug === repository?.slug);
 };
 
-// const downloadFiles = () => {
-//   let fileContent = '';
-//     if (props.repository) {
-//       fileContent += `Repository Name: ${props.repository.title}\n\n`;
-//       if (props.repository.files) {
-//         props.repository.files.forEach((file, index) => {
-//           fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-//         });
-//       }
-//     }
-//
-//   const blob = new Blob([fileContent], { type: 'text/plain' });
-//
-//   const url = URL.createObjectURL(blob);
-//
-//   const link = document.createElement('a');
-//   link.href = url;
-//   link.download = `${props.repository?.slug}.txt`;
-//
-//   link.click();
-//
-//   URL.revokeObjectURL(url);
-// }
-
 
 const tabs = [
   {

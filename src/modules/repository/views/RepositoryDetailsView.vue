@@ -27,38 +27,22 @@ import {
   PhFilePng, PhFilePpt, PhFileVideo,
   PhFileXls, PhInfo
 } from "@phosphor-icons/vue";
+import {Repository} from "../../../interfaces/repository.interface.ts";
 
-  const {route} = useRouting()
-  const {repository} = useRepositoryStore();
-  const {fetchRepositoryData} = useRepositoryServices();
-  const {setSnackbarMessage} = useSnackbarStore()
-  const selectedFileName = ref('');
-  const selectedFileDescription = ref('');
-  const selectedFileAttachment= ref('');
+const {route} = useRouting()
+const {repository} = useRepositoryStore();
+const {fetchRepositoryData} = useRepositoryServices();
+const {setSnackbarMessage} = useSnackbarStore()
+const selectedFileName = ref('');
+const selectedFileDescription = ref('');
+const selectedFileAttachment= ref('');
+const {fetchRepositoriesByUser} = useRepositoryServices();
+const isMember = ref(false)
 
-  // const downloadFiles = () => {
-  //   let fileContent = '';
-  //   if (repository.value) {
-  //     fileContent += `Repository Name: ${repository.value?.title}\n\n`;
-  //     if (repository.value?.files) {
-  //       repository.value?.files.forEach((file, index) => {
-  //         fileContent += `File ${index + 1}:\nName: ${file.name}\nDescription: ${file.description}\n\n`;
-  //       });
-  //     }
-  //   }
-  //
-  //   const blob = new Blob([fileContent], { type: 'text/plain' });
-  //
-  //   const url = URL.createObjectURL(blob);
-  //
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.download = `${repository.value?.slug}.txt`;
-  //
-  //   link.click();
-  //
-  //   URL.revokeObjectURL(url);
-  // }
+const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
+  return repoList.some(org => org.slug === repository?.slug);
+};
+
 
 const downloadRepoFiles = (): void => {
   window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${repository.value?.slug}`, '_blank');
@@ -152,6 +136,10 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
 
   onMounted(async () => {
     await fetchRepositoryData(<string>route.params.slug);
+    const allUserRepo = await fetchRepositoriesByUser();
+    if(isSlugInRepoList(repository.value, allUserRepo)) {
+      isMember.value = true;
+    }
     await setSnackbarMessage()
   })
 
@@ -322,7 +310,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           <div class="pa-4">
             <VRow justify="space-between" align="center" class="ma-0">
               <p><span class="text-data-heading">Data Explorer</span> ({{repository.files?.length}} Files)</p>
-              <VTooltip location="bottom">
+              <VTooltip v-if="isMember" location="bottom">
                 <template v-slot:activator="{ props }">
                   <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>
                 </template>
@@ -341,7 +329,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
                 </p>
                 <p class="text-data-description">{{selectedFileDescription}}</p>
               </div>
-              <p class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileAttachment)">
+              <p v-if="isMember" class="download-icon d-flex align-center cursor-pointer"  @click="downloadFile(selectedFileAttachment)">
                 <PhDownload size="20" class="mr-2"/>
                 Download File
               </p>
