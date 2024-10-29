@@ -153,7 +153,7 @@ export const useOrganizationServices = () => {
     Object.assign(errorMessage, { ...errorMessageIntialState });
   };
 
-  const saveOrganization = async (organization: Organization, endpoint: string, type: string) => {
+  const saveOrganization = async (organization: Organization, endpoint: string, type: string, id: string = '') => {
     clearErrorMessage();
     loading.value = true;
     try {
@@ -229,7 +229,7 @@ export const useOrganizationServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-organizations/${organization.slug}`
+          window.location.href = `/my-organizations/${id}`
         }, 3000);
 
         // await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
@@ -269,7 +269,7 @@ export const useOrganizationServices = () => {
   };
 
   const updateOrganization = async (organization: Organization, id: string) => {
-    await saveOrganization(organization, `/v1/organization/${id}/update`, 'update');
+    await saveOrganization(organization, `/v1/organization/${id}/update`, 'update', id);
   };
 
   const mapOrgData = async (rawData: any): Promise<Organization[]> => {

@@ -94,7 +94,7 @@ export const useRepositoryServices = () => {
     Object.assign(errorMessage, { ...errorMessageInitialState });
   };
 
-  const saveRepository = async (repository: Repository, endpoint: string, type: string) => {
+  const saveRepository = async (repository: Repository, endpoint: string, type: string, id: string = '') => {
     if(repository.com_extra == null) {
       repository.com_extra = {};
     }
@@ -179,7 +179,7 @@ export const useRepositoryServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-repositories/${repository.uid}`;
+          window.location.href = `/my-repositories/${id}`;
         }, 3000);
       }
     } catch (e: any){
@@ -235,7 +235,7 @@ export const useRepositoryServices = () => {
   }
 
   const updateRepository = async (repository: Repository, id: string) => {
-    await saveRepository(repository, `/repositories/${id}`, 'update')
+    await saveRepository(repository, `/repositories/${id}`, 'update', id)
   }
 
   const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
