@@ -8,6 +8,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
+import {useSectorServices} from "../../sector/services/sector.services.ts";
 
 
 const { userData, user } = useUserStore();
@@ -17,6 +18,7 @@ const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrgMembers} = useOrganizationMembersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
+const {addSector} = useSectorServices()
 
 const stringToArray = (str: string): string[] =>
   str.length > 0 ? str.split(', ') : [];
@@ -112,6 +114,8 @@ export const useRepositoryServices = () => {
           }
         }
       );
+
+
       if(type == 'create'){
         // @ts-ignore
         if(repository.files?.length > 0  && repository.files) {
@@ -130,6 +134,22 @@ export const useRepositoryServices = () => {
           }
         }
 
+        if(!isEmptyObject(repository.geojson)){
+          await addSector({
+            address: repository.location || 'N/A',
+            description: repository.description,
+            name: repository.title,
+            parent: 'Repository',
+            parent_id: res.data.uid,
+            geojson: repository.geojson,
+            visibility: repository.visibility,
+            image: repository.image,
+            tags: repository.tags,
+            owner_id: userData.uid
+          }, false)
+        }
+
+
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Repository created successfully',
           status: 'success'
@@ -138,7 +158,6 @@ export const useRepositoryServices = () => {
           loading.value = false;
           window.location.href = '/my-repositories';
         }, 3000);
-
 
       } else if(type == 'update'){
         // @ts-ignore

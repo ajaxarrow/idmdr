@@ -102,8 +102,8 @@ export const useSectorServices = () => {
     });
   }
 
-  const addSector = async (sector: Sector) => {
-    await saveSector(sector, `/v1/sector/`, 'create');
+  const addSector = async (sector: Sector, useInForm: boolean = true) => {
+    await saveSector(sector, `/v1/sector/`, 'create', useInForm);
   }
 
   const updateSector = async (sector: Sector, id: string) => {
