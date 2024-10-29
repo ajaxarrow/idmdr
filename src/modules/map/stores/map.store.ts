@@ -94,7 +94,6 @@ const clickOrganization = (boundary: Organization) => {
     map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', color.value);
 
     clickedBoundary.value = boundary.name;
-
   } else {
     resetToDefault('Organization')
     setupBoundaries(boundaries, 'Province');
@@ -207,9 +206,6 @@ const removeBoundaries = (boundaries: Sector[]) => {
       map.value?.removeSource(boundary.name);
     }
   });
-
-  // Optional: Reset clicked boundary if needed
-  clickedBoundary.value = '';
 };
 
 
