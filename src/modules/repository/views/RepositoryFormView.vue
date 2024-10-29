@@ -567,6 +567,7 @@ onMounted( async () => {
         <div class="mb-5">
           <label class="input-label">Organization<span class="text-pink">*</span></label>
           <VAutocomplete
+              :disabled="formType === FormType.edit"
               v-model="repositoryData.organization"
               placeholder="Select Organization"
               class="my-2"
@@ -579,6 +580,7 @@ onMounted( async () => {
               :item-value="organization => `${organization.uid}`"
               :item-title="organization => `${organization.name} (${organization.acronym})`"
               :error-messages="errorMessage.organization"
+              :hint="formType === FormType.edit ? 'You cannot changed the associated organization' : 'Select Organization that the repository belongs to'"
           >
             <template v-slot:item="{ props, item }">
               <VListItem
