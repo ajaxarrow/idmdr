@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "./MainLayout.vue";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
 import {Organization} from "../../interfaces/organization.interface.ts";
@@ -21,7 +21,6 @@ const isOrgAvailable = ref(false);
 const path = ref('organizations')
 const tab = ref("about");
 
-const emits = defineEmits(['updateOrg'])
 const props = defineProps({
   organization: {
     type: Object as PropType<Organization | null | undefined>,
@@ -72,21 +71,37 @@ const navigateTo = (linkName: string) => {
   });
 }
 
-onMounted(async ()=>{
-  pageLoading.value = true
+const initialize = async () => {
+  pageLoading.value = true;
   const allUserOrg = await fetchOrganizationByUser();
-  if(props.organization?.visibility == 1 || props.organization?.visibility == 4){
+
+  if (props.organization?.visibility === 1 || props.organization?.visibility === 4) {
     isOrgAvailable.value = true;
   } else {
     isOrgAvailable.value = isSlugInOrgList(props.organization, allUserOrg);
   }
 
-  if(props.activeTab){
-    tab.value = props.activeTab
+  if (props.activeTab) {
+    tab.value = props.activeTab;
   }
-  path.value = getFirstPath(<string>route.path)
-  pageLoading.value = false
-})
+
+  path.value = getFirstPath(<string>route.path);
+  pageLoading.value = false;
+};
+
+onMounted(() => {
+  if (props.organization) {
+    initialize();
+  } else {
+    watch(
+        () => props.organization,
+        (newOrg) => {
+          if (newOrg) initialize();
+        },
+        { immediate: true }
+    );
+  }
+});
 </script>
 
 <template>
