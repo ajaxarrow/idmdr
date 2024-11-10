@@ -13,15 +13,34 @@
   import {Status} from "../../../interfaces/enums/status.enum.ts";
   import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
   import {useSectorServices} from "../services/sector.services.ts";
+  import {useRepositoryServices} from "../../repository/services/repository.services.ts";
+  import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+  import {Organization} from "../../../interfaces/organization.interface.ts";
 
+  const baseURL = import.meta.env.VITE_BASE_API_URL_DJANGO;
   const {user, userData} = useUserStore()
   const {selectedSector, removeSelectedSector, title, allSectors} = useSectorsStore();
   const {deleteSector, fetchSectors} = useSectorServices()
+  const {fetchRepositoriesByUser} = useRepositoryServices()
+  const {fetchOrganizationByUser} = useOrganizationServices()
   const {showSnackbarMessage} = useSnackbarStore();
   const {resetToDefault, setupBoundaries, removeBoundaries} = useMapStore();
 
+
   const sectorActionMenu = ref(false);
-  const loading = ref(false)
+  const isRepoAvailable = ref(false);
+  const isOrgAvailable = ref(false);
+  const loading = ref(false);
+  const pageLoading = ref(false);
+
+  const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
+    return repoList.some(org => org.slug === repository?.uid);
+  };
+
+
+  const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
+    return orgList.some(org => org.slug === organization?.uid);
+  };
   const getRepositoriesBySector = (sector: string): Repository[] | null => {
     const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
     return foundRepositories.length > 0 ? foundRepositories : null;
@@ -38,24 +57,30 @@
     showSnackbarMessage('Sector Deleted Successfully', Status.success)
   }
 
-  watch(()=> selectedSector.value, () => {
+  watch(()=> selectedSector.value, async () => {
     if (selectedSector.value?.parent === 'Repository' && selectedSector.value) {
+      pageLoading.value = true
+      const allUserRepo = await fetchRepositoriesByUser();
       // @ts-ignore
       selectedSector.value.repoData = selectedSector.value?.parent_obj
-      // @ts-ignore
-      if (selectedSector.value.repoData?.image) {
-        // @ts-ignore
-        selectedSector.value.repoData.image = `${import.meta.env.VITE_BASE_API_URL_DJANGO}${selectedSector.value.repoData.image}`;
+      if(isSlugInRepoList(selectedSector.value?.repoData!, allUserRepo)) {
+        isRepoAvailable.value = true;
+      } else {
+        isRepoAvailable.value = false;
       }
+      pageLoading.value = false
 
     } else if (selectedSector.value?.parent === 'Organization' && selectedSector.value) {
+      pageLoading.value = true
+      const allUserOrg = await fetchOrganizationByUser();
       // @ts-ignore
       selectedSector.value.orgData = selectedSector.value?.parent_obj
-      // @ts-ignore
-      if (selectedSector.value.orgData?.image) {
-        // @ts-ignore
-        selectedSector.value.orgData.image = `${import.meta.env.VITE_BASE_API_URL_DJANGO}${selectedSector.value.orgData.image}`;
+      if(isSlugInOrgList(selectedSector.value?.orgData!, allUserOrg)) {
+        isOrgAvailable.value = true;
+      } else {
+        isOrgAvailable.value = false;
       }
+      pageLoading.value = false
     }
   })
 
@@ -78,7 +103,13 @@
       <p class="sidebar-title">{{title}}</p>
       <PhX color="#C83246" size="24" weight="bold" class="cursor-pointer" @click="resetToDefault"/>
     </VRow>
-    <div class="">
+    <div v-if="pageLoading" class="loading-state-container h-100">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <div v-else class="">
       <VImg
           rounded="lg"
           class="mx-auto"
@@ -116,27 +147,47 @@
                 <PhPencil/>
                 Edit
               </RouterLink>
-                <DeleteDialog @callback="deleteCallback(selectedSector?.uid! as string)">
-                  <p class="cursor-pointer action-menu-item">
-                    <PhTrash/>
-                    Delete
-                  </p>
-                </DeleteDialog>
+              <DeleteDialog @callback="deleteCallback(selectedSector?.uid! as string)">
+                <p class="cursor-pointer action-menu-item">
+                  <PhTrash/>
+                  Delete
+                </p>
+              </DeleteDialog>
             </VSheet>
           </VMenu>
         </VRow>
         <p class="sector-title">{{selectedSector.name}}</p>
         <div class="sector-description">{{selectedSector.address}}</div>
-        <div class="ql-snow">
+        <div v-if="selectedSector.parent == 'Province'" class="sector-description">{{selectedSector.description}}</div>
+        <div v-else class="ql-snow">
           <div v-html="selectedSector.description" class="ql-editor"></div>
         </div>
         <div class="my-3">
           <p class="section-title mb-2">{{selectedSector.parent == 'Province' ? 'Repositories' : 'Tagged Entity'}}</p>
-          <RouterLink
-              v-if="selectedSector.repoData && selectedSector.parent === 'Repository'"
-              class="text-decoration-none "
-              :to="{name: 'repository-data', params: { slug: selectedSector.repoData?.uid }}">
+          <div v-if="selectedSector.repoData && selectedSector.parent === 'Repository'">
+
+            <RouterLink
+                v-if="(selectedSector.repoData?.visibility == 1 || selectedSector.repoData?.visibility == 4) || isRepoAvailable"
+                class="text-decoration-none "
+                :to="{name: 'repository-data', params: { slug: selectedSector.repoData?.uid }}">
+              <div
+                  class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
+              >
+                <VImg
+                    style="border-radius: 8px; flex: none;"
+                    cover
+                    height="40px"
+                    width="40px"
+                    :src="selectedSector.repoData.image ? `${baseURL}${<string>selectedSector.repoData?.image}` : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                />
+                <div class="ml-2">
+                  <p class="default" style="font-size: 15px; font-weight: 600;">{{ selectedSector.repoData?.title }}</p>
+                  <p class="default" style="font-size: 13px; ">{{ selectedSector.repoData?.owner_data?.email }}</p>
+                </div>
+              </div>
+            </RouterLink>
             <div
+                v-else
                 class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
             >
               <VImg
@@ -144,34 +195,52 @@
                   cover
                   height="40px"
                   width="40px"
-                  :src="selectedSector.repoData.image ? <string>selectedSector.repoData?.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                  :src="'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
               />
               <div class="ml-2">
-                <p class="default" style="font-size: 15px; font-weight: 600;">{{ selectedSector.repoData?.title }}</p>
-                <p class="default" style="font-size: 13px; ">{{ selectedSector.repoData?.owner_data?.email }}</p>
+                <p class="default" style="font-size: 15px; font-weight: 600;">Private Entity</p>
+                <p class="default" style="font-size: 13px; ">This entity is private</p>
               </div>
             </div>
-          </RouterLink>
-          <RouterLink
-              v-else-if="selectedSector.orgData && selectedSector.parent === 'Organization'"
-              class="text-decoration-none "
-              :to="{name: 'organization-data', params: { slug: selectedSector.orgData?.uid }}">
-            <div
-                class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
-            >
-              <VImg
-                  style="border-radius: 8px; flex: none;"
-                  cover
-                  height="40px"
-                  width="40px"
-                  :src="selectedSector.orgData.image ? <string>selectedSector.orgData?.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
-              />
-              <div class="ml-2">
-                <p class="default" style="font-size: 15px; font-weight: 600;">{{ selectedSector.orgData?.name }} ({{ selectedSector.orgData?.acronym }})</p>
-                <p class="default" style="font-size: 13px; ">{{ selectedSector.orgData?.president }}</p>
-              </div>
-            </div>
-          </RouterLink>
+          </div>
+         <div v-else-if="selectedSector.orgData && selectedSector.parent === 'Organization'">
+           <RouterLink
+               v-if="(selectedSector.orgData?.visibility == 1 || selectedSector.orgData?.visibility == 4) || isOrgAvailable"
+               class="text-decoration-none "
+               :to="{name: 'organization-data', params: { slug: selectedSector.orgData?.uid }}">
+             <div
+                 class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
+             >
+               <VImg
+                   style="border-radius: 8px; flex: none;"
+                   cover
+                   height="40px"
+                   width="40px"
+                   :src="selectedSector.orgData.image ? `${baseURL}${<string>selectedSector.orgData?.image}` : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+               />
+               <div class="ml-2">
+                 <p class="default" style="font-size: 15px; font-weight: 600;">{{ selectedSector.orgData?.name }} ({{ selectedSector.orgData?.acronym }})</p>
+                 <p class="default" style="font-size: 13px; ">{{ selectedSector.orgData?.president }}</p>
+               </div>
+             </div>
+           </RouterLink>
+           <div
+               v-else
+               class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
+           >
+             <VImg
+                 style="border-radius: 8px; flex: none;"
+                 cover
+                 height="40px"
+                 width="40px"
+                 :src="'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+             />
+             <div class="ml-2">
+               <p class="default" style="font-size: 15px; font-weight: 600;">Private Entity</p>
+               <p class="default" style="font-size: 13px; ">This entity is private</p>
+             </div>
+           </div>
+         </div>
           <div v-else>
             <RouterLink
                 class="text-decoration-none"
