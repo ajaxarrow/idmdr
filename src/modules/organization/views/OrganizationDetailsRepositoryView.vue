@@ -32,7 +32,6 @@ const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
 
-
 const filterRepositoryCallback = (currentSelectedTags: string[]) => {
   const newTags = currentSelectedTags.filter(tag =>
       !selectedTags.value.includes(tag) && !currentTags.value.includes(tag)
@@ -103,7 +102,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <OrganizationDetailsLayout :organization="organization" activeTab="repositories">
+  <OrganizationDetailsLayout
+    :organization="organization"
+    activeTab="repositories">
     <div v-if="organization" class="pa-6">
       <VTextField
           v-model="searchQuery"

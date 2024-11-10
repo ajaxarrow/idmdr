@@ -41,6 +41,7 @@
   const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
     return orgList.some(org => org.slug === organization?.uid);
   };
+
   const getRepositoriesBySector = (sector: string): Repository[] | null => {
     const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
     return foundRepositories.length > 0 ? foundRepositories : null;

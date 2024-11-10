@@ -22,7 +22,9 @@
 </script>
 
 <template>
-  <OrganizationDetailsLayout :organization="organization" :activeTab="'about'">
+  <OrganizationDetailsLayout
+    :organization="organization"
+    :activeTab="'about'">
    <div v-if="organization">
      <div class="px-7 py-5">
        <div>

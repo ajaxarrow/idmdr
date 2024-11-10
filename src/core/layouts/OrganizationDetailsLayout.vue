@@ -9,12 +9,19 @@ import NotFound from "../../assets/images/404.svg";
 import {useScreenStore} from "../stores/screen-size.store.ts";
 import {PhArrowLeft} from "@phosphor-icons/vue";
 import {useUserStore} from "../stores/user.store.ts";
+import {useOrganizationServices} from "../../modules/organization/services/organization.services.ts";
 
 const {user} = useUserStore();
-const path = ref('organizations')
-const tab = ref("about");
+const {fetchOrganizationByUser} = useOrganizationServices()
 const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
+
+const pageLoading = ref(false);
+const isOrgAvailable = ref(false);
+const path = ref('organizations')
+const tab = ref("about");
+
+const emits = defineEmits(['updateOrg'])
 const props = defineProps({
   organization: {
     type: Object as PropType<Organization | null | undefined>,
@@ -51,6 +58,9 @@ const computedTabs = computed(() => {
   });
 });
 
+const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
+  return orgList.some(org => org.slug === organization?.uid);
+};
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -62,77 +72,94 @@ const navigateTo = (linkName: string) => {
   });
 }
 
-onMounted(()=>{
+onMounted(async ()=>{
+  pageLoading.value = true
+  const allUserOrg = await fetchOrganizationByUser();
+  if(props.organization?.visibility == 1 || props.organization?.visibility == 4){
+    isOrgAvailable.value = true;
+  } else {
+    isOrgAvailable.value = isSlugInOrgList(props.organization, allUserOrg);
+  }
+
   if(props.activeTab){
     tab.value = props.activeTab
   }
   path.value = getFirstPath(<string>route.path)
+  pageLoading.value = false
 })
 </script>
 
 <template>
   <MainLayout title="Organization Details">
-    <div v-if="organization" style="height: 100%" class="relative-container circle">
-      <div class="pa-6 relative-container" style="z-index: 20;">
-       <div class="d-flex">
-         <RouterLink
-             :to="{
+    <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <div v-else>
+      <div v-if="organization && isOrgAvailable" style="height: 100%" class="relative-container circle">
+        <div class="pa-6 relative-container" style="z-index: 20;">
+          <div class="d-flex">
+            <RouterLink
+                :to="{
           name: path == 'organizations' ?  'organizations' : 'my-organizations'
         }"
-             class="text-decoration-none text-none">
-           <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
-             <PhArrowLeft size="14" class="mr-1"/>
-             Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
-           </p>
-         </RouterLink>
-       </div>
-        <VRow justify="space-between" align="center" class="ma-0">
-          <VCol md="9" class="pa-0">
-            <div>
-              <p class="text-repository-heading d-flex align-center">
-                {{organization.name}} ({{organization.acronym}})
+                class="text-decoration-none text-none">
+              <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+                <PhArrowLeft size="14" class="mr-1"/>
+                Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
               </p>
-              <p class="text-subtitle">{{ organization.president }}</p>
-              <p class="text-subtitle text-gs20">{{organization.tel_phone}} <span v-if="organization.tel_phone">|</span> {{organization.phone}} <span v-if="organization.email">|</span> {{organization.email}}</p>
-            </div>
-          </VCol>
-          <VCol md="3" class="pa-0" v-if="!isSmall">
-            <VRow class="ma-0" justify="end">
-              <VImg
-                  style="border-radius: 15px"
-                  cover
-                  height="125px"
-                  width="250px"
-                  :src="organization?.image ? organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
-              />
-            </VRow>
-          </VCol>
-        </VRow>
-      </div>
-      <VTabs
-        class="mx-6"
-        color="primary"
-        v-model="tab"
-      >
-        <VTab
-          v-for="tab in computedTabs"
-          class="tab-title text-none mx-2"
-          :value="tab.name.toLowerCase()"
-          @click="navigateTo(<string>tab.linkName)"
+            </RouterLink>
+          </div>
+          <VRow justify="space-between" align="center" class="ma-0">
+            <VCol md="9" class="pa-0">
+              <div>
+                <p class="text-repository-heading d-flex align-center">
+                  {{organization.name}} ({{organization.acronym}})
+                </p>
+                <p class="text-subtitle">{{ organization.president }}</p>
+                <p class="text-subtitle text-gs20">{{organization.tel_phone}} <span v-if="organization?.tel_phone">|</span> {{organization.phone}} <span v-if="organization?.email">|</span> {{organization.email}}</p>
+              </div>
+            </VCol>
+            <VCol md="3" class="pa-0" v-if="!isSmall">
+              <VRow class="ma-0" justify="end">
+                <VImg
+                    style="border-radius: 15px"
+                    cover
+                    height="125px"
+                    width="250px"
+                    :src="organization?.image ? organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                />
+              </VRow>
+            </VCol>
+          </VRow>
+        </div>
+        <VTabs
+            class="mx-6"
+            color="primary"
+            v-model="tab"
         >
-          {{tab.name}}
-        </VTab>
-      </VTabs>
-      <VDivider/>
-      <slot/>
-    </div>
-    <div v-else style="height: 100%">
-      <div style="height:60vh" class="d-flex flex-column justify-center align-center">
-        <VImg
-            :src="NotFound"
-            width="400px"
-        />
-        <p class="text-h4 font-weight-black">Organization Not Found</p>
+          <VTab
+              v-for="tab in computedTabs"
+              class="tab-title text-none mx-2"
+              :value="tab.name.toLowerCase()"
+              @click="navigateTo(<string>tab.linkName)"
+          >
+            {{tab.name}}
+          </VTab>
+        </VTabs>
+        <VDivider/>
+        <slot/>
+      </div>
+      <div v-else style="height: 100%">
+        <div style="height:60vh" class="d-flex flex-column justify-center align-center">
+          <VImg
+              :src="NotFound"
+              width="400px"
+          />
+          <p class="text-h4 font-weight-black">Organization Not Found</p>
+        </div>
       </div>
     </div>
   </MainLayout>

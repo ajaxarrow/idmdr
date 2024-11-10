@@ -338,7 +338,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <OrganizationDetailsLayout :organization="organization" activeTab="settings">
+  <OrganizationDetailsLayout
+    :organization="organization"
+    activeTab="settings">
     <div v-if="loading" class="loading-state-container mt-15">
       <VProgressCircular
           indeterminate
