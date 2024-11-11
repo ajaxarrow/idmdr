@@ -505,6 +505,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
 .action-button{
   font-size: 14px;
   border-radius: 8px;

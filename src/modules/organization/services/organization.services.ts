@@ -344,7 +344,7 @@ export const useOrganizationServices = () => {
   // @ts-ignore
   const fetchOrganizationByUserWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
     try{
-      const res = await server.get(`/v1/user/${userData.uid}/organizations?page=${pageNumber}&page_size=5`, {
+      const res = await server.get(`/v1/user/${userData.uid}/organizations?page=${pageNumber}&page_size=5&is_deleted=false`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }

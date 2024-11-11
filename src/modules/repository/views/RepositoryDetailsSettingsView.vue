@@ -425,7 +425,7 @@ onMounted(async () => {
            </VTextField>
            <div class="my-5 mx-1" v-if="repoMembers.length > 0">
              <div
-                 v-for="member in repoMembers"
+                 v-for="(member, index) in repoMembers"
                  :key="member.membership_uid"
              >
                <VRow v-if="!member.is_deleted" class="ma-0 my-3" justify="space-between" align="center">
@@ -471,7 +471,7 @@ onMounted(async () => {
                    </VSheet>
                  </VMenu>
                </VRow>
-               <VDivider v-if="!member.is_deleted" class="mt-3"/>
+               <VDivider v-if="index != repoMembers.length - 1" class="mt-3"/>
              </div>
            </div>
            <div class="my-5 mx-1" v-else>
