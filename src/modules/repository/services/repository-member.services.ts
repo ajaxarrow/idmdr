@@ -17,21 +17,25 @@ export const useRepositoryMemberServices = () => {
 
   const {mapOrgMembers} = useOrganizationMembersServices();
 
-  const fetchRepoMembers = async (repoID: string): Promise<OrgMember[]> => {
+  const fetchRepoMembers = async (repoID: string, includeDeletedMembers: boolean = false): Promise<OrgMember[]> => {
     try {
       const res = await server.get(`/repo-users/${repoID}`, {
         headers: authorizationHeader,
       });
-      return mapOrgMembers(res.data.results);
+      if(includeDeletedMembers) {
+        return mapOrgMembers(res.data.results);
+      } else {
+        return mapOrgMembers(res.data.results.filter((member: any) => !member.is_deleted));
+      }
     } catch {
       return [];
     }
   };
 
   const addRepoMember = async (repoID: string, member: OrgMember) => {
-    const orgMembers = await fetchRepoMembers(repoID);
+    const orgMembers = await fetchRepoMembers(repoID, true);
+    console.log(orgMembers)
     const existingMember = orgMembers.find((m) => m.user.uid === member.user.uid);
-
     try {
       if (existingMember) {
         if (existingMember.is_deleted) {

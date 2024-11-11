@@ -8,13 +8,21 @@ import {onMounted, ref} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {useUserStore} from "../stores/user.store.ts";
 import {useRepositoryServices} from "../../modules/repository/services/repository.services.ts";
+import {useAccessRequestServices} from "../../modules/repository/services/access-request.services.ts";
+import {Status} from "../../interfaces/enums/status.enum.ts";
+import {useSnackbarStore} from "../stores/snackbar.store.ts";
+import AccessRequestConfirmationDialog from "../../modules/repository/components/AccessRequestConfirmationDialog.vue";
+import {AccessRequest} from "../../interfaces/access-request.interface.ts";
 
-
+const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
 const {fetchRepositoriesByUser} = useRepositoryServices();
-const {user} = useUserStore();
+const {user, userData} = useUserStore();
+const {showSnackbarMessage} = useSnackbarStore();
 const {router, route} = useRouting()
 const tab = ref("data");
 const path = ref('repositories')
+const sentRequest = ref<AccessRequest | null>(null)
+const hasSentRequest = ref(false)
 
 const isMember = ref(false)
 const buttonLoading = ref(false)
@@ -33,6 +41,15 @@ const isSlugInRepoList = (repository: Repository | null | undefined, repoList: R
   return repoList.some(org => org.slug === repository?.slug);
 };
 
+const fetchRequest = async () => {
+  const requests = await fetchAccessRequestsByRepositoryAndRequestor(userData.uid, route.params.slug as string);
+  if(requests.length > 0 && !requests[requests.length - 1].is_approved){
+    hasSentRequest.value = true
+    sentRequest.value = requests[requests.length - 1];
+  } else {
+    hasSentRequest.value = false
+  }
+}
 
 const tabs = [
   {
@@ -81,6 +98,20 @@ const navigateTo = (linkName: string) => {
   });
 }
 
+const addAccessRequestCallback = async () => {
+  buttonLoading.value = true
+  await addAccessRequest({
+    requestor: userData.uid,
+    content_type: 28,
+    object_id: <string>route.params.slug,
+    is_approved: false,
+    is_reviewed: false
+  });
+  await fetchRequest()
+  buttonLoading.value = false
+  showSnackbarMessage('Access Request Sent Successfully', Status.success)
+}
+
 const initialize = async () => {
   pageLoading.value = true;
   buttonLoading.value = true
@@ -97,6 +128,7 @@ const initialize = async () => {
   if(isSlugInRepoList(props.repository, allUserRepo)) {
     isMember.value = true;
   }
+  await fetchRequest()
   buttonLoading.value = false
   pageLoading.value = false;
 }
@@ -153,10 +185,26 @@ onMounted(() => {
               <PhDownload size="16" class="mr-2"/>
               Download
             </VBtnPrimaryFilled>
-            <VBtnPrimaryFilled :loading="buttonLoading" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-              <PhFolderSimpleLock size="16" class="mr-2"/>
-              Request Access
-            </VBtnPrimaryFilled>
+            <div v-else>
+              <VBtnPrimaryFilled
+                  v-if="hasSentRequest"
+                  :loading="buttonLoading"
+                  height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                <PhFolderSimpleLock size="16" class="mr-2"/>
+                {{sentRequest?.is_reviewed && !sentRequest?.is_approved ? 'Request Denied' : 'Pending Request'}}
+              </VBtnPrimaryFilled>
+              <AccessRequestConfirmationDialog
+                  v-else
+                  @callback="addAccessRequestCallback"
+                  content="Are you sure you want to send an access request for this repository? The request will be forwarded for review."
+                  confirm-content="Yes, Send Request!"
+              >
+                <VBtnPrimaryFilled :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                  <PhFolderSimpleLock size="16" class="mr-2"/>
+                  Request Access
+                </VBtnPrimaryFilled>
+              </AccessRequestConfirmationDialog>
+            </div>
           </VRow>
         </div>
         <VTabs

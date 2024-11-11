@@ -17,21 +17,28 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import AddRepoMemberDialog from "../components/AddRepoMemberDialog.vue";
 import jsPDF from 'jspdf';
 import DOMPurify from 'dompurify';
+import {useAccessRequestServices} from "../services/access-request.services.ts";
+import {AccessRequest} from "../../../interfaces/access-request.interface.ts";
+import AccessRequestConfirmationDialog from "../components/AccessRequestConfirmationDialog.vue";
 
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
 const {fetchRepositoryData, fetchRepositoriesByUser, deleteRepository} = useRepositoryServices()
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
+const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
 
 const {route, router} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
+const accessRequestSearchQuery = ref('')
 const memberActionMenu = ref(false)
 const overlayLoading = ref(false)
 const path = ref('repositories')
 const repoMemberData = ref<OrgMember[]>([])
 const repoMembers = ref<OrgMember[]>([])
+const accessRequests = ref<AccessRequest[]>([])
+const accessRequestData = ref<AccessRequest[]>([])
 const userRepoInfo = ref<OrgMember | null | undefined>(null)
 
 const stripHtml = (html: string): string => {
@@ -281,9 +288,17 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
 
 const filterRepoMembersBySearchQuery = () => {
   if(searchQuery.value) {
-    repoMembers.value = repoMemberData.value.filter(member => member.user.username.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
+    repoMembers.value = repoMemberData.value.filter(member => member.user.username.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) || member.user.email.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
   } else {
     repoMembers.value = repoMemberData.value
+  }
+}
+
+const filterAccessRequestBySearchQuery = () => {
+  if(accessRequestSearchQuery.value) {
+    accessRequests.value = accessRequestData.value.filter(request => request.requestor_user_obj?.username.toLowerCase().includes(accessRequestSearchQuery.value.toLowerCase().trim()) || request.requestor_user_obj?.email.toLowerCase().includes(accessRequestSearchQuery.value.toLowerCase().trim()));
+  } else {
+    accessRequests.value = accessRequestData.value
   }
 }
 const getFirstPath = (url: string) => {
@@ -315,6 +330,9 @@ const deleteMemberCallback = async (member: OrgMember) => {
 
 const fetchMembers = async () => {
   const data = await fetchRepoMembers(<string>route.params.slug)
+  const requests = await fetchAccessRequestsByRepository(route.params.slug as string)
+  accessRequests.value = requests
+  accessRequestData.value = requests
   repoMembers.value = data
   repoMemberData.value = data
 }
@@ -326,13 +344,31 @@ const deleteRepoCallback = async () => {
   await router.push({ name: 'my-repositories' })
 }
 
+const manageRequestCallback = async (id: string, isApproved: boolean) => {
+  await updateAccessRequest({
+    content_type: 28,
+    object_id: <string>route.params.slug,
+    is_approved: isApproved,
+    is_reviewed: true}, id
+  )
+  await fetchMembers()
+  showSnackbarMessage('Access Request Denied Successfully', Status.success)
+  memberActionMenu.value = false
+}
+
 watch(() => searchQuery.value, () => {
   filterRepoMembersBySearchQuery()
+});
+
+watch(() => accessRequestSearchQuery.value, () => {
+  filterAccessRequestBySearchQuery()
 });
 
 onMounted(async () => {
   loading.value = true;
   await fetchRepositoryData(route.params.slug as string);
+  accessRequests.value = await fetchAccessRequestsByRepository(route.params.slug as string);
+  accessRequestData.value = accessRequests.value
   path.value = getFirstPath(<string>route.path)
 
   const allUserRepo = await fetchRepositoriesByUser();
@@ -480,9 +516,98 @@ onMounted(async () => {
              </p>
            </div>
          </div>
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
+         <div v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'"  class="mt-2">
+           <VRow v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="ma-0" justify="space-between" align="center">
+             <div>
+               <p class="section-title">Access Requests</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage access requests in the repository </p>
+             </div>
+           </VRow>
+           <VTextField
+               class="my-3"
+               v-model="accessRequestSearchQuery"
+               hide-details
+               variant="outlined"
+               rounded="xl"
+               density="comfortable"
+               color="primary"
+               base-color="gs60"
+           >
+             <template v-slot:prepend-inner>
+               <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
+             </template>
+             <template v-slot:label>
+               <p class="text-gs20">Find users who have requested access</p>
+             </template>
+           </VTextField>
+           <div class="my-5 mx-1" v-if="accessRequests.length > 0">
+             <div
+                 v-for="(accessRequest, index) in accessRequestData"
+                 :key="accessRequest.uid"
+             >
+               <VRow v-if="!(accessRequest.is_approved && accessRequest.is_reviewed)" class="ma-0 my-3" justify="space-between" align="center">
+                 <div class="d-flex align-center">
+                   <VAvatar
+                       size="40"
+                       class="mr-1 cursor-pointer"
+                   >
+                     <VImg :src="accessRequest.requestor_user_obj?.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
+                   </VAvatar>
+                   <div class="mr-2">
+                     <p class="text-name text-container">{{accessRequest.requestor_user_obj?.username}}</p>
+                     <p class="text-name-subtitle">{{accessRequest.requestor_user_obj?.email}} · {{accessRequest.is_reviewed ? 'Denied' : 'Pending'}}</p>
+                   </div>
+                 </div>
+                 <VMenu
+                     location="bottom"
+                     :close-on-content-click="false"
+                 >
+                   <template #activator="{ props }">
+                     <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
+                       Options
+                       <PhDotsThreeOutlineVertical weight="fill"/>
+                     </p>
+                   </template>
+                   <VSheet width="200" class="rounded-b-lg py-2">
+                     <AddRepoMemberDialog
+                         :form-type="FormType.create"
+                         :selectedMember="accessRequest.requestor_user_obj"
+                         :isMemberIncluded="true"
+                         @callback="fetchMembersCallback"
+                         @accessRequestCallback="manageRequestCallback(accessRequest.uid as string, true)"
+
+                     >
+                       <p class="cursor-pointer action-menu-item">
+                         <PhPencil/>
+                         Approve Request
+                       </p>
+                     </AddRepoMemberDialog>
+                     <AccessRequestConfirmationDialog
+                      content="Are you sure you want to deny this access request? The requester will be notified that access was not granted."
+                      confirmContent="Yes, Deny Request"
+                      @callback="manageRequestCallback(accessRequest.uid as string, false)"
+                     >
+                       <p class="cursor-pointer action-menu-item">
+                         <PhTrash/>
+                         Deny Request
+                       </p>
+                     </AccessRequestConfirmationDialog>
+                   </VSheet>
+                 </VMenu>
+               </VRow>
+               <VDivider v-if="!(accessRequest.is_approved && accessRequest.is_reviewed) && index != accessRequests.length - 1" class="mt-3"/>
+             </div>
+           </div>
+           <div class="my-5 mx-1" v-else>
+             <p class="d-flex align-center justify-center">
+               <PhInfo class="mr-1"/>No Access Requests Found
+             </p>
+           </div>
+         </div>
          <VDivider v-if="userRepoInfo?.access_level == 'owner'" class="my-5"/>
          <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2">
-           <VRow  class="ma-0" justify="space-between" align="center">
+           <VRow class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Delete Repository Information</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire repository</p>

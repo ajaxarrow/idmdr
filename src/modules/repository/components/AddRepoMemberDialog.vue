@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, onUpdated, reactive, ref, PropType} from "vue";
+import {computed, onMounted, onUpdated, reactive, ref, PropType, watch} from "vue";
 import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 
 import {useRouting} from "../../../core/composables/useRouting.ts";
@@ -8,7 +8,7 @@ import {useOrganizationMembersServices} from "../../organization/services/organi
 import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
 import RepoAccessLevelInfoDialog from "./RepoAccessLevelInfoDialog.vue";
 
-const emits = defineEmits(['callback'])
+const emits = defineEmits(['callback', 'accessRequestCallback'])
 const props = defineProps({
   formType: {
     type: String as PropType<FormType>,
@@ -19,6 +19,13 @@ const props = defineProps({
   userAccessLevel: {
     type: String,
     default: ''
+  },
+  selectedMember: {
+    type: Object as PropType<User>
+  },
+  isMemberIncluded: {
+    type: Boolean,
+    default: false
   }
 })
 const {fetchUsers} = useOrganizationMembersServices();
@@ -73,7 +80,11 @@ const addMember = async () => {
     await addRepoMember(<string>route.params.slug, newMember);
     orgMembers.value = await fetchRepoMembers(<string>route.params.slug);
     closeDialog();
-    emits('callback')
+    if(props.isMemberIncluded){
+      emits('accessRequestCallback')
+    } else {
+      emits('callback')
+    }
   } catch (e: any) {
 
   }
@@ -133,6 +144,12 @@ onMounted(async () => {
       selectedAccessLevel.value = props.member.access_level
     }
   }
+
+  if(props.isMemberIncluded){
+    if(props.selectedMember){
+      selectedMember.value = props.selectedMember
+    }
+  }
 })
 
 onUpdated(async () => {
@@ -155,7 +172,7 @@ onUpdated(async () => {
         <div>
           <p class="dialog-label mb-2">Member</p>
           <VAutocomplete
-              :disabled="props.formType == FormType.edit"
+              :disabled="(props.formType == FormType.edit) || props.isMemberIncluded!"
               placeholder="Choose Member"
               :item-value="user => user"
               v-model="selectedMember"
