@@ -12,7 +12,7 @@ const props = defineProps({
 })
 
 const {isDesktop} = useScreenStore();
-const {router, route} = useRouting()
+const {route} = useRouting()
 
 // const goToOrganizationDetails = () => {
 //   router.push({
