@@ -14,12 +14,12 @@ const props = defineProps({
 const {isDesktop} = useScreenStore();
 const {router, route} = useRouting()
 
-const goToOrganizationDetails = () => {
-  router.push({
-    name: path.value == '/organizations' ?  'organization-data' : 'my-organization-data',
-    params: { slug: props.organization?.slug }
-  });
-}
+// const goToOrganizationDetails = () => {
+//   router.push({
+//     name: path.value == '/organizations' ?  'organization-data' : 'my-organization-data',
+//     params: { slug: props.organization?.slug }
+//   });
+// }
 
 onMounted(() => {
   path.value = <string>route.path
@@ -27,7 +27,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mb-2 cursor-pointer" @click="goToOrganizationDetails()">
+  <RouterLink class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == '/organizations' ?  'organization-data' : 'my-organization-data', params: { slug: props.organization?.slug } }">
     <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
       <div class="d-flex align-center">
         <VImg
@@ -54,17 +54,19 @@ onMounted(() => {
       </VBtn>
     </VRow>
     <VDivider class="mt-2"/>
-  </div>
+  </RouterLink>
 
 </template>
 
 <style scoped>
   .organization-title{
     font-weight: 600;
+    color: black !important;
   }
   
   .organization-subtitle{
     font-size: 14px;
+    color: black !important;
   }
   
   .view-details-btn{

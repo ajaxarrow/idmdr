@@ -13,12 +13,12 @@
   const {router, route} = useRouting()
   const path = ref('/repositories')
 
-  const goToRepositoryDetails = () => {
-    router.push({
-      name: path.value === '/repositories' ?  'repository-data' : 'my-repository-data',
-      params: { slug: props.repository?.slug }
-    });
-  }
+  // const goToRepositoryDetails = () => {
+  //   router.push({
+  //     name: path.value === '/repositories' ?  'repository-data' : 'my-repository-data',
+  //     params: { slug: props.repository?.slug }
+  //   });
+  // }
 
   onMounted(() => {
     path.value = <string>route.path
@@ -26,7 +26,7 @@
 </script>
 
 <template>
-  <div class="mb-2 cursor-pointer " @click="goToRepositoryDetails()">
+  <RouterLink class="mb-2 cursor-pointer text-decoration-none " :to="{ name: path == '/repositories' ?  'repository-data' : 'my-repository-data', params: { slug: props.repository?.slug } }">
     <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
         <div class="d-flex align-center">
           <VImg
@@ -53,16 +53,18 @@
         </VBtn>
       </VRow>
     <VDivider class="mt-2"/>
-  </div>
+  </RouterLink>
 </template>
 
 <style scoped>
   .repository-title{
     font-weight: 600;
+    color: black !important;
   }
 
   .repository-subtitle{
     font-size: 14px;
+    color: black !important;
   }
 
   .view-details-btn{

@@ -15,15 +15,15 @@ const totalComments = ref(0);
 
 
 
-const goToTopicDetails = () => {
-  router.push({
-    name: 'repository-discussions-topic',
-    params: {
-      slug: <string>route.params.slug,
-      topic: props.topic?.id
-    }
-  });
-}
+// const goToTopicDetails = () => {
+//   router.push({
+//     name: 'repository-discussions-topic',
+//     params: {
+//       slug: <string>route.params.slug,
+//       topic: props.topic?.id
+//     }
+//   });
+// }
 
 onMounted(() => {
   //@ts-ignore
@@ -33,7 +33,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mb-2 cursor-pointer" @click="goToTopicDetails()">
+  <RouterLink
+    class="mb-2 cursor-pointer text-decoration-none"
+    :to="{
+        name: 'repository-discussions-topic',
+        params: {
+          slug: <string>route.params.slug,
+          topic: props.topic?.id
+        }
+      }"
+  >
     <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
       <div class="d-flex align-center">
         <VImg
@@ -66,17 +75,19 @@ onMounted(() => {
       </VBtn>
     </VRow>
     <VDivider class="mt-2"/>
-  </div>
+  </RouterLink>
 </template>
 
 <style scoped>
 
 .topic-title{
   font-weight: 600;
+  color: black !important;
 }
 
 .topic-subtitle{
   font-size: 14px;
+  color: black !important;
 }
 
 .view-details-btn{
