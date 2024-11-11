@@ -272,6 +272,26 @@ export const useOrganizationServices = () => {
     await saveOrganization(organization, `/v1/organization/${id}/update`, 'update', id);
   };
 
+  const deleteOrganization = async (id: string) => {
+    try {
+      await server.patch(`/v1/organization/${id}/update`, {
+        is_deleted: true
+      },{
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      await localStorage.setItem('snackbarmessage', JSON.stringify({
+        message: 'Organization deleted successfully',
+        status: 'success'
+      }))
+      // console.log(res.data);
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
   const mapOrgData = async (rawData: any): Promise<Organization[]> => {
     return rawData.map((org: any) => {
       const organization = org.organization || org;
@@ -452,6 +472,7 @@ export const useOrganizationServices = () => {
     loading,
     addOrganization,
     updateOrganization,
+    deleteOrganization,
     errorMessage,
     clearErrorMessage,
     hasErrorMessages,

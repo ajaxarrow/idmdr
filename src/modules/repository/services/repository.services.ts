@@ -238,6 +238,26 @@ export const useRepositoryServices = () => {
     await saveRepository(repository, `/repositories/${id}`, 'update', id)
   }
 
+  const deleteRepository = async (id: string) => {
+    try {
+      await server.patch(`/repositories/${id}`, {
+        is_deleted: true
+      },{
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      await localStorage.setItem('snackbarmessage', JSON.stringify({
+        message: 'Repository deleted successfully',
+        status: 'success'
+      }))
+      // console.log(res.data);
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
   const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
     return Promise.all(
       rawData.map(async (repo: any) => {
@@ -547,6 +567,7 @@ export const useRepositoryServices = () => {
     fetchRepositoriesByOrganization,
     addRepository,
     updateRepository,
+    deleteRepository,
     errorMessage,
     clearErrorMessage,
     hasErrorMessages,

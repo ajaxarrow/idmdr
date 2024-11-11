@@ -21,13 +21,14 @@ import DOMPurify from 'dompurify';
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
-const {fetchRepositoryData, fetchRepositoriesByUser} = useRepositoryServices()
+const {fetchRepositoryData, fetchRepositoriesByUser, deleteRepository} = useRepositoryServices()
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 
-const {route} = useRouting()
+const {route, router} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
 const memberActionMenu = ref(false)
+const overlayLoading = ref(false)
 const path = ref('repositories')
 const repoMemberData = ref<OrgMember[]>([])
 const repoMembers = ref<OrgMember[]>([])
@@ -318,6 +319,13 @@ const fetchMembers = async () => {
   repoMemberData.value = data
 }
 
+const deleteRepoCallback = async () => {
+  overlayLoading.value = true
+  await deleteRepository(route.params.slug as string)
+  overlayLoading.value = false
+  await router.push({ name: 'my-repositories' })
+}
+
 watch(() => searchQuery.value, () => {
   filterRepoMembersBySearchQuery()
 });
@@ -471,6 +479,26 @@ onMounted(async () => {
                <PhInfo class="mr-1"/>No Repository Members Found
              </p>
            </div>
+         </div>
+         <VDivider v-if="userRepoInfo?.access_level == 'owner'" class="my-5"/>
+         <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2">
+           <VRow  class="ma-0" justify="space-between" align="center">
+             <div>
+               <p class="section-title">Delete Repository Information</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire repository</p>
+             </div>
+             <DeleteDialog
+                 @callback="deleteRepoCallback"
+             >
+               <VBtnPrimaryFilled
+                   height="41px"
+                   rounded="lg"
+                   class="satoshi-md"
+                   style="font-size: 14px !important; background-color: #b00020 !important">
+                 Delete Repository
+               </VBtnPrimaryFilled>
+             </DeleteDialog>
+           </VRow>
          </div>
        </div>
      </div>

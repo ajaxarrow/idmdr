@@ -20,12 +20,13 @@ import jsPDF from 'jspdf';
 import DOMPurify from 'dompurify';
 import {useOrgType} from "../composables/useOrgType.ts";
 
-const {route} = useRouting()
+const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationByUser, deleteOrganization} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
+const overlayLoading = ref(false);
 const loading = ref(false)
 const {userData} = useUserStore();
 const searchQuery = ref('')
@@ -318,6 +319,13 @@ const fetchMembers = async () => {
   orgMemberData.value = data
 }
 
+const deleteOrgCallback = async () => {
+  overlayLoading.value = true
+  await deleteOrganization(route.params.slug as string)
+  overlayLoading.value = false
+  await router.push({ name: 'my-organizations' })
+}
+
 onMounted(async () => {
   loading.value = true
   const allUserOrg = await fetchOrganizationByUser();
@@ -413,7 +421,7 @@ onMounted(async () => {
             </VTextField>
             <div class="my-5 mx-1" v-if="orgMembers.length > 0">
               <div
-                  v-for="member in orgMembers"
+                  v-for="(member, index) in orgMembers"
                   :key="member.membership_uid"
               >
                 <VRow v-if="!member.is_deleted" class="ma-0 my-3" justify="space-between" align="center">
@@ -461,7 +469,7 @@ onMounted(async () => {
                     </VSheet>
                   </VMenu>
                 </VRow>
-                <VDivider v-if="!member.is_deleted" class="mt-3"/>
+                <VDivider v-if="index != orgMembers.length - 1" class="mt-3"/>
               </div>
             </div>
             <div class="my-5 mx-1" v-else>
@@ -469,6 +477,26 @@ onMounted(async () => {
                 <PhInfo class="mr-1"/>No Organization Members Found
               </p>
             </div>
+          </div>
+          <VDivider v-if="userOrgInfo?.access_level == 'owner'" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner'" class="mt-2">
+            <VRow  class="ma-0" justify="space-between" align="center">
+              <div>
+                  <p class="section-title">Delete Organization Information</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire organization</p>
+              </div>
+              <DeleteDialog
+                @callback="deleteOrgCallback"
+              >
+                <VBtnPrimaryFilled
+                    height="41px"
+                    rounded="lg"
+                    class="satoshi-md"
+                    style="font-size: 14px !important; background-color: #b00020 !important">
+                  Delete Organization
+                </VBtnPrimaryFilled>
+              </DeleteDialog>
+            </VRow>
           </div>
         </div>
       </div>
