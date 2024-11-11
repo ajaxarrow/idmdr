@@ -34,7 +34,6 @@ export const useRepositoryMemberServices = () => {
 
   const addRepoMember = async (repoID: string, member: OrgMember) => {
     const orgMembers = await fetchRepoMembers(repoID, true);
-    console.log(orgMembers)
     const existingMember = orgMembers.find((m) => m.user.uid === member.user.uid);
     try {
       if (existingMember) {

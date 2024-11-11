@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, onUpdated, reactive, ref, PropType, watch} from "vue";
+import {computed, onMounted, onUpdated, reactive, ref, PropType} from "vue";
 import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 
 import {useRouting} from "../../../core/composables/useRouting.ts";
