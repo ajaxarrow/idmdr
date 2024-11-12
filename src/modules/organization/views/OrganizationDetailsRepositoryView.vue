@@ -62,12 +62,10 @@ const fetchMoreRepositories = async () => {
       5,
       lastItemValue.value
   );
-  console.log(data)
   repositoryData.value = [...repositoryData.value, ...data];
   searchedRepositories.value = repositoryData.value
   lastItemValue.value = lastItemValue.value + 1
   if(data.length === 0){
-    console.log('yes')
     reachEnd.value = true
   }
 }
