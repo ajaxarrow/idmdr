@@ -44,12 +44,14 @@ const appBarWidthStyle = computed(() => {
             <IconMenuDeep @click="toggleProfileSidebar" class="cursor-pointer" />
           </transition>
           <VRow align="center" v-else>
-            <p class="text-org d-flex align-center mx-2">
-              My Organization
-              <PhCaretDown size="18" class="ml-2"/>
-            </p>
-            <PhMagnifyingGlass size="24" class="mx-4"/>
-            <PhBell size="24"/>
+<!--            <p class="text-org d-flex align-center mx-2">-->
+<!--              My Organization-->
+<!--              <PhCaretDown size="18" class="ml-2"/>-->
+<!--            </p>-->
+<!--            <PhMagnifyingGlass size="24" class="mx-4"/>-->
+            <RouterLink :to="{name: 'notifications'}" class="text-decoration-none">
+              <VBadge color="#b00020" dot><PhBell size="24" class="icon-bell"/></VBadge>
+            </RouterLink>
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">
               <p class="text-name text-container mb-1">{{userData.username}}</p>
@@ -73,6 +75,12 @@ const appBarWidthStyle = computed(() => {
 </template>
 
 <style scoped>
+  .icon-bell{
+    border-radius: 50%;
+  }
+  .icon-bell:hover{
+    background-color: #e4e4e4;
+  }
   .text-nav-title{
     font-size: 18px !important;
     font-weight: 800 !important;

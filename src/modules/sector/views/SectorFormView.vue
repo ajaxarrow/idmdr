@@ -622,7 +622,7 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   right: -168px;
-  top: -460px;
+  top: -490px;
   width: 640px;
   height: 591px;
   border-radius: 50%;
