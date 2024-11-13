@@ -56,9 +56,11 @@ watch(() => selectedTags.value, () => {
   searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
 })
 
-watch(() => selectedTags.value, (newVal) => {
+watch(() => selectedTags.value, async (newVal) => {
   if (newVal.includes('All Repositories')){
     selectedTags.value = [];
+    lastItemValue.value = 1
+    await fetchMoreRepositories()
   }
 })
 
