@@ -352,7 +352,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
                 />
                 {{file.name}}
               </div>
-              <VDivider v-if="index != repository.files?.length - 1" />
+              <VDivider v-if="index !== (repository.files?.length ?? 1) - 1" />
             </VListItem>
           </div>
         </VSheet>
