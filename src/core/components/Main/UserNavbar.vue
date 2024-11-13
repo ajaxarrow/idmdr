@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {PhBell, PhCaretDown, PhList, PhMagnifyingGlass} from "@phosphor-icons/vue";
+import {PhBell, PhList} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screen-size.store.ts";
 import {IconMenuDeep} from "@tabler/icons-vue";
 import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
