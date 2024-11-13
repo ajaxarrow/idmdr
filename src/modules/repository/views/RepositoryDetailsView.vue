@@ -338,7 +338,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           <VDivider/>
           <div class="pa-2">
             <VListItem
-                v-for="file in repository.files"
+                v-for="(file, index) in repository.files"
                 @click="selectFile(file.description!, file.name!, file.attachment! as string)">
               <div
                   class="my-2 pa-1 d-flex align-center "
@@ -352,7 +352,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
                 />
                 {{file.name}}
               </div>
-              <VDivider/>
+              <VDivider v-if="index != repository.files?.length - 1" />
             </VListItem>
           </div>
         </VSheet>
