@@ -469,7 +469,7 @@ onMounted(async () => {
                     </VSheet>
                   </VMenu>
                 </VRow>
-                <VDivider v-if="index != orgMembers.length - 1" class="mt-3"/>
+                <VDivider v-if="!member.is_deleted && index !== orgMembers.length - 1" class="mt-3"/>
               </div>
             </div>
             <div class="my-5 mx-1" v-else>
