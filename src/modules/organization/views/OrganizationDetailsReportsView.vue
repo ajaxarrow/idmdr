@@ -5,16 +5,12 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted, ref} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
-import {useUserStore} from "../../../core/stores/user.store.ts";
-import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
-const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const loading = ref(false)
-const {userData} = useUserStore();
-const searchQuery = ref('')
 const path = ref('organizations')
 
 

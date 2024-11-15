@@ -5,18 +5,13 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
-import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
-import {useUserStore} from "../../../core/stores/user.store.ts";
 
 
-const {userData} = useUserStore();
-const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
 const {fetchRepositoryData, fetchRepositoriesByUser} = useRepositoryServices()
 
 const {route, router} = useRouting()
 const loading = ref(false)
-const searchQuery = ref('')
 const path = ref('repositories')
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
