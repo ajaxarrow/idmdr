@@ -65,6 +65,12 @@ export const routes = [
     component: () => import('../modules/user/views/NotificationsView.vue')
   },
   {
+    path: '/profile',
+    name: 'profile',
+    // @ts-ignore
+    component: () => import('../modules/user/views/UserProfileView.vue')
+  },
+  {
     path: '/settings',
     name: 'settings',
     // @ts-ignore

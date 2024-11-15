@@ -6,8 +6,7 @@ import {
   PhBell,
   PhCloud,
   PhQuestion,
-  PhSignOut,
-  PhUserCircleGear,
+  PhSignOut, PhUserCircle,
   PhUsersFour
 } from "@phosphor-icons/vue";
 
@@ -32,10 +31,15 @@ const navs = [
     icon: PhBell,
   },
   {
-    title: "Account Settings",
-    link: "/settings/account",
-    icon: PhUserCircleGear,
+    title: "My Profile",
+    link: "/profile",
+    icon: PhUserCircle,
   },
+  // {
+  //   title: "Account Settings",
+  //   link: "/settings/account",
+  //   icon: PhUserCircleGear,
+  // },
 ];
 
 
@@ -67,7 +71,7 @@ const navs = [
 
     <VCard min-width="250">
       <VList lines="three" density="compact">
-        <VListItem to="/profile">
+        <VListItem>
           <template v-slot:prepend>
             <VAvatar class="mt-2">
               <VImg

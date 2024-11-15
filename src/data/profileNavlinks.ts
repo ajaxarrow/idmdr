@@ -1,8 +1,7 @@
 import {
   PhAirplaneLanding,
   PhBell,
-  PhCloud,
-  PhUserCircleGear,
+  PhCloud, PhUserCircle,
   PhUsersFour,
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
@@ -27,10 +26,15 @@ export const profileNavlinks = [
       icon: PhBell,
     },
     {
-      name: "Account Settings",
-      link: "/settings/account",
-      icon: PhUserCircleGear,
+      name: "My Profile",
+      link: "/profile",
+      icon: PhUserCircle,
     },
+    // {
+    //   name: "Account Settings",
+    //   link: "/settings/account",
+    //   icon: PhUserCircleGear,
+    // },
   ] : [  {
     name: "Back to Landing",
     link: "/",

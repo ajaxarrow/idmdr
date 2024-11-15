@@ -1,12 +1,11 @@
 import {
   PhCloud,
-  PhGearSix,
   PhHouse,
   PhMapPinLine,
   PhSignOut,
   PhUsersFour,
   PhUsersThree,
-  PhAirplaneLanding
+  PhAirplaneLanding, PhUserCircle
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
@@ -45,10 +44,15 @@ export const navLinks = [
       icon: PhUsersFour
     },
     {
-      name: 'Settings',
-      link: '/settings',
-      icon: PhGearSix
-    }
+      name: "My Profile",
+      link: "/profile",
+      icon: PhUserCircle,
+    },
+    // {
+    //   name: 'Settings',
+    //   link: '/settings',
+    //   icon: PhGearSix
+    // }
   ] : []),
   {
     name: user.value ? 'Signout' : 'Back to Landing',
