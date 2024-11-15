@@ -1,24 +1,39 @@
-import {PhBell, PhMagnifyingGlass, PhUser, PhUsersThree} from "@phosphor-icons/vue";
+import {
+  PhAirplaneLanding,
+  PhBell,
+  PhCloud,
+  PhUserCircleGear,
+  PhUsersFour,
+} from "@phosphor-icons/vue";
+import {useUserStore} from "../core/stores/user.store.ts";
+
+const {user} = useUserStore()
 
 export const profileNavlinks = [
-  {
-    name: 'Organization',
-    link: '/organizations',
-    icon: PhUsersThree
-  },
-  {
-    name: 'Search',
-    link: '/search',
-    icon: PhMagnifyingGlass
-  },
-  {
-    name: 'Notifications',
-    link: '/notifications',
-    icon: PhBell
-  },
-  {
-    name: 'My Account',
-    link: '/account',
-    icon: PhUser
-  }
+  ...(user.value ? [
+    {
+      name: "My Repositories",
+      link: "/my-repositories",
+      icon: PhCloud,
+    },
+    {
+      name: 'My Organizations',
+      link: '/my-organizations',
+      icon: PhUsersFour
+    },
+    {
+      name: "Notifications",
+      link: "/notifications",
+      icon: PhBell,
+    },
+    {
+      name: "Account Settings",
+      link: "/settings/account",
+      icon: PhUserCircleGear,
+    },
+  ] : [  {
+    name: "Back to Landing",
+    link: "/",
+    icon: PhAirplaneLanding,
+  },]),
 ]
