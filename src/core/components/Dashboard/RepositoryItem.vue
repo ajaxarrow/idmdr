@@ -26,7 +26,7 @@
 </script>
 
 <template>
-  <RouterLink class="mb-2 cursor-pointer text-decoration-none " :to="{ name: path == '/repositories' ?  'repository-data' : 'my-repository-data', params: { slug: props.repository?.slug } }">
+  <RouterLink class="mb-2 cursor-pointer text-decoration-none " :to="{ name: path == '/my-repositories' ?  'my-repository-data' : 'repository-data', params: { slug: props.repository?.slug } }">
     <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
         <div class="d-flex align-center">
           <VImg
@@ -42,7 +42,7 @@
           </div>
         </div>
         <VBtn
-            :to="{ name: path == '/repositories' ?  'repository-data' : 'my-repository-data', params: { slug: props.repository?.slug } }"
+            :to="{ name: path == '/my-repositories' ?  'my-repository-data' : 'repository-data', params: { slug: props.repository?.slug } }"
             class="text-none bg-background view-details-btn"
             height="35px"
             width="95px"
