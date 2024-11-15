@@ -5,20 +5,8 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted, ref} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
-import AddMemberDialog from "../components/AddMemberDialog.vue";
-import AccessLeveLInfoDialog from "../components/AccessLeveLInfoDialog.vue";
-import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
-import {OrgMember} from "../../../interfaces/member.interface.ts";
-import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
-import {watch} from "vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
-import {Status} from "../../../interfaces/enums/status.enum.ts";
-import DeleteDialog from "../../../core/components/DeleteDialog.vue";
-import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
-import jsPDF from 'jspdf';
-import DOMPurify from 'dompurify';
-import {useOrgType} from "../composables/useOrgType.ts";
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();

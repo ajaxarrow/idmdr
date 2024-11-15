@@ -1,25 +1,13 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {useRepositoryServices} from "../services/repository.services.ts";
-import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
-import {OrgMember} from "../../../interfaces/member.interface.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
-import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
-import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
-import AccessLeveLInfoDialog from "../../organization/components/AccessLeveLInfoDialog.vue";
-import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
-import DeleteDialog from "../../../core/components/DeleteDialog.vue";
-import AddRepoMemberDialog from "../components/AddRepoMemberDialog.vue";
-import jsPDF from 'jspdf';
-import DOMPurify from 'dompurify';
-import {useAccessRequestServices} from "../services/access-request.services.ts";
-import {AccessRequest} from "../../../interfaces/access-request.interface.ts";
-import AccessRequestConfirmationDialog from "../components/AccessRequestConfirmationDialog.vue";
+
 
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
