@@ -5,6 +5,7 @@ import {IconMenuDeep} from "@tabler/icons-vue";
 import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
 import {computed} from "vue";
 import {useUserStore} from "../../stores/user.store.ts";
+import UserAvatarMenu from "./UserAvatarMenu.vue";
 const {isSmall, isMobile, isLargePhone} = useScreenStore();
 const {toggleSidebar, isCollapsed, toggleProfileSidebar} = useToggleSidebar();
 const {userData} = useUserStore();
@@ -50,23 +51,24 @@ const appBarWidthStyle = computed(() => {
 <!--            </p>-->
 <!--            <PhMagnifyingGlass size="24" class="mx-4"/>-->
             <RouterLink :to="{name: 'notifications'}" class="text-decoration-none">
-              <VBadge color="#b00020" dot><PhBell size="24" class="icon-bell"/></VBadge>
+              <VBadge color="#b00020" dot><PhBell size="24" class="icon-bell" color="#000000"/></VBadge>
             </RouterLink>
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">
               <p class="text-name text-container mb-1">{{userData.username}}</p>
               <p class="text-right text-name-subtitle">{{ userData.email }}</p>
             </div>
-            <VAvatar
-                size="45"
-                class="ml-1 cursor-pointer"
-            >
-              <VImg :src="userData.profilePicture"></VImg>
-              <VTooltip
-                  activator="parent"
-                  location="bottom"
-              >Account</VTooltip>
-            </VAvatar>
+            <UserAvatarMenu/>
+<!--            <VAvatar-->
+<!--                size="45"-->
+<!--                class="ml-1 cursor-pointer"-->
+<!--            >-->
+<!--              <VImg :src="userData.profilePicture"></VImg>-->
+<!--              <VTooltip-->
+<!--                  activator="parent"-->
+<!--                  location="bottom"-->
+<!--              >Account</VTooltip>-->
+<!--            </VAvatar>-->
           </VRow>
         </VCol>
       </VRow>
