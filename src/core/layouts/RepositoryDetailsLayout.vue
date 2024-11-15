@@ -51,26 +51,17 @@ const fetchRequest = async () => {
   }
 }
 
-const tabs = ref([
-  {
-    name: "Data",
-    // linkName: "repository-data"
-  },
-  {
-    name: "Discussions",
-    // linkName: "repository-discussions"
-  },
-  ...(user.value && isMember.value ? [{
-    name: "Reports",
-    // linkName: "repository-settings"
-  }] : []),
-  ...(user.value ? [
-    {
-      name: "Settings",
-      // linkName: "repository-settings"
-    },
-  ] : [])
-])
+const getTabs = () => {
+  return [
+    { name: "Data"},
+    { name: "Discussions"},
+    ...(user.value && isMember.value ? [{ name: "Reports"}] : []),
+    ...(user.value ? [
+      { name: "Settings" }] : [])
+  ]
+}
+
+const tabs = ref(getTabs())
 
 const computedTabs = computed(() => {
   return tabs.value.map(tab => {
@@ -135,26 +126,7 @@ const initialize = async () => {
   }
   if(isSlugInRepoList(props.repository, allUserRepo)) {
     isMember.value = true;
-    tabs.value = [
-      {
-        name: "Data",
-        // linkName: "repository-data"
-      },
-      {
-        name: "Discussions",
-        // linkName: "repository-discussions"
-      },
-      ...(user.value && isMember.value ? [{
-        name: "Reports",
-        // linkName: "repository-settings"
-      }] : []),
-      ...(user.value ? [
-        {
-          name: "Settings",
-          // linkName: "repository-settings"
-        },
-      ] : [])
-    ]
+    tabs.value = getTabs()
   }
   await fetchRequest()
   buttonLoading.value = false

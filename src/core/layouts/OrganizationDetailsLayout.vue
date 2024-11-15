@@ -31,12 +31,16 @@ const props = defineProps({
   }
 });
 
-const tabs = ref([
-  { name: "About" },
-  { name: "Repositories" },
-  ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
-  ...(user.value ? [{ name: "Settings" }] : [])
-])
+const getTabs = () => {
+  return [
+    { name: "About" },
+    { name: "Repositories" },
+    ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
+    ...(user.value ? [{ name: "Settings" }] : [])
+  ]
+}
+
+const tabs = ref(getTabs())
 
 
 // Create a computed property that maps over the tabs array
@@ -87,12 +91,7 @@ const initialize = async () => {
 
   if(isSlugInOrgList(props.organization, allUserOrg)){
     isMember.value = true
-    tabs.value = [
-      { name: "About" },
-      { name: "Repositories" },
-      ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
-      ...(user.value ? [{ name: "Settings" }] : [])
-    ]
+    tabs.value = getTabs()
   }
 
   if (props.activeTab) {
