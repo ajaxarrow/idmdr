@@ -63,7 +63,7 @@ onMounted(async () => {
     </div>
     <div v-else>
       <div v-if="repository" class="px-6 py-7">
-        Hello {{repository.is_member}}
+        Hello
       </div>
     </div>
   </RepositoryDetailsLayout>
