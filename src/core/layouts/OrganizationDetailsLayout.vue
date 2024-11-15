@@ -16,6 +16,7 @@ const {fetchOrganizationByUser} = useOrganizationServices()
 const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
 
+const isMember = ref(false)
 const pageLoading = ref(false);
 const isOrgAvailable = ref(false);
 const path = ref('organizations')
@@ -30,22 +31,25 @@ const props = defineProps({
   }
 });
 
-const tabs = [
+const tabs = ref([
   { name: "About" },
   { name: "Repositories" },
+  ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
   ...(user.value ? [{ name: "Settings" }] : [])
-];
+])
 
 
 // Create a computed property that maps over the tabs array
 const computedTabs = computed(() => {
-  return tabs.map(tab => {
+  return tabs.value.map(tab => {
     let linkName;
 
     if (tab.name === "About") {
       linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
     } else if (tab.name === "Repositories") {
       linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
+    } else if (tab.name === "Reports" && user.value && isMember.value) {
+      linkName = path.value === 'organizations' ? 'organization-reports' : 'my-organization-reports';
     } else if (tab.name === "Settings" && user.value) {
       linkName = path.value === 'organizations' ? 'organization-settings' : 'my-organization-settings';
     }
@@ -79,6 +83,16 @@ const initialize = async () => {
     isOrgAvailable.value = true;
   } else {
     isOrgAvailable.value = isSlugInOrgList(props.organization, allUserOrg);
+  }
+
+  if(isSlugInOrgList(props.organization, allUserOrg)){
+    isMember.value = true
+    tabs.value = [
+      { name: "About" },
+      { name: "Repositories" },
+      ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
+      ...(user.value ? [{ name: "Settings" }] : [])
+    ]
   }
 
   if (props.activeTab) {

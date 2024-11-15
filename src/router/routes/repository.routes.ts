@@ -54,6 +54,12 @@ const repositoryRoutes = [
     component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionTopicView.vue')
   },
   {
+    path: '/repositories/:slug/reports',
+    name: 'repository-reports',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsReportsView.vue')
+  },
+  {
     path: '/repositories/:slug/settings',
     name: 'repository-settings',
     // @ts-ignore
@@ -70,6 +76,12 @@ const repositoryRoutes = [
     name: 'my-repository-discussions',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsDiscussionView.vue')
+  },
+  {
+    path: '/my-repositories/:slug/reports',
+    name: 'my-repository-reports',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryDetailsReportsView.vue')
   },
   {
     path: '/my-repositories/:slug/discussions/:topic',

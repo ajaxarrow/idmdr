@@ -24,6 +24,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsRepositoryView.vue'),
   },
   {
+    path: '/my-organizations/:slug/reports',
+    name: 'my-organization-reports',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsReportsView.vue'),
+  },
+  {
     path: '/my-organizations/:slug/settings',
     name: 'my-organization-settings',
     // @ts-ignore
@@ -58,6 +64,12 @@ const organizationRoutes = [
     name: 'organization-settings',
     // @ts-ignore
     component: () => import('../../modules/organization/views/OrganizationDetailsSettingsView.vue'),
+  },
+  {
+    path: '/organizations/:slug/reports',
+    name: 'organization-reports',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsReportsView.vue'),
   },
   {
     path: '/organizations/:slug',
