@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import vuetify from "./plugins/vuetify.ts";
 import PhosphorIcons from "@phosphor-icons/vue";
 import router from './router'
+import VueApexCharts from "vue3-apexcharts";
 // @ts-ignore
 import App from './App.vue'
 const app = createApp(App);
@@ -11,4 +12,5 @@ const app = createApp(App);
 app.use(router);
 app.use(vuetify);
 app.use(PhosphorIcons);
+app.use(VueApexCharts);
 app.mount('#app')
