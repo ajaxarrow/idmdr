@@ -24,15 +24,18 @@ const timeIntervals = [
 const chartOptions = computed(() => {
   return {
     chart: {
-      type: "area",
+      type: "line",
       height: 350,
       fontFamily: `inherit`,
-      foreColor: "#adb0bb",
-      zoom: {
+      foreColor: "#a1aab2",
+      toolbar: { show: false },
+      dropShadow: {
         enabled: true,
-      },
-      toolbar: {
-        show: false,
+        color: "rgba(0,0,0,0.2)",
+        top: 12,
+        left: 4,
+        blur: 3,
+        opacity: 0.4,
       },
     },
     colors: ["#4782FB", "#47C4F4", "#48f1c4"],
@@ -40,7 +43,7 @@ const chartOptions = computed(() => {
       enabled: false,
     },
     stroke: {
-      width: "3",
+      width: 7,
       curve: "smooth",
     },
     xaxis: {
@@ -56,6 +59,14 @@ const chartOptions = computed(() => {
       labels: {
         show: true,
       },
+    },
+    markers: {
+      size: 4,
+      opacity: 0.9,
+      colors: ["#4e79ff", "#4e79ff", "#4e79ff"],
+      strokeColor: "#fff",
+      strokeWidth: 2,
+      hover: { size: 7 },
     },
     legend: {
       show: true,
@@ -165,7 +176,7 @@ onMounted(async () => {
             label="Group by"
         ></VAutocomplete>
         <apexchart
-            type="area"
+            type="line"
             height="350"
             :options="chartOptions"
             :series="areaChart.series"
