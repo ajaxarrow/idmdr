@@ -47,7 +47,7 @@ const chartOptions = computed(() => ({
     type: "gradient",
     gradient: {
       shade: "dark",
-      gradientToColors: ["#0b70fb"],
+      gradientToColors: ["#23668b"],
       shadeIntensity: 1,
       type: "horizontal",
       opacityFrom: 1,
