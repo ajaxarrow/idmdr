@@ -120,3 +120,11 @@ ul {
 .scroll-top-link:hover{
     text-decoration: underline;
 }
+
+.add-link{
+    color: #23668b;
+}
+
+.add-link:hover{
+    text-decoration: underline !important;
+}

@@ -5,6 +5,7 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted, ref} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
+import OrgRepoCharts from "../components/reports/OrgRepoCharts.vue";
 
 
 const {route, router} = useRouting()
@@ -59,8 +60,11 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
     <div v-else>
-      <div v-if="organization" class="py-6 px-7">
-        Reports
+      <div v-if="organization">
+        <div class="px-7 py-5">
+          <p class="text-about-heading py-3">Created Repositories</p>
+          <OrgRepoCharts/>
+        </div>
       </div>
     </div>
   </OrganizationDetailsLayout>
@@ -68,27 +72,10 @@ onMounted(async () => {
 
 <style scoped>
 
-.action-button{
-  font-size: 14px;
-  border-radius: 8px;
-  padding: 10px;
-  border: 2px solid #e6e6e6;
-}
-
-.action-button:hover{
-  background-color: #F0F5F9;
-}
-
-.action-menu-item{
-  padding: 10px 15px !important;
-  font-size: 14px;
-  display: flex;
-  align-items: center !important;
-  gap: 10px !important;
-}
-
-.action-menu-item:hover{
-  background-color: #e0e3e3;
+.text-about-heading{
+  font-weight: 800;
+  font-size: 20px;
+  margin-bottom: 5px;
 }
 
 .section-title{
