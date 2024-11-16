@@ -43,6 +43,18 @@ export const useAccessRequestServices = () => {
     }
   }
 
+  const fetchAccessRequestsByRequestor = async (userID: string,): Promise<AccessRequest[]> => {
+    try {
+      const res = await server.get(`/access_request/?requestor=${userID}`, {
+        headers: authorizationHeader
+      })
+      return res.data
+    } catch (e: any) {
+      console.log(e)
+      return [];
+    }
+  }
+
   const fetchAccessRequestsByRepositoryAndRequestor = async (userID: string, repoID: string): Promise<AccessRequest[]> => {
     try {
       const res = await server.get(`/access_request/?object_id=${repoID}&requestor=${userID}`, {
@@ -73,7 +85,8 @@ export const useAccessRequestServices = () => {
     updateAccessRequest,
     fetchAccessRequestsByRepository,
     fetchAccessRequestsByRepositoryAndRequestor,
-    fetchAccessRequestData
+    fetchAccessRequestData,
+    fetchAccessRequestsByRequestor
   }
 
 }

@@ -6,6 +6,7 @@ import {useRepositoryServices} from "../../repository/services/repository.servic
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useSectorServices} from "../../sector/services/sector.services.ts";
 import UserSectorCharts from "../components/Profile/UserSectorCharts.vue";
+import UserAccessRequests from "../components/Profile/UserAccessRequestsChart.vue";
 
 const {userData} = useUserStore()
 const {fetchRepositoriesByUser} = useRepositoryServices()
@@ -105,6 +106,11 @@ onMounted(async () => {
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">User Sector Statistics</p>
         <UserSectorCharts/>
+      </div>
+      <VDivider/>
+      <div class="px-7 py-5">
+        <p class="text-about-heading py-3">User Access Requests Statistics</p>
+        <UserAccessRequests/>
       </div>
       <VDivider/>
       <div class="px-7 py-5">
