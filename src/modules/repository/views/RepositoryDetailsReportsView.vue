@@ -5,7 +5,7 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
-import RepoAccessRequestCharts from "../components/Charts/RepoAccessRequestCharts.vue";
+import RepoAccessRequestCharts from "../components/Reports/RepoAccessRequestCharts.vue";
 
 
 const {repository} = useRepositoryStore();

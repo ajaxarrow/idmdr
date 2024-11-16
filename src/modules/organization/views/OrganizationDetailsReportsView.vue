@@ -5,7 +5,7 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {onMounted, ref} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
-import OrgRepoCharts from "../components/reports/OrgRepoCharts.vue";
+import OrgRepoCharts from "../components/Reports/OrgRepoCharts.vue";
 
 
 const {route, router} = useRouting()
