@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { Repository } from "../../../../interfaces/repository.interface";
 import { useRouting } from "../../../../core/composables/useRouting";
-import {format, getWeek, parseISO, startOfWeek} from "date-fns";
+import {format, parseISO, startOfWeek} from "date-fns";
 import NotFound from "../../../../assets/images/404.svg";
 import {AccessRequest} from "../../../../interfaces/access-request.interface.ts";
 import {useAccessRequestServices} from "../../services/access-request.services.ts";
@@ -92,7 +91,7 @@ const filteredData = computed(() => {
         break;
     }
 
-    groupedData.set(key, (groupedData.get(key) || 0) + 1);
+    groupedData.set(key as string, (groupedData.get(key) || 0) + 1);
   });
 
   return Array.from(groupedData, ([key, count]) => ({

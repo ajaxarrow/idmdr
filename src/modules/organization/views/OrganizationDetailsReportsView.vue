@@ -78,27 +78,11 @@ onMounted(async () => {
   margin-bottom: 5px;
 }
 
-.section-title{
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 0.5px;
-}
 
 :deep(.v-field__outline) {
   opacity: 70%;
   color: #8C8C8C;
   --v-field-border-width: 1px !important;
-}
-
-.text-name{
-  font-size: 16px !important;
-  font-weight: 700 !important;
-}
-
-.text-name-subtitle{
-  font-size: 12px !important;
-  font-weight: 400 !important;
-  line-height: 0.75;
 }
 
 </style>
