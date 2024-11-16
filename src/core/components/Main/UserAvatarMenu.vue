@@ -4,7 +4,7 @@ import {useUserStore} from "../../stores/user.store.ts";
 import {
   PhAirplaneLanding,
   PhBell,
-  PhCloud,
+  PhCloud, PhFingerprint, PhKey,
   PhQuestion,
   PhSignOut, PhUserCircle,
   PhUsersFour
@@ -109,6 +109,41 @@ const navs = [
               <VListItemSubtitle class="text-body-2">{{
                   nav.title
                 }}</VListItemSubtitle>
+            </div>
+          </VListItem>
+        </VList>
+        <VDivider />
+      </div>
+      <div v-else>
+        <VList variant="flat" elevation="0" :lines="false" density="compact">
+          <VListItem
+              color="primary"
+              to="/auth?tab=login"
+              link
+              density="compact"
+              class="py-3"
+          >
+            <template v-slot:prepend>
+              <PhFingerprint size="20" weight="fill" class="mr-2 icon" />
+            </template>
+
+            <div>
+              <VListItemSubtitle class="text-body-2">Login</VListItemSubtitle>
+            </div>
+          </VListItem>
+          <VListItem
+              color="primary"
+              to="/auth?tab=register"
+              link
+              density="compact"
+              class="py-3"
+          >
+            <template v-slot:prepend>
+              <PhKey size="20" weight="fill" class="mr-2 icon" />
+            </template>
+
+            <div>
+              <VListItemSubtitle class="text-body-2">Register</VListItemSubtitle>
             </div>
           </VListItem>
         </VList>
