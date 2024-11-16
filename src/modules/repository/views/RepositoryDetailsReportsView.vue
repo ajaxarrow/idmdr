@@ -5,6 +5,8 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
+import OrgRepoCharts from "../../organization/components/reports/OrgRepoCharts.vue";
+import RepoAccessRequestCharts from "../components/Charts/RepoAccessRequestCharts.vue";
 
 
 const {repository} = useRepositoryStore();
@@ -57,8 +59,11 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
     <div v-else>
-      <div v-if="repository" class="px-6 py-7">
-        Hello
+      <div v-if="repository">
+        <div class="px-7 py-5">
+          <p class="text-about-heading py-3">Access Requests Received</p>
+          <RepoAccessRequestCharts/>
+        </div>
       </div>
     </div>
   </RepositoryDetailsLayout>
@@ -109,5 +114,11 @@ onMounted(async () => {
   font-size: 12px !important;
   font-weight: 400 !important;
   line-height: 0.75;
+}
+
+.text-about-heading{
+  font-weight: 800;
+  font-size: 20px;
+  margin-bottom: 5px;
 }
 </style>
