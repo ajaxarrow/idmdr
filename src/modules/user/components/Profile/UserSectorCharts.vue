@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 
-import { useRouting } from "../../../../core/composables/useRouting";
 import {format, parseISO, startOfWeek} from "date-fns";
 import NotFound from "../../../../assets/images/404.svg";
 import {Sector} from "../../../../interfaces/sector.interface.ts";
@@ -9,7 +8,6 @@ import {useSectorServices} from "../../../sector/services/sector.services.ts";
 import {useUserStore} from "../../../../core/stores/user.store.ts";
 
 const {userData} = useUserStore()
-const { route } = useRouting();
 const {fetchSectors} = useSectorServices()
 const sectors = ref<Sector[]>([]);
 const pageLoading = ref(false);
