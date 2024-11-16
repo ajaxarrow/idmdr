@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useRouting } from "../../../../core/composables/useRouting";
-import { format, parseISO, startOfWeek } from "date-fns";
+import {format, parseISO, startOfWeek} from "date-fns";
 import NotFound from "../../../../assets/images/404.svg";
-import { AccessRequest } from "../../../../interfaces/access-request.interface.ts";
-import { useAccessRequestServices } from "../../services/access-request.services.ts";
+import {AccessRequest} from "../../../../interfaces/access-request.interface.ts";
+import {useAccessRequestServices} from "../../services/access-request.services.ts";
 
 const { route } = useRouting();
 const { fetchAccessRequestsByRepository } = useAccessRequestServices();
@@ -16,16 +16,63 @@ const timeIntervals = [
   { label: "Day", value: "day" },
   { label: "Week", value: "week" },
   { label: "Month", value: "month" },
-  { label: "Year", value: "year" },
+  { label: "Year", value: "year" }
 ];
 
-// Filter data into Pending, Approved, and Denied based on criteria
-const filteredData = computed(() => {
-  const pending = new Map<string, number>();
-  const approved = new Map<string, number>();
-  const denied = new Map<string, number>();
+// Chart options (line chart)
+const chartOptions = computed(() => ({
+  chart: {
+    type: "line",
+    height: 350,
+    fontFamily: `inherit`,
+    foreColor: "#a1aab2",
+    toolbar: { show: false },
+    dropShadow: {
+      enabled: true,
+      color: "rgba(0,0,0,0.2)",
+      top: 12,
+      left: 4,
+      blur: 3,
+      opacity: 0.4,
+    },
+  },
+  stroke: {
+    width: 7,
+    curve: "smooth",
+  },
+  xaxis: {
+    type: "datetime",
+  },
+  fill: {
+    type: "gradient",
+    gradient: {
+      shade: "dark",
+      gradientToColors: ["#23668b"],
+      shadeIntensity: 1,
+      type: "horizontal",
+      opacityFrom: 1,
+      opacityTo: 0.9,
+      stops: [0, 100, 100, 100],
+    },
+  },
+  markers: {
+    size: 4,
+    opacity: 0.9,
+    colors: ["#4e79ff"],
+    strokeColor: "#fff",
+    strokeWidth: 2,
+    hover: { size: 7 },
+  },
+  yaxis: { min: 0 },
+  grid: { show: false },
+  tooltip: { theme: "light" },
+}));
 
-  accessRequests.value.forEach((req) => {
+// Reactive chart data based on selected time interval
+const filteredData = computed(() => {
+  const groupedData = new Map<string, number>();
+
+  accessRequests.value.forEach(req => {
     const date = parseISO(req.created_at as string);
     let key;
 
@@ -44,57 +91,31 @@ const filteredData = computed(() => {
         break;
     }
 
-    if (!req.is_reviewed) {
-      pending.set(key, (pending.get(key) || 0) + 1);
-    } else if (req.is_approved) {
-      approved.set(key, (approved.get(key) || 0) + 1);
-    } else {
-      denied.set(key, (denied.get(key) || 0) + 1);
-    }
+    groupedData.set(key as string, (groupedData.get(key as string) || 0) + 1);
   });
 
-  return {
-    pending: Array.from(pending, ([x, y]) => ({ x, y })),
-    approved: Array.from(approved, ([x, y]) => ({ x, y })),
-    denied: Array.from(denied, ([x, y]) => ({ x, y })),
-  };
+  return Array.from(groupedData, ([key, count]) => ({
+    x: key,
+    y: count,
+  }));
 });
 
-// Chart options for area chart
-const chartOptions = computed(() => ({
-  chart: {
-    type: "area",
-    height: 350,
-    fontFamily: `inherit`,
-    foreColor: "#adb0bb",
-    zoom: { enabled: true },
-    toolbar: { show: false },
-  },
-  colors: ["#4782FB", "#47C4F4", "#FF5733"],
-  dataLabels: { enabled: false },
-  stroke: { width: 3, curve: "smooth" },
-  xaxis: { type: "datetime" },
-  yaxis: { opposite: false, labels: { show: true } },
-  legend: { show: true, position: "bottom" },
-  grid: { show: false },
-  tooltip: { theme: "dark" },
-}));
-
-// Reactive chart data based on the filtered data
 const gradientChart = computed(() => ({
   series: [
-    { name: "Pending", data: filteredData.value.pending },
-    { name: "Approved", data: filteredData.value.approved },
-    { name: "Denied", data: filteredData.value.denied },
+    {
+      name: "Access Requests Found",
+      data: filteredData.value,
+    },
   ],
 }));
 
 // Fetch repository data
 onMounted(async () => {
   pageLoading.value = true;
-  accessRequests.value = await fetchAccessRequestsByRepository(<string>route.params.slug);
+  accessRequests.value = await fetchAccessRequestsByRepository(<string>route.params.slug)
   pageLoading.value = false;
 });
+
 </script>
 
 <template>
@@ -104,8 +125,12 @@ onMounted(async () => {
     </div>
     <div v-else>
       <div v-if="accessRequests.length === 0" class="d-flex justify-center align-center flex-column pa-5 ga-2" style="height: 350px;">
-        <VImg :src="NotFound" width="300px" />
-        <p>There are no access requests found.</p>
+        <VImg
+            :src="NotFound"
+            width="300px"
+        />
+        <p>
+          There are no access requests found.</p>
       </div>
       <div v-else>
         <VAutocomplete
@@ -117,7 +142,7 @@ onMounted(async () => {
         ></VAutocomplete>
 
         <apexchart
-            type="area"
+            type="line"
             height="350"
             :options="chartOptions"
             :series="gradientChart.series"

@@ -45,6 +45,11 @@ const chartOptions = computed(() => {
     },
     xaxis: {
       type: "datetime",
+      range: 7 * 24 * 60 * 60 * 1000,
+      scrollbar: {
+        enabled: true,
+        height: 20,
+      },
     },
     yaxis: {
       opposite: false,
@@ -101,8 +106,6 @@ const filteredData = computed(() => {
       groupedData.denied.set(key as string, (groupedData.denied.get(key as string) || 0) + 1);
     }
   });
-
-  console.log(groupedData)
 
   return {
     pending: Array.from(groupedData.pending, ([key, count]) => ({ x: key, y: count })),
@@ -161,7 +164,6 @@ onMounted(async () => {
             :item-value="interval => interval.value"
             label="Group by"
         ></VAutocomplete>
-
         <apexchart
             type="area"
             height="350"
