@@ -91,7 +91,7 @@ const filteredData = computed(() => {
         break;
     }
 
-    groupedData.set(key as string, (groupedData.get(key) || 0) + 1);
+    groupedData.set(key as string, (groupedData.get(key as string) || 0) + 1);
   });
 
   return Array.from(groupedData, ([key, count]) => ({
