@@ -8,7 +8,7 @@ import {useUserStore} from "../../stores/user.store.ts";
 import UserAvatarMenu from "./UserAvatarMenu.vue";
 const {isSmall, isMobile, isLargePhone} = useScreenStore();
 const {toggleSidebar, isCollapsed, toggleProfileSidebar} = useToggleSidebar();
-const {userData} = useUserStore();
+const {userData, user} = useUserStore();
 const props = defineProps({
   title: {
     type: String,
@@ -50,7 +50,7 @@ const appBarWidthStyle = computed(() => {
 <!--              <PhCaretDown size="18" class="ml-2"/>-->
 <!--            </p>-->
 <!--            <PhMagnifyingGlass size="24" class="mx-4"/>-->
-            <RouterLink :to="{name: 'notifications'}" class="text-decoration-none">
+            <RouterLink v-if="user" :to="{name: 'notifications'}" class="text-decoration-none">
               <VBadge color="#b00020" dot><PhBell size="24" class="icon-bell" color="#000000"/></VBadge>
             </RouterLink>
             <VDivider class="mx-4 my-1" vertical/>
