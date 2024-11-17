@@ -23,9 +23,9 @@ export const useRepositoryMemberServices = () => {
         headers: authorizationHeader,
       });
       if(includeDeletedMembers) {
-        return mapOrgMembers(res.data.results);
+        return mapOrgMembers(res.data);
       } else {
-        return mapOrgMembers(res.data.results.filter((member: any) => !member.is_deleted));
+        return mapOrgMembers(res.data.filter((member: any) => !member.is_deleted));
       }
     } catch {
       return [];
