@@ -11,10 +11,12 @@ import OrganizationDetailsSidebar from "./Organizations/OrganizationDetailsSideb
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
 import {useSectorServices} from "../../sector/services/sector.services.ts";
+import {useFilterStore} from "../stores/filters.store.ts";
 
   const {fetchOrganizations} = useOrganizationServices()
   const {mapOrganizations} = useOrganizationStore();
-  const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
+  const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
+  const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, } = useFilterStore();
   const {removeSelectedSector, allSectors} = useSectorsStore();
   const {fetchSectors} = useSectorServices()
   const mapContainer = shallowRef<HTMLDivElement | null>(null);

@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import {useMapStore} from "../../stores/map.store.ts";
+import {useFilterStore} from "../../stores/filters.store.ts";
 
-const {dotDensityLayer} = useMapStore();
+const {dotDensityLayer} = useFilterStore();
 
   const productionData = ref([
+    {
+      title: 'Commodities',
+      color: "#00FFA6",
+      value: false
+    },
+    {
+      title: 'Northern Mindanao Consortiums',
+      color: "#00FFA6",
+      value: false
+    },
     {
       title: 'Primary Agriculture Lands',
       color: "#c77d32",
@@ -28,11 +38,6 @@ const {dotDensityLayer} = useMapStore();
     {
       title: 'Sugarcane Plantation',
       color: "#15561c",
-      value: false
-    },
-    {
-      title: 'Commodities',
-      color: "#00FFA6",
       value: false
     },
   ])
