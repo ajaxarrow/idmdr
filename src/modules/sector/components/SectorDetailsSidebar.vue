@@ -16,13 +16,18 @@
   import {useRepositoryServices} from "../../repository/services/repository.services.ts";
   import {useOrganizationServices} from "../../organization/services/organization.services.ts";
   import {Organization} from "../../../interfaces/organization.interface.ts";
+  //@ts-ignore
+  import * as turf from "@turf/turf";
+  import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+
 
   const baseURL = import.meta.env.VITE_BASE_API_URL_DJANGO;
+  const {isEmptyObject} = useObjectChecker()
   const {user, userData} = useUserStore()
   const {selectedSector, removeSelectedSector, title, allSectors} = useSectorsStore();
   const {deleteSector, fetchSectors} = useSectorServices()
-  const {fetchRepositoriesByUser} = useRepositoryServices()
-  const {fetchOrganizationByUser} = useOrganizationServices()
+  const {fetchRepositoriesByUser, fetchRepositories} = useRepositoryServices()
+  const {fetchOrganizationByUser, fetchOrganizations} = useOrganizationServices()
   const {showSnackbarMessage} = useSnackbarStore();
   const {resetToDefault, setupBoundaries, removeBoundaries} = useMapStore();
 
@@ -32,6 +37,8 @@
   const isOrgAvailable = ref(false);
   const loading = ref(false);
   const pageLoading = ref(false);
+  const publicOrgs = ref<Organization[]>([]);
+  const selectedOrgs = ref<Organization[]>([]);
 
   const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
     return repoList.some(org => org.slug === repository?.uid);
@@ -82,11 +89,29 @@
         isOrgAvailable.value = false;
       }
       pageLoading.value = false
+    } else if(selectedSector.value && selectedSector.value?.parent === 'Province') {
+      selectedOrgs.value = []
+      pageLoading.value = true
+      const multiPolygon = turf.multiPolygon(
+          selectedSector.value?.geojson.features.map(feature => feature.geometry.coordinates)
+      );
+
+      publicOrgs.value.forEach(org => {
+        if(!isEmptyObject(org.geojson)) {
+          const point = turf.centroid(org.geojson)
+          if(turf.booleanPointInPolygon(point, multiPolygon.geometry)) {
+            selectedOrgs.value.push(org)
+          }
+        }
+      })
+
+      pageLoading.value = false
     }
   })
 
-  onMounted(() => {
+  onMounted(async () => {
     removeSelectedSector();
+    publicOrgs.value = await fetchOrganizations();
   })
 
   onUnmounted(() => {
@@ -164,7 +189,7 @@
           <div v-html="selectedSector.description" class="ql-editor"></div>
         </div>
         <div class="my-3">
-          <p class="section-title mb-2">{{selectedSector.parent == 'Province' ? 'Repositories' : 'Tagged Entity'}}</p>
+          <p class="section-title mb-2">{{selectedSector.parent == 'Province' ? 'Organizations' : 'Tagged Entity'}}</p>
           <div v-if="selectedSector.repoData && selectedSector.parent === 'Repository'">
 
             <RouterLink
@@ -244,27 +269,28 @@
          </div>
           <div v-else>
             <RouterLink
-                class="text-decoration-none"
-                v-if="getRepositoriesBySector(selectedSector.slug as string)"
-                v-for="repository in getRepositoriesBySector(selectedSector.slug as string)"
-                :to="{name: 'repository-data', params: { slug: repository.slug  }}">
+                v-for="org in selectedOrgs"
+                v-if="selectedOrgs.length > 0"
+                class="text-decoration-none "
+                :to="{name: 'organization-data', params: { slug: org.uid }}">
               <div
-                  class="d-flex align-center my-1 cursor-pointer"
+                  class="d-flex align-center my-1 pa-1 cursor-pointer repo-item"
               >
                 <VImg
-                    style="border-radius: 8px"
+                    style="border-radius: 8px; flex: none;"
                     cover
                     height="40px"
                     width="40px"
-                    :src="repository.image ? <string>repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                    :src="org.image ? `${baseURL}${<string>org.image}` : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
                 />
                 <div class="ml-2">
-                  <p class="default">{{ repository.title }}</p>
+                  <p class="default" style="font-size: 15px; font-weight: 600;">{{ org.name }} ({{ org.acronym }})</p>
+                  <p class="default" style="font-size: 13px; ">{{ org.president }}</p>
                 </div>
               </div>
             </RouterLink>
             <p v-else class="my-1  d-flex align-center justify-center">
-              <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
+              <PhInfo size="19" class="mr-1 mb-1"/>  No organizations found
             </p>
           </div>
         </div>
