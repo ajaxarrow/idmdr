@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import {repositories} from "../../../data/repository.ts";
   import {useSectorsStore} from "../stores/sectors.store.ts";
   import {Repository} from "../../../interfaces/repository.interface.ts";
   import {PhDotsThreeOutlineVertical, PhInfo, PhPencil, PhTrash, PhX} from "@phosphor-icons/vue";
