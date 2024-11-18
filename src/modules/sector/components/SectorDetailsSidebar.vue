@@ -26,7 +26,7 @@
   const {user, userData} = useUserStore()
   const {selectedSector, removeSelectedSector, title, allSectors} = useSectorsStore();
   const {deleteSector, fetchSectors} = useSectorServices()
-  const {fetchRepositoriesByUser, fetchRepositories} = useRepositoryServices()
+  const {fetchRepositoriesByUser} = useRepositoryServices()
   const {fetchOrganizationByUser, fetchOrganizations} = useOrganizationServices()
   const {showSnackbarMessage} = useSnackbarStore();
   const {resetToDefault, setupBoundaries, removeBoundaries} = useMapStore();
@@ -49,10 +49,6 @@
     return orgList.some(org => org.slug === organization?.uid);
   };
 
-  const getRepositoriesBySector = (sector: string): Repository[] | null => {
-    const foundRepositories = repositories.filter(repository => repository.sectors?.includes(sector));
-    return foundRepositories.length > 0 ? foundRepositories : null;
-  }
 
   const deleteCallback = async (id: string) => {
     loading.value = true
@@ -93,7 +89,7 @@
       selectedOrgs.value = []
       pageLoading.value = true
       const multiPolygon = turf.multiPolygon(
-          selectedSector.value?.geojson.features.map(feature => feature.geometry.coordinates)
+          selectedSector.value?.geojson.features.map((feature: any) => feature.geometry.coordinates)
       );
 
       publicOrgs.value.forEach(org => {
