@@ -17,12 +17,14 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.vue";
 import {useSectorServices} from "../services/sector.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useFilterStore} from "../../map/stores/filters.store.ts";
 
 const {fetchOrganizations} = useOrganizationServices()
 const {user} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
-const {map, lnglat, setupBoundaries, dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
+const {map, lnglat, setupBoundaries, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
+const {dotDensityLayer} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
 const {fetchSectors} = useSectorServices()
 const {router} = useRouting();
