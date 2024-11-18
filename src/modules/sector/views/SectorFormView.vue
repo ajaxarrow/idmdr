@@ -75,14 +75,14 @@ const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
   isGeoJSONDrawn.value = isJSONDrawn
 }
 
-const scrollToTop = () => {
-  setTimeout(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, 100);
-}
+// const scrollToTop = () => {
+//   setTimeout(() => {
+//     window.scrollTo({
+//       top: 0,
+//       behavior: 'smooth'
+//     });
+//   }, 100);
+// }
 
 const closeGeoJSONPreview = () => {
   isGeoJSONPreview.value = false
@@ -91,12 +91,12 @@ const closeGeoJSONPreview = () => {
 
 const openMapPreview = () => {
   isMapPreview.value = true
-  scrollToTop()
+  // scrollToTop()
 }
 
 const openGeoJSONPreview = () => {
   isGeoJSONPreview.value = true
-  scrollToTop()
+  // scrollToTop()
 }
 
 const closePreview = () => {
