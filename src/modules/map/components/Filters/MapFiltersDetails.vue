@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import {useMapStore} from "../../stores/map.store.ts";
   import {PhCircle} from "@phosphor-icons/vue";
+  import {useFilterStore} from "../../stores/filters.store.ts";
 
-  const {dotDensityLayer} = useMapStore();
+  const {dotDensityLayer} = useFilterStore();
   const legends = [
     {
       commodity: 'Corn',
