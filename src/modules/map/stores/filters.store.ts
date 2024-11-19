@@ -4,9 +4,16 @@ import {useMapStore} from "./map.store.ts";
 import {createGlobalState} from "@vueuse/core";
 //@ts-ignore
 import * as turf from "@turf/turf";
+import boundaries from "../../../data/boundaries.ts";
+import chroma from "chroma-js";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 
+const {isEmptyObject} = useObjectChecker()
 const {map} = useMapStore();
 const dotDensityLayer = ref(false);
+const provinceConsortiumsLayer = ref(false);
 
 const numPoints = 500
 const getRandomNumber = (min: number, max: number) => {
@@ -14,6 +21,32 @@ const getRandomNumber = (min: number, max: number) => {
 }
 
 const randomPoints = ref([])
+const {fetchOrganizations} = useOrganizationServices()
+
+const fetchOrgCountPerProvinces = async (publicOrgs: Organization[]) => {
+
+  boundaries.forEach((boundary: any) => {
+    const selectedOrgs = ref<Organization[]>([]);
+
+    const multiPolygon = turf.multiPolygon(
+      boundary.geojson.features.map((feature: any) => feature.geometry.coordinates)
+    );
+
+    publicOrgs.forEach(org => {
+      if(!isEmptyObject(org.geojson)) {
+        const point = turf.centroid(org.geojson)
+        if(turf.booleanPointInPolygon(point, multiPolygon.geometry)) {
+          selectedOrgs.value.push(org)
+        }
+      }
+    })
+    // @ts-ignore
+    vizData.value[`${boundary.slug}-org`].organizations = selectedOrgs.value.length
+
+  })
+
+
+}
 
 //@ts-ignore
 const generateRandomCoordinates = (geojson) => {
@@ -94,7 +127,163 @@ const loadRandomCoordinates = (boundaries: Sector[]) => {
 }
 
 
+const vizData = ref({
+  'bukidnon-org': { name: 'Bukidnon', organizations: 7},
+  'camiguin-org': { name: 'Camiguin', organizations: 0},
+  'lanao-del-norte-org': { name: 'Lanao del Norte', organizations: 2},
+  'misamis-occidental-org': { name: 'Misamis Occidental', organizations: 1},
+  'misamis-oriental-org': { name: 'Misamis Oriental', organizations: 0},
+})
+
+
+const organizationData = Object.keys(vizData.value).reduce((agg, id) => {
+  // @ts-ignore
+  agg.push(vizData.value[id].organizations);
+  return agg;
+}, []);
+
+const getPrecision = (num: number): number => {
+  const digits = Math.floor(num).toString().length;
+  return Math.pow(10, digits - 1);
+};
+
+const roundDown = (num: number, precision: number = 0): number => {
+  num = parseFloat(num.toString());
+  return precision ? Math.floor(num / precision) * precision : num;
+};
 
 
 
-export const useFilterStore = createGlobalState(() => ({loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, dotDensityLayer}))
+const roundLimits = (limits: number[]): number[] =>
+  limits.map((num) => {
+    const precision = getPrecision(num);
+    return roundDown(num, precision);
+  });
+
+const limits = roundLimits(chroma.limits(organizationData, 'e', 4));
+//chroma color scale
+const colorScale = chroma.scale(['rgba(222,235,247,1)', 'rgba(49,130,189,1)']).mode('lch').colors(5);
+
+
+
+const createPaintColor = (limits: number[], colorScale: string[]): Record<number, string> => {
+  const stepObject: Record<number, string> = {};
+
+  // Loop through the limits and colorScale to create the step object
+  for (let i = 0; i < limits.length; i++) {
+    stepObject[limits[i]] = colorScale[i];
+  }
+
+  // Return the step object with limits and corresponding colors
+  return stepObject;
+};
+
+
+
+// const setProvince = () => {
+//   // @ts-ignore
+//   // data.forEach(
+//   //   (feature: any) => {
+//   //     console.log(feature.properties.ID_2)
+//   //     const province = feature.properties.PROVINCE;
+//   //     // Check if there's a corresponding entry in vizData for the province
+//   //     const vizKey = province.toLowerCase().replace(/ /g, '-') + '-org';
+//   //     // @ts-ignore
+//   //     const organizationCount = vizData[vizKey].organizations;
+//   //
+//   //     // Set the feature state for the current feature based on the province data
+//   //     map.value?.setFeatureState(
+//   //       {
+//   //         source: 'provinceData',
+//   //         id: feature.properties.ID_2
+//   //       },
+//   //       {
+//   //         hello: 'hi',
+//   //         organizations: organizationCount
+//   //       }
+//   //     );
+//   //   }
+//   // )
+//
+//   // if(data?.length !== 0) {
+//   //   //@ts-ignore
+//   //   map.value?.off('data', afterLoad)
+//   // }
+// }
+
+const getColorForPopulation = (stepObject: Record<number, string>, population: number): string => {
+  // Sort the limits to ensure we go through the ranges in ascending order
+  const limits = Object.keys(stepObject).map(Number).sort((a, b) => a - b);
+
+  // Check if the population is within the first range (0 to the first limit)
+  if (population <= limits[0]) {
+    return stepObject[limits[0]];
+  }
+
+  // Loop through the limits to find the corresponding color
+  for (let i = 0; i < limits.length; i++) {
+    if (population <= limits[i]) {
+      return stepObject[limits[i]];
+    }
+  }
+
+  // If the population is greater than the last limit, return the last color
+  return stepObject[limits[limits.length - 1]];
+};
+
+
+
+
+
+const loadConsortiumLayer = async (transparent: boolean = false) => {
+
+  const orgs = await fetchOrganizations()
+  await fetchOrgCountPerProvinces(orgs)
+  const paintColor = createPaintColor(limits, colorScale);
+
+  boundaries.forEach((boundary: any) => {
+
+    // @ts-ignore
+    const population = vizData.value[`${boundary.slug}-org`].organizations;
+    const fillColor = getColorForPopulation(paintColor, population);
+
+    map.value?.addSource(boundary.slug, {
+      type: 'geojson',
+      data: boundary.geojson,
+    });
+
+    // @ts-ignore
+    map.value?.addLayer({
+      id: `${boundary.slug}-org`,
+      type: 'fill',
+      source: boundary.slug,
+      layout: {},
+
+      'paint': {
+        // @ts-ignore
+        'fill-color': fillColor,
+        'fill-opacity': transparent ? 0 : 1,
+        'fill-outline-color': '#000',
+      },
+    });
+  });
+}
+
+
+const removeConsortiumLayer = () => {
+  boundaries.forEach((boundary: any) => {
+    if (map.value?.getLayer(`${boundary.slug}-org`)) {
+      map.value?.removeLayer(`${boundary.slug}-org`);
+    }
+
+    // Remove the source associated with the boundary
+    if (map.value?.getSource(boundary.slug)) {
+      map.value?.removeSource(boundary.slug);
+    }
+  });
+}
+
+
+
+
+export const useFilterStore = createGlobalState(() => ({loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, dotDensityLayer, limits, colorScale, vizData, provinceConsortiumsLayer, loadConsortiumLayer, removeConsortiumLayer}))

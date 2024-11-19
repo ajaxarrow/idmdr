@@ -1,64 +1,59 @@
 <script setup lang="ts">
-import {ref, watch} from "vue";
-import {useFilterStore} from "../../stores/filters.store.ts";
+import { ref, watch } from "vue";
+import { useFilterStore } from "../../stores/filters.store.ts";
 
-const {dotDensityLayer} = useFilterStore();
+const { dotDensityLayer, provinceConsortiumsLayer } = useFilterStore();
 
-  const productionData = ref([
-    {
-      title: 'Commodities',
-      color: "#00FFA6",
-      value: false
-    },
-    {
-      title: 'Northern Mindanao Consortiums',
-      color: "#00FFA6",
-      value: false
-    },
-    {
-      title: 'Primary Agriculture Lands',
-      color: "#c77d32",
-      value: false
-    },
-    {
-      title: 'Plantation Cover',
-      color: "#2d1fa4",
-      value: false
-    },
-    {
-      title: 'Corn Planted Area',
-      color: "#84c732",
-      value: false
-    },
-    {
-      title: 'Vegatable Gardens',
-      color: "#c73293",
-      value: false
-    },
-    {
-      title: 'Sugarcane Plantation',
-      color: "#15561c",
-      value: false
-    },
-  ])
+const productionData = ref([
+  {
+    title: 'Commodities',
+    color: "#00FFA6",
+    value: false
+  },
+  {
+    title: 'Northern Mindanao Consortiums',
+    color: "#00FFA6",
+    value: false
+  },
+]);
+
+// Watcher to ensure only one switch is open at a time
+const toggleSwitch = (selectedSwitch: string) => {
+  productionData.value.forEach((data) => {
+    if (data.title !== selectedSwitch) {
+      data.value = false; // Close all other switches
+    }
+  });
+};
 
 watch(
     () => productionData.value.find(data => data.title === 'Commodities'),
     (newVal) => {
       if (newVal) {
-        dotDensityLayer.value = newVal.value
+        toggleSwitch('Commodities'); // Close other switches when this one is opened
+        dotDensityLayer.value = newVal.value;
       }
     },
     { deep: true }
 );
 
-
+watch(
+    () => productionData.value.find(data => data.title === 'Northern Mindanao Consortiums'),
+    (newVal) => {
+      if (newVal) {
+        toggleSwitch('Northern Mindanao Consortiums'); // Close other switches when this one is opened
+        provinceConsortiumsLayer.value = newVal.value;
+      }
+    },
+    { deep: true }
+);
 
 </script>
 
 <template>
   <VSwitch
       v-for="data in productionData"
+      :key="data.title"
       :label="data.title"
       hide-details
       :color="data.color"
@@ -68,5 +63,4 @@ watch(
 </template>
 
 <style scoped>
-
 </style>

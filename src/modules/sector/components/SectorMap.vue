@@ -18,13 +18,14 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
 import {useSectorServices} from "../services/sector.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useFilterStore} from "../../map/stores/filters.store.ts";
+import {ChoroplethLegendControl} from "../../map/helpers/legendControl.ts"
 
 const {fetchOrganizations} = useOrganizationServices()
 const {user} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
-const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates,} = useFilterStore()
+const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
 const {fetchSectors} = useSectorServices()
 const {router} = useRouting();
@@ -110,6 +111,25 @@ watch(dotDensityLayer, (newValue) => {
   }
 });
 
+const choroplethLegendControl = new ChoroplethLegendControl({
+  layerId: 'bukidnon-org',
+  limits: limits,
+  colorScale: colorScale,
+});
+
+watch(provinceConsortiumsLayer, async (newValue) => {
+  if (newValue) {
+    removeConsortiumLayer()
+    await loadConsortiumLayer()
+    //@ts-ignore
+    map.value?.addControl(choroplethLegendControl, 'bottom-right');
+
+  } else {
+    removeConsortiumLayer()
+    map.value?.removeControl(choroplethLegendControl);
+  }
+})
+
 onMounted(async () => {
   await fetchOrganizations();
   await fetchSectors();
@@ -119,7 +139,7 @@ onMounted(async () => {
     (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
     (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
     (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
-    map.value?.addControl(new NavigationControl(), 'bottom-right');
+    map.value?.addControl(new NavigationControl(), 'top-right');
     // @ts-ignore
     map.value.addControl(draw);
     ['draw.create', 'draw.update', 'draw.delete'].forEach((eventName) => {
@@ -133,10 +153,12 @@ onMounted(async () => {
 
   // @ts-ignore
   map.value?.on('style.load', async () => {
+    await loadConsortiumLayer(true)
     await setupBoundariesforOrganization(mapOrganizations.value);
     setupBoundaries(boundaries, 'Province');
     setupBoundaries(allSectors.value, 'Sector');
     loadRandomCoordinates(boundaries)
+
   })
 
   // @ts-ignore
@@ -148,7 +170,6 @@ onMounted(async () => {
       setupBoundaries(boundaries, 'Province');
     }
   });
-
 
 })
 
@@ -253,5 +274,7 @@ button{
 .delete-button:hover {
   background-color: #c94b63; /* Darker pink */
 }
+
+
 
 </style>

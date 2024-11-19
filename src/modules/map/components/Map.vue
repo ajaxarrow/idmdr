@@ -16,7 +16,7 @@ import {useFilterStore} from "../stores/filters.store.ts";
   const {fetchOrganizations} = useOrganizationServices()
   const {mapOrganizations} = useOrganizationStore();
   const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary} = useMapStore();
-  const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, } = useFilterStore();
+  const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates} = useFilterStore();
   const {removeSelectedSector, allSectors} = useSectorsStore();
   const {fetchSectors} = useSectorServices()
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
