@@ -173,7 +173,7 @@ onUnmounted(() => {
                 <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
               </div>
             </div>
-            <p v-else class="my-1 d-flex justify-center align-center">
+            <p v-else class="my-1 d-flex justify-center align-center mb-10">
               <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
             </p>
           </div>
@@ -203,6 +203,7 @@ onUnmounted(() => {
   width: 355px !important;
   box-shadow: 0px 0px 7px 0px #5d6e87;
   transition: opacity 1s ease;
+  overflow: hidden;
 }
 
 .scrollable-container{
