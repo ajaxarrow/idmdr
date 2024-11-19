@@ -22,7 +22,7 @@ onMounted(async () => {
   pageLoading.value = true
   sectorsLength.value = (await fetchSectors()).filter(sector => sector.owner_id === userData.uid).length
   repoLength.value =  (await fetchRepositoriesByUser()).length
-  orgLength.value = (await fetchOrganizationByUser()).length
+  orgLength.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted).length
   pageLoading.value = false
   pageLoading.value = false
 })

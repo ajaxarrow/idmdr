@@ -176,6 +176,7 @@ export const useOrganizationServices = () => {
           ttc_rep: organization.tt_rep,
           icc_rep: organization.ic_rep,
           scc_rep: organization.sc_rep,
+          is_active: true,
         },
         {
           headers: {
@@ -201,6 +202,7 @@ export const useOrganizationServices = () => {
           email: organization.email,
           website: organization.website,
           geojson: organization.geojson,
+          is_active: true,
         },
         {
           headers: {
@@ -297,6 +299,7 @@ export const useOrganizationServices = () => {
       const organization = org.organization || org;
       return {
         is_member: false,
+        is_deleted: organization?.is_deleted,
         access_level: org?.access_level ?? '',
         visibility: organization?.visibility ?? '',
         sub_org_type: organization?.sub_org_type ?? '',
@@ -425,10 +428,9 @@ export const useOrganizationServices = () => {
         const visibilityData = await fetchOrganizationsByVisibility([1]);
         data = visibilityData[0];
       }
-
-      mapOrganizations.value = data;
+      mapOrganizations.value = data.filter(org =>  !org.is_deleted);
       allOrganizations.value = data;
-      searchedMapOrganizations.value = data;
+      searchedMapOrganizations.value = data.filter(org =>  !org.is_deleted);
       return data;
     } catch (e) {
       return [];

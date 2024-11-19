@@ -66,7 +66,7 @@ const computedTabs = computed(() => {
 });
 
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
-  return orgList.some(org => org.slug === organization?.uid);
+  return orgList.some(org => org.uid === organization?.uid);
 };
 
 const getFirstPath = (url: string) => {

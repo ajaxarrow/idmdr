@@ -1,6 +1,7 @@
 import {ClusterType} from "./enums/organization.enum";
 
 interface Organization {
+  is_deleted?: boolean,
   is_member?: boolean,
   uid?: string,
   access_level?: string,

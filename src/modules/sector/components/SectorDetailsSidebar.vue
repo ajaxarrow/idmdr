@@ -66,7 +66,7 @@
       const allUserRepo = await fetchRepositoriesByUser();
       // @ts-ignore
       selectedSector.value.repoData = selectedSector.value?.parent_obj
-      if(isSlugInRepoList(selectedSector.value?.repoData!, allUserRepo)) {
+      if(isSlugInRepoList(selectedSector.value?.repoData!, allUserRepo) && !selectedSector.value?.repoData?.is_deleted) {
         isRepoAvailable.value = true;
       } else {
         isRepoAvailable.value = false;
@@ -78,7 +78,7 @@
       const allUserOrg = await fetchOrganizationByUser();
       // @ts-ignore
       selectedSector.value.orgData = selectedSector.value?.parent_obj
-      if(isSlugInOrgList(selectedSector.value?.orgData!, allUserOrg)) {
+      if(isSlugInOrgList(selectedSector.value?.orgData!, allUserOrg) && !selectedSector.value?.orgData?.is_deleted) {
         isOrgAvailable.value = true;
       } else {
         isOrgAvailable.value = false;

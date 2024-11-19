@@ -397,7 +397,7 @@ export const useRepositoryServices = () => {
       const repositories: Repository[] = await mapRepoData(validData.map((data: any) => data.repo));
 
 
-      const data = [...repositories];
+      const data = [...repositories].filter(repo => !repo.is_deleted);
       orgRepositories.value = data;
       return data;
 
@@ -477,7 +477,7 @@ export const useRepositoryServices = () => {
       });
 
       const results = await Promise.all(promises);
-      return results.flat();
+      return results.flat().filter(repo => !repo.is_deleted);
     } catch (e) {
       return []
     }
@@ -498,8 +498,8 @@ export const useRepositoryServices = () => {
         const visibilityData = await fetchRepositoriesByVisibility([1]);
         data = visibilityData[0];
       }
-      allRepositories.value = data;
-      return data;
+      allRepositories.value = data.filter(repo => !repo.is_deleted);
+      return data.filter(repo => !repo.is_deleted);
     } catch (e) {
       return []
     }
