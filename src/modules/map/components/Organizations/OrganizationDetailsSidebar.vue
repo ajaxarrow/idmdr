@@ -6,12 +6,18 @@ import {useOrganizationStore} from "../../../organization/stores/organization.st
 import {useMapStore} from "../../stores/map.store.ts";
 import {useRepositoryServices} from "../../../repository/services/repository.services.ts";
 import Observer from "../../../../core/components/Observer.vue";
+import OrgRepoCharts from "../../../organization/components/Reports/OrgRepoCharts.vue";
+import {useOrganizationServices} from "../../../organization/services/organization.services.ts";
+import {Organization} from "../../../../interfaces/organization.interface.ts";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
+const {fetchOrganizationByUser} = useOrganizationServices()
 const {resetToDefault} = useMapStore();
 const {fetchRepositoriesByOrganization} = useRepositoryServices()
 
 const pageLoading = ref(false);
 const repositoryData = ref<Repository[]>([]);
+const allUserOrg = ref<Organization[]>([])
+const isMember = ref(false)
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
@@ -22,6 +28,10 @@ const scrollToTop = () => {
       scrollableContainer.value.scrollTo({top: 0, behavior: 'smooth'});
     }
   }
+};
+
+const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
+  return orgList.some(org => org.uid === organization?.uid);
 };
 
 const fetchMoreRepositories = async () => {
@@ -41,6 +51,11 @@ const fetchMoreRepositories = async () => {
 watch(() => selectedOrganization.value, async () => {
   observerReady.value = false
   pageLoading.value = true;
+  if(isSlugInOrgList(selectedOrganization.value, allUserOrg.value)){
+    isMember.value = true
+  } else {
+    isMember.value = false
+  }
   repositoryData.value = [];
   lastItemValue.value = 1;
   reachEnd.value = false
@@ -53,6 +68,7 @@ watch(() => selectedOrganization.value, async () => {
 
 onMounted(async () => {
   removeSelectedOrganization()
+  allUserOrg.value = await fetchOrganizationByUser();
 })
 
 onUnmounted(() => {
@@ -87,8 +103,32 @@ onUnmounted(() => {
           <span>Visit Organization</span>
         </VTooltip>
         <p class="sector-description ">{{selectedOrganization.address}}</p>
+        <div class="my-3" v-if="isMember">
+          <VTooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <RouterLink v-bind="props" :to="{name: 'my-organization-reports', params: { slug: selectedOrganization.slug  }}" class="text-decoration-none text-black ">
+                <p class="section-title mb-2">Created Repositories Statistics</p>
+              </RouterLink>
+            </template>
+            <span>View Reports in Organization Details View</span>
+          </VTooltip>
+
+          <OrgRepoCharts
+            :useInCharts="false"
+            :useInMap="true"
+            :organization="selectedOrganization.uid"
+          />
+        </div>
         <div class="my-3">
-          <p class="section-title mb-2">Repositories</p>
+          <VTooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <RouterLink v-bind="props" :to="{name: 'my-organization-repositories', params: { slug: selectedOrganization.slug  }}" class="text-decoration-none text-black ">
+                <p class="section-title mb-2">Repositories</p>
+              </RouterLink>
+            </template>
+            <span>View All in Organization Details View</span>
+          </VTooltip>
+
           <div v-if="pageLoading" class="loading-state-container">
             <VProgressCircular
                 indeterminate
@@ -186,7 +226,7 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.sector-title:hover{
+.sector-title:hover, .section-title:hover{
   text-decoration: underline;
 }
 

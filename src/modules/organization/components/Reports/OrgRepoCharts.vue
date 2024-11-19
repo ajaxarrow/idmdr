@@ -1,10 +1,24 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import { Repository } from "../../../../interfaces/repository.interface";
 import { useRepositoryServices } from "../../../repository/services/repository.services";
 import { useRouting } from "../../../../core/composables/useRouting";
 import {format, parseISO, startOfWeek} from "date-fns";
 import NotFound from "../../../../assets/images/404.svg";
+
+const props = defineProps({
+  useInCharts : {
+    type: Boolean,
+    default: true
+  },
+  organization: {
+    type: String,
+  },
+  useInMap: {
+    type: Boolean,
+    default: false
+  }
+});
 
 const { route } = useRouting();
 const { fetchRepositoriesByOrganization } = useRepositoryServices();
@@ -109,11 +123,23 @@ const gradientChart = computed(() => ({
   ],
 }));
 
+watch(() => props.organization, async () => {
+  pageLoading.value = true;
+  if(props.organization){
+    orgRepositories.value = await fetchRepositoriesByOrganization(
+        props.useInCharts ? route.params.slug as string : props.organization as string,
+        true,
+        100
+    );
+  }
+  pageLoading.value = false;
+})
+
 // Fetch repository data
 onMounted(async () => {
   pageLoading.value = true;
   orgRepositories.value = await fetchRepositoriesByOrganization(
-      route.params.slug as string,
+      props.useInCharts ? route.params.slug as string : props.organization as string,
       true,
       100
   );
@@ -131,7 +157,7 @@ onMounted(async () => {
       <div v-if="orgRepositories.length === 0" class="d-flex justify-center align-center flex-column pa-5 ga-2" style="height: 350px;">
         <VImg
             :src="NotFound"
-            width="300px"
+            :width="props.useInMap ? '200px' : '300px'"
         />
         <p>
           There are no repositories found.
@@ -150,7 +176,7 @@ onMounted(async () => {
 
         <apexchart
             type="line"
-            height="350"
+            :height="props.useInMap ? '200' : '350'"
             :options="chartOptions"
             :series="gradientChart.series"
         ></apexchart>
