@@ -239,7 +239,7 @@ const updateSectorData = async () => {
 
 onMounted(async () => {
   fetchTags();
-  organizations.value = await fetchOrganizationByUser();
+  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   repositories.value = await fetchRepositoriesByUser();
   sectorData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null;
   sectorData.repository = repositories.value.length > 0 ? <string>repositories.value[0].uid : null;

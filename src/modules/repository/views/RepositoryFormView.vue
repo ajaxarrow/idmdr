@@ -446,7 +446,7 @@ const updateRepositoryData = async () => {
 
 onMounted( async () => {
   fetchTags();
-  organizations.value = await fetchOrganizationByUser();
+  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   repositoryData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];

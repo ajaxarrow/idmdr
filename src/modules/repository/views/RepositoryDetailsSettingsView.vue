@@ -352,7 +352,7 @@ const manageRequestCallback = async (id: string, isApproved: boolean) => {
     is_reviewed: true}, id
   )
   await fetchMembers()
-  showSnackbarMessage('Access Request Denied Successfully', Status.success)
+  showSnackbarMessage(`Access Request ${isApproved ? 'Approved' : 'Denied'} Successfully`, Status.success)
   memberActionMenu.value = false
 }
 
