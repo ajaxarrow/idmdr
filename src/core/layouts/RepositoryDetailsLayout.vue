@@ -181,29 +181,31 @@ onMounted(() => {
               <!--            <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>-->
               <p class="text-subtitle">{{ repository?.owner_data?.username }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
             </div>
-            <VBtnPrimaryFilled v-if="isMember" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">
-              <PhDownload size="16" class="mr-2"/>
-              Download
-            </VBtnPrimaryFilled>
-            <div v-else>
-              <VBtnPrimaryFilled
-                  v-if="hasSentRequest"
-                  :loading="buttonLoading"
-                  height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-                <PhFolderSimpleLock size="16" class="mr-2"/>
-                {{sentRequest?.is_reviewed && !sentRequest?.is_approved ? 'Request Denied' : 'Pending Request'}}
+            <div v-if="user">
+              <VBtnPrimaryFilled v-if="isMember" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">
+                <PhDownload size="16" class="mr-2"/>
+                Download
               </VBtnPrimaryFilled>
-              <AccessRequestConfirmationDialog
-                  v-else
-                  @callback="addAccessRequestCallback"
-                  content="Are you sure you want to send an access request for this repository? The request will be forwarded for review."
-                  confirm-content="Yes, Send Request!"
-              >
-                <VBtnPrimaryFilled :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+              <div v-else>
+                <VBtnPrimaryFilled
+                    v-if="hasSentRequest"
+                    :loading="buttonLoading"
+                    height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                   <PhFolderSimpleLock size="16" class="mr-2"/>
-                  Request Access
+                  {{sentRequest?.is_reviewed && !sentRequest?.is_approved ? 'Request Denied' : 'Pending Request'}}
                 </VBtnPrimaryFilled>
-              </AccessRequestConfirmationDialog>
+                <AccessRequestConfirmationDialog
+                    v-else
+                    @callback="addAccessRequestCallback"
+                    content="Are you sure you want to send an access request for this repository? The request will be forwarded for review."
+                    confirm-content="Yes, Send Request!"
+                >
+                  <VBtnPrimaryFilled :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                    <PhFolderSimpleLock size="16" class="mr-2"/>
+                    Request Access
+                  </VBtnPrimaryFilled>
+                </AccessRequestConfirmationDialog>
+              </div>
             </div>
           </VRow>
         </div>
