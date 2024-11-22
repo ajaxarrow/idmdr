@@ -17,7 +17,7 @@ import {Attachment, Commercialization, Repository} from "../../../interfaces/rep
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {
   commodities, readinessLevel, technologyStatus, technologyCategories, agencies, industries,
-  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus
+  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus, repoType
 } from "../../../data/repository.inventory.fields.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
@@ -35,6 +35,8 @@ import {useRepositoryAttachmentServices} from "../services/repository-attachment
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+
+
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
@@ -95,6 +97,7 @@ const repositoryDataIntialState = reactive<Repository>({
   rpt: "",
   slug: "",
   start_date: '',
+  type: 'Project Repository',
   tags: [],
   tech_owner: "Aurora State College of Technology (ASCoT)",
   technology_category: "Application of genomics in the study of diseases of aquatic species",
@@ -611,7 +614,7 @@ onMounted( async () => {
           <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
         </div>
         <div class="mb-3">
-          <label class="input-label">Location</label>
+          <label class="input-label">Site of Implementation</label>
           <VTextField
               v-model="repositoryData.location"
               placeholder="E.g. Musuan, Bukidnon"
@@ -625,244 +628,42 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Commodity</label>
+          <label class="input-label">Repository Type</label>
           <VAutocomplete
-              v-model="repositoryData.commodity"
-              placeholder="Select Commodity"
+              v-model="repositoryData.type"
+              placeholder="Select Type"
               class="my-2"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-              :items="commodities"
+              :items="repoType"
+              hint="Project Repository focuses on Technology projects file Document Repositoryt type served as file repository"
               :error-messages="errorMessage.commodity"
           />
         </div>
-        <div class="mb-3">
-          <label class="input-label">Industry</label>
-          <VAutocomplete
-              v-model="repositoryData.industry"
-              placeholder="Select Industry"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="industries"
-              :error-messages="errorMessage.industry"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Start Date</label>
-          <VTextField
-              v-model="repositoryData.start_date"
-              type="date"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :error-messages="errorMessage.start_date"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">End Date</label>
-          <VTextField
-              v-model="repositoryData.end_date"
-              type="date"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :error-messages="errorMessage.end_date"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Category</label>
-          <VAutocomplete
-              v-model="repositoryData.technology_category"
-              placeholder="Select Technology Category"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="technologyCategories"
-              :error-messages="errorMessage.technology_category"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Status</label>
-          <VAutocomplete
-              v-model="repositoryData.technology_status"
-              placeholder="Select Technology Status"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="technologyStatus"
-              :error-messages="errorMessage.technology_status"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Readiness Level</label>
-          <VAutocomplete
-              v-model="repositoryData.technology_readiness_level"
-              placeholder="Select Readiness Level"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="readinessLevel"
-              :error-messages="errorMessage.technology_readiness_level"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Research Project/s Conducted</label>
-          <VTextField
-              v-model="repositoryData.rpt"
-              placeholder="Enter Research Project/s Conducted"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :error-messages="errorMessage.rpt"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Funding Agency</label>
-          <VAutocomplete
-              v-model="repositoryData.funding_agency"
-              placeholder="Select Funding Agency"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="agencies"
-              :error-messages="errorMessage.funding_agency"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Generator</label>
-          <VTextField
-              v-model="repositoryData.technology_generator"
-              placeholder="Enter Technology Generator"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :error-messages="errorMessage.technology_generator"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Affiliation<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="repositoryData.affiliation"
-              placeholder="Enter Affiliation"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :error-messages="errorMessage.affiliation"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Owners</label>
-          <VAutocomplete
-              v-model="repositoryData.tech_owner"
-              placeholder="Select Technology Owners"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="agencies"
-              :error-messages="errorMessage.tech_owner"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Existing or Potential Adopters</label>
-          <VAutocomplete
-              v-model="repositoryData.adaptors"
-              placeholder="Select Adopter"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="adopters"
-              :error-messages="errorMessage.adaptors"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Plan</label>
-          <VAutocomplete
-              v-model="repositoryData.transfer_plan"
-              placeholder="Select Transfer Plan"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="transferPlans"
-              :error-messages="errorMessage.transfer_plan"
-          />
-        </div>
-        <div v-if="repositoryData.transfer_plan == 'Commercialization'">
+        <div v-if="repositoryData.type === 'Project Repository'">
           <div class="mb-3">
-            <label class="input-label">IP Type</label>
+            <label class="input-label">Commodity</label>
             <VAutocomplete
-                v-model="commercialization.ipType"
-                placeholder="Select IP Type"
+                v-model="repositoryData.commodity"
+                placeholder="Select Commodity"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="ipType"
+                :items="commodities"
+                :error-messages="errorMessage.commodity"
             />
           </div>
           <div class="mb-3">
-            <label class="input-label">IP Status</label>
+            <label class="input-label">Industry</label>
             <VAutocomplete
-                v-model="commercialization.ipStatus"
-                placeholder="Select IP Status"
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-                :items="ipStatus"
-            />
-          </div>
-          <div class="mb-3">
-            <label class="input-label">IP Registration Number</label>
-            <VTextField
-                v-model="commercialization.regNo"
-                placeholder="Enter IP Registration Number"
+                v-model="repositoryData.industry"
+                placeholder="Select Industry"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
@@ -870,41 +671,274 @@ onMounted( async () => {
                 color="primary"
                 base-color="gs60"
                 :items="industries"
+                :error-messages="errorMessage.industry"
             />
           </div>
           <div class="mb-3">
-            <label class="input-label">Commercialization Status (Mode)</label>
-            <VAutocomplete
-                v-model="commercialization.modeStatus"
-                placeholder="Select Status Mode"
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-                :items="modeStatus"
-            />
-          </div>
-          <div class="mb-3">
-            <label class="input-label">Commercialization Status (Current)</label>
-            <VAutocomplete
-                v-model="commercialization.currentStatus"
-                placeholder="Select Current Commercialization Status"
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-                :items="currentStatus"
-            />
-          </div>
-          <div class="mb-3">
-            <label class="input-label">Commercialization Status (Adopter)</label>
+            <label class="input-label">Start Date</label>
             <VTextField
-                v-model="commercialization.adopterStatus"
-                placeholder="Enter Commercialization Status"
+                v-model="repositoryData.start_date"
+                type="date"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :error-messages="errorMessage.start_date"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">End Date</label>
+            <VTextField
+                v-model="repositoryData.end_date"
+                type="date"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :error-messages="errorMessage.end_date"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Technology Category</label>
+            <VAutocomplete
+                v-model="repositoryData.technology_category"
+                placeholder="Select Technology Category"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="technologyCategories"
+                :error-messages="errorMessage.technology_category"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Technology Status</label>
+            <VAutocomplete
+                v-model="repositoryData.technology_status"
+                placeholder="Select Technology Status"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="technologyStatus"
+                :error-messages="errorMessage.technology_status"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Technology Readiness Level</label>
+            <VAutocomplete
+                v-model="repositoryData.technology_readiness_level"
+                placeholder="Select Readiness Level"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="readinessLevel"
+                :error-messages="errorMessage.technology_readiness_level"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Research Project/s Conducted</label>
+            <VTextField
+                v-model="repositoryData.rpt"
+                placeholder="Enter Research Project/s Conducted"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :error-messages="errorMessage.rpt"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Funding Agency</label>
+            <VAutocomplete
+                v-model="repositoryData.funding_agency"
+                placeholder="Select Funding Agency"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="agencies"
+                :error-messages="errorMessage.funding_agency"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Technology Generator</label>
+            <VTextField
+                v-model="repositoryData.technology_generator"
+                placeholder="Enter Technology Generator"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :error-messages="errorMessage.technology_generator"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Affiliation<span class="text-pink">*</span></label>
+            <VTextField
+                v-model="repositoryData.affiliation"
+                placeholder="Enter Affiliation"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :error-messages="errorMessage.affiliation"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Technology Owners</label>
+            <VAutocomplete
+                v-model="repositoryData.tech_owner"
+                placeholder="Select Technology Owners"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="agencies"
+                :error-messages="errorMessage.tech_owner"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Existing or Potential Adopters</label>
+            <VAutocomplete
+                v-model="repositoryData.adaptors"
+                placeholder="Select Adopter"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="adopters"
+                :error-messages="errorMessage.adaptors"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="input-label">Technology Transfer Plan</label>
+            <VAutocomplete
+                v-model="repositoryData.transfer_plan"
+                placeholder="Select Transfer Plan"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="transferPlans"
+                :error-messages="errorMessage.transfer_plan"
+            />
+          </div>
+          <div v-if="repositoryData.transfer_plan == 'Commercialization'">
+            <div class="mb-3">
+              <label class="input-label">IP Type</label>
+              <VAutocomplete
+                  v-model="commercialization.ipType"
+                  placeholder="Select IP Type"
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+                  :items="ipType"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="input-label">IP Status</label>
+              <VAutocomplete
+                  v-model="commercialization.ipStatus"
+                  placeholder="Select IP Status"
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+                  :items="ipStatus"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="input-label">IP Registration Number</label>
+              <VTextField
+                  v-model="commercialization.regNo"
+                  placeholder="Enter IP Registration Number"
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+                  :items="industries"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="input-label">Commercialization Status (Mode)</label>
+              <VAutocomplete
+                  v-model="commercialization.modeStatus"
+                  placeholder="Select Status Mode"
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+                  :items="modeStatus"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="input-label">Commercialization Status (Current)</label>
+              <VAutocomplete
+                  v-model="commercialization.currentStatus"
+                  placeholder="Select Current Commercialization Status"
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+                  :items="currentStatus"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="input-label">Commercialization Status (Adopter)</label>
+              <VTextField
+                  v-model="commercialization.adopterStatus"
+                  placeholder="Enter Commercialization Status"
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+              />
+            </div>
+          </div>
+          <div class="mb-3" v-else>
+            <label class="input-label">Technology Transfer Status</label>
+            <VTextField
+                v-model="repositoryData.technology_transfer_status"
+                placeholder="Select Transfer Status"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
@@ -913,35 +947,22 @@ onMounted( async () => {
                 base-color="gs60"
             />
           </div>
-        </div>
-        <div class="mb-3" v-else>
-          <label class="input-label">Technology Transfer Status</label>
-          <VTextField
-              v-model="repositoryData.technology_transfer_status"
-              placeholder="Select Transfer Status"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Priority Level</label>
-          <VAutocomplete
-              v-model="repositoryData.priority_level"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :item-value="priorityLevel => `${priorityLevel}`"
-              :items="priorityLevels"
-              :item-title="priorityLevel => `${priorityLevel.charAt(0).toUpperCase() + priorityLevel.slice(1)}`"
-              :error-messages="errorMessage.priority_level"
-          />
+          <div class="mb-3">
+            <label class="input-label">Priority Level</label>
+            <VAutocomplete
+                v-model="repositoryData.priority_level"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :item-value="priorityLevel => `${priorityLevel}`"
+                :items="priorityLevels"
+                :item-title="priorityLevel => `${priorityLevel.charAt(0).toUpperCase() + priorityLevel.slice(1)}`"
+                :error-messages="errorMessage.priority_level"
+            />
+          </div>
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
@@ -1170,7 +1191,7 @@ onMounted( async () => {
             </div>
           </div>
         </div>
-        <div class="mb-10">
+        <div class="mb-10" v-if="repositoryData.type === 'Project Repository'">
           <label class="input-label">Location/Area</label>
           <OrganizationFormMapPreview
               class="my-2"

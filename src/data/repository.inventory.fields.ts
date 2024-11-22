@@ -6,6 +6,8 @@ const commodities = [
   'Tropical Fruits - Pomelo', 'Vegetables', 'Crops (Others)', 'Others'
 ];
 
+const repoType = ['Project Repository', 'Document Repository']
+
 
 const industries = [
   'Agriculture', 'Biotechnology / Molecular Technology', 'Construction', 'Crops',
@@ -201,4 +203,4 @@ const currentStatus = ['Applied Fairness Opinion Report', 'Awaiting Fairness Opi
 const priorityLevels = ["high", "medium", "low"]
 
 
-export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel}
+export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType}

@@ -183,51 +183,57 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">Project Components</p>
         <VRow class="ma-0">
+          <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Repository Type</p>
+            <p class="text-subtitle pr-3">{{ repository.type}}</p>
+          </VCol>
           <VCol v-if="repository.org_data" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization</p>
             <p class="text-subtitle pr-3">{{ repository.org_data.name}} ({{repository.org_data.acronym}})</p>
           </VCol>
           <VCol v-if="repository.location" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Location</p>
+            <p class="text-subtitle text-gs20">Site of Implementation</p>
             <p class="text-subtitle pr-3">{{ repository.location}}</p>
           </VCol>
-          <VCol v-if="repository.start_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Start Date</p>
-            <p class="text-subtitle">{{ formatDate(repository.start_date)}}</p>
-          </VCol>
-          <VCol v-if="repository.end_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">End Date</p>
-            <p class="text-subtitle">{{formatDate(repository.end_date)}}</p>
-          </VCol>
-          <VCol v-if="repository.funding_agency" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Funding Agency</p>
-            <p class="text-subtitle pr-3">{{repository.funding_agency}}</p>
-          </VCol>
-          <VCol v-if="repository.affiliation" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Affiliation</p>
-            <p class="text-subtitle pr-3">{{ repository.affiliation}}</p>
-          </VCol>
-          <VCol v-if="repository.commodity" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Commodity</p>
-            <p class="text-subtitle pr-3">{{repository.commodity}}</p>
-          </VCol>
-          <VCol v-if="repository.industry" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Industry</p>
-            <p class="text-subtitle pr-3">{{repository.industry}}</p>
-          </VCol>
-          <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Research Project/s Conducted</p>
-            <p class="text-subtitle pr-3">{{repository.rpt}}</p>
-          </VCol>
-          <VCol v-if="repository.priority_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Priority Level</p>
-            <p class="text-subtitle">{{repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1)}}</p>
-          </VCol>
+          <VRow class="ma-0" v-if="repository.type === 'Project Repository'">
+            <VCol v-if="repository.start_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Start Date</p>
+              <p class="text-subtitle">{{ formatDate(repository.start_date)}}</p>
+            </VCol>
+            <VCol v-if="repository.end_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">End Date</p>
+              <p class="text-subtitle">{{formatDate(repository.end_date)}}</p>
+            </VCol>
+            <VCol v-if="repository.funding_agency" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Funding Agency</p>
+              <p class="text-subtitle pr-3">{{repository.funding_agency}}</p>
+            </VCol>
+            <VCol v-if="repository.affiliation" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Affiliation</p>
+              <p class="text-subtitle pr-3">{{ repository.affiliation}}</p>
+            </VCol>
+            <VCol v-if="repository.commodity" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Commodity</p>
+              <p class="text-subtitle pr-3">{{repository.commodity}}</p>
+            </VCol>
+            <VCol v-if="repository.industry" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Industry</p>
+              <p class="text-subtitle pr-3">{{repository.industry}}</p>
+            </VCol>
+            <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Research Project/s Conducted</p>
+              <p class="text-subtitle pr-3">{{repository.rpt}}</p>
+            </VCol>
+            <VCol v-if="repository.priority_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <p class="text-subtitle text-gs20">Priority Level</p>
+              <p class="text-subtitle">{{repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1)}}</p>
+            </VCol>
+          </VRow>
 
         </VRow>
       </div>
-      <VDivider/>
-      <div class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization' && repository.files?.length == 0}" >
+      <VDivider  v-if="repository.type === 'Project Repository'" />
+      <div v-if="repository.type === 'Project Repository'" class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization' && repository.files?.length == 0}" >
         <p class="text-about-heading py-3" >Technology Details</p>
         <VRow class="ma-0">
           <VCol v-if="repository.technology_category" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -265,7 +271,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
         </VRow>
       </div>
 
-      <div  v-if="repository.transfer_plan == 'Commercialization'">
+      <div v-if="repository.transfer_plan == 'Commercialization' && repository.type === 'Project Repository'">
         <VDivider/>
         <div class="px-7 py-5">
           <p class="text-about-heading py-3">Commercialization</p>

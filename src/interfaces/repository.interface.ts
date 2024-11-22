@@ -2,6 +2,7 @@ import {Organization} from "./organization.interface.ts";
 import {User} from "./member.interface.ts";
 
 interface Repository {
+  type?: string,
   is_member?: boolean,
   visibility: number,
   uid: string,

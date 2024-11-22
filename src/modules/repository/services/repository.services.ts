@@ -52,7 +52,7 @@ export const useRepositoryServices = () => {
     transfer_plan: "",
     uid: "",
     adaptors: '',
-    image: ""
+    image: "",
   })
 
   const loading = ref(false);
@@ -273,6 +273,7 @@ export const useRepositoryServices = () => {
           industry: repo.industry || "",
           is_active: repo.is_active,
           is_approved: repo.is_approved,
+          type: repo.type || "",
           is_deleted: repo.is_deleted,
           location: repo.location || "",
           organization: repo.organization || "",
