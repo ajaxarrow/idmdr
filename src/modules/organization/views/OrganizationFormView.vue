@@ -235,6 +235,9 @@ onMounted(async () => {
     formType.value = FormType.edit
     Object.assign(organizationData, {...organization.value});
     organizationData.geojson = JSON.stringify(organizationData.geojson)
+    if(!isEmptyObject(organizationData.geojson)){
+      isGeoJSONPreview.value = true
+    }
     previewImage.value = <string>organizationData.image
     hasImage.value = true
   }

@@ -252,6 +252,9 @@ onMounted(async () => {
     const fetchedData = await fetchSectorData(route.params.slug as string)
     Object.assign(sectorData, {...fetchedData})
     sectorData.geojson = JSON.stringify(fetchedData?.geojson)
+    if(!isEmptyObject(fetchedData?.geojson)){
+      isGeoJSONPreview.value = true
+    }
     selectedObjectType.value = fetchedData?.parent as string
     if(selectedObjectType.value == 'Repository'){
       sectorData.repository = fetchedData?.parent_id
@@ -263,6 +266,7 @@ onMounted(async () => {
   }
   if (Object.keys(storedGeoJSON.value).length !== 0) {
     setGeoJSON(storedGeoJSON.value, true);
+    isGeoJSONPreview.value = true
   }
   if(fileName.value !== '') {
     isGeoJSONDrawn.value = false

@@ -461,6 +461,9 @@ onMounted( async () => {
     // console.log(repositoryData.tags)
     // repositoryData.tags = stringToArray(<string>repositoryData.tags)
     repositoryData.geojson = JSON.stringify(repositoryData.geojson)
+    if(!isEmptyObject(repositoryData.geojson)){
+      isGeoJSONPreview.value = true
+    }
     const fetchedFiles = await fetchAttachmentsByRepository(<string>route.params.slug, 'update')
     for(let i = 0; i < fetchedFiles.length; i++){
       attachments.value.push({
