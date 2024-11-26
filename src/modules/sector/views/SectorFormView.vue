@@ -37,7 +37,15 @@ const {route} = useRouting();
 
 const organizations = ref<Organization[]>([])
 const repositories = ref<Repository[]>([])
-const objectTypes = ['Organization', 'Repository']
+const objectTypes = [
+  {
+    title: 'Project',
+    value: 'Repository'
+  }, {
+    title: 'Consortium Member Institution',
+    value: 'Organization'
+  },
+]
 const selectedObjectType = ref('Repository')
 const sectorForm = ref(null);
 const path = ref('sectors')
@@ -424,7 +432,72 @@ onUnmounted(() => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Sector Location<span class="text-pink">*</span></label>
+          <label class="input-label">Tagged Entity<span class="text-pink">*</span></label>
+          <VAutocomplete
+              v-model="selectedObjectType"
+              placeholder="Select What Entity to be Tagged"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="objectTypes"
+              :item-value="objectType => `${objectType.value}`"
+          />
+        </div>
+        <div class="mb-3" v-if="selectedObjectType === 'Organization'">
+          <label class="input-label">Consortium Member Institution<span class="text-pink">*</span></label>
+          <VAutocomplete
+              v-model="sectorData.organization"
+              placeholder="Select Organization"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="organizations"
+              :item-value="organization => `${organization.uid}`"
+              :item-title="organization => `${organization.name} (${organization.acronym})`"
+          >
+            <template v-slot:item="{ props, item }">
+              <VListItem
+                  v-bind="props"
+                  :prepend-avatar="item.raw.image"
+                  :subtitle="item.raw.email"
+                  :title="`${item.raw.name} (${item.raw.acronym})`"
+              ></VListItem>
+            </template>
+          </VAutocomplete>
+        </div>
+        <div class="mb-3" v-else>
+          <label class="input-label">Project<span class="text-pink">*</span></label>
+          <VAutocomplete
+              v-model="sectorData.repository"
+              placeholder="Select Repository"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="repositories"
+              :item-value="repository => `${repository.uid}`"
+              :item-title="repository => `${repository.title}`"
+          >
+            <template v-slot:item="{ props, item }">
+              <VListItem
+                  v-bind="props"
+                  :prepend-avatar="item.raw.image as string"
+                  :subtitle="item.raw.owner_data?.username!"
+                  :title="`${item.raw.title}`"
+              ></VListItem>
+            </template>
+          </VAutocomplete>
+        </div>
+        <div class="mb-3">
+          <label class="input-label">Sector Site of Implementation<span class="text-pink">*</span></label>
           <VTextField
               v-model="sectorData.address"
               placeholder="E.g. Musuan, Bukidnon"
@@ -454,70 +527,6 @@ onUnmounted(() => {
               placeholder="E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices."
           />
 <!--          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Tagged Entity<span class="text-pink">*</span></label>
-          <VAutocomplete
-              v-model="selectedObjectType"
-              placeholder="Select What Entity to be Tagged"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="objectTypes"
-          />
-        </div>
-        <div class="mb-3" v-if="selectedObjectType === 'Organization'">
-          <label class="input-label">Organization<span class="text-pink">*</span></label>
-          <VAutocomplete
-              v-model="sectorData.organization"
-              placeholder="Select Organization"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="organizations"
-              :item-value="organization => `${organization.uid}`"
-              :item-title="organization => `${organization.name} (${organization.acronym})`"
-          >
-            <template v-slot:item="{ props, item }">
-              <VListItem
-                  v-bind="props"
-                  :prepend-avatar="item.raw.image"
-                  :subtitle="item.raw.email"
-                  :title="`${item.raw.name} (${item.raw.acronym})`"
-              ></VListItem>
-            </template>
-          </VAutocomplete>
-        </div>
-        <div class="mb-3" v-else>
-          <label class="input-label">Repository<span class="text-pink">*</span></label>
-          <VAutocomplete
-              v-model="sectorData.repository"
-              placeholder="Select Repository"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="repositories"
-              :item-value="repository => `${repository.uid}`"
-              :item-title="repository => `${repository.title}`"
-          >
-            <template v-slot:item="{ props, item }">
-              <VListItem
-                  v-bind="props"
-                  :prepend-avatar="item.raw.image as string"
-                  :subtitle="item.raw.owner_data?.username!"
-                  :title="`${item.raw.title}`"
-              ></VListItem>
-            </template>
-          </VAutocomplete>
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
