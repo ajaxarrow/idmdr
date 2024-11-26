@@ -27,8 +27,6 @@ interface Repository {
   location: string,
   affiliation: string | string[],
   tags: string | string[],
-  // start_date: Date,
-  // end_date: Date,
   start_date: string,
   end_date: string,
   tech_owner: string,
