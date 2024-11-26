@@ -1,6 +1,7 @@
 import {Feature} from "maplibre-gl";
 
 export interface ChoroplethLegendControlOptions {
+  title: string;
   layerId: string;
   colorScale: string[];
   limits: number[];
@@ -12,6 +13,7 @@ export class ChoroplethLegendControl {
   private _map?: maplibregl.Map;
   // @ts-ignore
   private _paint?: any;
+  private title: string;
   private mousemove: (e:any) => void;
   private mouseleave: () => void;
   // @ts-ignore
@@ -20,6 +22,8 @@ export class ChoroplethLegendControl {
   private _selectedFeature: Boolean;
 
   constructor(options: ChoroplethLegendControlOptions) {
+    //@ts-ignore
+    this.title = options.title || "";
     this._options = { ...options };
     this._container = document.createElement("div");
     this._container.classList.add("maplibregl-ctrl");
@@ -46,8 +50,9 @@ export class ChoroplethLegendControl {
           );
         }
       }
+
       this._container.innerHTML = `
-        <h3>Number of Organizations<label></label></h3>
+        <h3>Number of ${this.title}<label></label></h3>
         <ul style="list-style-type:none;display:flex">${labels.join('')}</ul>
       `;
       const paintCategories = this._container.querySelectorAll('span');
@@ -64,7 +69,7 @@ export class ChoroplethLegendControl {
 
   //@ts-ignore
   private _mousemove(e: any): void {
-    console.log(e.features[0])
+    // console.log(e.features[0])
     if (e.features[0]?.state?.organization) {
       this.legendHighlight(e.features[0]);
     } else {

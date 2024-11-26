@@ -302,4 +302,4 @@ const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
 
 
 
-export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, removeBoundaries, resetToDefault, setupBoundariesforOrganization, clickOrganization}))
+export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, removeBoundaries, resetToDefault, setupBoundariesforOrganization, clickOrganization, popup}))

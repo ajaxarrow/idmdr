@@ -25,7 +25,7 @@ const {user} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
-const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer} = useFilterStore()
+const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer, provinceRepositoriesLayer, loadConsortiumRepoLayer, colorScalePink} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
 const {fetchSectors} = useSectorServices()
 const {router} = useRouting();
@@ -115,17 +115,44 @@ const choroplethLegendControl = new ChoroplethLegendControl({
   layerId: 'bukidnon-org',
   limits: limits,
   colorScale: colorScale,
+  title: 'Organizations'
+});
+
+const choroplethRepoLegendControl = new ChoroplethLegendControl({
+  layerId: 'bukidnon-org',
+  limits: limits,
+  colorScale: colorScalePink,
+  title: 'Repositories'
 });
 
 watch(provinceConsortiumsLayer, async (newValue) => {
   if (newValue) {
+    removeBoundaries(boundaries)
     removeConsortiumLayer()
     await loadConsortiumLayer()
     //@ts-ignore
     map.value?.addControl(choroplethLegendControl, 'bottom-right');
 
   } else {
+    setupBoundaries(boundaries, 'Province');
     removeConsortiumLayer()
+    map.value?.removeControl(choroplethLegendControl);
+    map.value?.removeControl(choroplethRepoLegendControl);
+  }
+})
+
+watch(provinceRepositoriesLayer, async (newValue) => {
+  if (newValue) {
+    removeBoundaries(boundaries)
+    removeConsortiumLayer()
+    await loadConsortiumRepoLayer()
+    //@ts-ignore
+    map.value?.addControl(choroplethRepoLegendControl, 'bottom-right');
+
+  } else {
+    setupBoundaries(boundaries, 'Province');
+    removeConsortiumLayer()
+    map.value?.removeControl(choroplethRepoLegendControl);
     map.value?.removeControl(choroplethLegendControl);
   }
 })

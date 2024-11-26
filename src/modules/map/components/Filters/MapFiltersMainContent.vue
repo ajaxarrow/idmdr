@@ -2,16 +2,21 @@
 import { ref, watch } from "vue";
 import { useFilterStore } from "../../stores/filters.store.ts";
 
-const { dotDensityLayer, provinceConsortiumsLayer } = useFilterStore();
+const { dotDensityLayer, provinceConsortiumsLayer, provinceRepositoriesLayer } = useFilterStore();
 
 const productionData = ref([
+  // {
+  //   title: 'Commodities',
+  //   color: "#00FFA6",
+  //   value: false
+  // },
   {
-    title: 'Commodities',
+    title: 'Northern Mindanao Consortiums',
     color: "#00FFA6",
     value: false
   },
   {
-    title: 'Northern Mindanao Consortiums',
+    title: 'Northern Mindanao Repositories',
     color: "#00FFA6",
     value: false
   },
@@ -30,19 +35,32 @@ watch(
     () => productionData.value.find(data => data.title === 'Commodities'),
     (newVal) => {
       if (newVal) {
-        toggleSwitch('Commodities'); // Close other switches when this one is opened
         dotDensityLayer.value = newVal.value;
       }
     },
     { deep: true }
 );
 
+
+
 watch(
     () => productionData.value.find(data => data.title === 'Northern Mindanao Consortiums'),
     (newVal) => {
       if (newVal) {
-        toggleSwitch('Northern Mindanao Consortiums'); // Close other switches when this one is opened
         provinceConsortiumsLayer.value = newVal.value;
+        // provinceRepositoriesLayer.value = !newVal.value;
+      }
+    },
+    { deep: true }
+);
+
+watch(
+    () => productionData.value.find(data => data.title === 'Northern Mindanao Repositories'),
+    (newVal) => {
+      if (newVal) {
+        toggleSwitch('Northern Mindanao Repositories');
+        // provinceConsortiumsLayer.value = !newVal.value;
+        provinceRepositoriesLayer.value = newVal.value;
       }
     },
     { deep: true }
