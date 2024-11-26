@@ -28,8 +28,10 @@ import {
   PhFileXls, PhInfo
 } from "@phosphor-icons/vue";
 import {Repository} from "../../../interfaces/repository.interface.ts";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
 const {route} = useRouting()
+const {arrayToString} = useStringArrayHelper()
 const {repository} = useRepositoryStore();
 const {fetchRepositoryData} = useRepositoryServices();
 const {setSnackbarMessage} = useSnackbarStore()
@@ -48,8 +50,6 @@ const downloadRepoFiles = (): void => {
   window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${repository.value?.slug}`, '_blank');
 };
 
-const arrayToString = (arr: string[]): string =>
-    arr.length > 0 ? arr.join(', ') : '';
 
 const downloadFile = (attachment: string): void => {
   if (attachment) {

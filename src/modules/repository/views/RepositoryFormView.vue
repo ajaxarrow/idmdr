@@ -35,8 +35,9 @@ import {useRepositoryAttachmentServices} from "../services/repository-attachment
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
-
+const {arrayToString} = useStringArrayHelper()
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
@@ -348,12 +349,6 @@ const formatDate = (): string=> {
 
   return `${year}-${month}-${day}-${hours}${minutes}${seconds}`
 }
-
-const arrayToString = (arr: string[]): string =>
-    arr.length > 0 ? arr.join(', ') : '';
-
-// const stringToArray = (str: string): string[] =>
-//     str.length > 0 ? str.split(', ') : [];
 
 
 const getFirstPath = (url: string) => {

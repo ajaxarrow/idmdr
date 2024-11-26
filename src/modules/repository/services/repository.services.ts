@@ -9,6 +9,7 @@ import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
 import {useSectorServices} from "../../sector/services/sector.services.ts";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
 
 const { userData, user } = useUserStore();
@@ -20,8 +21,7 @@ const {fetchOrgMembers} = useOrganizationMembersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
 const {addSector} = useSectorServices()
 
-const stringToArray = (str: string): string[] =>
-  str.length > 0 ? str.split(', ') : [];
+const {stringToArray} = useStringArrayHelper()
 
 export const useRepositoryServices = () => {
   const errorMessageInitialState = reactive({

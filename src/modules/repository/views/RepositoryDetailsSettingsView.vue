@@ -20,6 +20,7 @@ import DOMPurify from 'dompurify';
 import {useAccessRequestServices} from "../services/access-request.services.ts";
 import {AccessRequest} from "../../../interfaces/access-request.interface.ts";
 import AccessRequestConfirmationDialog from "../components/AccessRequestConfirmationDialog.vue";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
@@ -28,6 +29,7 @@ const {fetchRepositoryData, fetchRepositoriesByUser, deleteRepository} = useRepo
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
 
+const {arrayToString} = useStringArrayHelper()
 const {route, router} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
@@ -201,10 +203,10 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
     { label: 'Location: ', content: repository.location },
     { label: 'Start Date: ', content: repository.start_date ? formatDate(repository.start_date) : undefined },
     { label: 'End Date: ', content: repository.end_date ? formatDate(repository.end_date) : undefined },
-    { label: 'Funding Agency: ', content: repository.funding_agency },
-    { label: 'Affiliation: ', content: repository.affiliation },
-    { label: 'Commodity: ', content: repository.commodity },
-    { label: 'Industry: ', content: repository.industry },
+    { label: 'Funding Agency: ', content: arrayToString(repository.funding_agency as string[]) },
+    { label: 'Affiliation: ', content: arrayToString(repository.affiliation as string[]) },
+    { label: 'Commodity: ', content: arrayToString(repository.commodity as string[]) },
+    { label: 'Industry: ', content: arrayToString(repository.industry as string[]) },
     { label: 'Research Project/s: ', content: repository.rpt },
     { label: 'Priority Level: ', content: repository.priority_level ?
           repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1) : undefined }
