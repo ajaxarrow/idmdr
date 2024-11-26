@@ -122,8 +122,15 @@ onUnmounted(() => {
               <li>
                 <a href="#intro">Intro</a>
                 <ul>
-                  <li><a href="#intro-project">About the Project</a></li>
+                  <li><a href="#intro-project">About the Application</a></li>
                   <li><a href="#intro-stakeholders">Stakeholders</a></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#dev">Developers</a>
+                <ul>
+                  <li><a href="#dev-about">About the Developers</a></li>
+                  <li><a href="#dev-method">Methodology</a></li>
                 </ul>
               </li>
               <li>
@@ -151,23 +158,52 @@ onUnmounted(() => {
           </nav>
 
           <article class="contents">
-            <p class="text-h4 font-weight-bold">About IDMDR</p>
+            <p class="text-h4 font-weight-bold">About LINNKS</p>
             <section id="intro">
               <h2>Introduction</h2>
               <div id="intro-project">
-                <h3>About the Project</h3>
+                <h3>About the Application</h3>
+                <p>
+                  Learning and Information Network for NOMCAARRD Knowledge-Based System, or LINNKS, is an interactive platform designed for NOMCAARRD to manage projects and consortium member institutions. It provides a centralized space for accessing, sharing, and organizing key data and resources across the organization.
+                </p>
+                <p>
+                  LINNKS empowers users by offering streamlined data visualization and collaboration tools. With its intuitive interface, users can easily navigate through project information, fostering transparency and informed decision-making.
+                </p>
+                <p>
+                  The platform also supports dynamic mapping and knowledge-sharing capabilities to enhance communication among consortium members. By connecting insights and expertise, LINNKS strengthens NOMCAARRD's mission to drive innovation and growth within the organization.
+                </p>
+              </div>
+              <div id="intro-stakeholders">
+                <h3>Stakeholders</h3>
+                <p>
+                  The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization consisting of 20 government and non-government entities in region 10.
+                </p>
+                <p>
+                  These include educational institutions like Central Mindanao University (CMU), Xavier University (XU), and others, as well as government agencies like the Department of Agriculture Regional Field Office-10 (DA RFO-10) and the National Economic Development Authority-10 (NEDA-10). NOMCAARRD's main goal is to coordinate research, development, and extension efforts related to agriculture, fisheries, and natural resources in the region. Its office is situated at CMU.
+                </p>
+                <p>
+                  NOOMCAARD is supported the development of the project. They are the stakeholders of the system. The system is tailored to the organizations' problems and needs.
+                </p>
+              </div>
+
+            </section>
+            <section id="dev">
+              <h2>Developers</h2>
+              <div id="dev-about">
+                <h3>About the Developers</h3>
+                <p>
+                  LINNKS is based on the capstone project entitled Interactive Data Mapping Distribution and Repository. The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
+                </p>
                 <p>
                   The Interactive Data Mapping Distribution and Repository aims to digitize and centralize the storage of datasets collected by NOMCAARRD. This platform will enable organization members to establish repositories, categorize datasets into specific geographical areas on a map, and visualize data.
                 </p>
                 <p>
                   The project, NIDMDR, seeks to establish a comprehensive repository for datasets, accommodating various data types such as images, CSV files, and text documents. This repository will provide researchers and users with a centralized location to access and manage diverse datasets efficiently.
                 </p>
-                <p>
-                  The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
-                </p>
+
               </div>
-              <div id="intro-stakeholders">
-                <h3>Stakeholders</h3>
+              <div id="dev-method">
+                <h3>Methodology</h3>
                 <p>
                   The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization consisting of 20 government and non-government entities in region 10.
                 </p>

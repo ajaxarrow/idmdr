@@ -22,19 +22,31 @@ const handleHover = (isHovered: boolean) => {
     <PhHardDrives :size="props.useAltDesign ? 32 : 24" weight="duotone" color="#3291C7" class="ph-icon" />
       <template v-if="props.useAltDesign">
         <div>
-          <span style="--i:1">I</span>
-          <span style="--i:2">D</span>
-          <span style="--i:3">M</span>
-          <span style="--i:4">D</span>
-          <span style="--i:5">R</span>
+<!--          <span style="&#45;&#45;i:1">I</span>-->
+<!--          <span style="&#45;&#45;i:2">D</span>-->
+<!--          <span style="&#45;&#45;i:3">M</span>-->
+<!--          <span style="&#45;&#45;i:4">D</span>-->
+<!--          <span style="&#45;&#45;i:5">R</span>-->
+          <span style="--i:1">L</span>
+          <span style="--i:2">I</span>
+          <span style="--i:3">N</span>
+          <span style="--i:4">N</span>
+          <span style="--i:5">K</span>
+          <span style="--i:6">S</span>
         </div>
       </template>
       <template v-else>
-        <span style="--i:1">I</span>
-        <span style="--i:2">D</span>
-        <span style="--i:3">M</span>
-        <span style="--i:4">D</span>
-        <span style="--i:5">R</span>
+<!--        <span style="&#45;&#45;i:1">I</span>-->
+<!--        <span style="&#45;&#45;i:2">D</span>-->
+<!--        <span style="&#45;&#45;i:3">M</span>-->
+<!--        <span style="&#45;&#45;i:4">D</span>-->
+<!--        <span style="&#45;&#45;i:5">R</span>-->
+        <span style="--i:1">L</span>
+        <span style="--i:2">I</span>
+        <span style="--i:3">N</span>
+        <span style="--i:4">N</span>
+        <span style="--i:5">K</span>
+        <span style="--i:6">S</span>
       </template>
     </div>
   </RouterLink>

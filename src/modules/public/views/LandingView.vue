@@ -123,7 +123,7 @@ onMounted(() => {
           <div class="bg-sb10">
             <VContainer>
               <blockquote class="blockquote-question text-center pt-5">
-                Why IDMDR?
+                Why LINNKS?
               </blockquote>
               <VRow justify="center" class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
                 <VCol v-for="text in highlights" cols="12" lg="4" xl="4" xxl="4">
@@ -190,7 +190,7 @@ onMounted(() => {
             </VContainer>
             <div class="mt-10">
               <p class="text-h5 text-sm-h4 text-md-h3 text-lg-h4 text-xl-h3 text-xxl-h3 font-weight-bold text-center my-2 mx-5">Get Started Now!</p>
-              <p class="text-center font-weight-medium text-gs30 my-5 mx-5 ">Explore IDMDR now as a guest by browsing the interactive map and discover new features today</p>
+              <p class="text-center font-weight-medium text-gs30 my-5 mx-5 ">Explore LINNKS now as a guest by browsing the interactive map and discover new features today</p>
               <VRow class="ma-0 mb-15" justify="center">
                 <VBtn
                     color="bs50"
