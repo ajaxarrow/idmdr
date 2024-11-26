@@ -447,7 +447,7 @@ export const useRepositoryServices = () => {
     }
   }
 
-  const fetchRepositoriesWithPagination = async (pageNumber: number): Promise<Repository[]> => {
+  const fetchRepositoriesWithPagination = async (pageNumber: number, isForIPT: boolean = false): Promise<Repository[]> => {
     try{
       let data: Repository[] = []
       if(user.value){
@@ -461,7 +461,7 @@ export const useRepositoryServices = () => {
       } else {
         data = await fetchPaginatedRepositories(pageNumber, [1])
       }
-      return data;
+      return isForIPT ? data.filter(repo => repo.type == 'Project Repository') : data;
     } catch (e) {
       return []
     }

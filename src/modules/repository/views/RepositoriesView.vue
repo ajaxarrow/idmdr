@@ -70,7 +70,7 @@
   })
 
   const fetchMoreRepositories = async () => {
-    const data = await fetchRepositoriesWithPagination(lastItemValue.value);
+    const data = await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
     repositoryData.value = [...repositoryData.value, ...data];
     searchedRepositories.value = repositoryData.value;
     lastItemValue.value = lastItemValue.value + 1
@@ -83,16 +83,14 @@
     return url.split('/').filter(Boolean)[0];
   }
 
-  watch(() => route.path, () => {
-    path.value = getFirstPath(<string>route.path)
-  })
-
-  onMounted(async () => {
+  const init = async () => {
+    const tagsData = tags.value
+    lastItemValue.value = 1
     path.value = getFirstPath(<string>route.path)
     pageLoading.value = true
     fetchTags();
-    currentTags.value = tags.value.splice(0, 6)
-    const fetchedData = await fetchRepositoriesWithPagination(lastItemValue.value);
+    currentTags.value = tagsData.splice(0, 6)
+    const fetchedData = await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
     repositoryData.value = [...fetchedData];
     repositoryItems.value = repositoryData.value;
     lastItemValue.value = lastItemValue.value + 1
@@ -103,6 +101,14 @@
       searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
     }
     pageLoading.value = false
+  }
+
+  watch(() => route.path, async () => {
+    await init();
+  })
+
+  onMounted(async () => {
+    await init();
   })
 
   onUnmounted(() => {
