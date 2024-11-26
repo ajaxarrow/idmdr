@@ -48,6 +48,8 @@ const downloadRepoFiles = (): void => {
   window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${repository.value?.slug}`, '_blank');
 };
 
+const arrayToString = (arr: string[]): string =>
+    arr.length > 0 ? arr.join(', ') : '';
 
 const downloadFile = (attachment: string): void => {
   if (attachment) {
@@ -184,7 +186,11 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
         <p class="text-about-heading py-3">Project Components</p>
         <VRow class="ma-0">
           <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Repository Type</p>
+            <p class="text-subtitle text-gs20">Project Category</p>
+            <p class="text-subtitle pr-3">{{ repository.type}}</p>
+          </VCol>
+          <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Project Type</p>
             <p class="text-subtitle pr-3">{{ repository.type}}</p>
           </VCol>
           <VCol v-if="repository.org_data" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -206,19 +212,19 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             </VCol>
             <VCol v-if="repository.funding_agency" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Funding Agency</p>
-              <p class="text-subtitle pr-3">{{repository.funding_agency}}</p>
+              <p class="text-subtitle pr-3">{{arrayToString(repository.funding_agency as string[])}}</p>
             </VCol>
             <VCol v-if="repository.affiliation" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Affiliation</p>
-              <p class="text-subtitle pr-3">{{ repository.affiliation}}</p>
+              <p class="text-subtitle pr-3">{{arrayToString(repository.affiliation as string[])}}</p>
             </VCol>
             <VCol v-if="repository.commodity" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Commodity</p>
-              <p class="text-subtitle pr-3">{{repository.commodity}}</p>
+              <p class="text-subtitle pr-3">{{arrayToString(repository.commodity as string[])}}</p>
             </VCol>
             <VCol v-if="repository.industry" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Industry</p>
-              <p class="text-subtitle pr-3">{{repository.industry}}</p>
+              <p class="text-subtitle pr-3">{{arrayToString(repository.industry as string[])}}</p>
             </VCol>
             <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Research Project/s Conducted</p>

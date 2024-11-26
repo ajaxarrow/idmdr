@@ -77,16 +77,20 @@ const isGeoJSONPreview = ref(false);
 const geoJSONFileName = ref('')
 const organizations = ref<Organization[]>([]);
 const previousTags = ref<string[]>([])
+const previousFundingAgencies = ref<string[]>([])
+const previousCommodities = ref<string[]>([])
+const previousIndustries = ref<string[]>([])
+const previousAffiliations = ref<string[]>([])
 const formType = ref<FormType>(FormType.create);
 const file = ref<File | null>(null);
 const repositoryDataIntialState = reactive<Repository>({
-  affiliation: "",
-  commodity: "Abaca",
+  affiliation: [],
+  commodity: [],
   description: "",
   end_date: '',
-  funding_agency: "Aurora State College of Technology (ASCoT)",
+  funding_agency: [],
   geojson: {},
-  industry: "Agriculture",
+  industry: [],
   is_active: false,
   is_approved: false,
   is_deleted: false,
@@ -388,7 +392,15 @@ const addRepositoryData = async () => {
       repositoryData.files = attachments.value
     }
     previousTags.value = <string[]>repositoryData.tags
+    previousCommodities.value = <string[]>repositoryData.commodity
+    previousAffiliations.value = <string[]>repositoryData.affiliation
+    previousIndustries.value = <string[]>repositoryData.industry
+    previousFundingAgencies.value = <string[]>repositoryData.funding_agency
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
+    repositoryData.commodity = arrayToString(<string[]>repositoryData.commodity)
+    repositoryData.industry = arrayToString(<string[]>repositoryData.industry)
+    repositoryData.affiliation = arrayToString(<string[]>repositoryData.affiliation)
+    repositoryData.funding_agency = arrayToString(<string[]>repositoryData.funding_agency)
     if(file.value){
       //@ts-ignore
       repositoryData.image = file.value as File
@@ -402,6 +414,10 @@ const addRepositoryData = async () => {
     await addRepository(repositoryData)
     if(hasErrorMessages(errorMessage)){
       repositoryData.tags = previousTags.value
+      repositoryData.commodity = previousCommodities.value
+      repositoryData.affiliation = previousAffiliations.value
+      repositoryData.industry = previousIndustries.value
+      repositoryData.funding_agency = previousFundingAgencies.value
       scrollToFirstErrorMessage()
     } else {
       clearFields();
@@ -432,13 +448,25 @@ const updateRepositoryData = async () => {
 
 
     previousTags.value = <string[]>repositoryData.tags
+    previousCommodities.value = <string[]>repositoryData.commodity
+    previousAffiliations.value = <string[]>repositoryData.affiliation
+    previousIndustries.value = <string[]>repositoryData.industry
+    previousFundingAgencies.value = <string[]>repositoryData.funding_agency
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
+    repositoryData.commodity = arrayToString(<string[]>repositoryData.commodity)
+    repositoryData.industry = arrayToString(<string[]>repositoryData.industry)
+    repositoryData.affiliation = arrayToString(<string[]>repositoryData.affiliation)
+    repositoryData.funding_agency = arrayToString(<string[]>repositoryData.funding_agency)
     if(repositoryData.transfer_plan === 'Commercialization'){
       repositoryData.com_extra = JSON.stringify(commercialization)
     }
     await updateRepository(repositoryData, repositoryData.slug)
     if(hasErrorMessages(errorMessage)){
       repositoryData.tags = previousTags.value
+      repositoryData.commodity = previousCommodities.value
+      repositoryData.affiliation = previousAffiliations.value
+      repositoryData.industry = previousIndustries.value
+      repositoryData.funding_agency = previousFundingAgencies.value
       scrollToFirstErrorMessage()
     } else {
       clearFields();
@@ -650,7 +678,7 @@ onMounted( async () => {
           <div class="mb-3">
             <label class="input-label">Commodity</label>
             <VAutocomplete
-                v-model="repositoryData.commodity"
+                v-model="repositoryData.commodity as string[]"
                 placeholder="Select Commodity"
                 class="my-2"
                 rounded="lg"
@@ -660,12 +688,15 @@ onMounted( async () => {
                 base-color="gs60"
                 :items="commodities"
                 :error-messages="errorMessage.commodity"
+                multiple
+                chips
+                closable-chips
             />
           </div>
           <div class="mb-3">
             <label class="input-label">Industry</label>
             <VAutocomplete
-                v-model="repositoryData.industry"
+                v-model="repositoryData.industry as string[]"
                 placeholder="Select Industry"
                 class="my-2"
                 rounded="lg"
@@ -675,6 +706,9 @@ onMounted( async () => {
                 base-color="gs60"
                 :items="industries"
                 :error-messages="errorMessage.industry"
+                multiple
+                chips
+                closable-chips
             />
           </div>
           <div class="mb-3">
@@ -767,7 +801,7 @@ onMounted( async () => {
           <div class="mb-3">
             <label class="input-label">Funding Agency</label>
             <VAutocomplete
-                v-model="repositoryData.funding_agency"
+                v-model="repositoryData.funding_agency as string[]"
                 placeholder="Select Funding Agency"
                 class="my-2"
                 rounded="lg"
@@ -776,6 +810,9 @@ onMounted( async () => {
                 color="primary"
                 base-color="gs60"
                 :items="agencies"
+                multiple
+                chips
+                closable-chips
                 :error-messages="errorMessage.funding_agency"
             />
           </div>
@@ -795,8 +832,8 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Affiliation<span class="text-pink">*</span></label>
-            <VTextField
-                v-model="repositoryData.affiliation"
+            <VAutocomplete
+                v-model="repositoryData.affiliation as string[]"
                 placeholder="Enter Affiliation"
                 class="my-2"
                 rounded="lg"
@@ -804,12 +841,16 @@ onMounted( async () => {
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
+                :items="agencies"
+                multiple
+                chips
+                closable-chips
                 :error-messages="errorMessage.affiliation"
             />
           </div>
           <div class="mb-3">
             <label class="input-label">Technology Owners</label>
-            <VAutocomplete
+            <VTextField
                 v-model="repositoryData.tech_owner"
                 placeholder="Select Technology Owners"
                 class="my-2"
@@ -818,7 +859,6 @@ onMounted( async () => {
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
-                :items="agencies"
                 :error-messages="errorMessage.tech_owner"
             />
           </div>
