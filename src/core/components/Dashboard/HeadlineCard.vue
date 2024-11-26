@@ -11,7 +11,7 @@ import Sector from "../../../assets/images/sector-img.jpg";
       />
       <div style="width: 220px">
         <p style="font-weight: 600">Tag a Sector Now</p>
-        <p class="text-subtitle">Create a sector and tag it in your existing repository!</p>
+        <p class="text-subtitle">Create a sector and tag it in your existing project!</p>
         <VBtnPrimaryFilled
           style="font-size: 14px !important;"
           class="my-2"

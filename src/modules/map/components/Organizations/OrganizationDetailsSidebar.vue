@@ -81,7 +81,7 @@ onUnmounted(() => {
 <template>
   <VSheet class="sector-details-sidebar ma-4" v-if="selectedOrganization">
     <VRow justify="space-between" align="center" class="ma-0 pa-4">
-      <p class="sidebar-title">Organization</p>
+      <p class="sidebar-title">CMI</p>
       <PhX color="#C83246" size="24" weight="bold" class="cursor-pointer" @click="resetToDefault('Organization')"/>
     </VRow>
     <div class="">
@@ -100,17 +100,17 @@ onUnmounted(() => {
               <p class="sector-title">{{selectedOrganization.name}}</p>
             </RouterLink>
           </template>
-          <span>Visit Organization</span>
+          <span>Visit CMI</span>
         </VTooltip>
         <p class="sector-description ">{{selectedOrganization.address}}</p>
         <div class="my-3" v-if="isMember">
           <VTooltip location="bottom">
             <template v-slot:activator="{ props }">
               <RouterLink v-bind="props" :to="{name: 'my-organization-reports', params: { slug: selectedOrganization.slug  }}" class="text-decoration-none text-black ">
-                <p class="section-title mb-2">Created Repositories Statistics</p>
+                <p class="section-title mb-2">Created Projects Statistics</p>
               </RouterLink>
             </template>
-            <span>View Reports in Organization Details View</span>
+            <span>View Reports in CMI Details View</span>
           </VTooltip>
 
           <OrgRepoCharts
@@ -123,10 +123,10 @@ onUnmounted(() => {
           <VTooltip location="bottom">
             <template v-slot:activator="{ props }">
               <RouterLink v-bind="props" :to="{name: 'my-organization-repositories', params: { slug: selectedOrganization.slug  }}" class="text-decoration-none text-black ">
-                <p class="section-title mb-2">Repositories</p>
+                <p class="section-title mb-2">Projects</p>
               </RouterLink>
             </template>
-            <span>View All in Organization Details View</span>
+            <span>View All in CMI Details View</span>
           </VTooltip>
 
           <div v-if="pageLoading" class="loading-state-container">
@@ -160,7 +160,7 @@ onUnmounted(() => {
               </RouterLink>
               <div class="pa-3" v-if="reachEnd">
                 <p class="text-center">
-                  All {{selectedOrganization.acronym}}'s repositories are loaded!
+                  All {{selectedOrganization.acronym}}'s projects are loaded!
                   <span
                       @click="scrollToTop"
                       class="text-bs50 cursor-pointer scroll-top-link"
@@ -174,7 +174,7 @@ onUnmounted(() => {
               </div>
             </div>
             <p v-else class="my-1 d-flex justify-center align-center mb-10">
-              <PhInfo size="19" class="mr-1 mb-1"/>  No repositories found
+              <PhInfo size="19" class="mr-1 mb-1"/>  No projects found
             </p>
           </div>
         </div>

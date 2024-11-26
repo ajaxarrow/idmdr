@@ -184,7 +184,7 @@
           <div v-html="selectedSector.description" class="ql-editor"></div>
         </div>
         <div class="my-3">
-          <p class="section-title mb-2">{{selectedSector.parent == 'Province' ? 'Organizations' : 'Tagged Entity'}}</p>
+          <p class="section-title mb-2">{{selectedSector.parent == 'Province' ? 'Consortium Member Institutions' : 'Tagged Entity'}}</p>
           <div v-if="selectedSector.repoData && selectedSector.parent === 'Repository'">
 
             <RouterLink

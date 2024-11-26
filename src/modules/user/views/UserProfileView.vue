@@ -45,7 +45,7 @@ onMounted(async () => {
             Profile
           </p>
           <p class="text-subtitle">
-            Discover your personalized dashboard, with insights and stats on your repositories and organizations.
+            Discover your personalized dashboard, with insights and stats on your projects and consortium member institutions.
           </p>
         </div>
 <!--        <div class="d-flex align-center ga-2">-->
@@ -89,11 +89,11 @@ onMounted(async () => {
         <p class="text-about-heading py-3">User Statistics</p>
         <VRow class="ma-0">
           <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Organizations</p>
+            <p class="text-subtitle text-gs20">Consortium Member Institutions</p>
             <p class="text-subtitle pr-3">{{orgLength}}</p>
           </VCol>
           <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Repositories</p>
+            <p class="text-subtitle text-gs20">Projects</p>
             <p class="text-subtitle pr-3">{{repoLength}}</p>
           </VCol>
           <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -114,12 +114,12 @@ onMounted(async () => {
       </div>
       <VDivider/>
       <div class="px-7 py-5">
-        <p class="text-about-heading py-3">User Repository Actions</p>
+        <p class="text-about-heading py-3">User Projects Actions</p>
         <div class="mt-5">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
-              <p class="section-title">Add Repository</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">Add Repository Related to Your Project</p>
+              <p class="section-title">Add Project</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">Add Project Related to Your Project</p>
             </div>
             <VBtnPrimaryFilled
                 :to="{ name: 'new-repository'}"
@@ -127,15 +127,15 @@ onMounted(async () => {
                 rounded="lg"
                 class="satoshi-md"
                 style="font-size: 14px !important;">
-              Add Repository
+              Add Project
             </VBtnPrimaryFilled>
           </VRow>
         </div>
         <div class="mt-5">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
-              <p class="section-title">View Repositories</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">View and browse your created repositories</p>
+              <p class="section-title">View Projects</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">View and browse your created projects</p>
             </div>
             <VBtnPrimaryFilled
                 :to="{ name: 'my-repositories'}"
@@ -143,19 +143,19 @@ onMounted(async () => {
                 rounded="lg"
                 class="satoshi-md"
                 style="font-size: 14px !important;">
-              View Repositories
+              View Projects
             </VBtnPrimaryFilled>
           </VRow>
         </div>
       </div>
       <VDivider/>
       <div class="px-7 py-5">
-        <p class="text-about-heading py-3">User Organization Actions</p>
+        <p class="text-about-heading py-3">User Consortium Member Institution Actions</p>
         <div class="mt-5">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
-              <p class="section-title">Add Organization</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">Add Organization to your profile</p>
+              <p class="section-title">Add Consortium Member Institution</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">Add consortium member institution to your profile</p>
             </div>
             <VBtnPrimaryFilled
                 :to="{ name: 'new-organization'}"
@@ -163,15 +163,15 @@ onMounted(async () => {
                 rounded="lg"
                 class="satoshi-md"
                 style="font-size: 14px !important;">
-              Add Organization
+              Add Consortium Member Institution
             </VBtnPrimaryFilled>
           </VRow>
         </div>
         <div class="mt-5">
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
-              <p class="section-title">View Organizations</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">View and browse your organizations</p>
+              <p class="section-title">View Consortium Member Institution</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">View and browse your consortium member institution</p>
             </div>
             <VBtnPrimaryFilled
                 :to="{ name: 'my-organizations'}"
@@ -179,7 +179,7 @@ onMounted(async () => {
                 rounded="lg"
                 class="satoshi-md"
                 style="font-size: 14px !important;">
-              View Organizations
+              View Consortium Member Institutions
             </VBtnPrimaryFilled>
           </VRow>
         </div>
@@ -191,7 +191,7 @@ onMounted(async () => {
           <VRow  class="ma-0" justify="space-between" align="center">
             <div>
               <p class="section-title">Tag Sector</p>
-              <p class="text-gs20 mb-2" style="font-size: 14px;">Tag a Repository or an Organization to Geographic Location in the Map</p>
+              <p class="text-gs20 mb-2" style="font-size: 14px;">Tag a Project or a CMI to Geographic Location in the Map</p>
             </div>
             <VBtnPrimaryFilled
                 :to="{ name: 'new-sector'}"

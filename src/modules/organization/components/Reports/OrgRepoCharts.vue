@@ -160,7 +160,7 @@ onMounted(async () => {
             :width="props.useInMap ? '200px' : '300px'"
         />
         <p>
-          There are no repositories found.
+          There are no projects found.
           <RouterLink class="text-decoration-none add-link" :to="{name: 'new-organization'}">
             Try adding some!
         </RouterLink></p>

@@ -254,7 +254,7 @@ onMounted(async () => {
       :imageSrc="previewImage"
       @closeOverlay="isImagePreviewed = false"
   />
-  <MainLayout :title="formType === FormType.edit ? 'Edit Organization' : 'New Organization'">
+  <MainLayout :title="formType === FormType.edit ? 'Edit Consortium Member Institution' : 'New Consortium Member Institution'">
     <VForm id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
@@ -266,15 +266,15 @@ onMounted(async () => {
                class="text-decoration-none text-none">
              <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                <PhArrowLeft size="14" class="mr-1"/>
-               Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
+               Back To {{path == 'organizations' ?  'Consortium Member Institutions' : 'My Consortium Member Institutions'}}
              </p>
            </RouterLink>
          </div>
           <p class="text-heading d-flex align-center">
-            {{formType === FormType.edit ? 'Edit Organization' : 'Create New Organization'}}
+            {{formType === FormType.edit ? 'Edit Consortium Member Institution' : 'Create New Consortium Member Institution'}}
           </p>
           <p class="text-subtitle">
-            An organization is an agency or institution undertaking research and development.
+            A Consortium Member Institution is an agency or institution undertaking research and development.
           </p>
         </div>
       </div>
@@ -282,13 +282,13 @@ onMounted(async () => {
       <p class="mx-6 my-3 text-note">Required fields are marked with an asterisk (<span class="text-red">*</span>).</p>
       <VDivider/>
       <div class="px-6 py-6">
-        <label class="input-label mb-3">Organization Visibility</label>
+        <label class="input-label mb-3">CMI Visibility</label>
         <VRadioGroup hide-details v-model="organizationData.visibility">
           <VRadio color="bs50" :value="1" class="my-3">
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Public</p>
-                <p class="radio-text-subtitle">The organization is accessible to the general public for content exploration.</p>
+                <p class="radio-text-subtitle">The CMI is accessible to the general public for content exploration.</p>
               </div>
             </template>
           </VRadio>
@@ -296,7 +296,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Private</p>
-                <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the organization.</p>
+                <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the consortium member institutions.</p>
               </div>
             </template>
           </VRadio>
@@ -304,7 +304,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Within Organization</p>
-                <p class="radio-text-subtitle">The organization's information is exclusively visible to members within the organization.</p>
+                <p class="radio-text-subtitle">The organization's information is exclusively visible to members within the consortium member institutions.</p>
               </div>
             </template>
           </VRadio>
@@ -312,7 +312,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Within All Organization</p>
-                <p class="radio-text-subtitle">The organization's information is visible to all members of any organization</p>
+                <p class="radio-text-subtitle">The CMI's information is visible to all members of any consortium member institutions</p>
               </div>
             </template>
           </VRadio>
@@ -326,7 +326,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Government</p>
-                <p class="radio-text-subtitle">This organization is an agency type.</p>
+                <p class="radio-text-subtitle">This consortium member institution is an agency type.</p>
               </div>
             </template>
           </VRadio>
@@ -334,7 +334,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Private</p>
-                <p class="radio-text-subtitle">This organization is an private type.</p>
+                <p class="radio-text-subtitle">This consortium member institution is an private type.</p>
               </div>
             </template>
           </VRadio>
@@ -342,7 +342,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Public</p>
-                <p class="radio-text-subtitle">This organization is an public type.</p>
+                <p class="radio-text-subtitle">This consortium member institution is an public type.</p>
               </div>
             </template>
           </VRadio>
@@ -350,7 +350,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">International</p>
-                <p class="radio-text-subtitle">This organization is an international type.</p>
+                <p class="radio-text-subtitle">This consortium member institution is an international type.</p>
               </div>
             </template>
           </VRadio>
@@ -358,7 +358,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">NGO</p>
-                <p class="radio-text-subtitle">This organization is an NGO type.</p>
+                <p class="radio-text-subtitle">This consortium member institution is an NGO type.</p>
               </div>
             </template>
           </VRadio>
@@ -366,7 +366,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Others</p>
-                <p class="radio-text-subtitle">This organization is an others type.</p>
+                <p class="radio-text-subtitle">This consortium member institution is an others type.</p>
               </div>
             </template>
           </VRadio>
@@ -380,7 +380,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Academia</p>
-                <p class="radio-text-subtitle">This organization sub type is an academia type.</p>
+                <p class="radio-text-subtitle">This consortium member institution sub type is an academia type.</p>
               </div>
             </template>
           </VRadio>
@@ -388,7 +388,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Research</p>
-                <p class="radio-text-subtitle">This organization sub type is an research type.</p>
+                <p class="radio-text-subtitle">This consortium member institution sub type is an research type.</p>
               </div>
             </template>
           </VRadio>
@@ -396,7 +396,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Agency</p>
-                <p class="radio-text-subtitle">This organization sub type is an agency type.</p>
+                <p class="radio-text-subtitle">This consortium member institution sub type is an agency type.</p>
               </div>
             </template>
           </VRadio>
@@ -404,7 +404,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Institutional</p>
-                <p class="radio-text-subtitle">This organization sub type is an institutional type.</p>
+                <p class="radio-text-subtitle">This consortium member institution sub type is an institutional type.</p>
               </div>
             </template>
           </VRadio>
@@ -412,7 +412,7 @@ onMounted(async () => {
             <template v-slot:label>
               <div>
                 <p class="radio-text-heading">Others</p>
-                <p class="radio-text-subtitle">This organization sub type is an others type.</p>
+                <p class="radio-text-subtitle">This consortium member institution sub type is an others type.</p>
               </div>
             </template>
           </VRadio>
@@ -421,7 +421,7 @@ onMounted(async () => {
       <VDivider/>
       <div class="pa-6">
         <div class="mb-3">
-          <label class="input-label">Organization Name<span class="text-pink">*</span></label>
+          <label class="input-label">Consortium Member Institution Name<span class="text-pink">*</span></label>
           <VTextField
               v-model="organizationData.name"
               hint="This field is for the name of the organization"
@@ -436,7 +436,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Organization Acronym<span class="text-pink">*</span></label>
+          <label class="input-label">Consortium Member Institution Acronym<span class="text-pink">*</span></label>
           <VTextField
               v-model="organizationData.acronym"
               placeholder="E.g. CMU"

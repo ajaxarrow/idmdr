@@ -324,7 +324,7 @@ const loadConsortiumLayer = async (transparent: boolean = false) => {
     if(!transparent){
       map.value?.on('mouseover', `${boundary.slug}-org`, (e) => {
         const popupContent = `<h4>${boundary.name}</h4>
-                              <p>${population} Organizations</p>`
+                              <p>${population} CMIs</p>`
         popup.value?.setHTML(popupContent);
         popup.value?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
         popup.value?.addTo(map.value!);
@@ -374,7 +374,7 @@ const loadConsortiumRepoLayer = async (transparent: boolean = false) => {
     if(!transparent){
       map.value?.on('mouseover', `${boundary.slug}-org`, (e) => {
         const popupContent = `<h4>${boundary.name}</h4>
-                              <p>${repositories} Repositories</p>`
+                              <p>${repositories} Projects</p>`
         popup.value?.setHTML(popupContent);
         popup.value?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
         popup.value?.addTo(map.value!);

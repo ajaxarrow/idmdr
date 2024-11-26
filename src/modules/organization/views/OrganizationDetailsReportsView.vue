@@ -62,7 +62,7 @@ onMounted(async () => {
     <div v-else>
       <div v-if="organization">
         <div class="px-7 py-5">
-          <p class="text-about-heading py-3">Created Repositories</p>
+          <p class="text-about-heading py-3">Created Projects</p>
           <OrgRepoCharts/>
         </div>
       </div>

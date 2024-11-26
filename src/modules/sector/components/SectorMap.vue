@@ -115,14 +115,14 @@ const choroplethLegendControl = new ChoroplethLegendControl({
   layerId: 'bukidnon-org',
   limits: limits,
   colorScale: colorScale,
-  title: 'Organizations'
+  title: 'CMIs'
 });
 
 const choroplethRepoLegendControl = new ChoroplethLegendControl({
   layerId: 'bukidnon-org',
   limits: limits,
   colorScale: colorScalePink,
-  title: 'Repositories'
+  title: 'Projects'
 });
 
 watch(provinceConsortiumsLayer, async (newValue) => {

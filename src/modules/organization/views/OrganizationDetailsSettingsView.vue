@@ -359,8 +359,8 @@ onMounted(async () => {
       <div v-if="organization" class="py-6 px-7">
         <VRow  class="ma-0" justify="space-between" align="center">
           <div>
-            <p class="section-title">Download Organization Information</p>
-            <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Organization Information in PDF</p>
+            <p class="section-title">Download Consortium Member Institution Information</p>
+            <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Consortium Member Institution Information in PDF</p>
           </div>
           <VBtnPrimaryFilled
               @click="downloadOrganizationDataPDF(organization)"
@@ -368,7 +368,7 @@ onMounted(async () => {
               rounded="lg"
               class="satoshi-md"
               style="font-size: 14px !important;">
-            Download Organization Info
+            Download CMI Info
           </VBtnPrimaryFilled>
         </VRow>
         <div v-if="organization.is_member">
@@ -376,8 +376,8 @@ onMounted(async () => {
           <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
-                <p class="section-title">Update Organization Information</p>
-                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your organization details and information</p>
+                <p class="section-title">Update Consortium Member Institution Information</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your consortium member institution details and information</p>
               </div>
               <VBtnPrimaryFilled
                   :to="{ name: path == 'organizations' ? 'edit-organization' : 'edit-organization-my', params: {slug: organization?.slug}}"
@@ -385,7 +385,7 @@ onMounted(async () => {
                   rounded="lg"
                   class="satoshi-md"
                   style="font-size: 14px !important;">
-                Update Organization Info
+                Update CMI Info
               </VBtnPrimaryFilled>
             </VRow>
           </div>
@@ -393,8 +393,8 @@ onMounted(async () => {
           <div class="mt-2">
             <VRow v-if="organization?.is_member" class="ma-0" justify="space-between" align="center">
               <div>
-                <p class="section-title">Organization Members</p>
-                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage organization members and their roles. <AccessLeveLInfoDialog/></p>
+                <p class="section-title">Consortium Member Institution Members</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage consortium member institution members and their roles. <AccessLeveLInfoDialog/></p>
               </div>
               <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
                 <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
@@ -474,7 +474,7 @@ onMounted(async () => {
             </div>
             <div class="my-5 mx-1" v-else>
               <p class="d-flex align-center justify-center">
-                <PhInfo class="mr-1"/>No Organization Members Found
+                <PhInfo class="mr-1"/>No CMI Members Found
               </p>
             </div>
           </div>
@@ -482,8 +482,8 @@ onMounted(async () => {
           <div v-if="userOrgInfo?.access_level == 'owner'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
-                  <p class="section-title">Delete Organization Information</p>
-                <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire organization</p>
+                  <p class="section-title">Delete Consortium Member Institution Information</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire consortium member institution</p>
               </div>
               <DeleteDialog
                 @callback="deleteOrgCallback"
@@ -493,7 +493,7 @@ onMounted(async () => {
                     rounded="lg"
                     class="satoshi-md"
                     style="font-size: 14px !important; background-color: #b00020 !important">
-                  Delete Organization
+                  Delete Consortium Member Institution
                 </VBtnPrimaryFilled>
               </DeleteDialog>
             </VRow>

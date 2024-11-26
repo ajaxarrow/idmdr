@@ -151,7 +151,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout title="Repository Details">
+  <MainLayout title="Project Details">
     <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
       <VProgressCircular
           indeterminate
@@ -169,7 +169,7 @@ onMounted(() => {
                 class="text-decoration-none text-none">
               <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                 <PhArrowLeft size="14" class="mr-1"/>
-                Back To {{path == 'repositories' ?  'Repositories' : 'My Repositories'}}
+                Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
               </p>
             </RouterLink>
           </div>

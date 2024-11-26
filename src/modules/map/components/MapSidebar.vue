@@ -53,7 +53,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
       mainContent: markRaw(MapSectorsMainContent)
     },
     {
-      name: 'Organizations',
+      name: 'CMIs',
       icon: markRaw(PhUsersThree),
       header: markRaw(MapOrganizationsHeader),
       mainContent: markRaw(MapOrganizationsMainContent)

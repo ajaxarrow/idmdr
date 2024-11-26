@@ -15,7 +15,7 @@ watch(() => searchedOrganization.value, () => {
 <template>
   <VTextField
       v-model="searchedOrganization"
-      placeholder="Search Organizations"
+      placeholder="Search CMIs"
       hide-details
       rounded="lg"
       density="comfortable"

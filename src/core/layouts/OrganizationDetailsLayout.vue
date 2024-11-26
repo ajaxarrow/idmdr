@@ -34,7 +34,7 @@ const props = defineProps({
 const getTabs = () => {
   return [
     { name: "About" },
-    { name: "Repositories" },
+    { name: "Projects" },
     ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
     ...(user.value ? [{ name: "Settings" }] : [])
   ]
@@ -50,7 +50,7 @@ const computedTabs = computed(() => {
 
     if (tab.name === "About") {
       linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
-    } else if (tab.name === "Repositories") {
+    } else if (tab.name === "Projects") {
       linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
     } else if (tab.name === "Reports" && user.value && isMember.value) {
       linkName = path.value === 'organizations' ? 'organization-reports' : 'my-organization-reports';
@@ -118,7 +118,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout title="Organization Details">
+  <MainLayout title="Consortium Member Institution Details">
     <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
       <VProgressCircular
           indeterminate
@@ -136,7 +136,7 @@ onMounted(() => {
                 class="text-decoration-none text-none">
               <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                 <PhArrowLeft size="14" class="mr-1"/>
-                Back To {{path == 'organizations' ?  'Organizations' : 'My Organizations'}}
+                Back To {{path == 'organizations' ?  'Consortium Member Institutions' : 'My Consortium Member Institutions'}}
               </p>
             </RouterLink>
           </div>

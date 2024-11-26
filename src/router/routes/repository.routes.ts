@@ -6,6 +6,12 @@ const repositoryRoutes = [
     component: () => import('../../modules/repository/views/RepositoriesView.vue')
   },
   {
+    path: '/ip-technologies',
+    name: 'ip-technologies',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoriesView.vue')
+  },
+  {
     path: '/my-repositories',
     name: 'my-repositories',
     // @ts-ignore

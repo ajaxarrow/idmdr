@@ -401,8 +401,8 @@ onMounted(async () => {
      <div v-if="repository" class="px-6 py-7">
        <VRow  class="ma-0" justify="space-between" align="center">
          <div>
-           <p class="section-title">Download Repository Information</p>
-           <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Repository Information in PDF</p>
+           <p class="section-title">Download Project Information</p>
+           <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Project Information in PDF</p>
          </div>
          <VBtnPrimaryFilled
              @click="downloadRepositoryDataPDF(repository)"
@@ -418,8 +418,8 @@ onMounted(async () => {
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Update Repository Information</p>
-               <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your repository details and information</p>
+               <p class="section-title">Update Project Information</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project details and information</p>
              </div>
              <VBtnPrimaryFilled
                  :to="{ name: path == 'repositories' ? 'edit-repository' : 'edit-repository-my', params: {slug: repository?.slug}}"
@@ -427,7 +427,7 @@ onMounted(async () => {
                  rounded="lg"
                  class="satoshi-md"
                  style="font-size: 14px !important;">
-               Update Repository Info
+               Update Project Info
              </VBtnPrimaryFilled>
            </VRow>
          </div>
@@ -435,8 +435,8 @@ onMounted(async () => {
          <div class="mt-2">
            <VRow v-if="repository?.is_member" class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Repository Members</p>
-               <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage repository members and their roles. <AccessLeveLInfoDialog/></p>
+               <p class="section-title">Project Members</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage project members and their roles. <AccessLeveLInfoDialog/></p>
              </div>
              <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
                <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
@@ -514,7 +514,7 @@ onMounted(async () => {
            </div>
            <div class="my-5 mx-1" v-else>
              <p class="d-flex align-center justify-center">
-               <PhInfo class="mr-1"/>No Repository Members Found
+               <PhInfo class="mr-1"/>No Project Members Found
              </p>
            </div>
          </div>
@@ -523,7 +523,7 @@ onMounted(async () => {
            <VRow v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Access Requests</p>
-               <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage access requests in the repository </p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage access requests in the project </p>
              </div>
            </VRow>
            <VTextField
@@ -611,8 +611,8 @@ onMounted(async () => {
          <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2">
            <VRow class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Delete Repository Information</p>
-               <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire repository</p>
+               <p class="section-title">Delete Project Information</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire project</p>
              </div>
              <DeleteDialog
                  @callback="deleteRepoCallback"
@@ -622,7 +622,7 @@ onMounted(async () => {
                    rounded="lg"
                    class="satoshi-md"
                    style="font-size: 14px !important; background-color: #b00020 !important">
-                 Delete Repository
+                 Delete Project
                </VBtnPrimaryFilled>
              </DeleteDialog>
            </VRow>

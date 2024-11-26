@@ -514,7 +514,7 @@ onMounted( async () => {
       :imageSrc="previewImage"
       @closeOverlay="isImagePreviewed = false"
   />
-  <MainLayout :title="formType === FormType.edit ? 'Edit Repository' : 'New Repository'">
+  <MainLayout :title="formType === FormType.edit ? 'Edit Project' : 'New Project'">
     <VForm id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
        <div class="d-flex">
@@ -525,16 +525,16 @@ onMounted( async () => {
              class="text-decoration-none text-none">
            <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
              <PhArrowLeft size="14" class="mr-1"/>
-             Back To {{path == 'repositories' ?  'Repositories' : 'My Repositories'}}
+             Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
            </p>
          </RouterLink>
        </div>
           <div>
             <p class="text-heading d-flex align-center">
-              {{formType === FormType.edit ? 'Edit Repository' : 'Create New Repository'}}
+              {{formType === FormType.edit ? 'Edit Project' : 'Create New Project'}}
             </p>
             <p class="text-subtitle">
-              A repository contain all related project of a certain project of the organization
+              A project contain all related project of a certain project of the organization
             </p>
           </div>
       </div>
@@ -547,7 +547,7 @@ onMounted( async () => {
               <template v-slot:label>
                 <div>
                   <p class="radio-text-heading">Public</p>
-                  <p class="radio-text-subtitle">The repository is accessible to the general public for content exploration.</p>
+                  <p class="radio-text-subtitle">The project is accessible to the general public for content exploration.</p>
                 </div>
               </template>
             </VRadio>
@@ -555,7 +555,7 @@ onMounted( async () => {
               <template v-slot:label>
                 <div>
                   <p class="radio-text-heading">Private</p>
-                  <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the repository.</p>
+                  <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the project.</p>
                 </div>
               </template>
             </VRadio>
@@ -563,7 +563,7 @@ onMounted( async () => {
               <template v-slot:label>
                 <div>
                   <p class="radio-text-heading">Within Organization</p>
-                  <p class="radio-text-subtitle">The repository's information is exclusively visible to members within the organization.</p>
+                  <p class="radio-text-subtitle">The project's information is exclusively visible to members within the organization.</p>
                 </div>
               </template>
             </VRadio>
@@ -571,7 +571,7 @@ onMounted( async () => {
               <template v-slot:label>
                 <div>
                   <p class="radio-text-heading">Within All Organization</p>
-                  <p class="radio-text-subtitle">The repository's information is visible to all members of any organization</p>
+                  <p class="radio-text-subtitle">The project's information is visible to all members of any organization</p>
                 </div>
               </template>
             </VRadio>

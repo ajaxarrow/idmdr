@@ -60,14 +60,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <MainLayout title="Organizations">
+  <MainLayout title="Consortium Member Institutions">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
           <VCol md="9" class="pa-0">
             <div>
               <p class="text-heading d-flex align-center">
-                Organizations
+                Consortium Member Institutions
               </p>
               <p class="text-subtitle">Browse and explore the consortium of agencies and institutions undertaking research and development
                 in agriculture, aquatic, and natural resources in Northern Mindanao. </p>
@@ -80,7 +80,7 @@ onUnmounted(() => {
              </VBtnPrimaryFilled>
              <VBtnPrimaryFilled :to="{ name: 'new-organization'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                <PhPlus size="16" class="mr-2"/>
-               New Organization
+               New CMI
              </VBtnPrimaryFilled>
            </VRow>
          </VCol>
@@ -101,13 +101,13 @@ onUnmounted(() => {
             <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
           </template>
           <template v-slot:label>
-            <p class="text-gs20">Search organizations by title</p>
+            <p class="text-gs20">Search CMIs by title</p>
           </template>
         </VTextField>
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">
             <PhUsersThree size="24" class="mr-1"/>
-            <p>{{organizationData.length}} Organization<span v-if="organizationData.length > 1">s</span> Available</p>
+            <p>{{organizationData.length}} Consortium Member Institution<span v-if="organizationData.length > 1">s</span> Available</p>
           </p>
         </VRow>
         <div v-if="pageLoading" class="loading-state-container">
@@ -121,7 +121,7 @@ onUnmounted(() => {
             <OrganizationItem v-for="organization in organizationData" :organization="organization"/>
             <div class="pa-3" v-if="reachEnd">
               <p class="text-center">
-                All organizations are loaded!
+                All CMIs are loaded!
                 <span
                     @click="scrollTop"
                     class="text-bs50 cursor-pointer scroll-top-link"
@@ -135,7 +135,7 @@ onUnmounted(() => {
             </div>
           </div>
           <p v-else class="d-flex align-center justify-center">
-            <PhInfo class="mr-1"/>No Organization Found
+            <PhInfo class="mr-1"/>No Consortium Member Institutions Found
           </p>
         </div>
       </div>

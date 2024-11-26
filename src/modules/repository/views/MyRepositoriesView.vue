@@ -101,15 +101,15 @@ onUnmounted(() => {
 </script>
 
 <template>s
-  <MainLayout title="Repositories">
+  <MainLayout title="My Projects">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
           <div>
             <p class="text-heading d-flex align-center">
-              My Repositories
+              My Projects
             </p>
-            <p class="text-subtitle">Create and manage repositories within your organization!</p>
+            <p class="text-subtitle">Create and manage projects within your organization!</p>
           </div>
           <div v-if="user">
             <VBtnPrimaryFilled :to="{ name: 'new-repository-my'}" v-if="isSmall || isTablet" icon >
@@ -117,7 +117,7 @@ onUnmounted(() => {
             </VBtnPrimaryFilled>
             <VBtnPrimaryFilled :to="{ name: 'new-repository-my'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
               <PhPlus size="16" class="mr-2"/>
-              New Repository
+              New Project
             </VBtnPrimaryFilled>
           </div>
         </VRow>
@@ -137,7 +137,7 @@ onUnmounted(() => {
             <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
           </template>
           <template v-slot:label>
-            <p class="text-gs20">Search repositories by title, keyword, tags.</p>
+            <p class="text-gs20">Search projects by title, keyword, tags.</p>
           </template>
         </VTextField>
         <VRow class="ma-0 mt-2" align="center">
@@ -155,7 +155,7 @@ onUnmounted(() => {
                 variant="outlined"
                 key="All Repositories"
                 value="All Repositories">
-              All Repositories
+              All Projects
               <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
             </VChip>
             <VChip
@@ -188,7 +188,7 @@ onUnmounted(() => {
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">
             <PhHardDrives size="24" class="mr-1"/>
-            Browse Latest Repositories
+            Browse Latest Projects
           </p>
           <p class="d-flex align-center">
             Latest
@@ -206,7 +206,7 @@ onUnmounted(() => {
             <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
             <div class="pa-3" v-if="reachEnd">
               <p class="text-center">
-                All repositories are loaded!
+                All projects are loaded!
                 <span
                     @click="scrollTop"
                     class="text-bs50 cursor-pointer scroll-top-link"
@@ -219,7 +219,7 @@ onUnmounted(() => {
               <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
             </div>
           </div>
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Projects Found</p>
         </div>
       </div>
     </div>

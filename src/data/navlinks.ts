@@ -5,7 +5,7 @@ import {
   PhSignOut,
   PhUsersFour,
   PhUsersThree,
-  PhAirplaneLanding, PhUserCircle
+  PhAirplaneLanding, PhUserCircle, PhLightbulbFilament
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
@@ -17,12 +17,17 @@ export const navLinks = [
     icon: PhHouse
   },
   {
-    name: 'Repositories',
+    name: 'Projects',
     link: '/repositories',
     icon: PhCloud
   },
   {
-    name: 'Organizations',
+    name: 'IP Technologies',
+    link: '/ip-technologies',
+    icon: PhLightbulbFilament
+  },
+  {
+    name: 'CMIs',
     link: '/organizations',
     icon: PhUsersThree
   },
@@ -34,12 +39,12 @@ export const navLinks = [
   // Conditionally include "My Organizations" and "Settings" links
   ...(user.value ? [
     {
-      name: 'My Repositories',
+      name: 'My Projects',
       link: '/my-repositories',
       icon: PhCloud
     },
     {
-      name: 'My Organizations',
+      name: 'My CMIs',
       link: '/my-organizations',
       icon: PhUsersFour
     },

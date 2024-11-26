@@ -10,7 +10,7 @@
     PhX
   } from "@phosphor-icons/vue";
   import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-  import {onMounted, onUnmounted, ref, watch} from "vue";
+  import {computed, onMounted, onUnmounted, ref, watch} from "vue";
   import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import {useRepositoryServices} from "../services/repository.services.ts";
@@ -33,11 +33,15 @@
   const currentTags = ref<string[]>([]);
   const {isSmall, isTablet} = useScreenStore();
   const {route} = useRouting();
-
+  const path = ref('repositories')
   const reachEnd = ref(false)
   const lastItemValue = ref(1);
   const observerReady = ref(false)
   const pageLoading = ref(false)
+
+  const computedTitle = computed(() => {
+    return path.value === 'repositories' ? 'Projects' : 'IP Technologies';
+  });
 
 
   const filterRepositoryCallback = (currentSelectedTags: string[]) => {
@@ -75,7 +79,16 @@
     }
   }
 
+  const getFirstPath = (url: string) => {
+    return url.split('/').filter(Boolean)[0];
+  }
+
+  watch(() => route.path, () => {
+    path.value = getFirstPath(<string>route.path)
+  })
+
   onMounted(async () => {
+    path.value = getFirstPath(<string>route.path)
     pageLoading.value = true
     fetchTags();
     currentTags.value = tags.value.splice(0, 6)
@@ -101,15 +114,15 @@
 </script>
 
 <template>s
-  <MainLayout title="Repositories">
+  <MainLayout :title="computedTitle">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
           <div>
             <p class="text-heading d-flex align-center">
-              Repositories
+              {{computedTitle}}
             </p>
-            <p class="text-subtitle">Create and manage repositories within your organization!</p>
+            <p class="text-subtitle">Create and manage {{path == 'repositories' ?  'projects' : 'IP technologies'}} within your organization!</p>
           </div>
           <div v-if="user">
             <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-if="isSmall || isTablet" icon >
@@ -117,7 +130,7 @@
             </VBtnPrimaryFilled>
             <VBtnPrimaryFilled :to="{ name: 'new-repository'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
               <PhPlus size="16" class="mr-2"/>
-              New Repository
+              New {{path == 'repositories' ?  'Project' : 'IP Technology'}}
             </VBtnPrimaryFilled>
           </div>
         </VRow>
@@ -137,7 +150,7 @@
             <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
           </template>
           <template v-slot:label>
-            <p class="text-gs20">Search repositories by title, keyword, tags.</p>
+            <p class="text-gs20">Search {{path == 'repositories' ?  'projects' : 'IP technologies'}} by title, keyword, tags.</p>
           </template>
         </VTextField>
         <VRow class="ma-0 mt-2" align="center">
@@ -155,7 +168,7 @@
                 variant="outlined"
                 key="All Repositories"
                 value="All Repositories">
-              All Repositories
+              All {{computedTitle}}
               <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
             </VChip>
             <VChip
@@ -188,7 +201,7 @@
         <VRow justify="space-between" align="center" class="ma-0 my-6">
           <p class="text-title d-flex align-center">
             <PhHardDrives size="24" class="mr-1"/>
-            Browse Latest Repositories
+            Browse Latest {{computedTitle}}
           </p>
           <p class="d-flex align-center">
             Latest
@@ -206,7 +219,7 @@
             <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
             <div class="pa-3" v-if="reachEnd">
               <p class="text-center">
-                All repositories are loaded!
+                All {{path == 'repositories' ?  'projects' : 'IP technologies'}} are loaded!
                 <span
                   @click="scrollTop"
                   class="text-bs50 cursor-pointer scroll-top-link"
@@ -219,7 +232,7 @@
               <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
             </div>
           </div>
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No {{computedTitle}} Found</p>
         </div>
       </div>
     </div>

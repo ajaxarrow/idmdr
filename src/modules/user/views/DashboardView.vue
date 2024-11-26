@@ -27,12 +27,12 @@ const dataCards = [
     icon: PhFactory
   },
   {
-    name: 'Repositories',
+    name: 'Projects',
     value: repoLength,
     icon: PhCloud
   },
   {
-    name: 'Organizations',
+    name: 'CMIs',
     value: orgLength,
     icon: PhUsersThree
   }
@@ -76,7 +76,7 @@ onMounted(async () => {
           </VCol>
         </VRow>
         <VRow justify="space-between" align="center" class="ma-0 my-6">
-          <p class="text-title">Browse Latest Repositories</p>
+          <p class="text-title">Browse Latest Projects</p>
           <RouterLink class="link" :to="{name: 'repositories'}">See All</RouterLink>
         </VRow>
         <div>

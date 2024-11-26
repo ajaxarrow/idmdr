@@ -16,7 +16,7 @@ const productionData = ref([
     value: false
   },
   {
-    title: 'Northern Mindanao Repositories',
+    title: 'Northern Mindanao Projects',
     color: "#00FFA6",
     value: false
   },
@@ -55,10 +55,10 @@ watch(
 );
 
 watch(
-    () => productionData.value.find(data => data.title === 'Northern Mindanao Repositories'),
+    () => productionData.value.find(data => data.title === 'Northern Mindanao Projects'),
     (newVal) => {
       if (newVal) {
-        toggleSwitch('Northern Mindanao Repositories');
+        toggleSwitch('Northern Mindanao Projects');
         // provinceConsortiumsLayer.value = !newVal.value;
         provinceRepositoriesLayer.value = newVal.value;
       }
