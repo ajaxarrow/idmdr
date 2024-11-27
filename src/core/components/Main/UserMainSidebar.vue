@@ -68,7 +68,7 @@
         <Logo/>
       </VRow>
       <VDivider/>
-      <div class="px-6 pt-2">
+      <div class="px-6 pt-2 scrollable-sidebar-container">
         <VList>
           <VListItem
               v-for="navLink in navLinks"
@@ -126,6 +126,10 @@
     z-index: 30;
     width: 100vw;
 
+  }
+
+  .scrollable-container{
+    overflow-y: auto;
   }
 
   .nav-border{

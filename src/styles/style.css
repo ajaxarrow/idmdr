@@ -167,3 +167,20 @@ ul {
     cursor: pointer;
     margin-right: 5px;
 }
+
+.scrollable-sidebar-container{
+    overflow-y: auto;
+}
+
+.scrollable-sidebar-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.scrollable-sidebar-container::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px #F0F5F9;
+}
+
+.scrollable-sidebar-container::-webkit-scrollbar-thumb {
+    background-color: rgba(35, 102, 139, 0.48);
+    outline: #23668b;
+}

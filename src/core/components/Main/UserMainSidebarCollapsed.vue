@@ -10,7 +10,7 @@ import {navLinks} from "../../../data/navlinks.ts";
       <Logo :useAltDesign="true"/>
     </VRow>
     <VDivider/>
-    <div class="mt-2">
+    <div class="scrollable-sidebar-container mt-2">
       <VList>
         <VListItem
             v-for="navLink in navLinks"
@@ -59,6 +59,7 @@ import {navLinks} from "../../../data/navlinks.ts";
   height: 95vh;
 }
 
+
 .nav-item{
   font-size: 12px;
   font-weight: 600;
@@ -72,6 +73,7 @@ import {navLinks} from "../../../data/navlinks.ts";
 .v-list-item--active{
   background-color: #F0F5F9 !important;
   border-right: 3px solid #3291C7;
+  color: #000000 !important;
 }
 
 :deep(.v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line){
@@ -81,7 +83,6 @@ import {navLinks} from "../../../data/navlinks.ts";
 .v-list-item--variant-plain {
   opacity: 1;
 }
-
 
 .icon{
   color: #191919 !important;
