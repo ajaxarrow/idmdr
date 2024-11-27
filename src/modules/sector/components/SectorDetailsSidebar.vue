@@ -276,7 +276,7 @@
                     cover
                     height="40px"
                     width="40px"
-                    :src="org.image ? `${baseURL}${<string>org.image}` : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                    :src="org.image ? `${<string>org.image}` : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
                 />
                 <div class="ml-2">
                   <p class="default" style="font-size: 15px; font-weight: 600;">{{ org.name }} ({{ org.acronym }})</p>
