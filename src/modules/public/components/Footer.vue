@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {PhHardDrives} from "@phosphor-icons/vue";
+// import {PhHardDrives} from "@phosphor-icons/vue";
+import logo from '../../../assets/images/nomcaarrd.png';
 </script>
 
 <template>
@@ -7,7 +8,8 @@ import {PhHardDrives} from "@phosphor-icons/vue";
     <VContainer>
       <RouterLink to="/" class="text-decoration-none">
         <div class="d-flex align-center text-logo">
-          <PhHardDrives :size="24" weight="duotone" color="#3291C7" class="ph-icon" />
+<!--          <PhHardDrives :size="24" weight="duotone" color="#3291C7" class="ph-icon" />-->
+          <img style="height: 24px; " :src="logo" alt="logo"/>
           LINNKS
         </div>
       </RouterLink>

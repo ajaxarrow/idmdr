@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { PhHardDrives } from "@phosphor-icons/vue";
+// import { PhHardDrives } from "@phosphor-icons/vue";
+import logo from '../../assets/images/nomcaarrd.png';
 
 const props = defineProps({
   useAltDesign: {
@@ -19,7 +20,8 @@ const handleHover = (isHovered: boolean) => {
 <template>
   <RouterLink to="/" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
     <div class="d-flex align-center text-wrapper" :class="{ 'flex-column': props.useAltDesign }" @mouseover="() => handleHover(true)" @mouseout="() => handleHover(false)">
-    <PhHardDrives :size="props.useAltDesign ? 32 : 24" weight="duotone" color="#3291C7" class="ph-icon" />
+<!--    <PhHardDrives :size="props.useAltDesign ? 32 : 24" weight="duotone" color="#3291C7" class="ph-icon" />-->
+    <img :style="{height: props.useAltDesign ? '32px' : '24px'}" :src="logo" alt="logo" class="ph-icon"/>
       <template v-if="props.useAltDesign">
         <div>
 <!--          <span style="&#45;&#45;i:1">I</span>-->
