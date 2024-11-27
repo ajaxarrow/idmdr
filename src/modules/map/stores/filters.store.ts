@@ -292,7 +292,6 @@ const loadConsortiumLayer = async (transparent: boolean = false) => {
   const orgs = await fetchOrganizations()
   await fetchOrgCountPerProvinces(orgs)
   await fetchRepoCountPerProvinces(orgs)
-  console.log(vizData.value)
   const paintColor = createPaintColor(limits, colorScale);
 
   boundaries.forEach((boundary: any) => {
