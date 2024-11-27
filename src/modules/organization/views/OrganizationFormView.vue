@@ -45,6 +45,7 @@ const organizationDataInitialState = reactive<Organization>({
   tel_phone: '',
   phone: '',
   email: '',
+  additional_info: '',
   president: '',
   rd_rep: {
     email: '',
@@ -745,6 +746,23 @@ onMounted(async () => {
               color="primary"
               base-color="gs60"
           />
+        </div>
+        <div class="mb-3" v-if="organizationData.additional_info">
+          <label class="input-label">Additional Info</label>
+          <QuillRichTextEditor
+              :modelValue="organizationData.additional_info"
+              @update:modelValue="$event => (organizationData.additional_info = $event)"
+              placeholder="Enter additional information related to this project "
+          />
+        </div>
+        <div class="mb-5" v-else>
+          <label class="input-label">Additional Info</label>
+          <QuillRichTextEditor
+              :modelValue="organizationData.additional_info"
+              @update:modelValue="$event => (organizationData.additional_info = $event)"
+              placeholder="Enter additional information related to this project "
+          />
+          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
         </div>
         <div class="mb-5">
           <label class="input-label">Organization Logo/Image</label>

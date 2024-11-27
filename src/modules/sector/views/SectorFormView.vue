@@ -72,6 +72,7 @@ const sectorDataInitialState = reactive<Sector>({
   repository: null,
   visibility: 1,
   address: "",
+  additional_info: "",
 })
 
 const sectorData = reactive({
@@ -255,10 +256,11 @@ onMounted(async () => {
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
 
-  if (type === 'edit') {
+  if(type === 'edit') {
     formType.value = FormType.edit
     const fetchedData = await fetchSectorData(route.params.slug as string)
     Object.assign(sectorData, {...fetchedData})
+    console.log(sectorData)
     sectorData.geojson = JSON.stringify(fetchedData?.geojson)
     if(!isEmptyObject(fetchedData?.geojson)){
       isGeoJSONPreview.value = true
@@ -510,10 +512,9 @@ onUnmounted(() => {
               :error-messages="errorMessage.address"
           />
         </div>
-        <div class="mb-5" v-if="formType === FormType.edit">
+        <div class="mb-5" v-if="sectorData.description">
           <label class="input-label">Sector Description</label>
           <QuillRichTextEditor
-              v-if="sectorData.description"
               :modelValue="sectorData.description"
               @update:modelValue="$event => (sectorData.description = $event)"
               placeholder="E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices."
@@ -543,6 +544,22 @@ onUnmounted(() => {
               multiple
               chips
               closable-chips
+          />
+        </div>
+        <div class="mb-3" v-if="sectorData.additional_info">
+          <label class="input-label">Additional Info</label>
+          <QuillRichTextEditor
+              :modelValue="sectorData.additional_info"
+              @update:modelValue="$event => (sectorData.additional_info = $event)"
+              placeholder="Enter additional information related to this sector"
+          />
+        </div>
+        <div class="mb-3" v-else>
+          <label class="input-label">Additional Info</label>
+          <QuillRichTextEditor
+              :modelValue="sectorData.additional_info"
+              @update:modelValue="$event => (sectorData.additional_info = $event)"
+              placeholder="Enter additional information related to this sector"
           />
         </div>
         <div class="mb-5">

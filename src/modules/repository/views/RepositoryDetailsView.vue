@@ -186,12 +186,24 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
         <p class="text-about-heading py-3">Project Components</p>
         <VRow class="ma-0">
           <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Project Category</p>
-            <p class="text-subtitle pr-3">{{ repository.type}}</p>
-          </VCol>
-          <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Type</p>
             <p class="text-subtitle pr-3">{{ repository.type}}</p>
+          </VCol>
+          <VCol v-if="repository.proj_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Project Category</p>
+            <p class="text-subtitle pr-3">{{ repository.proj_type}}</p>
+          </VCol>
+          <VCol v-if="repository.lead" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Project Lead</p>
+            <p class="text-subtitle pr-3">{{ repository.lead}}</p>
+          </VCol>
+          <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Author</p>
+            <p class="text-subtitle pr-3">{{ repository.author}}</p>
+          </VCol>
+          <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Project Status</p>
+            <p class="text-subtitle pr-3">{{ repository.status}}</p>
           </VCol>
           <VCol v-if="repository.org_data" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization</p>
@@ -242,6 +254,10 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
       <div v-if="repository.type === 'Project Repository'" class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization' && repository.files?.length == 0}" >
         <p class="text-about-heading py-3" >Technology Details</p>
         <VRow class="ma-0">
+          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <p class="text-subtitle text-gs20">Patenting Status</p>
+            <p class="text-subtitle pr-3">{{ repository.is_patentable ? 'Applicable for Patenting' : 'Not Applicable'}}</p>
+          </VCol>
           <VCol v-if="repository.technology_category" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Category</p>
             <p class="text-subtitle pr-3">{{ repository.technology_category}}</p>
@@ -312,6 +328,39 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
               <p class="text-subtitle text-gs20">Adopter Status</p>
               <p class="text-subtitle pr-3">{{ repository.commercialization.adopterStatus}}</p>
             </VCol>
+          </VRow>
+        </div>
+      </div>
+      <div v-if="repository.atbi && repository.atbi.trim().length != 0 && repository.type === 'Project Repository'">
+        <VDivider/>
+        <div class="px-7 py-5">
+          <p class="text-about-heading py-3">Agri-Aqua Technology Business Incubator</p>
+          <VRow class="ma-0">
+            <div class="ql-snow">
+              <div class="ql-editor" v-html="repository.atbi"></div>
+            </div>
+          </VRow>
+        </div>
+      </div>
+      <div v-if="repository.abh && repository.abh.trim().length != 0 && repository.type === 'Project Repository'">
+        <VDivider/>
+        <div class="px-7 py-5">
+          <p class="text-about-heading py-3">Agri-Aqua Business Hub</p>
+          <VRow class="ma-0">
+            <div class="ql-snow">
+              <div class="ql-editor" v-html="repository.abh"></div>
+            </div>
+          </VRow>
+        </div>
+      </div>
+      <div v-if="repository.additional_info && repository.additional_info?.trim().length > 0">
+        <VDivider/>
+        <div class="px-7 py-5">
+          <p class="text-about-heading py-3">Additional Information</p>
+          <VRow class="ma-0">
+            <div class="ql-snow">
+              <div class="ql-editor" v-html="repository.additional_info"></div>
+            </div>
           </VRow>
         </div>
       </div>

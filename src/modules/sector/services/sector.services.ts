@@ -125,6 +125,7 @@ export const useSectorServices = () => {
         tags: data.tags ? stringToArray(data.tags) : '',
         parent: data.parent || '',
         parent_id: data.parent_id || '',
+        additional_info: data.additional_info || '',
         parent_obj: data.parent_obj,
         owner_id: data.owner_id,
         owner: data.owner,
@@ -201,7 +202,8 @@ export const useSectorServices = () => {
         parent_obj: res.data.parent_obj,
         owner_id: res.data.owner_id,
         owner: res.data.owner,
-        visibility: res.data.visibility
+        visibility: res.data.visibility,
+        additional_info: res.data.additional_info || ''
       }
     } catch(e: any){
       console.log(e)

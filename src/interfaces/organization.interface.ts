@@ -24,6 +24,7 @@ interface Organization {
   tt_rep: Representative,
   ic_rep: Representative,
   sc_rep: Representative,
+  additional_info?: string,
   // clusterRepresentatives: ClusterRepresentative[]
 }
 

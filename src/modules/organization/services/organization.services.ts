@@ -176,6 +176,7 @@ export const useOrganizationServices = () => {
           ttc_rep: organization.tt_rep,
           icc_rep: organization.ic_rep,
           scc_rep: organization.sc_rep,
+          additional_info: organization.additional_info,
           is_active: true,
         },
         {
@@ -202,6 +203,7 @@ export const useOrganizationServices = () => {
           email: organization.email,
           website: organization.website,
           geojson: organization.geojson,
+          additional_info: organization.additional_info,
           is_active: true,
         },
         {
@@ -298,6 +300,7 @@ export const useOrganizationServices = () => {
     return rawData.map((org: any) => {
       const organization = org.organization || org;
       return {
+        additional_info: organization?.additional_info ?? '',
         is_member: false,
         is_deleted: organization?.is_deleted,
         access_level: org?.access_level ?? '',

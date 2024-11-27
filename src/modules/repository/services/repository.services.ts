@@ -302,7 +302,15 @@ export const useRepositoryServices = () => {
           owner_id: repo.owner_id || "",
           owner_data: repo.owner_data || {},
           org_data: repo.org_data || {},
-          files: attachments
+          files: attachments,
+          author: repo.author || "",
+          lead: repo.lead || "",
+          proj_type: repo.proj_type || "",
+          additional_info: repo.additional_info || "",
+          status: repo.status || "",
+          abh: repo.abh || "",
+          atbi: repo.atbi || "",
+          is_patentable: repo.is_patentable || false,
         };
       })
     );

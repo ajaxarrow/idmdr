@@ -20,9 +20,10 @@
 
   const {toolbarOptions} = useQuill();
   const quill = ref<null | Quill>(null);
+  const uniqueId = `editor-${Math.random().toString(36).substr(2, 9)}`;
 
   onMounted(() => {
-    quill.value = new Quill('#editor', {
+    quill.value = new Quill(`#${uniqueId}`, {
       theme: 'snow',
       modules: {
         toolbar: toolbarOptions
@@ -40,7 +41,10 @@
 </script>
 
 <template>
-  <div id="editor">
+  <div :id="uniqueId" style="border: 1.75px solid rgba(140, 140, 140, 0.2);
+    border-radius: 0 0 10px 10px ;
+    height: 200px;
+    font-size: 16px;">
   </div>
 </template>
 

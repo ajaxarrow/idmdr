@@ -6,6 +6,19 @@ const commodities = [
   'Tropical Fruits - Pomelo', 'Vegetables', 'Crops (Others)', 'Others'
 ];
 
+const status = ['Ongoing', 'Completed', 'Suspended', 'Terminated', 'Unliquidated']
+
+const forPatent = [
+  {
+    title: 'Applicable',
+    value: true
+  },
+  {
+    title: 'Not Applicable',
+    value: false
+  }
+]
+
 const repoType = ['Project Repository', 'Document Repository']
 
 
@@ -203,4 +216,4 @@ const currentStatus = ['Applied Fairness Opinion Report', 'Awaiting Fairness Opi
 const priorityLevels = ["high", "medium", "low"]
 
 
-export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType}
+export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent}

@@ -120,6 +120,17 @@
 
        </VRow>
      </div>
+     <div v-if="organization.additional_info && organization.additional_info?.trim().length != 0">
+       <VDivider/>
+       <div class="px-7 py-5">
+         <p class="text-about-heading py-3">Additional Information</p>
+         <VRow class="ma-0">
+           <div class="ql-snow">
+             <div class="ql-editor" v-html="organization.additional_info"></div>
+           </div>
+         </VRow>
+       </div>
+     </div>
    </div>
 
   </OrganizationDetailsLayout>

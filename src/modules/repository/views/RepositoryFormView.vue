@@ -17,7 +17,7 @@ import {Attachment, Commercialization, Repository} from "../../../interfaces/rep
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {
   commodities, readinessLevel, technologyStatus, technologyCategories, agencies, industries,
-  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus, repoType
+  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus, repoType, status, forPatent
 } from "../../../data/repository.inventory.fields.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
@@ -116,7 +116,15 @@ const repositoryDataIntialState = reactive<Repository>({
   visibility: 1,
   adaptors: 'Farmers',
   com_extra: {},
-  image: ''
+  image: '',
+  author: '',
+  lead: '',
+  proj_type: '',
+  additional_info: '',
+  status: 'Ongoing',
+  abh: '',
+  atbi: '',
+  is_patentable: false,
 })
 
 const repositoryData = reactive<Repository>({
@@ -240,6 +248,12 @@ watch(
       });
     }
 );
+
+watch(()=> repositoryData.is_patentable, ()=> {
+  if(repositoryData.is_patentable){
+    repositoryData.visibility = 2
+  }
+})
 
 
 const setGeoJSON = (geojson: any, isJSONDrawn: boolean) => {
@@ -541,46 +555,53 @@ onMounted( async () => {
       <VDivider/>
       <p class="mx-6 my-3 text-note">Required fields are marked with an asterisk (<span class="text-red">*</span>).</p>
       <VDivider/>
-        <div class="px-6 py-3">
-          <VRadioGroup  v-model="repositoryData.visibility">
-            <VRadio color="bs50" :value="1" class="my-3">
-              <template v-slot:label>
-                <div>
-                  <p class="radio-text-heading">Public</p>
-                  <p class="radio-text-subtitle">The project is accessible to the general public for content exploration.</p>
-                </div>
-              </template>
-            </VRadio>
-            <VRadio color="bs50" :value="2" class="my-3">
-              <template v-slot:label>
-                <div>
-                  <p class="radio-text-heading">Private</p>
-                  <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the project.</p>
-                </div>
-              </template>
-            </VRadio>
-            <VRadio color="bs50" :value="3" class="my-3">
-              <template v-slot:label>
-                <div>
-                  <p class="radio-text-heading">Within Organization</p>
-                  <p class="radio-text-subtitle">The project's information is exclusively visible to members within the organization.</p>
-                </div>
-              </template>
-            </VRadio>
-            <VRadio color="bs50" :value="4" class="my-3">
-              <template v-slot:label>
-                <div>
-                  <p class="radio-text-heading">Within All Organization</p>
-                  <p class="radio-text-subtitle">The project's information is visible to all members of any organization</p>
-                </div>
-              </template>
-            </VRadio>
-          </VRadioGroup>
-        </div>
+      <div
+          class="px-6 py-3"
+          :class="{ 'disabled-cursor': repositoryData.is_patentable }"
+          :title="repositoryData.is_patentable ? 'This project is open for patenting, visibility set to Private' : ''"
+      >
+        <VRadioGroup
+            v-model="repositoryData.visibility"
+            :disabled="repositoryData.is_patentable"
+        >
+          <VRadio color="bs50" :value="1" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Public</p>
+                <p class="radio-text-subtitle">The project is accessible to the general public for content exploration.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="2" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Private</p>
+                <p class="radio-text-subtitle">The content is accessible only to the creator or owner of the project.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="3" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Within Organization</p>
+                <p class="radio-text-subtitle">The project's information is exclusively visible to members within the organization.</p>
+              </div>
+            </template>
+          </VRadio>
+          <VRadio color="bs50" :value="4" class="my-3">
+            <template v-slot:label>
+              <div>
+                <p class="radio-text-heading">Within All Organization</p>
+                <p class="radio-text-subtitle">The project's information is visible to all members of any organization</p>
+              </div>
+            </template>
+          </VRadio>
+        </VRadioGroup>
+      </div>
       <VDivider/>
       <div class="pa-6">
         <div class="mb-3">
-          <label class="input-label">Repository Title<span class="text-pink">*</span></label>
+          <label class="input-label">Project Title<span class="text-pink">*</span></label>
           <VTextField
             v-model="repositoryData.title"
             placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
@@ -621,10 +642,9 @@ onMounted( async () => {
             </template>
           </VAutocomplete>
         </div>
-        <div class="mb-3" v-if="formType === FormType.edit">
+        <div class="mb-3" v-if="repositoryData.description">
           <label class="input-label">Abstract<span class="text-pink">*</span></label>
           <QuillRichTextEditor
-              v-if="repositoryData.description"
               :modelValue="repositoryData.description"
               @update:modelValue="$event => (repositoryData.description = $event)"
               placeholder="E.g. This dataset presents a comprehensive array of meticulously compiled data related to soil health and agricultural landscapes across diverse global regions. It encompasses an extensive range of indicators vital for understanding soil conditions and their implications for sustainable cultivation practices."
@@ -654,7 +674,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Repository Type</label>
+          <label class="input-label">Type</label>
           <VAutocomplete
               v-model="repositoryData.type"
               placeholder="Select Type"
@@ -665,11 +685,68 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :items="repoType"
-              hint="Project Repository focuses on Technology projects file Document Repositoryt type served as file repository"
+              hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"
+              :error-messages="errorMessage.commodity"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">Project Category</label>
+          <VTextField
+              v-model="repositoryData.proj_type"
+              placeholder="Enter Project Category"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.commodity"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">Author</label>
+          <VTextField
+              v-model="repositoryData.author"
+              placeholder="Enter Author"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.commodity"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">Project Lead</label>
+          <VTextField
+              v-model="repositoryData.lead"
+              placeholder="Enter Project Lead"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
               :error-messages="errorMessage.commodity"
           />
         </div>
         <div v-if="repositoryData.type === 'Project Repository'">
+          <div class="mb-3">
+            <label class="input-label">Project Status</label>
+            <VAutocomplete
+                v-model="repositoryData.status"
+                placeholder="Select Status"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="status"
+                :error-messages="errorMessage.commodity"
+            />
+          </div>
           <div class="mb-3">
             <label class="input-label">Commodity</label>
             <VAutocomplete
@@ -873,6 +950,57 @@ onMounted( async () => {
             />
           </div>
           <div class="mb-3">
+            <label class="input-label">Patenting Status</label>
+            <VAutocomplete
+                v-model="repositoryData.  is_patentable"
+                placeholder="Select Funding Agency"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="forPatent"
+                :item-value="item => item.value"
+                :item-title="item => item.title"
+                :error-messages="errorMessage.funding_agency"
+            />
+          </div>
+          <div class="mb-3" v-if="repositoryData.abh">
+            <label class="input-label">Agri-Aqua Business Hub</label>
+            <QuillRichTextEditor
+                :modelValue="repositoryData.abh"
+                @update:modelValue="$event => (repositoryData.abh = $event)"
+                placeholder="Enter information related to agri aqua business hub to this project"
+            />
+          </div>
+          <div class="mb-5" v-else>
+            <label class="input-label">Agri-Aqua Business Hub</label>
+            <QuillRichTextEditor
+                :modelValue="repositoryData.abh"
+                @update:modelValue="$event => (repositoryData.abh = $event)"
+                placeholder="Enter information related to agri aqua business hub to this project"
+            />
+            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
+          </div>
+          <div class="mb-3" v-if="repositoryData.atbi">
+            <label class="input-label">Agri-Aqua Technology Business Incubator</label>
+            <QuillRichTextEditor
+                :modelValue="repositoryData.atbi"
+                @update:modelValue="$event => (repositoryData.atbi = $event)"
+                placeholder="Enter information about technology business incubator that is related to this project"
+            />
+          </div>
+          <div class="mb-5" v-else>
+            <label class="input-label">Agri-Aqua Technology Business Incubator</label>
+            <QuillRichTextEditor
+                :modelValue="repositoryData.atbi"
+                @update:modelValue="$event => (repositoryData.atbi = $event)"
+                placeholder="Enter information about technology business incubator that is related to this project"
+            />
+            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
+          </div>
+          <div class="mb-3">
             <label class="input-label">Technology Transfer Plan</label>
             <VAutocomplete
                 v-model="repositoryData.transfer_plan"
@@ -1001,6 +1129,23 @@ onMounted( async () => {
                 :error-messages="errorMessage.priority_level"
             />
           </div>
+        </div>
+        <div class="mb-3" v-if="repositoryData.additional_info">
+          <label class="input-label">Additional Info</label>
+          <QuillRichTextEditor
+              :modelValue="repositoryData.additional_info"
+              @update:modelValue="$event => (repositoryData.additional_info = $event)"
+              placeholder="Enter additional information related to this project "
+          />
+        </div>
+        <div class="mb-5" v-else>
+          <label class="input-label">Additional Info</label>
+          <QuillRichTextEditor
+              :modelValue="repositoryData.additional_info"
+              @update:modelValue="$event => (repositoryData.additional_info = $event)"
+              placeholder="Enter additional information related to this project "
+          />
+          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
@@ -1422,5 +1567,9 @@ onMounted( async () => {
 :deep(textarea::placeholder){
   color: #5F6061;
   opacity: 90%;
+}
+
+.disabled-cursor {
+  cursor: not-allowed;
 }
 </style>

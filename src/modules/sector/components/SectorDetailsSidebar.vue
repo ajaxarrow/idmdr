@@ -300,6 +300,12 @@
             {{tag}}
           </VChip>
         </div>
+        <div v-if="selectedSector.parent != 'Province' && selectedSector.additional_info && selectedSector.additional_info.trim().length > 0" class="my-3">
+          <p class="section-title mb-2">Additional Info</p>
+          <div class="ql-snow">
+            <div v-html="selectedSector.additional_info" class="ql-editor"></div>
+          </div>
+        </div>
       </div>
 
 

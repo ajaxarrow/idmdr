@@ -18,6 +18,7 @@ interface Sector {
   bbox?: [number, number, number, number],
   visibility?: number,
   created_at?: string,
+  additional_info?: string,
   updated_at?: string
   parent?: string,
   parent_id?: string,
