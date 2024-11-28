@@ -2,7 +2,7 @@
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {PhCaretDown, PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
+import {PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";

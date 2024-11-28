@@ -2,7 +2,7 @@
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, PropType, ref} from "vue";
-import {Expert, Organization} from "../../../interfaces/organization.interface.ts";
+import {Expert} from "../../../interfaces/organization.interface.ts";
 
 const path = ref('/organizations')
 const props = defineProps({

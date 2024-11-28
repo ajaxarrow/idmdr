@@ -65,6 +65,7 @@ onMounted(async () => {
       })
     }
   }
+  // @ts-ignore
   expertData.value = await fetchExpertById(route.params.expert as string);
   pageLoading.value = false
 })

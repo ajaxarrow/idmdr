@@ -5,19 +5,16 @@ import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vu
 import {onMounted, reactive, ref} from "vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {Expert, Organization} from "../../../interfaces/organization.interface.ts";
-import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
-import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
 import {contactVisibility, expertise} from "../../../data/repository.inventory.fields.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
-const {userData} = useUserStore();
+
 const {arrayToString} = useStringArrayHelper()
 const {addExpert, updateExpert, fetchExpertById, loading} = useOrganizationExpertsServices()
 const {fetchOrganizationByUser} = useOrganizationServices();
-const {isEmptyObject} = useObjectChecker()
 const {route} = useRouting();
 // const previousTags = ref<string[]>([])
 
@@ -73,9 +70,13 @@ onMounted(async () => {
 
   if(type === 'edit') {
     formType.value = FormType.edit
+    // @ts-ignore
     const fetchedData = await fetchExpertById(route.params.slug as string)
+    // @ts-ignore
     Object.assign(expertData, {...fetchedData})
+    // @ts-ignore
     if ("uid" in fetchedData.organization) {
+      // @ts-ignore
       expertData.organization = fetchedData.organization.uid
     }
   }
