@@ -41,7 +41,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <MainLayout title="My Consortium Member Institutions">
+  <MainLayout title="Experts">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
@@ -60,7 +60,7 @@ onMounted(async () => {
               </VBtnPrimaryFilled>
               <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                 <PhPlus size="16" class="mr-2"/>
-                New CMI
+                New Expert
               </VBtnPrimaryFilled>
             </VRow>
           </VCol>

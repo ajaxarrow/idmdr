@@ -10,8 +10,10 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
 import {contactVisibility, expertise} from "../../../data/repository.inventory.fields.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 
+const {userData} = useUserStore();
 const {arrayToString} = useStringArrayHelper()
 const {addExpert, updateExpert, fetchExpertById, loading} = useOrganizationExpertsServices()
 const {fetchOrganizationByUser} = useOrganizationServices();
@@ -35,7 +37,8 @@ const expertDataInitialState = reactive<Expert>({
   },
   expertise: [],
   organization: '',
-  additional_info: ''
+  additional_info: '',
+  created_by: '',
 })
 
 const expertData = reactive({
@@ -50,6 +53,7 @@ const clearFields = ( ) => {
 
 const addExpertData = async () => {
   expertData.name = JSON.stringify(expertData.name)
+  expertData.created_by = userData.uid
   expertData.expertise = arrayToString(<string[]>expertData.expertise)
   await addExpert(expertData, <string>expertData.organization)
   clearFields()
