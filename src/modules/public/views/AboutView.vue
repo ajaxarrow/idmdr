@@ -233,7 +233,7 @@ onUnmounted(() => {
                     <strong>Khent Mark J. Dahay:</strong> Back-end Developer, ensuring robust and scalable server-side logic.
                   </li>
                   <li>
-                    <strong>Mereal Kate C. Silvestre:</strong> Back-end Developer, ensuring robust and scalable server-side logic.
+                    <strong>Mereal Kate C. Silvestre:</strong>  Quality Assurance, ensures that the system works as expected to ensure performance and reliability.
                   </li>
                 </ul>
               </div>
