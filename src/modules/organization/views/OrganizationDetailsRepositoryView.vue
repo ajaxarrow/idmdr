@@ -2,7 +2,7 @@
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {PhCaretDown, PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhX} from "@phosphor-icons/vue";
+import {PhCaretDown, PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
@@ -171,8 +171,10 @@ onUnmounted(() => {
           Browse Projects by {{organization.name}} ({{organization.acronym}})
         </p>
         <p class="d-flex align-center">
-          Latest
-          <PhCaretDown weight="fill" class="ml-1"/>
+          <VBtnPrimaryFilled :to="{ name: 'new-repository-my'}" height="40px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+            <PhPlus size="16" class="mr-2"/>
+            New Project
+          </VBtnPrimaryFilled>
         </p>
       </VRow>
       <div v-if="pageLoading" class="loading-state-container">
