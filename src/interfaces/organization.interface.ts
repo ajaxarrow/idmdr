@@ -28,7 +28,30 @@ interface Organization {
   // clusterRepresentatives: ClusterRepresentative[]
 }
 
+interface Expert{
+  uid?: string,
+  name?: Name | string,
+  expertise?: string | string [],
+  organization?: string | Organization,
+  contact: Contact,
+  additional_info?: string,
+  is_deleted?: boolean
+  created_at?: string
+  created_by?: string
+  updated_at?: string
+}
 
+interface Name{
+  first_name?: '',
+  middle_name?: '',
+  last_name?: '',
+  extension?: ''
+}
+
+interface Contact{
+  value: string,
+  is_displayed: boolean
+}
 interface ClusterRepresentative{
   type: ClusterType,
   name: string,
@@ -41,4 +64,4 @@ interface Representative{
   phone?: string
 }
 
-export type {Organization, ClusterRepresentative, Representative}
+export type {Organization, ClusterRepresentative, Representative, Expert}

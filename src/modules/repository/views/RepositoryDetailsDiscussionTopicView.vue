@@ -28,7 +28,6 @@ const {fetchCommentsByDiscussion, updateDiscussionTopicComment, deleteDiscussion
 const {route, router} = useRouting();
 
 const topicActionMenu = ref(false);
-
 const topic = ref<Topic | null>(null);
 const commentList = ref<Comment[]>([]);
 const totalComment = ref(0);
@@ -102,8 +101,6 @@ const updateCommentData = async (comment: Comment) => {
     removeEditedComment();
     showSnackbarMessage('Comment Updated', Status.success)
   }
-
-
 }
 
 const deleteCommentData = async (comment: Comment) => {

@@ -35,6 +35,7 @@ const getTabs = () => {
   return [
     { name: "About" },
     { name: "Projects" },
+    ...(user.value && isMember.value ? [{ name: "Experts" }] : []),
     ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
     ...(user.value ? [{ name: "Settings" }] : [])
   ]
@@ -52,6 +53,8 @@ const computedTabs = computed(() => {
       linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
     } else if (tab.name === "Projects") {
       linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
+    } else if (tab.name === "Experts" && user.value && isMember.value) {
+      linkName = path.value === 'organizations' ? 'organization-experts' : 'my-organization-experts';
     } else if (tab.name === "Reports" && user.value && isMember.value) {
       linkName = path.value === 'organizations' ? 'organization-reports' : 'my-organization-reports';
     } else if (tab.name === "Settings" && user.value) {

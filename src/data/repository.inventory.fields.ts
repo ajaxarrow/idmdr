@@ -215,5 +215,103 @@ const currentStatus = ['Applied Fairness Opinion Report', 'Awaiting Fairness Opi
 
 const priorityLevels = ["high", "medium", "low"]
 
+const expertise: string[] = [
+  // Technology and Business
+  "Software Engineering",
+  "Data Science",
+  "Cybersecurity",
+  "Cloud Computing",
+  "Artificial Intelligence",
+  "Project Management",
+  "Marketing Strategy",
+  "Business Analysis",
+  "UI/UX Design",
+  "DevOps",
+  "Blockchain Technology",
+  "Product Management",
+  "E-commerce Development",
+  "IT Infrastructure Management",
 
-export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent}
+  // Agriculture and Biology
+  "Agricultural Engineering",
+  "Crop Science",
+  "Soil Management",
+  "Horticulture",
+  "Animal Husbandry",
+  "Aquaculture",
+  "Agroforestry",
+  "Plant Genetics",
+  "Entomology",
+  "Botany",
+  "Ecology",
+  "Microbiology",
+  "Environmental Science",
+  "Biotechnology",
+  "Marine Biology",
+  "Fisheries Science",
+  "Veterinary Science",
+  "Pathology",
+  "Zoology",
+  "Ornithology",
+
+  // General Science
+  "Astronomy",
+  "Physics",
+  "Chemistry",
+  "Mathematics",
+  "Geology",
+  "Meteorology",
+  "Oceanography",
+
+  // Medical and Health Sciences
+  "Pharmacology",
+  "Nursing",
+  "Public Health",
+  "Epidemiology",
+  "Genetics",
+  "Immunology",
+  "Neuroscience",
+  "Nutrition and Dietetics",
+  "Toxicology",
+
+  // Social Sciences and Humanities
+  "Sociology",
+  "Psychology",
+  "Anthropology",
+  "Economics",
+  "History",
+  "Political Science",
+  "Archaeology",
+  "Philosophy",
+  "Education",
+
+  // Arts and Creative Fields
+  "Fine Arts",
+  "Graphic Design",
+  "Performing Arts",
+  "Creative Writing",
+  "Film Production",
+  "Photography",
+
+  // Miscellaneous Fields
+  "Sports Science",
+  "Forensic Science",
+  "Urban Planning",
+  "Sustainability Studies",
+  "Renewable Energy",
+  "Hospitality Management",
+];
+
+const contactVisibility = [
+  {
+    title: 'Visible',
+    value: true
+  },
+  {
+    title: 'Private',
+    value: false
+  }
+]
+
+
+export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent, expertise, contactVisibility}

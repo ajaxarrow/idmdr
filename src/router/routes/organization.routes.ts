@@ -24,6 +24,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsRepositoryView.vue'),
   },
   {
+    path: '/my-organizations/:slug/experts',
+    name: 'my-organization-experts',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsExpertsView.vue'),
+  },
+  {
     path: '/my-organizations/:slug/reports',
     name: 'my-organization-reports',
     // @ts-ignore
@@ -60,6 +66,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationFormView.vue')
   },
   {
+    path: '/my-organizations/:slug/experts/:expert',
+    name: 'my-organization-experts-details',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsExpertsDetailsView.vue'),
+  },
+  {
     path: '/organizations/:slug/settings',
     name: 'organization-settings',
     // @ts-ignore
@@ -72,6 +84,18 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsReportsView.vue'),
   },
   {
+    path: '/organizations/:slug/experts',
+    name: 'organization-experts',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsExpertsView.vue'),
+  },
+  {
+    path: '/organizations/:slug/experts/:expert',
+    name: 'organization-experts-details',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsExpertsDetailsView.vue'),
+  },
+  {
     path: '/organizations/:slug',
     name: 'organization-data',
     // @ts-ignore
@@ -82,7 +106,19 @@ const organizationRoutes = [
     name: 'organization-repositories',
     // @ts-ignore
     component: () => import('../../modules/organization/views/OrganizationDetailsRepositoryView.vue'),
-  }
+  },
+  {
+    path: '/experts/new',
+    name: 'new-expert',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/ExpertsFormView.vue')
+  },
+  {
+    path: '/experts/edit/:slug',
+    name: 'edit-expert',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/ExpertsFormView.vue')
+  },
 ]
 
 export default organizationRoutes
