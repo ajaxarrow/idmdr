@@ -127,10 +127,11 @@ onUnmounted(() => {
                 </ul>
               </li>
               <li>
-                <a href="#dev">Developers</a>
+                <a href="#dev">System Development</a>
                 <ul>
-                  <li><a href="#dev-about">About the Developers</a></li>
-                  <li><a href="#dev-method">Methodology</a></li>
+                  <li><a href="#dev-about">About the Capstone</a></li>
+                  <li><a href="#dev-team">The Team</a></li>
+                  <li><a href="#dev-others">Other Contributors</a></li>
                 </ul>
               </li>
               <li>
@@ -188,9 +189,9 @@ onUnmounted(() => {
 
             </section>
             <section id="dev">
-              <h2>Developers</h2>
+              <h2>System Development</h2>
               <div id="dev-about">
-                <h3>About the Developers</h3>
+                <h3>About the Capstone</h3>
                 <p>
                   LINNKS is based on the capstone project entitled Interactive Data Mapping Distribution and Repository. The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
                 </p>
@@ -202,16 +203,60 @@ onUnmounted(() => {
                 </p>
 
               </div>
-              <div id="dev-method">
-                <h3>Methodology</h3>
+              <div id="dev-team">
+                <h3>About the Developers</h3>
                 <p>
-                  The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization consisting of 20 government and non-government entities in region 10.
+                  The proponents of the project are Khent Mark J. Dahay, Mereal Kate C. Silvestre, and Jiu Axl R. Tabilla. These Software Development students dedicated to crafting innovative, user-centric digital solutions. With the utilization spanning various technologies and frameworks, we thrive on solving simple-complex challenges and delivering sensible user experiences.
                 </p>
+                <h3>Vision</h3>
                 <p>
-                  These include educational institutions like Central Mindanao University (CMU), Xavier University (XU), and others, as well as government agencies like the Department of Agriculture Regional Field Office-10 (DA RFO-10) and the National Economic Development Authority-10 (NEDA-10). NOMCAARRD's main goal is to coordinate research, development, and extension efforts related to agriculture, fisheries, and natural resources in the region. Its office is situated at CMU.
+                  To create meaningful, high-quality software that empowers users and fosters growth in the digital space.
                 </p>
+                <h3>Core Values</h3>
+                <ul>
+                  <li>
+                    <strong>Innovation:</strong> Continuously exploring new technologies to push the boundaries of what's possible.
+                  </li>
+                  <li>
+                    <strong>Collaboration:</strong> Working closely with clients and users to ensure their needs are met with precision and care.
+                  </li>
+                  <li>
+                    <strong>Excellence:</strong> Committing to the highest standards of quality in every project we undertake.
+                  </li>
+                </ul>
+                <h3>The Team</h3>
+                <ul>
+                  <li>
+                    <strong>Jiu Axl R. Tabilla</strong> Front-end Developer, focused on creating intuitive and visually appealing user interfaces.
+                  </li>
+                  <li>
+                    <strong>Khent Mark J. Dahay:</strong> Back-end Developer, ensuring robust and scalable server-side logic.
+                  </li>
+                  <li>
+                    <strong>Mereal Kate C. Silvestre:</strong> Back-end Developer, ensuring robust and scalable server-side logic.
+                  </li>
+                </ul>
+              </div>
+              <div id="dev-others">
+                <h3>Other Contributors</h3>
                 <p>
-                  NOOMCAARD is supported the development of the project. They are the stakeholders of the system. The system is tailored to the organizations' problems and needs.
+                  The project proponents—Khent Mark J. Dahay, Mereal Kate C. Silvestre, and Jiu Axl R. Tabilla—are passionate Software Development students dedicated to crafting innovative, user-centric digital solutions. With expertise spanning diverse technologies and frameworks, the team thrives on solving complex challenges while delivering exceptional user experiences.
+                </p>
+                <h3>Stakeholders</h3>
+                <p>
+                  The proponents extend their heartfelt gratitude to the stakeholders at <strong>NOMCAARRD</strong> for their valuable feedback and unwavering support, which were instrumental in shaping this project. Special recognition is given to the members of NOMCAARRD who actively participated in the testing phase, offering insights that ensured the system's functionality and usability.
+                </p>
+                <h3>Adviser</h3>
+                <p>
+                  Deep appreciation is given to <strong>Neil John J. Jomaya</strong>, the project's adviser, for his guidance, encouragement, and expertise throughout the development journey.
+                </p>
+                <h3>Consultant</h3>
+                <p>
+                  Gratitude is also extended to <strong>Rinante Buntod</strong> for providing invaluable consultations, significantly enriching the project's overall quality.
+                </p>
+                <h3>Panel Members</h3>
+                <p>
+                  Sincere appreciation is expressed to the panel members, <strong>Kent Levi A. Bonifacio</strong> and <strong>Donah Rae P. Verula</strong>, for their constructive feedback and recommendations, which played a crucial role in guiding the project toward improvement.
                 </p>
               </div>
 
