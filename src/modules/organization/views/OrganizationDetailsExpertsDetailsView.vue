@@ -17,7 +17,7 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
 const {route, router} = useRouting()
-const {showSnackbarMessage} = useSnackbarStore();
+const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const {fetchExpertById, deleteExpert} = useOrganizationExpertsServices()
 const {arrayToString} = useStringArrayHelper()
@@ -67,6 +67,7 @@ onMounted(async () => {
   }
   // @ts-ignore
   expertData.value = await fetchExpertById(route.params.expert as string);
+  await setSnackbarMessage()
   pageLoading.value = false
 })
 

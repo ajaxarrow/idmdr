@@ -8,11 +8,12 @@ import {Expert, Organization} from "../../../interfaces/organization.interface.t
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
 import OrganizationExpertItem from "../components/OrganizationExpertItem.vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 
+const {setSnackbarMessage} = useSnackbarStore()
 const {scrollTop} = useScroll()
 const {route, router} = useRouting()
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
-
 const {fetchExpertsByOrganization} = useOrganizationExpertsServices()
 
 const path = ref('organizations')
@@ -70,6 +71,7 @@ onMounted(async () => {
   }
   expertData.value = await fetchExpertsByOrganization(route.params.slug as string);
   searchedExperts.value = expertData.value
+  await setSnackbarMessage()
   pageLoading.value = false
 })
 

@@ -17,21 +17,14 @@ const {route} = useRouting()
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
-// const goToOrganizationDetails = () => {
-//   router.push({
-//     name: path.value == '/organizations' ?  'organization-data' : 'my-organization-data',
-//     params: { slug: props.organization?.slug }
-//   });
-// }
 
 onMounted(() => {
   path.value = getFirstPath(<string>route.path)
-  console.log(path.value)
 })
 </script>
 
 <template>
-  <RouterLink v-if="typeof props.expert?.organization === 'object'" class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == '/organizations' ?  'organization-experts-details' : 'my-organization-experts-details', params: { slug: props.expert?.organization?.slug, expert: props.expert?.uid } }">
+  <RouterLink v-if="typeof props.expert?.organization === 'object'" class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == '/organizations' ?  'organization-experts-details' : 'my-organization-experts-details', params: { slug: props.expert?.organization?.uid, expert: props.expert?.uid } }">
     <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
       <div class="d-flex align-center">
 <!--        <VImg-->
@@ -54,7 +47,7 @@ onMounted(() => {
         </div>
       </div>
       <VBtn
-          v-if="typeof props.expert?.organization === 'object' || isDesktop" :to="{ name: path == '/organizations' ?  'organization-experts-details' : 'my-organization-experts-details', params: { slug: props.expert?.organization?.slug, expert: props.expert?.uid  } }"
+          v-if="typeof props.expert?.organization === 'object' || isDesktop" :to="{ name: path == '/organizations' ?  'organization-experts-details' : 'my-organization-experts-details', params: { slug: props.expert?.organization?.uid, expert: props.expert?.uid  } }"
           class="text-none bg-background view-details-btn"
           height="35px"
           width="95px"

@@ -119,6 +119,12 @@ const organizationRoutes = [
     // @ts-ignore
     component: () => import('../../modules/organization/views/ExpertsFormView.vue')
   },
+  {
+    path: '/experts',
+    name: 'experts',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/ExpertsView.vue')
+  },
 ]
 
 export default organizationRoutes
