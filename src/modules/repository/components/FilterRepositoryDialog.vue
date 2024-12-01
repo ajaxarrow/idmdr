@@ -69,6 +69,7 @@ onMounted(() => {
               base-color="gs60"
               multiple
               chips
+              closable-chips
               hide-details
           />
         </div>
