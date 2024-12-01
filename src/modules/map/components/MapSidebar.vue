@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   PhFactory, PhFileArrowUp,
-  PhGlobe, PhHouse, PhPlusCircle, PhSliders, PhUsersThree,
+  PhGlobeHemisphereWest, PhHouse, PhPlusCircle, PhSliders, PhUsersThree,
 } from "@phosphor-icons/vue";
 
   import Logo from "../../../core/components/Logo.vue";
@@ -42,7 +42,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
   const navLinks = [
     {
       name: 'Provinces',
-      icon: markRaw(PhGlobe),
+      icon: markRaw(PhGlobeHemisphereWest),
       header: markRaw(MapProvincesHeader),
       mainContent: markRaw(MapProvincesMainContent)
     },

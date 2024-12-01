@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useProvincesStore} from "../../stores/provinces.store.ts";
-import {PhInfo, PhPlant} from "@phosphor-icons/vue";
+import {PhInfo, PhMapPinLine} from "@phosphor-icons/vue";
 import {useMapStore} from "../../stores/map.store.ts";
 import {onUnmounted} from "vue";
 
@@ -33,7 +33,7 @@ onUnmounted(() => {
     >
       <VListItemTitle class="cursor-pointer">
         <div class="d-flex align-center">
-          <PhPlant size="18" color="#3E454D" weight="fill"/>
+          <PhMapPinLine size="18" color="#3E454D" weight="fill"/>
           <span class="mx-2 me-1 province-title">{{province.name}}</span>
         </div>
       </VListItemTitle>
