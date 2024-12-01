@@ -49,7 +49,7 @@ onMounted(() => {
 
   <VDialog v-model="filterDialog" class="center">
     <VSheet class="filter-dialog-container" @click.stop>
-      <p class="dialog-title pa-5">Filter Repository by Tags</p>
+      <p class="dialog-title pa-5">Filter Project by Tags</p>
       <VDivider/>
       <div class="pa-5">
         <div>
@@ -59,7 +59,7 @@ onMounted(() => {
           <VAutocomplete
               :menu-props="{ maxWidth: 0 }"
               v-model="selectedTags as string[]"
-              placeholder="Select Tags to Filter the Repository"
+              placeholder="Select Tags to Filter the Project"
               :items="tagItems"
               class="my-2"
               rounded="lg"
