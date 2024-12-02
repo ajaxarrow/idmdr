@@ -5,6 +5,8 @@ import {useOrganizationMembersServices} from "../../organization/services/organi
 import {OrgMember} from "../../../interfaces/member.interface.ts";
 import {server} from "../../../plugins/axios.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useRepositoryServices} from "./repository.services.ts";
+import {useNotificationsServices} from "../../user/services/notifications.services.ts";
 
 export const useRepositoryMemberServices = () => {
   const { userData, user } = useUserStore();
@@ -12,10 +14,11 @@ export const useRepositoryMemberServices = () => {
   const authorizationHeader = user.value
     ? { Authorization: `Bearer ${userData.accessToken}` }
     : {};
-
+  const {addNotification} = useNotificationsServices()
   const loading = ref(false);
 
   const {mapOrgMembers} = useOrganizationMembersServices();
+  const {fetchRepositoryData} = useRepositoryServices()
 
   const fetchRepoMembers = async (repoID: string, includeDeletedMembers: boolean = false): Promise<OrgMember[]> => {
     try {
@@ -62,6 +65,20 @@ export const useRepositoryMemberServices = () => {
         },
         { headers: authorizationHeader }
       );
+
+      const repo = await fetchRepositoryData(repoID)
+
+      await addNotification({
+        sender: userData.uid,
+        receiver: member.user.uid,
+        title: 'Access Level Changed for Membership from Repository',
+        message: `Your membership in ${repo?.title} has been changed. Your access level has been changed to ${member.access_level}.`,
+        type: 'Repository',
+        object_id: repoID,
+        content_type: 28,
+        is_read: false,
+        is_deleted: false
+      })
     } catch (e: any) {
       handleApiError(e);
     }
@@ -80,6 +97,20 @@ export const useRepositoryMemberServices = () => {
         },
         { headers: authorizationHeader }
       );
+
+      const repo = await fetchRepositoryData(repoID)
+
+      await addNotification({
+        sender: userData.uid,
+        receiver: member.user.uid,
+        title: 'Membership Removed from Repository',
+        message: `Your membership in ${repo?.title} has been removed. You are no longer a member of this repository.`,
+        type: 'Repository',
+        object_id: repoID,
+        content_type: 28,
+        is_read: false,
+        is_deleted: false
+      })
     } catch (e: any) {
       handleApiError(e);
     }
@@ -96,6 +127,20 @@ export const useRepositoryMemberServices = () => {
       },
       { headers: authorizationHeader }
     );
+
+    const repo = await fetchRepositoryData(repoID)
+
+    await addNotification({
+      sender: userData.uid,
+      receiver: member.user.uid,
+      title: 'Added to Repository',
+      message: `You have been added to ${repo?.title} with ${member.access_level} access level`,
+      type: 'Repository',
+      object_id: repoID,
+      content_type: 28,
+      is_read: false,
+      is_deleted: false
+    })
   };
 
   const restoreRepoMember = async (repoID: string, member: OrgMember, newAccessLevel: string) => {
@@ -110,6 +155,20 @@ export const useRepositoryMemberServices = () => {
       },
       { headers: authorizationHeader }
     );
+
+    const repo = await fetchRepositoryData(repoID)
+
+    await addNotification({
+      sender: userData.uid,
+      receiver: member.user.uid,
+      title: 'Added to Repository',
+      message: `You have been added to ${repo?.title} with ${member.access_level} access level`,
+      type: 'Repository',
+      object_id: repoID,
+      content_type: 28,
+      is_read: false,
+      is_deleted: false
+    })
   };
 
   const handleApiError = (e: any) => {

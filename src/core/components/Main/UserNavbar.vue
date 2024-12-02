@@ -3,12 +3,15 @@ import {PhBell, PhList} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../stores/screen-size.store.ts";
 import {IconMenuDeep} from "@tabler/icons-vue";
 import {useToggleSidebar} from "../../composables/useToggleSidebar.ts";
-import {computed} from "vue";
+import {computed, onMounted, onUpdated, ref} from "vue";
 import {useUserStore} from "../../stores/user.store.ts";
 import UserAvatarMenu from "./UserAvatarMenu.vue";
+import {useNotificationsServices} from "../../../modules/user/services/notifications.services.ts";
 const {isSmall, isMobile, isLargePhone} = useScreenStore();
 const {toggleSidebar, isCollapsed, toggleProfileSidebar} = useToggleSidebar();
+const {isThereUnreadNotif} = useNotificationsServices()
 const {userData, user} = useUserStore();
+const isUnread = ref(false)
 const props = defineProps({
   title: {
     type: String,
@@ -23,6 +26,15 @@ const appBarWidthStyle = computed(() => {
     return isCollapsed.value ? { width: `calc(100vw - 140px)` } : { width: `calc(100vw - 360px)` };
   }
 });
+
+onMounted(async()=>{
+  isUnread.value = await isThereUnreadNotif()
+})
+
+onUpdated(async()=>{
+  isUnread.value = await isThereUnreadNotif()
+})
+
 
 
 </script>
@@ -51,7 +63,10 @@ const appBarWidthStyle = computed(() => {
 <!--            </p>-->
 <!--            <PhMagnifyingGlass size="24" class="mx-4"/>-->
             <RouterLink v-if="user" :to="{name: 'notifications'}" class="text-decoration-none">
-              <VBadge color="#b00020" dot><PhBell size="24" class="icon-bell" color="#000000"/></VBadge>
+              <VBadge v-if="isUnread" color="#b00020" dot>
+                <PhBell size="24" class="icon-bell" color="#000000"/>
+              </VBadge>
+              <PhBell v-else size="24" class="icon-bell" color="#000000"/>
             </RouterLink>
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">

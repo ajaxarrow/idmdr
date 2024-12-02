@@ -1,7 +1,51 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhChecks, PhEye} from "@phosphor-icons/vue";
+import {useNotificationsServices} from "../services/notifications.services.ts";
+import {GroupedNotification, Notification} from "../../../interfaces/notification.interface.ts";
+import {computed, onMounted, ref} from "vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
 
+const {fetchNotificationsByReceiver, updateNotification} = useNotificationsServices()
+const {showSnackbarMessage} = useSnackbarStore()
+const {router} = useRouting();
+const notifications = ref<Notification[]>([]);
+const groupedNotifications = computed(() => {
+  return notifications.value.reduce<GroupedNotification[]>(
+      (acc, notif) => {
+        //@ts-ignore
+        const date = <string>notif.created_at?.split("T")[0]; // Extract the date part
+        const existingGroup = acc.find(group => group.date === date);
+
+        if (existingGroup) {
+          existingGroup.notifications.push(notif);
+        } else {
+          acc.push({ date: date, notifications: [notif] });
+        }
+
+        return acc;
+      },
+      []
+  )
+});
+
+const readNotification = async(notification: Notification) => {
+  await updateNotification({is_read: true}, notification?.pk!);
+  notifications.value = await fetchNotificationsByReceiver();
+  showSnackbarMessage("Notification marked as read", Status.success);
+}
+
+const goToDetails = async(notification: Notification) => {
+  if(notification.type == 'Repository' || notification.type == 'Access Request'){
+    await router.push({name: "repository-data", params: {slug: notification.object_id}});
+  } else if (notification.type == 'Organization'){
+    await router.push({name: "organization-data", params: {slug: notification.object_id}});
+  } else if (notification.type == 'Access Request Pending'){
+    await router.push({name: "repository-settings", params: {slug: notification.object_id}});
+  }
+}
 
 const getRelativeTime = (dateString: string): string => {
   const date = new Date(dateString);
@@ -27,6 +71,17 @@ const getRelativeTime = (dateString: string): string => {
 
   return 'Just Now';
 };
+
+const formatDate = (date: string): string => {
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(date).toLocaleDateString('en-US', options);
+};
+
+
+
+onMounted(async () => {
+  notifications.value = await fetchNotificationsByReceiver()
+})
 </script>
 
 <template>
@@ -44,9 +99,9 @@ const getRelativeTime = (dateString: string): string => {
       </div>
       <VDivider/>
       <div class="pa-6">
-        <div>
-          <p class="text-date-heading">November 13, 2024</p>
-          <div class="my-5">
+        <div v-for="groupNotif in groupedNotifications">
+          <p class="text-date-heading">{{formatDate(groupNotif.date)}}</p>
+          <div v-for="notif in groupNotif.notifications" class="my-5">
             <div class="mb-2 comment-container">
               <VImg
                   class="avatar-area"
@@ -54,94 +109,48 @@ const getRelativeTime = (dateString: string): string => {
                   cover
                   height="40px"
                   width="40px"
-                  :src="'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+                  :src="'https://cdn-icons-png.flaticon.com/512/10686/10686420.png'"
               />
               <div class="ml-2 owner-area">
                 <div style="line-height: 20px">
-                  <p class="topic-subtitle mr-3"><strong>Access Request Pending</strong>: Please review and manage the request.[Name] has requested access to [repo-name]. Please review and manage the request.</p>
-                  <p class="text-gs60" style="font-size: 14px">{{getRelativeTime('2024-11-13T13:24:54.823288Z')}} · Repository</p>
+                  <p class="topic-subtitle mr-3">
+                    <strong>{{notif.title}}</strong>:
+                    {{notif.message}}</p>
+                  <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(notif.created_at)}} · {{notif.type}}</p>
                 </div>
               </div>
               <VRow class="ma-0 py-2 content-area">
                 <VBtnPrimaryAlt
+                    @click="readNotification(notif)"
+                    v-if="!notif.is_read"
                     variant="outlined"
                     class="button-outline"
                 >
-                  Decline
+                  Mark as Read
                 </VBtnPrimaryAlt>
                 <VBtnPrimaryAlt
+                    @click="goToDetails(notif)"
                     class="submit-button"
                 >
-                  Approve
+                  View Actual Content
                 </VBtnPrimaryAlt>
               </VRow>
-              <div class="ml-2">
-                <div class="d-flex align-center justify-space-between ga-2 notif-action-container pa-2">
-                  <VTooltip location="bottom" >
-                    <template v-slot:activator="{ props }">
-                      <PhEye v-bind="props" class="cursor-pointer" />
-                    </template>
-                    <span>Go to Actual Content</span>
-                  </VTooltip>
-                  <VTooltip location="bottom">
-                    <template v-slot:activator="{ props }">
-                      <PhChecks v-bind="props" class="cursor-pointer"/>
-                    </template>
-                    <span>Mark as Read</span>
-                  </VTooltip>
-                </div>
-              </div>
-            </div>
-            <VDivider class="mt-3"/>
-          </div>
-        </div>
-        <div>
-          <p class="text-date-heading">November 13, 2024</p>
-          <div class="my-5">
-            <div class="mb-2 comment-container">
-              <VImg
-                  class="avatar-area"
-                  style="border-radius: 50%"
-                  cover
-                  height="40px"
-                  width="40px"
-                  :src="'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
-              />
-              <div class="ml-2 owner-area">
-                <div style="line-height: 20px">
-                  <p class="topic-subtitle mr-3"><strong>Access Request Pending</strong>: Please review and manage the request.[Name] has requested access to [repo-name]. Please review and manage the request.</p>
-                  <p class="text-gs60" style="font-size: 14px">{{getRelativeTime('2024-11-13T13:24:54.823288Z')}} · Repository</p>
-                </div>
-              </div>
-              <VRow class="ma-0 py-2 content-area">
-                <VBtnPrimaryAlt
-                    variant="outlined"
-                    class="button-outline"
-                >
-                  Decline
-                </VBtnPrimaryAlt>
-                <VBtnPrimaryAlt
-                    class="submit-button"
-                >
-                  Approve
-                </VBtnPrimaryAlt>
-              </VRow>
-              <div class="ml-2">
-                <div class="d-flex align-center justify-space-between ga-2 notif-action-container pa-2">
-                  <VTooltip location="bottom" >
-                    <template v-slot:activator="{ props }">
-                      <PhEye v-bind="props" class="cursor-pointer" />
-                    </template>
-                    <span>Go to Actual Content</span>
-                  </VTooltip>
-                  <VTooltip location="bottom">
-                    <template v-slot:activator="{ props }">
-                      <PhChecks v-bind="props" class="cursor-pointer"/>
-                    </template>
-                    <span>Mark as Read</span>
-                  </VTooltip>
-                </div>
-              </div>
+<!--              <div class="ml-2">-->
+<!--                <div class="d-flex align-center justify-space-between ga-2 notif-action-container pa-2">-->
+<!--                  <VTooltip location="bottom" >-->
+<!--                    <template v-slot:activator="{ props }">-->
+<!--                      <PhEye v-bind="props" class="cursor-pointer" />-->
+<!--                    </template>-->
+<!--                    <span>Go to Actual Content</span>-->
+<!--                  </VTooltip>-->
+<!--                  <VTooltip location="bottom">-->
+<!--                    <template v-slot:activator="{ props }">-->
+<!--                      <PhChecks v-bind="props" class="cursor-pointer"/>-->
+<!--                    </template>-->
+<!--                    <span>Mark as Read</span>-->
+<!--                  </VTooltip>-->
+<!--                </div>-->
+<!--              </div>-->
             </div>
             <VDivider class="mt-3"/>
           </div>

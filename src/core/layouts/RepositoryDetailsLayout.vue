@@ -13,8 +13,14 @@ import {Status} from "../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../stores/snackbar.store.ts";
 import AccessRequestConfirmationDialog from "../../modules/repository/components/AccessRequestConfirmationDialog.vue";
 import {AccessRequest} from "../../interfaces/access-request.interface.ts";
+import {useNotificationsServices} from "../../modules/user/services/notifications.services.ts";
+import {useRepositoryMemberServices} from "../../modules/repository/services/repository-member.services.ts";
+import {useStringArrayHelper} from "../composables/useStringArrayHelper.ts";
 
+const {arrayToString} = useStringArrayHelper()
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
+const {addNotification} = useNotificationsServices()
+const {fetchRepoMembers} = useRepositoryMemberServices()
 const {fetchRepositoriesByUser} = useRepositoryServices();
 const {user, userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
@@ -23,7 +29,6 @@ const tab = ref("data");
 const path = ref('repositories')
 const sentRequest = ref<AccessRequest | null>(null)
 const hasSentRequest = ref(false)
-
 const isMember = ref(false)
 const buttonLoading = ref(false)
 const pageLoading = ref(false);
@@ -106,6 +111,34 @@ const addAccessRequestCallback = async () => {
     is_approved: false,
     is_reviewed: false
   });
+
+  const userIDs = ref<string[]>([]);
+  const users = await fetchRepoMembers(<string>route.params.slug);
+
+  // Step 3: Process repository members and collect user IDs
+  await Promise.all(
+    users.map(async (user) => {
+      if (['owner', 'admin', 'manager'].includes(user.access_level)) {
+        userIDs.value.push(user.user?.uid!);
+      }
+    })
+  ).then(async () => {
+    await addNotification({
+      sender: userData.uid,
+      receiver: '',
+      title: 'Access Request Pending',
+      message: `${userData.username} has requested access to ${props.repository?.title}. Please review and manage the request.`,
+      type: 'Access Request Pending',
+      object_id: <string>route.params.slug,
+      content_type: 28,
+      is_read: false,
+      is_deleted: false,
+    });
+  })
+
+
+
+
   await fetchRequest()
   buttonLoading.value = false
   showSnackbarMessage('Access Request Sent Successfully', Status.success)

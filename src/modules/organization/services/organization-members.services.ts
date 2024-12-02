@@ -4,6 +4,8 @@ import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import { server } from "../../../plugins/axios.ts";
 import { Status } from "../../../interfaces/enums/status.enum.ts";
 import { useSnackbarStore } from "../../../core/stores/snackbar.store.ts";
+import {useNotificationsServices} from "../../user/services/notifications.services.ts";
+import {useOrganizationServices} from "./organization.services.ts";
 
 export const useOrganizationMembersServices = () => {
   // Store access and helper constants
@@ -12,7 +14,8 @@ export const useOrganizationMembersServices = () => {
   const authorizationHeader = user.value
     ? { Authorization: `Bearer ${userData.accessToken}` }
     : {};
-
+  const {addNotification} = useNotificationsServices()
+  const {fetchOrganizationData} = useOrganizationServices()
   const loading = ref(false);
 
 
@@ -112,6 +115,20 @@ export const useOrganizationMembersServices = () => {
         },
         { headers: authorizationHeader }
       );
+
+      const org = await fetchOrganizationData(orgID)
+
+      await addNotification({
+        sender: userData.uid,
+        receiver: member.user.uid,
+        title: 'Access Level Changed for Membership from Organization',
+        message: `Your membership in ${org?.name} has been changed. Your access level has been changed to ${member.access_level}.`,
+        type: 'Organization',
+        object_id: orgID,
+        content_type: 14,
+        is_read: false,
+        is_deleted: false
+      })
     } catch (e: any) {
       handleApiError(e);
     }
@@ -130,6 +147,21 @@ export const useOrganizationMembersServices = () => {
         },
         { headers: authorizationHeader }
       );
+
+      const org = await fetchOrganizationData(orgID)
+
+      await addNotification({
+        sender: userData.uid,
+        receiver: member.user.uid,
+        title: 'Membership Removed from Organization',
+        message: `Your membership in ${org?.name} has been removed. You are no longer a member of this organization.`,
+        type: 'Organization',
+        object_id: orgID,
+        content_type: 14,
+        is_read: false,
+        is_deleted: false
+      })
+
     } catch (e: any) {
       handleApiError(e);
     }
@@ -146,6 +178,20 @@ export const useOrganizationMembersServices = () => {
       },
       { headers: authorizationHeader }
     );
+
+    const org = await fetchOrganizationData(orgID)
+
+    await addNotification({
+      sender: userData.uid,
+      receiver: member.user.uid,
+      title: 'Added to Organization',
+      message: `You have been added to ${org?.name} with ${member.access_level} access level`,
+      type: 'Organization',
+      object_id: orgID,
+      content_type: 14,
+      is_read: false,
+      is_deleted: false
+    })
   };
 
   const restoreOrgMember = async (orgID: string, member: OrgMember, newAccessLevel: string) => {
@@ -160,6 +206,20 @@ export const useOrganizationMembersServices = () => {
       },
       { headers: authorizationHeader }
     );
+
+    const org = await fetchOrganizationData(orgID)
+
+    await addNotification({
+      sender: userData.uid,
+      receiver: member.user.uid,
+      title: 'Added to Organization',
+      message: `You have been added to ${org?.name} with ${member.access_level} access level`,
+      type: 'Organization',
+      object_id: orgID,
+      content_type: 14,
+      is_read: false,
+      is_deleted: false
+    })
   };
 
   const handleApiError = (e: any) => {

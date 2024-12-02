@@ -21,7 +21,8 @@ import {useAccessRequestServices} from "../services/access-request.services.ts";
 import {AccessRequest} from "../../../interfaces/access-request.interface.ts";
 import AccessRequestConfirmationDialog from "../components/AccessRequestConfirmationDialog.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
-
+import {useNotificationsServices} from "../../user/services/notifications.services.ts";
+const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
@@ -33,6 +34,7 @@ const {arrayToString} = useStringArrayHelper()
 const {route, router} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
+const currentRepo = ref<Repository | null>(null)
 const accessRequestSearchQuery = ref('')
 const memberActionMenu = ref(false)
 const overlayLoading = ref(false)
@@ -346,13 +348,26 @@ const deleteRepoCallback = async () => {
   await router.push({ name: 'my-repositories' })
 }
 
-const manageRequestCallback = async (id: string, isApproved: boolean) => {
+const manageRequestCallback = async (id: string, isApproved: boolean, accessRequest: AccessRequest) => {
   await updateAccessRequest({
     content_type: 28,
     object_id: <string>route.params.slug,
     is_approved: isApproved,
     is_reviewed: true}, id
   )
+
+  await addNotification({
+    sender: userData.uid,
+    receiver: accessRequest.requestor_user_obj?.uid,
+    title: isApproved ? 'Access Request Approved' : 'Access Request Denied',
+    message: isApproved ? `Your request for access to ${repository.value?.title} has been approved.` : `Your access request for ${repository.value?.title} has been denied.`,
+    type: 'Access Request',
+    object_id: <string> route.params.slug,
+    content_type: 28,
+    is_read: false,
+    is_deleted: false
+  })
+
   await fetchMembers()
   showSnackbarMessage(`Access Request ${isApproved ? 'Approved' : 'Denied'} Successfully`, Status.success)
   memberActionMenu.value = false
@@ -368,17 +383,17 @@ watch(() => accessRequestSearchQuery.value, () => {
 
 onMounted(async () => {
   loading.value = true;
-  await fetchRepositoryData(route.params.slug as string);
+  currentRepo.value = await fetchRepositoryData(route.params.slug as string);
   accessRequests.value = await fetchAccessRequestsByRepository(route.params.slug as string);
   accessRequestData.value = accessRequests.value
   path.value = getFirstPath(<string>route.path)
 
   const allUserRepo = await fetchRepositoriesByUser();
 
-  if(repository.value){
-    if(isSlugInRepoList(repository.value, allUserRepo)) {
-      if("is_member" in repository.value){
-        repository.value.is_member = true;
+  if(currentRepo.value){
+    if(isSlugInRepoList(currentRepo.value, allUserRepo)) {
+      if("is_member" in currentRepo.value){
+        currentRepo.value.is_member = true;
       }
     }
   }
@@ -398,14 +413,14 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
    <div v-else>
-     <div v-if="repository" class="px-6 py-7">
+     <div v-if="currentRepo" class="px-6 py-7">
        <VRow  class="ma-0" justify="space-between" align="center">
          <div>
            <p class="section-title">Download Project Information</p>
            <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Project Information in PDF</p>
          </div>
          <VBtnPrimaryFilled
-             @click="downloadRepositoryDataPDF(repository)"
+             @click="downloadRepositoryDataPDF(currentRepo)"
              height="41px"
              rounded="lg"
              class="satoshi-md"
@@ -413,7 +428,7 @@ onMounted(async () => {
            Download Repository Info
          </VBtnPrimaryFilled>
        </VRow>
-       <div v-if="repository.is_member">
+       <div v-if="currentRepo.is_member">
          <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
@@ -431,9 +446,9 @@ onMounted(async () => {
              </VBtnPrimaryFilled>
            </VRow>
          </div>
-         <VDivider v-if="repository?.is_member" class="my-5"/>
+         <VDivider v-if="currentRepo?.is_member" class="my-5"/>
          <div class="mt-2">
-           <VRow v-if="repository?.is_member" class="ma-0" justify="space-between" align="center">
+           <VRow v-if="currentRepo?.is_member" class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Project Members</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage project members and their roles. <AccessLeveLInfoDialog/></p>
@@ -577,7 +592,7 @@ onMounted(async () => {
                          :selectedMember="accessRequest.requestor_user_obj"
                          :isMemberIncluded="true"
                          @callback="fetchMembersCallback"
-                         @accessRequestCallback="manageRequestCallback(accessRequest.uid as string, true)"
+                         @accessRequestCallback="manageRequestCallback(accessRequest.uid as string, true, accessRequest)"
 
                      >
                        <p class="cursor-pointer action-menu-item">
@@ -588,7 +603,7 @@ onMounted(async () => {
                      <AccessRequestConfirmationDialog
                       content="Are you sure you want to deny this access request? The requester will be notified that access was not granted."
                       confirmContent="Yes, Deny Request"
-                      @callback="manageRequestCallback(accessRequest.uid as string, false)"
+                      @callback="manageRequestCallback(accessRequest.uid as string, false, accessRequest)"
                      >
                        <p class="cursor-pointer action-menu-item">
                          <PhTrash/>

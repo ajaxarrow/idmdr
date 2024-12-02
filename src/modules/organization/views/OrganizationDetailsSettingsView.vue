@@ -22,6 +22,7 @@ import {useOrgType} from "../composables/useOrgType.ts";
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
+const currentOrg = ref<Organization | null>(null)
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationByUser, deleteOrganization} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
@@ -330,12 +331,12 @@ onMounted(async () => {
   loading.value = true
   const allUserOrg = await fetchOrganizationByUser();
   path.value = getFirstPath(<string>route.path)
-  await fetchOrganizationData(route.params.slug as string);
+  currentOrg.value = await fetchOrganizationData(route.params.slug as string);
 
-  if(organization.value){
-    if( isSlugInOrgList(organization.value, allUserOrg)){
-      if ("is_member" in organization.value) {
-        organization.value.is_member = true;
+  if(currentOrg.value){
+    if( isSlugInOrgList(currentOrg.value, allUserOrg)){
+      if ("is_member" in currentOrg.value) {
+        currentOrg.value.is_member = true;
       }
     }
   }
@@ -356,14 +357,14 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
     <div v-else>
-      <div v-if="organization" class="py-6 px-7">
+      <div v-if="currentOrg" class="py-6 px-7">
         <VRow  class="ma-0" justify="space-between" align="center">
           <div>
             <p class="section-title">Download Consortium Member Institution Information</p>
             <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Consortium Member Institution Information in PDF</p>
           </div>
           <VBtnPrimaryFilled
-              @click="downloadOrganizationDataPDF(organization)"
+              @click="downloadOrganizationDataPDF(currentOrg)"
               height="41px"
               rounded="lg"
               class="satoshi-md"
@@ -371,7 +372,7 @@ onMounted(async () => {
             Download CMI Info
           </VBtnPrimaryFilled>
         </VRow>
-        <div v-if="organization.is_member">
+        <div v-if="currentOrg.is_member">
           <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="my-5"/>
           <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
@@ -389,9 +390,9 @@ onMounted(async () => {
               </VBtnPrimaryFilled>
             </VRow>
           </div>
-          <VDivider v-if="organization?.is_member" class="my-5"/>
+          <VDivider v-if="currentOrg?.is_member" class="my-5"/>
           <div class="mt-2">
-            <VRow v-if="organization?.is_member" class="ma-0" justify="space-between" align="center">
+            <VRow v-if="currentOrg?.is_member" class="ma-0" justify="space-between" align="center">
               <div>
                 <p class="section-title">Consortium Member Institution Members</p>
                 <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage consortium member institution members and their roles. <AccessLeveLInfoDialog/></p>
