@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhChecks, PhEye} from "@phosphor-icons/vue";
 import {useNotificationsServices} from "../services/notifications.services.ts";
 import {GroupedNotification, Notification} from "../../../interfaces/notification.interface.ts";
 import {computed, onMounted, ref} from "vue";
@@ -116,7 +115,7 @@ onMounted(async () => {
                   <p class="topic-subtitle mr-3">
                     <strong>{{notif.title}}</strong>:
                     {{notif.message}}</p>
-                  <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(notif.created_at)}} · {{notif.type}}</p>
+                  <p class="text-gs60" style="font-size: 14px">{{getRelativeTime(notif?.created_at!)}} · {{notif.type}}</p>
                 </div>
               </div>
               <VRow class="ma-0 py-2 content-area">

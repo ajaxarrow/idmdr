@@ -15,9 +15,8 @@ import AccessRequestConfirmationDialog from "../../modules/repository/components
 import {AccessRequest} from "../../interfaces/access-request.interface.ts";
 import {useNotificationsServices} from "../../modules/user/services/notifications.services.ts";
 import {useRepositoryMemberServices} from "../../modules/repository/services/repository-member.services.ts";
-import {useStringArrayHelper} from "../composables/useStringArrayHelper.ts";
 
-const {arrayToString} = useStringArrayHelper()
+
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
 const {addNotification} = useNotificationsServices()
 const {fetchRepoMembers} = useRepositoryMemberServices()
