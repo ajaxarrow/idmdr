@@ -95,6 +95,12 @@ export const routes = [
     component: () => import('../modules/sector/views/SectorView.vue')
   },
   {
+    path: '/posts',
+    name: 'posts',
+    // @ts-ignore
+    component: () => import('../modules/posts/views/PostsView.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'error404',
     // @ts-ignore

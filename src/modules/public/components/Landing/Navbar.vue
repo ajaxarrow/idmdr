@@ -19,10 +19,10 @@
       title: 'Stakeholders',
       link: '/stakeholders'
     },
-    // {
-    //   title: 'News & Updates',
-    //   link: '/news-updates',
-    // },
+    {
+      title: 'News & Updates',
+      link: '/news-updates',
+    },
     {
       title: 'Help Center',
       link: '/help'
