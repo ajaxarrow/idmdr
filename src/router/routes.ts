@@ -2,6 +2,7 @@ import authRoutes from "./routes/auth.routes.ts";
 import repositoryRoutes from "./routes/repository.routes.ts";
 import organizationRoutes from "./routes/organization.routes.ts";
 import sectorRoutes from "./routes/sector.routes.ts";
+import postRoutes from "./routes/post.routes.ts";
 
 export const routes = [
   {
@@ -95,12 +96,6 @@ export const routes = [
     component: () => import('../modules/sector/views/SectorView.vue')
   },
   {
-    path: '/posts',
-    name: 'posts',
-    // @ts-ignore
-    component: () => import('../modules/posts/views/PostsView.vue')
-  },
-  {
     path: '/:pathMatch(.*)*',
     name: 'error404',
     // @ts-ignore
@@ -115,5 +110,6 @@ export const routes = [
   ...authRoutes,
   ...repositoryRoutes,
   ...organizationRoutes,
-  ...sectorRoutes
+  ...sectorRoutes,
+  ...postRoutes
 ]

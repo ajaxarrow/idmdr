@@ -4,7 +4,7 @@ import {Vue3Lottie} from "vue3-lottie";
 const props = defineProps({
   overlay: {
     type: Boolean,
-    default: true
+    default: false
   }
 })
 

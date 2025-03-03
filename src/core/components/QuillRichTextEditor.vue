@@ -34,9 +34,22 @@
       // @ts-ignore
       quill.value.root.innerHTML = <string>props.modelValue
     }
-    quill.value?.on('text-change', () => {
-      emits('update:modelValue', quill.value?.root.innerHTML);
-    })
+    // @ts-ignore
+    quill.value.on("text-change", () => {
+      emits("update:modelValue", quill.value?.root.innerHTML);
+
+      setTimeout(() => {
+        if (quill.value) {
+          // @ts-ignore
+          const length = quill.value.getLength();
+          // @ts-ignore
+          quill.value.setSelection(length, 0);
+          // @ts-ignore
+          quill.value.focus();
+        }
+      }, 10);
+    });
+
   })
 </script>
 

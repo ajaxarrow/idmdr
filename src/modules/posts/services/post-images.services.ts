@@ -52,7 +52,8 @@ export const usePostImagesServices = () => {
           image: image.image,
           created_at: image.created_at,
           updated_at: image.updated_at,
-          is_deleted: image.is_deleted
+          is_deleted: image.is_deleted,
+          type: 'update',
         }
       })
     } catch (e) {

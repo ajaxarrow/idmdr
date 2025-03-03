@@ -12,12 +12,15 @@ interface Post{
 }
 
 interface PostImage{
+  file?: File | null,
   uid?: string,
-  image?: string,
+  image?: File | string,
   post?: string,
+  type?: string,
   created_at?: string,
   updated_at?: string,
-  is_deleted?: boolean
+  is_deleted?: boolean,
+  previewImage?: string;
 }
 
 export type {Post, PostImage}

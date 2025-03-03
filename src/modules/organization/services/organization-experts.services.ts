@@ -121,9 +121,5 @@ export const useOrganizationExpertsServices = () => {
     }
   };
 
-
-
-
-
   return { addExpert, updateExpert, deleteExpert, loading, fetchExpertById, fetchAllExperts, fetchExpertsByOrganization }
 }
