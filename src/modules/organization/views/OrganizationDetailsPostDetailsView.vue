@@ -23,7 +23,7 @@ const {fetchPostbyID, deletePost, managePostStatus} = usePostServices()
 
 const postActionMenu = ref(false);
 const path = ref('organizations')
-const postData = ref<Post | null>(null);
+const postData = ref<Post | null | undefined>(null);
 const organization = ref<Organization | null>();
 const pageLoading = ref(false)
 const imagePreviewDialog = ref(false);

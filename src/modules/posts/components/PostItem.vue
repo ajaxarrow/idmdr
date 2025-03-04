@@ -32,12 +32,12 @@ onMounted(() => {
             cover
             height="40px"
             width="40px"
-            :src="props.post?.images?.length ? <string>props.post.images[0].image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+            :src="props.post?.images?.length ? <string>props.post?.images[0].image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
         />
         <div class="ml-2">
-          <p class="organization-title">{{props.post.title}}</p>
+          <p class="organization-title">{{props.post?.title}}</p>
 
-          <p class="organization-subtitle">{{  props.post.organizationData ? `${props.post.organizationData.name} (${props.post.organizationData.acronym})` : 'No CMI Associated'}}</p>
+          <p class="organization-subtitle">{{  props.post?.organizationData ? `${props.post?.organizationData?.name} (${props.post?.organizationData?.acronym})` : 'No CMI Associated'}}</p>
         </div>
       </div>
       <VBtn

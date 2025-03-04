@@ -75,7 +75,7 @@ onMounted(async () => {
                   >
                   </VImg>
                   <VCardSubtitle class="pt-4 d-flex align-center ga-1">
-                    <PhCalendar :size="16"/> {{ formatDateString(post.created_at) }}
+                    <PhCalendar :size="16"/> {{ formatDateString(post?.created_at!) }}
                   </VCardSubtitle>
                   <v-card-title>{{ post.title }}</v-card-title>
                   <RouterLink

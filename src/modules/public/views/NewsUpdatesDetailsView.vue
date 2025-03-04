@@ -58,7 +58,7 @@ onMounted(async () => {
           </div>
 
           <!-- Image Carousel -->
-          <div v-if="post?.images?.length > 0" class="my-10">
+          <div v-if="post!.images!.length > 0" class="my-10">
             <VCarousel
                 :show-arrows="post.images?.length > 1"
                 height="450"
