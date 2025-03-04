@@ -11,7 +11,7 @@ const {fetchPostImagesByPost, addPostImage} = usePostImagesServices();
 export const usePostServices = () => {
   const loading = ref(false);
 
-  const savePost = async (post: any, endpoint: string, type: string, id: string = '') => {
+  const savePost = async (post: any, endpoint: string, type: string, orgID: string, id: string = '') => {
     loading.value = true;
     try {
       const res = await (type === 'create' ? server.post : server.put)(endpoint, post, {
@@ -27,17 +27,17 @@ export const usePostServices = () => {
       }
 
       await localStorage.setItem('snackbarmessage', JSON.stringify({
-        message: `News ${type === 'create' ? 'added' : 'updated'}  successfully`,
+        message: `Post ${type === 'create' ? 'added' : 'updated'}  successfully`,
         status: 'success'
       }))
 
       if(type === 'create'){
         setTimeout(async function() {
-          window.location.href = `/posts/`;
+          window.location.href = `/my-organizations/${orgID}/posts/`;
         }, 3000);
       } else {
         setTimeout(async function() {
-          window.location.href = `/posts/${id}/`;
+          window.location.href = `/my-organizations/${orgID}/posts/${id}/`;
         }, 3000);
       }
     } catch (error) {
@@ -46,12 +46,25 @@ export const usePostServices = () => {
     }
   }
 
-  const addPost = async (post: Post) => {
-    await savePost(post, '/posts/', 'create');
+  const addPost = async (post: Post, orgID: string) => {
+    await savePost(post, '/posts/', 'create', orgID);
   }
 
-  const updatePost = async (post: Post) => {
-    await savePost(post, `/posts/${post.uid}/`, 'update', post.uid);
+  const updatePost = async (post: Post, orgID: string) => {
+    await savePost(post, `/posts/${post.uid}/`, 'update', orgID, post.uid);
+  }
+
+  const managePostStatus = async(id: string, isPublished: boolean) => {
+    try{
+      await server.patch(`/posts/${id}/`, {
+        is_draft: false,
+        is_published: isPublished
+      }, {
+        headers: authorizationHeader
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   const deletePost = async (id: string) => {
@@ -64,6 +77,7 @@ export const usePostServices = () => {
     }
   }
 
+
   const mapPostData = async (post: any): Promise<Post> => {
     const images = await fetchPostImagesByPost(post.uid);
     return {
@@ -73,6 +87,10 @@ export const usePostServices = () => {
       created_at: post.created_at,
       updated_at: post.updated_at,
       is_deleted: post.is_deleted,
+      is_draft: post.is_draft,
+      is_published: post.is_published,
+      organization: post.organization.uid,
+      organizationData: post.organization,
       images: images
     };
   };
@@ -81,6 +99,19 @@ export const usePostServices = () => {
   const fetchAllPosts = async (): Promise<Post[]> => {
     try {
       const res = await server.get('/posts/', {
+        headers: authorizationHeader
+      });
+
+      return await Promise.all(res.data.map((post: any) => mapPostData(post)));
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  const fetchPostByOrganization = async (id: string): Promise<Post[]> => {
+    try {
+      const res = await server.get(`/posts/?organization_id=${id}`, {
         headers: authorizationHeader
       });
 
@@ -110,7 +141,9 @@ export const usePostServices = () => {
     updatePost,
     deletePost,
     fetchAllPosts,
-    fetchPostbyID
+    fetchPostbyID,
+    fetchPostByOrganization,
+    managePostStatus
   }
 
 }

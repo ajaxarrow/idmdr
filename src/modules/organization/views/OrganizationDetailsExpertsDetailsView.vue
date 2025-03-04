@@ -184,7 +184,7 @@ onUnmounted(() => {
             :src="NotFound"
             width="300px"
         />
-        <p class="text-h4 font-weight-black">Topic Not Found</p>
+        <p class="text-h4 font-weight-black">Expert Not Found</p>
       </div>
     </div>
   </OrganizationDetailsLayout>

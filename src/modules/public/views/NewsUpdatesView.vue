@@ -1,33 +1,37 @@
 <script setup lang="ts">
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import {newsUpdates} from "../../../data/newsupdates.ts"
-import {PhCalendar} from "@phosphor-icons/vue";
-import {useRouting} from "../../../core/composables/useRouting.ts";
+import { PhCalendar, PhInfo } from "@phosphor-icons/vue";
+import { useRouting } from "../../../core/composables/useRouting.ts";
 import Placeholder from "../../../assets/landing-page/placeholder.png";
+import { usePostServices } from "../../posts/services/post.services.ts";
+import { onMounted, ref } from "vue";
+import { Post } from "../../../interfaces/post.interface.ts";
 
-const {router} = useRouting();
-const formatDate = (dateString: string): string => {
+const { router } = useRouting();
+const { fetchAllPosts } = usePostServices();
+const postData = ref<Post[]>([]);
+const pageLoading = ref(false);
+
+const formatDateString = (dateString: string) => {
   const date = new Date(dateString);
-
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-
-  return `${month} ${day}, ${year}`;
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "2-digit"
+  };
+  return date.toLocaleDateString("en-US", options);
 };
 
-const goToBlogDetails = (slug: string) => {
-  router.push({
-    name: 'news-updates-detail',
-    params: { slug: slug }
-  });
-}
+const goToPostDetails = (post: Post) => {
+  router.push({ name: 'news-updates-details', params: { slug: post.uid } });
+};
+
+onMounted(async () => {
+  pageLoading.value = true;
+  postData.value = await fetchAllPosts();
+  pageLoading.value = false;
+});
 </script>
 
 <template>
@@ -36,36 +40,58 @@ const goToBlogDetails = (slug: string) => {
       <VContainer>
         <div>
           <h1>News & Updates</h1>
-          <VRow class="ma-0">
-            <VCol v-for="blog in newsUpdates" sm="12" md="6" xxl="4" xl="4" lg="4" class="my-2">
-              <VCard
-                  @click="goToBlogDetails(blog.slug)"
-                  class="mx-auto cursor-pointer"
+          <div v-if="pageLoading" class="loading-state-container" style="height: 65vh;">
+            <VProgressCircular indeterminate color="#23668b"></VProgressCircular>
+          </div>
+          <div v-else style="min-height: 65vh;">
+            <p
+                v-if="postData.length == 0"
+                class="d-flex align-center justify-center"
+                style="min-height: 65vh;"
+            >
+              <PhInfo class="mr-1"/> No Posts Found
+            </p>
+            <VRow class="ma-0" v-else>
+              <VCol
+                  v-for="post in postData"
+                  :key="post.uid"
+                  sm="12"
+                  md="6"
+                  xxl="4"
+                  xl="4"
+                  lg="4"
+                  class="my-2"
               >
-                <VImg
-                    height="200px"
-                    class="align-end text-white"
-                    :lazy-src="Placeholder"
-                    :src="blog.image"
-                    cover
+                <VCard
+                    @click="goToPostDetails(post)"
+                    class="mx-auto cursor-pointer post-card"
                 >
-                </VImg>
-
-                <VCardSubtitle class="pt-4 d-flex align-center ga-1">
-                  <PhCalendar size="16"/>
-                  {{ formatDate(blog.date) }}
-                </VCardSubtitle>
-
-                <v-card-title>{{ blog.title }}</v-card-title>
-                <RouterLink :to="{name: 'news-updates-detail', params: {slug: blog.slug}}" class="text-none d-flex text-decoration-none">
-                <VCardText class="d-flex">
-                    <div style="display: flex !important;"><p class="fancy-text text-black">Read More</p></div>
-                </VCardText>
-                </RouterLink>
-              </VCard>
-
-            </VCol>
-          </VRow>
+                  <VImg
+                      height="200px"
+                      class="align-end text-white post-image"
+                      :lazy-src="Placeholder"
+                      :src="post?.images?.length ? <string>post.images[0].image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                      cover
+                  >
+                  </VImg>
+                  <VCardSubtitle class="pt-4 d-flex align-center ga-1">
+                    <PhCalendar :size="16"/> {{ formatDateString(post.created_at) }}
+                  </VCardSubtitle>
+                  <v-card-title>{{ post.title }}</v-card-title>
+                  <RouterLink
+                      :to="{name: 'news-updates-detail', params: {slug: post.uid}}"
+                      class="text-none d-flex text-decoration-none"
+                  >
+                    <VCardText class="d-flex">
+                      <div style="display: flex !important;">
+                        <p class="fancy-text text-black">Read More</p>
+                      </div>
+                    </VCardText>
+                  </RouterLink>
+                </VCard>
+              </VCol>
+            </VRow>
+          </div>
         </div>
       </VContainer>
       <Footer/>
@@ -74,7 +100,7 @@ const goToBlogDetails = (slug: string) => {
 </template>
 
 <style scoped>
-.fancy-text{
+.fancy-text {
   width: 100%;
   background-image: linear-gradient(90deg, #000, #000);
   background-size: 0% 2.5px;
@@ -83,7 +109,24 @@ const goToBlogDetails = (slug: string) => {
   transition: background-size 300ms ease;
 }
 
-.fancy-text:hover, .animate-underline:hover{
+.fancy-text:hover, .animate-underline:hover {
   background-size: 100% 2.5px;
+}
+
+.post-card {
+  transition: all 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.post-image {
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover .post-image {
+  transform: scale(1.05);
 }
 </style>

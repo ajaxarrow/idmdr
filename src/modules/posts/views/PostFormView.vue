@@ -14,20 +14,24 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {PhEye, PhFileDashed, PhImage, PhTrash, PhX} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
 
 const {route} = useRouting();
 const {userData} = useUserStore();
 const {addPost, updatePost, fetchPostbyID, loading} = usePostServices();
 const {showSnackbarMessage} = useSnackbarStore();
+const {fetchOrganizationByUser} = useOrganizationServices();
 const {deletePostImage} = usePostImagesServices();
 const formType = ref<FormType>(FormType.create);
 const path = ref('');
-
+const organizations = ref<Organization[]>([])
 const postDataInitialState = reactive<Post>({
   uid: '',
   title: '',
   description: '',
   created_by: '',
+  organization: '',
   is_draft: false,
   is_published: false,
   images: []
@@ -103,12 +107,19 @@ const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 };
 
-const addPostData = async () => {
+const addPostData = async (isDraft:boolean) => {
+  if(isDraft) {
+    postData.is_draft = true;
+    postData.is_published = false;
+  } else{
+    postData.is_draft = false;
+    postData.is_published = true;
+  }
   postData.created_by = userData.uid;
   if (postImages.value.length > 0) {
     postData.images = [...postImages.value];
   }
-  await addPost(postData);
+  await addPost(postData, postData.organization as string);
   clearFields();
 };
 
@@ -120,7 +131,7 @@ const updatePostData = async () => {
     postData.images = [];
   }
 
-  await updatePost(postData);
+  await updatePost(postData, postData.organization as string);
   clearFields();
 };
 
@@ -129,10 +140,17 @@ onMounted(async () => {
   const type = rawSegments[1];
   path.value = getFirstPath(route.path);
 
+  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  postData.organization = organizations.value[0].uid
+
   if (type === 'edit') {
-    formType.value = FormType.edit;
+
     const data = await fetchPostbyID(route.params.slug as string);
     Object.assign(postData, {...data});
+    formType.value = FormType.edit;
+    if (data.organization) {
+      postData.organization = data.organization
+    }
     if (Array.isArray(postData.images)) {
       for (let i = 0; i < postData.images.length; i++) {
         postImages.value.push({
@@ -197,9 +215,34 @@ onMounted(async () => {
               placeholder="Enter content about this post"
           />
         </div>
+        <div class="mb-3">
+          <label class="input-label">Assigned Consortium Member Institution<span class="text-pink">*</span></label>
+          <VAutocomplete
+              v-model="postData.organization"
+              placeholder="Select Organization"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="organizations"
+              :item-value="organization => `${organization.uid}`"
+              :item-title="organization => `${organization.name} (${organization.acronym})`"
+          >
+            <template v-slot:item="{ props, item }">
+              <VListItem
+                  v-bind="props"
+                  :prepend-avatar="item.raw.image"
+                  :subtitle="item.raw.email"
+                  :title="`${item.raw.name} (${item.raw.acronym})`"
+              ></VListItem>
+            </template>
+          </VAutocomplete>
+        </div>
         <div class="mb-10">
           <div v-if="postImages.length === 0">
-            <label class="input-label">File</label>
+            <label class="input-label">Images</label>
             <div
                 class="my-2 file-upload-container"
                 :class="{'dropzone-active': active}"
@@ -271,15 +314,28 @@ onMounted(async () => {
               @closeOverlay="isImagePreviewed = false"
           />
         </div>
-        <VRow class="ma-0" justify="end">
+        <VRow class="ma-0" justify="end" align="center">
+          <VBtnPrimaryAlt
+              v-if="formType == FormType.create"
+              @click="addPostData(true)"
+              rounded="lg"
+              height="44px"
+              width="166px"
+              variant="outlined"
+              class="button-outline action-button"
+          >
+            Save as Draft
+          </VBtnPrimaryAlt>
+          <span v-if="formType == FormType.create" class="mx-2" >Or</span>
           <VBtnPrimaryFilled
-              @click="formType === FormType.edit ? updatePostData() : addPostData()"
+              @click="formType === FormType.edit ? updatePostData() : addPostData(false)"
               rounded="lg"
               height="44px"
               width="166px"
           >
             Submit
           </VBtnPrimaryFilled>
+
         </VRow>
       </div>
     </VForm>
@@ -324,6 +380,14 @@ onMounted(async () => {
   background: #DEF1FB;
   z-index: 1;
   opacity: 75%;
+}
+.button-outline{
+  border-width: 3px;
+}
+.action-button{
+  font-weight: 500 !important;
+  letter-spacing: 0;
+  border-radius: 10px;
 }
 
 .text-note{

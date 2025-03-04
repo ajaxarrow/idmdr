@@ -30,6 +30,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsExpertsView.vue'),
   },
   {
+    path: '/my-organizations/:slug/posts',
+    name: 'my-organization-posts',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsPostView.vue'),
+  },
+  {
     path: '/my-organizations/:slug/reports',
     name: 'my-organization-reports',
     // @ts-ignore
@@ -72,6 +78,12 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsExpertsDetailsView.vue'),
   },
   {
+    path: '/my-organizations/:slug/posts/:post',
+    name: 'my-organization-posts-details',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsPostDetailsView.vue'),
+  },
+  {
     path: '/organizations/:slug/settings',
     name: 'organization-settings',
     // @ts-ignore
@@ -88,6 +100,18 @@ const organizationRoutes = [
     name: 'organization-experts',
     // @ts-ignore
     component: () => import('../../modules/organization/views/OrganizationDetailsExpertsView.vue'),
+  },
+  {
+    path: '/organizations/:slug/posts',
+    name: 'organization-posts',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsPostView.vue'),
+  },
+  {
+    path: '/organizations/:slug/posts/:post',
+    name: 'organization-posts-details',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsPostDetailsView.vue'),
   },
   {
     path: '/organizations/:slug/experts/:expert',

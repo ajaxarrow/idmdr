@@ -1,3 +1,5 @@
+import {Organization} from "./organization.interface.ts";
+
 interface Post{
   uid?: string,
   title?: string,
@@ -5,6 +7,9 @@ interface Post{
   created_by?: string,
   is_draft?: boolean,
   is_published?: boolean,
+  is_approved?: boolean,
+  organization?: string,
+  organizationData?: Organization,
   created_at?: string,
   updated_at?: string,
   is_deleted?: boolean,
