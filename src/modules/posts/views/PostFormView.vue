@@ -148,8 +148,8 @@ onMounted(async () => {
     const data = await fetchPostbyID(route.params.slug as string);
     Object.assign(postData, {...data});
     formType.value = FormType.edit;
-    if (data.organization) {
-      postData.organization = data.organization
+    if (data?.organization) {
+      postData.organization = data?.organization!
     }
     if (Array.isArray(postData.images)) {
       for (let i = 0; i < postData.images.length; i++) {

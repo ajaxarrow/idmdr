@@ -9,7 +9,7 @@ import { Post } from "../../../interfaces/post.interface.ts";
 import { usePostServices } from "../../posts/services/post.services.ts";
 import NotFound from "../../../assets/images/404.svg";
 
-const post = ref<Post | null>(null);
+const post = ref<Post | null | undefined>(null);
 const { fetchPostbyID } = usePostServices();
 const { route } = useRouting();
 const imagePreviewDialog = ref(false);
@@ -53,14 +53,14 @@ onMounted(async () => {
             <h1>{{ post?.title }}</h1>
 
             <p class="pt-4 d-flex align-center ga-1 text-gs60">
-              <PhCalendar :size="16"/> {{ formatDateString(post.updated_at) }}
+              <PhCalendar :size="16"/> {{ formatDateString(post?.updated_at!) }}
             </p>
           </div>
 
           <!-- Image Carousel -->
           <div v-if="post!.images!.length > 0" class="my-10">
             <VCarousel
-                :show-arrows="post.images?.length > 1"
+                :show-arrows="post!.images!.length > 1"
                 height="450"
                 hide-delimiter-background
                 cycle
