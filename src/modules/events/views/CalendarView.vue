@@ -3,7 +3,7 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import EventDetailsDialog from "../components/EventDetailsDialog.vue";
 import {PhEye, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import {computed, onMounted, ref, onUnmounted, nextTick} from "vue";
+import {computed, onMounted, ref, onUnmounted} from "vue";
 import EventFormDialog from "../components/EventFormDialog.vue";
 import {useEventsServices} from "../services/events.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
@@ -17,7 +17,6 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 
 const {showSnackbarMessage} = useSnackbarStore();
-const eventDetailsDialog = ref(false);
 const {fetchEvents, deleteEvent} = useEventsServices()
 const {isSmall, isTablet} = useScreenStore();
 const events = ref<OrganizationEvent[]>([]);
@@ -92,7 +91,7 @@ const handleEventRightClick = (mouseEvent: MouseEvent, event: EventInput) => {
     show: true,
     x: mouseEvent.pageX,
     y: mouseEvent.pageY,
-    event: event
+    event: event!
   };
 };
 
