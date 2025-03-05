@@ -82,7 +82,7 @@ export const useEventsServices = () => {
       title: event.title,
       description: event.description,
       repository: event.repository.uid,
-      repositoruyData: event.repository,
+      repositoryData: event.repository,
       organization: event.organization.uid,
       organizationData: event.organization,
       start_date: event.start_date,
