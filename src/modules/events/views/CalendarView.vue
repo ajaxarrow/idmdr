@@ -91,6 +91,7 @@ const handleEventRightClick = (mouseEvent: MouseEvent, event: EventInput) => {
     show: true,
     x: mouseEvent.pageX,
     y: mouseEvent.pageY,
+    //@ts-ignore
     event: event!
   };
 };

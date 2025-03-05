@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
-import {PropType} from "vue/dist/vue";
+import {onMounted, PropType, ref, watch} from "vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {OrganizationEvent} from "../../../interfaces/organization.interface.ts";
 import {PhDotsThreeOutlineVertical, PhPencil, PhTrash} from "@phosphor-icons/vue";
