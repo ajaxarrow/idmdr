@@ -13,17 +13,24 @@ import {useEventsServices} from "../services/events.services.ts";
 const {showSnackbarMessage} = useSnackbarStore();
 const emits = defineEmits(['callback']);
 const {fetchEventByID, deleteEvent} = useEventsServices()
-const eventActionMenu = ref(false);
-const eventDetailsDialog = ref(false);
-const loading = ref(false);
-
-
 const props = defineProps({
   event: {
     type: Object as PropType<OrganizationEvent>,
     required: true
+  },
+  useOutsideDialogModel: {
+    type: Boolean,
+    default: false
+  },
+  value: {
+    type: Boolean,
+    default: false
   }
 })
+const eventActionMenu = ref(false);
+const eventDetailsDialog = ref(props.useOutsideDialogModel ? props.value : false);
+const loading = ref(false);
+
 
 const event = ref<OrganizationEvent>(props.event!)
 
@@ -96,11 +103,15 @@ watch(() => eventDetailsDialog.value, async() => {
   }
 })
 
+watch(() => props.value, async() => {
+  if(props.value) {
+    eventDetailsDialog.value = true
+  }
+})
+
 onMounted(() => {
   fetchEvent()
 })
-
-
 
 </script>
 
@@ -109,7 +120,7 @@ onMounted(() => {
     <slot></slot>
   </div>
   <VDialog v-model="eventDetailsDialog" class="center" :persistent="true">
-    <VSheet class="sector-tagging-dialog-container" @click.stop>
+    <VSheet class="sector-tagging-dialog-container scrollable-sidebar-container" @click.stop>
       <p class="dialog-title pa-5">Event Details</p>
       <VDivider/>
 
@@ -224,6 +235,7 @@ li{
 
 .sector-tagging-dialog-container{
   width: 663px;
+  height: 85vh;
   border-radius: 15px !important;
 }
 

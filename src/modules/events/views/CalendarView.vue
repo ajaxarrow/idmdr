@@ -3,7 +3,7 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import EventDetailsDialog from "../components/EventDetailsDialog.vue";
 import {PhEye, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import {computed, onMounted, ref, onUnmounted} from "vue";
+import {computed, onMounted, ref, onUnmounted, nextTick} from "vue";
 import EventFormDialog from "../components/EventFormDialog.vue";
 import {useEventsServices} from "../services/events.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
@@ -17,13 +17,14 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 
 const {showSnackbarMessage} = useSnackbarStore();
-
+const eventDetailsDialog = ref(false);
 const {fetchEvents, deleteEvent} = useEventsServices()
 const {isSmall, isTablet} = useScreenStore();
 const events = ref<OrganizationEvent[]>([]);
 const pageLoading = ref(false)
 
 const selectedEvent = ref<OrganizationEvent | null>(null);
+const selectedEventInfo = ref<OrganizationEvent | null>(null);
 const contextMenu = ref({
   show: false,
   x: 0,
@@ -104,6 +105,7 @@ const calendarOptions = computed(() => ({
     center: 'title',
     left: 'dayGridMonth,timeGridWeek,timeGridDay'
   },
+  eventClick: handleEventClick,
   eventDidMount: (info: any) => {
     info.el.addEventListener("contextmenu", (event: any) => {
       handleEventRightClick(event!, info.event!);
@@ -112,13 +114,19 @@ const calendarOptions = computed(() => ({
 }));
 
 
-// const handleEventClick = (clickInfo: EventClickArg) => {
-//   //@ts-ignore
-//   selectedEvent.value = clickInfo.event.extendedProps;
-//   eventDetailsDialog.value = true;
-// };
+const handleEventClick = (clickInfo: any) => {
+  const fullEvent = events.value.find(e => e.uid === clickInfo.event.id);
+  if (!fullEvent) return;
+
+  selectedEventInfo.value = fullEvent;
+  setTimeout(() => {
+    selectedEventInfo.value = fullEvent;
+  }, 500);
+};
+
 
 const viewEventCallback = async () => {
+  selectedEventInfo.value = null;
   await fetchEventsData();
 }
 
@@ -159,6 +167,12 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <EventDetailsDialog
+      :use-outside-dialog-model="true"
+      :value="selectedEventInfo !== null"
+      :event="selectedEventInfo!"
+      @callback="viewEventCallback"
+  />
   <MainLayout title="Calendar">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
@@ -219,6 +233,7 @@ onUnmounted(() => {
               <VSheet width="200" class="rounded-b-lg py-2" @click.stop>
                 <div>
                   <EventDetailsDialog
+                      :use-outside-dialog-model="false"
                       :event="selectedEvent!"
                       @callback="viewEventCallback"
                   >
@@ -288,5 +303,10 @@ onUnmounted(() => {
 .action-menu-item:hover{
   background-color: #e0e3e3;
 }
+
+:deep(.fc-event) {
+  cursor: pointer;
+}
+
 
 </style>
