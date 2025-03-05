@@ -1,4 +1,5 @@
 import {ClusterType} from "./enums/organization.enum";
+import {Repository} from "./repository.interface.ts";
 
 interface Organization {
   is_deleted?: boolean,
@@ -64,4 +65,29 @@ interface Representative{
   phone?: string
 }
 
-export type {Organization, ClusterRepresentative, Representative, Expert}
+interface OrganizationEvent{
+  uid?: string,
+  title?: string,
+  description?: string,
+  repository: string,
+  repositoryData?: Repository,
+  organization?: string,
+  organizationData?: Organization,
+  start_date?: string,
+  end_date?: string,
+  start_date_object: {
+    date: string;
+    time: string;
+  };
+  end_date_object: {
+    date: string;
+    time: string;
+  };
+  created_at?: string,
+  created_by?: string,
+  updated_at?: string,
+  is_deleted?: boolean
+
+}
+
+export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent}

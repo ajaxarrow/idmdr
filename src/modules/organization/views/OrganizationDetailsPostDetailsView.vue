@@ -81,6 +81,7 @@ onMounted(async () => {
   await setSnackbarMessage()
   pageLoading.value = false
 })
+
 </script>
 
 <template>

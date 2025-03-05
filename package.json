@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/vue3": "^6.1.15",
     "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@mdi/font": "^7.4.47",
     "@phosphor-icons/vue": "^2.1.6",

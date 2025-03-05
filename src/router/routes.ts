@@ -66,6 +66,12 @@ export const routes = [
     component: () => import('../modules/user/views/NotificationsView.vue')
   },
   {
+    path: '/events',
+    name: 'events',
+    // @ts-ignore
+    component: () => import('../modules/events/views/CalendarView.vue')
+  },
+  {
     path: '/profile',
     name: 'profile',
     // @ts-ignore

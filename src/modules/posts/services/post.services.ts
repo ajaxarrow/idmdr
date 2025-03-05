@@ -111,7 +111,7 @@ export const usePostServices = () => {
 
   const fetchPostByOrganization = async (id: string): Promise<Post[]> => {
     try {
-      const res = await server.get(`/posts/?organization_id=${id}`, {
+      const res = await server.get(`/posts/?organization=${id}`, {
         headers: authorizationHeader
       });
 

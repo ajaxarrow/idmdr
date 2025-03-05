@@ -1,0 +1,295 @@
+<script setup lang="ts">
+import MainLayout from "../../../core/layouts/MainLayout.vue";
+import EventDetailsDialog from "../components/EventDetailsDialog.vue";
+import {PhEye, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
+import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import {computed, onMounted, ref, onUnmounted} from "vue";
+import {useScroll} from "../../../core/composables/useScroll.ts";
+import EventFormDialog from "../components/EventFormDialog.vue";
+import {useEventsServices} from "../services/events.services.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {OrganizationEvent} from "../../../interfaces/organization.interface.ts";
+import FullCalendar from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import {EventInput} from '@fullcalendar/core';
+import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+
+const {showSnackbarMessage} = useSnackbarStore();
+
+const {scrollTop} = useScroll()
+const {fetchEvents, deleteEvent} = useEventsServices()
+const {isSmall, isTablet} = useScreenStore();
+const searchQuery = ref('');
+const events = ref<OrganizationEvent[]>([]);
+const pageLoading = ref(false)
+
+const selectedEvent = ref<OrganizationEvent | null>(null);
+const contextMenu = ref({
+  show: false,
+  x: 0,
+  y: 0,
+  event: null
+});
+
+// Method to close context menu
+const closeContextMenu = () => {
+  contextMenu.value.show = false;
+  selectedEvent.value = null;
+};
+
+const handleGlobalClick = (event: MouseEvent) => {
+  const contextMenuEl = document.querySelector('.v-sheet');
+  if (contextMenuEl && !contextMenuEl.contains(event.target as Node)) {
+    closeContextMenu();
+  }
+};
+
+const processEvents = (rawEvents: OrganizationEvent[]): EventInput[] => {
+  return rawEvents.map(event => {
+    let startDate, endDate;
+
+    try {
+      const startDateObj = typeof event.start_date === 'string'
+          ? JSON.parse(event.start_date)
+          : event.start_date_object;
+
+      const endDateObj = typeof event.end_date === 'string'
+          ? JSON.parse(event.end_date)
+          : event.end_date_object;
+
+      startDate = `${startDateObj.date}T${startDateObj.time}:00`;
+      endDate = `${endDateObj.date}T${endDateObj.time}:00`;
+    } catch (error) {
+      startDate = event.start_date;
+      endDate = event.end_date;
+    }
+
+    return {
+      id: event.uid,
+      title: event.title,
+      start: startDate,
+      end: endDate,
+      allDay: false
+    };
+  });
+};
+
+const processedEvents = computed(() => processEvents(events.value));
+
+const handleEventRightClick = (mouseEvent: MouseEvent, event: EventInput) => {
+  mouseEvent.preventDefault();
+
+  // Find the full event details
+  const fullEvent = events.value.find(e => e.uid === event.id);
+
+  if (!fullEvent) return;
+
+  // Set the selected event
+  selectedEvent.value = fullEvent;
+  //@ts-ignore
+  contextMenu.value = {
+    show: true,
+    x: mouseEvent.pageX,
+    y: mouseEvent.pageY,
+    event: event
+  };
+};
+
+const calendarOptions = computed(() => ({
+  plugins: [dayGridPlugin, interactionPlugin],
+  initialView: 'dayGridMonth',
+  events: processedEvents.value,
+  headerToolbar: {
+    right: 'prev,next today',
+    center: 'title',
+    left: 'dayGridMonth,timeGridWeek,timeGridDay'
+  },
+  eventDidMount: (info) => {
+    info.el.addEventListener("contextmenu", (event) => {
+      handleEventRightClick(event, info.event);
+    });
+  },
+}));
+
+
+// const handleEventClick = (clickInfo: EventClickArg) => {
+//   //@ts-ignore
+//   selectedEvent.value = clickInfo.event.extendedProps;
+//   eventDetailsDialog.value = true;
+// };
+
+const viewEventCallback = async () => {
+  await fetchEventsData();
+}
+
+const addEventCallback = async () => {
+  showSnackbarMessage('Event Added Successfully', Status.success)
+  await fetchEventsData();
+}
+
+const updateEventCallback = async () => {
+  showSnackbarMessage('Event Updated Successfully', Status.success)
+  events.value = await fetchEvents();
+  closeContextMenu();
+}
+
+const deleteEventCallback = async (id: string) => {
+  await deleteEvent(id);
+  events.value = await fetchEvents();
+  showSnackbarMessage('Event Deleted Successfully', Status.success)
+  closeContextMenu();
+}
+
+const fetchEventsData = async () => {
+  pageLoading.value = true
+  events.value = await fetchEvents();
+  pageLoading.value = false
+}
+
+onMounted(async () => {
+  document.addEventListener('click', handleGlobalClick);
+  await fetchEventsData();
+})
+
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleGlobalClick);
+});
+
+</script>
+
+<template>
+  <MainLayout title="Calendar">
+    <div style="height: 100%" class="relative-container circle-quarter">
+      <div class="pa-6 relative-container" style="z-index: 20;">
+        <VRow justify="space-between" align="center" class="ma-0">
+          <VCol md="9" class="pa-0">
+            <div>
+              <p class="text-heading d-flex align-center">
+                Calendar
+              </p>
+              <p class="text-subtitle">Browse the saved and scheduled events by your organizations related to your projects</p>
+            </div>
+          </VCol>
+          <VCol md="3" class="pa-0">
+            <VRow class="ma-0 justify-end">
+              <EventFormDialog :form-type="FormType.create" @callback="addEventCallback">
+                <VBtnPrimaryFilled v-if="isSmall || isTablet" icon >
+                  <PhPlus size="16"/>
+                </VBtnPrimaryFilled>
+                <VBtnPrimaryFilled  v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                  <PhPlus size="16" class="mr-2"/>
+                  New Event
+                </VBtnPrimaryFilled>
+              </EventFormDialog>
+            </VRow>
+          </VCol>
+        </VRow>
+      </div>
+      <VDivider/>
+      <div class="pa-6">
+        <div v-if="pageLoading" class="loading-state-container">
+          <VProgressCircular
+              indeterminate
+              color="#23668b"
+          ></VProgressCircular>
+        </div>
+        <div v-else>
+          <div>
+            <FullCalendar
+                :options="calendarOptions"
+                ref="calendar"
+                @eventContextmenu="handleEventRightClick"
+            >
+              <template v-slot:eventContent="arg">
+                <div class="event-content">
+                  {{ arg.event.title }}
+                </div>
+              </template>
+            </FullCalendar>
+            <VMenu
+                :close-on-content-click="false"
+                v-model="contextMenu.show"
+                :position-x="contextMenu.x"
+                :position-y="contextMenu.y"
+                absolute
+                offset-y
+
+            >
+              <VSheet width="200" class="rounded-b-lg py-2" @click.stop>
+                <div>
+                  <EventDetailsDialog
+                      :event="selectedEvent!"
+                      @callback="viewEventCallback"
+                  >
+                    <p class="cursor-pointer action-menu-item">
+                      <PhEye/>
+                      View Details
+                    </p>
+                  </EventDetailsDialog>
+                  <EventFormDialog
+                      :form-type="FormType.edit"
+                      @callback="updateEventCallback"
+                      :event="selectedEvent!"
+                  >
+                    <p class="cursor-pointer action-menu-item">
+                      <PhPencil/>
+                      Edit
+                    </p>
+                  </EventFormDialog>
+                  <DeleteDialog
+                      @callback="deleteEventCallback(selectedEvent?.uid || '')"
+                  >
+                    <p class="cursor-pointer action-menu-item">
+                      <PhTrash/>
+                      Delete
+                    </p>
+                  </DeleteDialog>
+                </div>
+              </VSheet>
+            </VMenu>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </MainLayout>
+</template>
+
+
+<style scoped>
+.circle-quarter::after {
+  content: '';
+  position: absolute;
+  left: -209px;
+  top: -460px;
+  width: 590px;
+  height: 585px;
+  border-radius: 50%;
+  background: #DEF1FB;
+  z-index: 1;
+  opacity: 75%;
+}
+
+:deep(.v-field__outline) {
+  opacity: 70%;
+  color: #8C8C8C;
+  --v-field-border-width: 1px !important;
+}
+
+.action-menu-item{
+  padding: 10px 15px !important;
+  font-size: 14px;
+  display: flex;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.action-menu-item:hover{
+  background-color: #e0e3e3;
+}
+
+</style>
