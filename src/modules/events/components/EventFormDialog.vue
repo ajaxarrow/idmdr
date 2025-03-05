@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {computed, onMounted, PropType, reactive, ref, watch} from "vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
@@ -9,11 +8,8 @@ import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
-import {Status} from "../../../interfaces/enums/status.enum.ts";
-import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
-import {PhPlus} from "@phosphor-icons/vue";
-const {showSnackbarMessage} = useSnackbarStore();
-const {route} = useRouting();
+
+
 const {userData} = useUserStore();
 const {addEvent, updateEvent} = useEventsServices();
 const {fetchOrganizationByUser} = useOrganizationServices();

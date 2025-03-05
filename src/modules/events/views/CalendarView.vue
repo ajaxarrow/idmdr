@@ -4,7 +4,6 @@ import EventDetailsDialog from "../components/EventDetailsDialog.vue";
 import {PhEye, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {computed, onMounted, ref, onUnmounted} from "vue";
-import {useScroll} from "../../../core/composables/useScroll.ts";
 import EventFormDialog from "../components/EventFormDialog.vue";
 import {useEventsServices} from "../services/events.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
@@ -19,10 +18,8 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 
 const {showSnackbarMessage} = useSnackbarStore();
 
-const {scrollTop} = useScroll()
 const {fetchEvents, deleteEvent} = useEventsServices()
 const {isSmall, isTablet} = useScreenStore();
-const searchQuery = ref('');
 const events = ref<OrganizationEvent[]>([]);
 const pageLoading = ref(false)
 
@@ -107,9 +104,9 @@ const calendarOptions = computed(() => ({
     center: 'title',
     left: 'dayGridMonth,timeGridWeek,timeGridDay'
   },
-  eventDidMount: (info) => {
-    info.el.addEventListener("contextmenu", (event) => {
-      handleEventRightClick(event, info.event);
+  eventDidMount: (info: any) => {
+    info.el.addEventListener("contextmenu", (event: any) => {
+      handleEventRightClick(event!, info.event!);
     });
   },
 }));
