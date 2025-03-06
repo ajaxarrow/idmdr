@@ -94,7 +94,9 @@ const calculateDuration = (
 }
 const closeDialog = () => {
   eventDetailsDialog.value = false
-  emits('callback')
+  if(props.event != event.value) {
+    emits('callback')
+  }
 }
 watch(() => eventDetailsDialog.value, async() => {
   if(eventDetailsDialog.value) {
