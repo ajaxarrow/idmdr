@@ -210,8 +210,7 @@ onUnmounted(() => {
               v-model="contextMenu.show"
               absolute
               offset-y
-              :style="{ top: `${contextMenu.y}px`, left: `${contextMenu.y}px` }"
-
+              :style="{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px` }"
           >
             <VSheet
                 width="200" class="rounded-b-lg py-2"
