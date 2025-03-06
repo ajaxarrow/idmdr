@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import EventDetailsDialog from "../components/EventDetailsDialog.vue";
 import {PhEye, PhPencil, PhTrash} from "@phosphor-icons/vue";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {computed, onMounted, ref, onUnmounted} from "vue";
 import EventFormDialog from "../components/EventFormDialog.vue";
 import {useEventsServices} from "../services/events.services.ts";
@@ -26,7 +25,6 @@ const props = defineProps({
 const {route} = useRouting();
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchEvents, deleteEvent, fetchEventsByOrganization} = useEventsServices()
-const {isSmall} = useScreenStore();
 const events = ref<OrganizationEvent[]>([]);
 const pageLoading = ref(false)
 

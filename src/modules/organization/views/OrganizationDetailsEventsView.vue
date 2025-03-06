@@ -4,12 +4,10 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, ref} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
-import {useScroll} from "../../../core/composables/useScroll.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import CalendarContent from "../../events/components/CalendarContent.vue";
 
 const {setSnackbarMessage} = useSnackbarStore()
-const {scrollTop} = useScroll()
 const {route, router} = useRouting()
 const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
 const organization = ref<Organization | null>();

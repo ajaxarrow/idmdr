@@ -6,13 +6,11 @@ import { ref} from "vue";
 import EventFormDialog from "../components/EventFormDialog.vue";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
-import {OrganizationEvent} from "../../../interfaces/organization.interface.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import CalendarContent from "../components/CalendarContent.vue";
 
 const {showSnackbarMessage} = useSnackbarStore();
 const {isSmall, isTablet} = useScreenStore();
-const events = ref<OrganizationEvent[]>([]);
 const calendarKey = ref(0);
 
 const addEventCallback = async () => {
