@@ -224,13 +224,15 @@ onUnmounted(() => {
             <VMenu
                 :close-on-content-click="false"
                 v-model="contextMenu.show"
-                :position-x="contextMenu.x"
-                :position-y="contextMenu.y"
                 absolute
                 offset-y
+                :style="{ top: `${contextMenu.y}px`, left: `${contextMenu.y}px` }"
 
             >
-              <VSheet width="200" class="rounded-b-lg py-2" @click.stop>
+              <VSheet
+                  width="200" class="rounded-b-lg py-2"
+                  @click.stop
+              >
                 <div>
                   <EventDetailsDialog
                       :use-outside-dialog-model="false"
