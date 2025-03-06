@@ -108,6 +108,18 @@ const organizationRoutes = [
     component: () => import('../../modules/organization/views/OrganizationDetailsPostView.vue'),
   },
   {
+    path: '/organizations/:slug/events',
+    name: 'organization-events',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsEventsView.vue'),
+  },
+  {
+    path: '/my-organizations/:slug/events',
+    name: 'my-organization-events',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationDetailsEventsView.vue'),
+  },
+  {
     path: '/organizations/:slug/posts/:post',
     name: 'organization-posts-details',
     // @ts-ignore
