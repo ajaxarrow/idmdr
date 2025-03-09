@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import MapSnippet from "../components/Contact/MapSnippet.vue";
 import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@tabler/icons-vue";
-const {isMobile, isSmall} = useScreenStore();
 </script>
 
 <template>

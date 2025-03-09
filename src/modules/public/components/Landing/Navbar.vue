@@ -1,13 +1,12 @@
 <script setup lang="ts">
   import {useScreenStore} from "../../../../core/stores/screen-size.store.ts";
-  import Logo from "../../../../core/components/Logo.vue";
   import {useToggleMenu} from "../../../../core/composables/useToggleMenu.ts";
   import {useRouting} from "../../../../core/composables/useRouting.ts";
   import {useUserStore} from "../../../../core/stores/user.store.ts";
   import NOMCAARRDLogo from "../../../../core/components/NOMCAARRDLogo.vue";
 
   const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
-  const {isSmall} = useScreenStore();
+  const {isDesktop} = useScreenStore();
   const {route} = useRouting();
   const {user} = useUserStore();
 
@@ -72,7 +71,7 @@
         <VRow align="center" class="ma-0">
           <VRow align="center" class="ma-0">
             <NOMCAARRDLogo/>
-            <VRow class="ma-0 mx-5"  v-if="!isSmall">
+            <VRow class="ma-0 mx-5"  v-if="isDesktop">
               <VListItem
                   v-for="(navLink, index) in baseNavLinks" :key="index"
                   class="nav-item"
@@ -85,8 +84,8 @@
               />
             </VRow>
           </VRow>
-          <VSpacer v-if="isSmall"/>
-          <VCol cols="auto" v-if="isSmall">
+          <VSpacer v-if="!isDesktop"/>
+          <VCol cols="auto" v-if="!isDesktop">
             <transition name="flip" mode="out-in">
               <component :is="activeIcon" @click="toggleMenu" class="cursor-pointer" />
             </transition>

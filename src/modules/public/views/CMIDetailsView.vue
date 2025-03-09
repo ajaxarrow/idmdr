@@ -6,7 +6,7 @@ import { CMI } from "../../../interfaces/cmi.interface.ts";
 import cmis from "../../../data/cmis.ts";
 import { useRouting } from "../../../core/composables/useRouting.ts";
 import { ClusterType } from "../../../interfaces/enums/organization.enum.ts";
-import { ClusterRepresentative } from "../../../interfaces/organization.interface.ts";
+import {ClusterRepresentative} from "../../../interfaces/organization.interface.ts";
 import {PhIdentificationCard, PhInfo, PhUsers} from "@phosphor-icons/vue";
 
 const { route } = useRouting();
@@ -49,7 +49,7 @@ onMounted(async () => {
       <VContainer fluid class="p-0" v-if="cmi">
         <VParallax :src="cmi.cover" height="400" class="hero-parallax">
           <div class="hero-overlay"></div>
-          <VContainer class="d-flex flex-column justify-center h-100">
+          <VContainer class="d-flex flex-column justify-center h-100 hero-container">
             <VAvatar size="120" class="mb-4 elevation-5 bg-white pa-2" rounded="0">
               <VImg :src="cmi.logo" alt="CMI Logo" contain />
             </VAvatar>
@@ -91,13 +91,13 @@ onMounted(async () => {
                       </VExpansionPanelTitle>
                       <VExpansionPanelText>
                         <VList>
-                          <VListItem v-for="(rep, index) in representatives" :key="index" class="py-2">
+                          <VListItem v-for="(rep, index) in representatives as ClusterRepresentative[]" :key="index" class="py-2">
                             <template v-slot:prepend>
                               <VAvatar color="primary" class="mr-3">
                                 <span class="text-h6 text-white">{{ rep!.name!.charAt(0) }}</span>
                               </VAvatar>
                             </template>
-                            <VListItemTitle>{{ rep.name }}</VListItemTitle>
+                            <VListItemTitle>{{ rep.name! }}</VListItemTitle>
                             <VListItemSubtitle v-if="rep.email">
                               <VIcon size="small" icon="mdi-email-outline" class="mr-1"></VIcon>
                               {{ rep!.email! }}
@@ -161,7 +161,12 @@ onMounted(async () => {
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 1 !important;
   background-color: rgba(0, 0, 0, 0.6);
+}
 
+.hero-container{
+  position: relative;
+  z-index: 2;
 }
 </style>

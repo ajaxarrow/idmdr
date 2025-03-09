@@ -23,7 +23,7 @@ interface Feature {
   image: CustomComponent
 }
 
-const {isMobile, isSmall} = useScreenStore()
+const {isSmall} = useScreenStore()
 const loading = ref(true)
 
 const highlights = [
