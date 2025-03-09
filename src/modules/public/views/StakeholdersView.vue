@@ -114,24 +114,42 @@ onUnmounted(() => {
               <li>
                 <a href="#about">About the Stakeholders</a>
                 <ul>
-                  <li><a href="#intro-nomcaarrd">What is NOMCAARRD?</a></li>
+                  <li><a href="#intro-stakeholders">Who are NOMCAARRD's Stakeholders?</a></li>
                 </ul>
               </li>
               <li>
-                <a href="#goals">Purpose and Goals</a>
+                <a href="#categories">Categories of Stakeholders</a>
                 <ul>
-                  <li><a href="#goals-vision">Vision</a></li>
-                  <li><a href="#goals-mission">Mission</a></li>
-                  <li><a href="#goals-objectives">Objectives</a></li>
+                  <li><a href="#categories-farmers">Smallholder Farmers and Agricultural Workers</a></li>
+                  <li><a href="#categories-fisherfolk">Fisherfolk Communities</a></li>
+                  <li><a href="#categories-indigenous">Indigenous Communities</a></li>
+                  <li><a href="#categories-entrepreneurs">Agricultural Entrepreneurs and Value Chain Actors</a></li>
+                  <li><a href="#categories-consumers">Consumers and Urban Communities</a></li>
+                  <li><a href="#categories-environmental">Environmental Stewards and Conservation Groups</a></li>
                 </ul>
               </li>
               <li>
-                <a href="#cmi">Consortium Member-Institutions</a>
-                <ul>
-                  <li><a href="#cmi-about">What is a CMI?</a></li>
-                  <li><a href="#cmi-research">Research Delivering Institutions</a></li>
-                  <li><a href="#cmi-non-research">Non-Research Delivering Institutions</a></li>
-                </ul>
+                <a href="#engagement">Stakeholder Engagement</a>
+<!--                <ul>-->
+<!--                  <li><a href="#engagement-research">Participatory Research Approaches</a></li>-->
+<!--                  <li><a href="#engagement-knowledge">Knowledge Sharing Networks</a></li>-->
+<!--                  <li><a href="#engagement-capacity">Capacity Building for Stakeholders</a></li>-->
+<!--                </ul>-->
+              </li>
+              <li>
+                <a href="#impact">Impact on Stakeholders</a>
+<!--                <ul>-->
+<!--                  <li><a href="#impact-economic">Economic Benefits</a></li>-->
+<!--                  <li><a href="#impact-environmental">Environmental Sustainability</a></li>-->
+<!--                  <li><a href="#impact-social">Social and Cultural Well-being</a></li>-->
+<!--                </ul>-->
+              </li>
+              <li>
+                <a href="#future">Future Directions for Stakeholder Engagement</a>
+<!--                <ul>-->
+<!--                  <li><a href="#future-needs">Emerging Stakeholder Needs</a></li>-->
+<!--                  <li><a href="#future-voice">Enhancing Stakeholder Voice and Agency</a></li>-->
+<!--                </ul>-->
               </li>
             </ul>
             <svg class="toc-marker" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
@@ -143,116 +161,278 @@ onUnmounted(() => {
             <p class="text-h4 font-weight-bold">Stakeholders</p>
             <section id="about">
               <h2>About the Stakeholders</h2>
-              <div id="intro-nomcaarrd">
-                <h3>What is NOMCAARRD?</h3>
+              <div id="intro-stakeholders">
+                <h3>Who are NOMCAARRD's Stakeholders?</h3>
                 <p>
-                  The Northern Mindanao Consortium for Agriculture, Aquatic, and Natural Resources Research and Development (NOMCAARRD) is a collaborative organization of 20 government and non-government entities in Region 10. Its primary role is to coordinate regional research, development, and extension priorities within the agriculture, fisheries, and natural resources sectors.
+                  NOMCAARRD (Northern Mindanao Consortium for Agriculture, Aquatic, and Natural Resources Research and Development) serves a diverse range of stakeholders across Region 10. While NOMCAARRD functions as a coordinating body, its true purpose is to benefit the various individuals and groups who rely on agriculture, aquatic resources, and natural resources for their livelihoods and wellbeing.
                 </p>
                 <p>
-                  NOMCAARRD’s history includes several name changes and organizational expansions. It began in December 1978 as the Northern and Central Mindanao Coordinated Agriculture and Resources Research Program (NOCEMCARRP), initially consisting of only 9 member agencies. As the consortium grew, it was renamed the Northern Mindanao Consortium for Agriculture and Natural Resources Research and Development (NOMCAARD) to reflect its broader membership. Following a government rationalization program, where the Philippine Council for Aquatic Marine Resources Research and Development (PCAMRRD) was integrated with the Philippine Council for Agriculture and Natural Resources Research and Development (PCAARD) to form the Philippine Council for Agriculture, Aquatic and Natural Resources Research and Development (PCAARRD), the consortium adapted to these changes by adopting its current name, Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD), in 2015.
+                  The primary stakeholders of NOMCAARRD include farmers, fisherfolk, indigenous communities, agricultural entrepreneurs, consumers, and ecosystem stewards. These groups represent the heart of Northern Mindanao's agricultural and resource sectors, and NOMCAARRD's initiatives are designed specifically to address their needs, challenges, and aspirations.
                 </p>
                 <p>
-                  To address the need for better collaboration and data visualization among its varied member organizations, NOMCAARRD looked into NOMCAARRD Interactive Data Mapping Distribution and Repository (NIDMDR). This centralized repository serves as a platform for the consortium’s projects and developments, providing a visual representation of the initiatives across different sectors and organizations involved with NOMCAARRD.
+                  Through its research, development, and extension priorities, NOMCAARRD works to ensure that scientific and technological advancements directly benefit these stakeholders by improving productivity, sustainability, and resilience within the region's vital resource sectors.
                 </p>
               </div>
             </section>
-            <section id="goals">
-              <h2>NOMCAARRD'S Purpose and Goals</h2>
-              <div>
-                <p>
-                  The Consortium is hereby created for the following:
-                </p>
-                <ul>
-                  <li>
-                    To promote science and technology applications for agriculture, aquatic, forestry, and natural resources (AANR) sectors.
-                  </li>
-                  <li>
-                    To promote science and technology applications for agriculture, aquatic, forestry, and natural resources (AANR) sectors.
-                    Provide a venue for planning, monitoring evaluation and sharing resources through collaborative involvements of its members through the implementation of:
-                    <ol class="ml-5">
-                      <li>
-                        Strategic Research and Development
-                      </li>
-                      <li>
-                        Capability Building and Research and Development Governance
-                      </li>
-                      <li>
-                        Research Results Dissemination and Utilization
-                      </li>
-                      <li>
-                        Policy Advocacy
-                      </li>
-                    </ol>
-                  </li>
-                  <li>
-                    To collaborate with Regional Research, Development, and Innovation Committee (RRDIC)-Region 10 for maximizing the utilization of research results to support regional development.
-                  </li>
-                  <li>
-                    To source other funds for use in the implementation of research and development.
 
-                  </li>
-                </ul>
+            <section id="categories">
+              <h2>Categories of Stakeholders</h2>
+              <div id="categories-farmers">
+                <h3>Smallholder Farmers and Agricultural Workers</h3>
                 <p>
-                  It shall   operate as a program funded by the Department of Science and Technology – Philippine Council for Agriculture, Aquatic and natural Resources Research and Development (DOST-PCAARRD) as the PCAARRD in the Northern Mindanao.
+                  Smallholder farmers represent the largest stakeholder group served by NOMCAARRD. These agricultural producers typically farm on less than two hectares of land and often face significant challenges including limited access to modern technology, vulnerability to climate change, and market access barriers.
                 </p>
-              </div>
-              <div id="goals-vision">
-                <h3>NOMCAARRD'S Vision</h3>
                 <p>
-                  NOMCAARRD envisions a productive, competitive, and sustainable Science and Technology-based (S&T) Agriculture, Aquatic, and Natural Resources (AANR) sector in Northern Mindanao. As a regional research and development consortium, it is committed to develop knowledge and provide innovative technologies through collaboration and networking with local and international organizations to bring about improvements for the AANR sectors.
+                  In Region 10, smallholder farmers grow a diverse range of crops including rice, corn, high-value fruits and vegetables, coconut, and coffee. Many practice integrated farming, combining crop production with small-scale livestock raising to maximize land productivity and income sources.
                 </p>
-              </div>
-              <div id="goals-mission">
-                <h3>NOMCAARRD'S Mission</h3>
                 <p>
-                  As a regional research consortium, we commit ourselves to develop knowledge and provide innovative technologies through collaboration and networking with local and international organizations to bring about improvements for the AAFNR sectors.
+                  Agricultural workers, including seasonal laborers and farm hands, also form a significant stakeholder group. These individuals often depend on agricultural employment for their livelihoods but may lack secure tenure or access to social protection.
                 </p>
-              </div>
-              <div id="goals-objectives">
-                <h3>NOMCAARRD'S Objectives</h3>
+                <p>
+                  NOMCAARRD develops and promotes technologies specifically designed for the needs of smallholder farmers, including:
+                </p>
                 <ul>
-                  <li>
-                    To identify regional research and development priorities;
-                  </li>
-                  <li>
-                    To plan, monitor, and evaluate integrated regional research and development programs;
-                  </li>
-                  <li>
-                    To plan, monitor and evaluate related activities in agriculture, fisheries, forestry environment, and natural resources;
-                  </li>
-                  <li>
-                    To develop and implement a system of research management attuned to the development efforts of the region to maximize the utilization of research results to support regional development; and,
-                  </li>
-                  <li>
-                    To source other funds for use in the implantation of research and development programs.
-                  </li>
+                  <li>Climate-resilient crop varieties adapted to local conditions</li>
+                  <li>Low-cost farming implements suitable for small land areas</li>
+                  <li>Integrated pest management systems that reduce chemical inputs</li>
+                  <li>Post-harvest technologies to reduce losses and increase market value</li>
                 </ul>
               </div>
 
+              <div id="categories-fisherfolk">
+                <h3>Fisherfolk Communities</h3>
+                <p>
+                  Northern Mindanao's extensive coastline and inland waters support numerous fishing communities. These fisherfolk stakeholders include:
+                </p>
+                <ul>
+                  <li>Small-scale marine fishers who operate in coastal waters using traditional methods</li>
+                  <li>Aquaculture producers who cultivate fish, shellfish, and seaweeds</li>
+                  <li>Inland fishers who rely on the region's lakes, rivers, and reservoirs</li>
+                  <li>Post-harvest processors who add value to fishery products</li>
+                </ul>
+                <p>
+                  These communities face challenges including declining fish stocks, habitat degradation, limited access to sustainable fishing technologies, and vulnerability to extreme weather events.
+                </p>
+                <p>
+                  NOMCAARRD supports fisherfolk communities through research on sustainable fishing practices, aquaculture innovations, post-harvest processing improvements, and coastal resource management. Projects often focus on balancing ecological sustainability with livelihood security for these vulnerable stakeholders.
+                </p>
+              </div>
 
+              <div id="categories-indigenous">
+                <h3>Indigenous Communities</h3>
+                <p>
+                  Region 10 is home to numerous indigenous communities, including the Higaonon, Talaandig, Manobo, and Bukidnon peoples. These communities often serve as stewards of ancestral domains that contain important forest, water, and biodiversity resources.
+                </p>
+                <p>
+                  Indigenous stakeholders possess valuable traditional ecological knowledge that has been passed down through generations. NOMCAARRD recognizes the importance of this knowledge and works to integrate it with modern scientific approaches.
+                </p>
+                <p>
+                  Research initiatives involving indigenous stakeholders often focus on:
+                </p>
+                <ul>
+                  <li>Documentation and validation of traditional farming systems</li>
+                  <li>Sustainable harvesting of non-timber forest products</li>
+                  <li>Conservation of locally adapted crop varieties and livestock breeds</li>
+                  <li>Watershed protection and forest restoration</li>
+                </ul>
+                <p>
+                  NOMCAARRD ensures that research involving indigenous communities respects cultural protocols and promotes free, prior, and informed consent in all engagements.
+                </p>
+              </div>
+
+              <div id="categories-entrepreneurs">
+                <h3>Agricultural Entrepreneurs and Value Chain Actors</h3>
+                <p>
+                  Beyond primary producers, NOMCAARRD serves stakeholders involved in agricultural value chains, including:
+                </p>
+                <ul>
+                  <li>Small and medium agricultural enterprises</li>
+                  <li>Food processors and manufacturers</li>
+                  <li>Seed producers and agricultural input suppliers</li>
+                  <li>Traders, transporters, and market vendors</li>
+                  <li>Rural financial service providers</li>
+                </ul>
+                <p>
+                  These stakeholders play crucial roles in transforming raw agricultural and fishery products into marketable goods, creating employment opportunities, and strengthening the regional economy.
+                </p>
+                <p>
+                  NOMCAARRD supports these entrepreneurs through research on processing technologies, quality standards, market information systems, and business development. Special attention is given to supporting women and youth entrepreneurs to promote inclusive economic growth within the agriculture and natural resources sectors.
+                </p>
+              </div>
+
+              <div id="categories-consumers">
+                <h3>Consumers and Urban Communities</h3>
+                <p>
+                  The ultimate beneficiaries of NOMCAARRD's work include consumers throughout Northern Mindanao and beyond. Consumer stakeholders benefit from:
+                </p>
+                <ul>
+                  <li>Increased availability of nutritious, safe, and affordable food</li>
+                  <li>Reduced environmental impact of agricultural production</li>
+                  <li>Preserved ecosystem services such as clean water and air</li>
+                  <li>Enhanced cultural heritage connected to traditional food systems</li>
+                </ul>
+                <p>
+                  Urban communities in particular rely on the productivity and sustainability of rural agricultural systems. NOMCAARRD's research on urban agriculture, food safety, nutrition, and waste management also directly benefits these stakeholders.
+                </p>
+              </div>
+
+              <div id="categories-environmental">
+                <h3>Environmental Stewards and Conservation Groups</h3>
+                <p>
+                  Environmental stakeholders include both individual land stewards and organized conservation groups working to protect Northern Mindanao's rich biodiversity and natural resources.
+                </p>
+                <p>
+                  NOMCAARRD partners with these stakeholders on research related to:
+                </p>
+                <ul>
+                  <li>Agroforestry and sustainable land management</li>
+                  <li>Biodiversity conservation in agricultural landscapes</li>
+                  <li>Watershed protection and water resource management</li>
+                  <li>Climate change mitigation and adaptation</li>
+                </ul>
+                <p>
+                  These partnerships ensure that agricultural development proceeds in harmony with environmental conservation, recognizing that long-term food security depends on healthy ecosystems.
+                </p>
+              </div>
             </section>
 
-            <section id="cmi">
-              <h2>Consortium Member-Institutions (CMIs)</h2>
-              <div id="cmi-about">
-                <h3>What is a CMI?</h3>
+            <section id="engagement">
+              <h2>Stakeholder Engagement</h2>
+              <div id="engagement-research">
+                <h3>Participatory Research Approaches</h3>
                 <p>
-                  The Consortium Member-Institutions (CMIs) represent a collective of esteemed agencies and academic institutions dedicated to advancing research and development in the fields of agriculture, aquatic sciences, and natural resources within Northern Mindanao.
+                  NOMCAARRD employs participatory research methodologies that directly involve stakeholders in all stages of the research process, from problem identification to technology development and evaluation.
                 </p>
                 <p>
-                  These institutions collaborate to pool their expertise, resources, and knowledge to address the region's most pressing challenges, driving innovation and sustainable practices that benefit both the environment and local communities. Through their concerted efforts, the CMIs aim to foster a vibrant research ecosystem that supports the region's growth and development, ensuring a prosperous future for the people and the natural heritage of Northern Mindanao.
+                  Farmer-led research, community-based monitoring systems, and participatory technology development are common approaches. These methods ensure that research outputs are relevant, appropriate, and readily adoptable by the intended users.
                 </p>
-              </div>
-              <div id="cmi-research">
-                <h3>Research Delivering Institutions</h3>
                 <p>
-                  Research Delivering Institutions are central to the consortium’s mission, driving innovation through focused research in agriculture, aquatic sciences, and natural resources. With advanced facilities and skilled researchers, these institutions develop sustainable technologies and solutions to address regional challenges. Their research directly supports the socio-economic growth of Northern Mindanao, benefiting local communities and ecosystems.
+                  Through participatory guarantee systems and farmer field schools, NOMCAARRD facilitates peer-to-peer learning and technology diffusion among stakeholder groups.
                 </p>
               </div>
-              <div id="cmi-non-research">
-                <h3>Non-Research Delivering Institutions</h3>
+
+              <div id="engagement-knowledge">
+                <h3>Knowledge Sharing Networks</h3>
                 <p>
-                  Non-Research Delivering Institutions play a supportive role in the consortium, helping to apply and disseminate the research conducted by their counterparts. These institutions, which include government agencies and NGOs, focus on policy-making, education, and community engagement. Their efforts ensure that research outcomes are effectively implemented, enhancing sustainability and development in Northern Mindanao.
+                  NOMCAARRD facilitates various knowledge-sharing networks that connect stakeholders with researchers and extension workers:
+                </p>
+                <ul>
+                  <li>Community learning centers in strategic agricultural areas</li>
+                  <li>Demonstration farms showcasing integrated farming systems</li>
+                  <li>Mobile information services reaching remote communities</li>
+                  <li>Stakeholder forums for dialogue on research priorities</li>
+                  <li>Digital platforms connecting producers with markets and information</li>
+                </ul>
+                <p>
+                  These networks ensure that research findings flow efficiently to those who can most benefit from them, while also allowing stakeholder feedback to inform future research directions.
+                </p>
+              </div>
+
+              <div id="engagement-capacity">
+                <h3>Capacity Building for Stakeholders</h3>
+                <p>
+                  Beyond conducting research, NOMCAARRD invests in building the capacity of its stakeholders through:
+                </p>
+                <ul>
+                  <li>Technical training programs tailored to specific needs</li>
+                  <li>Leadership development for farmer and fisher organizations</li>
+                  <li>Enterprise development support for agricultural entrepreneurs</li>
+                  <li>Youth mentorship to encourage next-generation involvement</li>
+                  <li>Climate resilience planning for vulnerable communities</li>
+                </ul>
+                <p>
+                  These capacity-building initiatives empower stakeholders to adapt to changing conditions, implement new technologies, and participate more effectively in governance of natural resources.
+                </p>
+              </div>
+            </section>
+
+            <section id="impact">
+              <h2>Impact on Stakeholders</h2>
+              <div id="impact-economic">
+                <h3>Economic Benefits</h3>
+                <p>
+                  NOMCAARRD's research and development initiatives have generated significant economic benefits for stakeholders through:
+                </p>
+                <ul>
+                  <li>Increased agricultural productivity and reduced production costs</li>
+                  <li>Enhanced market access and value addition opportunities</li>
+                  <li>Diversified income sources and reduced seasonal vulnerability</li>
+                  <li>Improved resource efficiency and waste reduction</li>
+                  <li>Development of niche markets for specialty products</li>
+                </ul>
+                <p>
+                  Case studies throughout Northern Mindanao demonstrate how stakeholders have used NOMCAARRD-developed technologies to increase household income, create employment opportunities, and build financial resilience.
+                </p>
+              </div>
+
+              <div id="impact-environmental">
+                <h3>Environmental Sustainability</h3>
+                <p>
+                  Stakeholders also benefit from NOMCAARRD's focus on environmental sustainability, including:
+                </p>
+                <ul>
+                  <li>Reduced dependency on chemical inputs through biological alternatives</li>
+                  <li>Improved soil health and water management</li>
+                  <li>Conservation of agricultural biodiversity</li>
+                  <li>Ecosystem restoration in degraded areas</li>
+                  <li>Climate-smart practices adapted to local conditions</li>
+                </ul>
+                <p>
+                  These environmental benefits ensure the long-term viability of agricultural and natural resource-based livelihoods for future generations of stakeholders.
+                </p>
+              </div>
+
+              <div id="impact-social">
+                <h3>Social and Cultural Well-being</h3>
+                <p>
+                  NOMCAARRD recognizes that stakeholder well-being extends beyond economic and environmental dimensions to include social and cultural aspects:
+                </p>
+                <ul>
+                  <li>Preservation of traditional farming knowledge and practices</li>
+                  <li>Strengthened community organizations and social capital</li>
+                  <li>Enhanced food security and improved nutrition</li>
+                  <li>Recognition of women's roles in agriculture and natural resource management</li>
+                  <li>Revitalization of local food cultures and traditions</li>
+                </ul>
+                <p>
+                  By taking this holistic approach, NOMCAARRD ensures that technological innovations complement rather than displace the social and cultural systems that provide meaning and resilience to stakeholder communities.
+                </p>
+              </div>
+            </section>
+
+            <section id="future">
+              <h2>Future Directions for Stakeholder Engagement</h2>
+              <div id="future-needs">
+                <h3>Emerging Stakeholder Needs</h3>
+                <p>
+                  As Northern Mindanao develops, stakeholder needs are evolving. NOMCAARRD is adapting its research agenda to address:
+                </p>
+                <ul>
+                  <li>Digital inclusion for rural stakeholders in an increasingly technology-driven sector</li>
+                  <li>Youth engagement to address agricultural aging and succession challenges</li>
+                  <li>Climate resilience as weather patterns become more unpredictable</li>
+                  <li>Urbanization and changing land-use patterns affecting agricultural space</li>
+                  <li>Consumer demand for traceability, sustainability, and food safety</li>
+                </ul>
+                <p>
+                  These emerging needs require innovative approaches and deeper stakeholder involvement in setting research priorities.
+                </p>
+              </div>
+
+              <div id="future-voice">
+                <h3>Enhancing Stakeholder Voice and Agency</h3>
+                <p>
+                  NOMCAARRD is committed to amplifying stakeholder voices through:
+                </p>
+                <ul>
+                  <li>Representation in governance structures and decision-making processes</li>
+                  <li>Regular stakeholder consultations to identify research gaps</li>
+                  <li>Collaborative design of research methodologies and metrics</li>
+                  <li>Stakeholder-led monitoring and evaluation</li>
+                  <li>Recognition of diverse forms of knowledge and expertise</li>
+                </ul>
+                <p>
+                  By enhancing stakeholder agency, NOMCAARRD ensures that its work remains relevant, effective, and equitable in serving the diverse communities of Northern Mindanao.
                 </p>
               </div>
             </section>

@@ -4,6 +4,7 @@
   import {useToggleMenu} from "../../../../core/composables/useToggleMenu.ts";
   import {useRouting} from "../../../../core/composables/useRouting.ts";
   import {useUserStore} from "../../../../core/stores/user.store.ts";
+  import NOMCAARRDLogo from "../../../../core/components/NOMCAARRDLogo.vue";
 
   const {activeIcon, isMenuToggled, toggleMenu} = useToggleMenu();
   const {isSmall} = useScreenStore();
@@ -24,13 +25,21 @@
       link: '/news-updates',
     },
     {
-      title: 'Help Center',
-      link: '/help'
+      title: 'CMIs',
+      link: '/cmis',
     },
     {
       title: 'Contact',
       link: '/contact'
     },
+    {
+      title: "Visit NOMCAARD'S KMS",
+      link: '/linnks'
+    },
+    // {
+    //   title: 'Help Center',
+    //   link: '/help'
+    // },
   ];
 
   // const navLinks = computed(() => {
@@ -62,7 +71,7 @@
       <VContainer fluid>
         <VRow align="center" class="ma-0">
           <VRow align="center" class="ma-0">
-            <Logo/>
+            <NOMCAARRDLogo/>
             <VRow class="ma-0 mx-5"  v-if="!isSmall">
               <VListItem
                   v-for="(navLink, index) in baseNavLinks" :key="index"

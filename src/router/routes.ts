@@ -3,56 +3,9 @@ import repositoryRoutes from "./routes/repository.routes.ts";
 import organizationRoutes from "./routes/organization.routes.ts";
 import sectorRoutes from "./routes/sector.routes.ts";
 import postRoutes from "./routes/post.routes.ts";
+import publicRoutes from "./routes/public.routes.ts";
 
 export const routes = [
-  {
-    path: '/',
-    name: 'landing',
-    // @ts-ignore
-    component: () => import('../modules/public/views/LandingView.vue')
-  },
-  {
-    path: '/seed',
-    name: 'seed',
-    // @ts-ignore
-    component: () => import('../core/views/SeedView.vue')
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // @ts-ignore
-    component: () => import('../modules/public/views/AboutView.vue')
-  },
-  {
-    path: '/stakeholders',
-    name: 'stakeholders',
-    // @ts-ignore
-    component: () => import('../modules/public/views/StakeholdersView.vue')
-  },
-  {
-    path: '/news-updates',
-    name: 'news-updates',
-    // @ts-ignore
-    component: () => import('../modules/public/views/NewsUpdatesView.vue'),
-  },
-  {
-    path: '/news-updates/:slug',
-    name: 'news-updates-detail',
-    // @ts-ignore
-    component: () => import('../modules/public/views/NewsUpdatesDetailsView.vue')
-  },
-  {
-    path: '/help',
-    name: 'help',
-    // @ts-ignore
-    component: () => import('../modules/public/views/HelpCenterView.vue')
-  },
-  {
-    path: '/contact',
-    name: 'contact',
-    // @ts-ignore
-    component: () => import('../modules/public/views/ContactsView.vue')
-  },
   {
     path: '/dashboard',
     name: 'dashboard',
@@ -113,6 +66,7 @@ export const routes = [
     // @ts-ignore
     component: () => import('../core/views/Error404View.vue')
   },
+  ...publicRoutes,
   ...authRoutes,
   ...repositoryRoutes,
   ...organizationRoutes,

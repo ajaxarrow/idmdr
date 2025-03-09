@@ -11,81 +11,81 @@ const {isMobile, isSmall} = useScreenStore();
   <VLayout>
     <div style="width: 100%">
     <Navbar>
-        <div class="landing-container">
-          <VContainer>
-            <p class="text-heading text-center gradient-text">
-              Connect with Us
-            </p>
-            <p class="text-center text-subtitle px-sm-10 px-xs-5">
-              Reach out to us with any questions or inquiries you may have. We're here to assist you <br v-if=" !isSmall && !isMobile "/> and provide the information you need. Feel free to ask us anything.
-            </p>
-            <VRow class="ma-0 my-10" justify="center">
-              <div class="w-75 bg-white rounded-lg pa-6" style="border: 1px solid #e4e4e4;">
-                <div class="mb-5">
-                  <label class="input-label">First Name</label>
-                  <VTextField
-                      placeholder="e.g. John"
-                      class="my-2"
-                      hide-details
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
-                </div>
-                <div class="mb-5">
-                  <label class="input-label">Last Name</label>
-                  <VTextField
-                      placeholder="e.g. Doe"
-                      class="my-2"
-                      hide-details
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
-                </div>
-                <div class="mb-5">
-                  <label class="input-label">Email</label>
-                  <VTextField
-                      placeholder="user@example.com"
-                      class="my-2"
-                      hide-details
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
-                </div>
-                <div class="mb-5">
-                  <label class="input-label">How can we help?</label>
-                  <VTextarea
-                      placeholder="E.g. Repository Issues"
-                      class="my-2"
-                      hide-details
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
-                </div>
-                <VRow class="ma-0" justify="end">
-                  <VBtnPrimaryFilled
-                      rounded="lg"
-                      height="44px"
-                      width="166px"
-                  >
-                    Submit
-                  </VBtnPrimaryFilled>
-                </VRow>
-              </div>
-            </VRow>
-          </VContainer>
-        </div>
+<!--        <div class="landing-container">-->
+<!--          <VContainer>-->
+<!--            <p class="text-heading text-center gradient-text">-->
+<!--              Connect with Us-->
+<!--            </p>-->
+<!--            <p class="text-center text-subtitle px-sm-10 px-xs-5">-->
+<!--              Reach out to us with any questions or inquiries you may have. We're here to assist you <br v-if=" !isSmall && !isMobile "/> and provide the information you need. Feel free to ask us anything.-->
+<!--            </p>-->
+<!--            <VRow class="ma-0 my-10" justify="center">-->
+<!--              <div class="w-75 bg-white rounded-lg pa-6" style="border: 1px solid #e4e4e4;">-->
+<!--                <div class="mb-5">-->
+<!--                  <label class="input-label">First Name</label>-->
+<!--                  <VTextField-->
+<!--                      placeholder="e.g. John"-->
+<!--                      class="my-2"-->
+<!--                      hide-details-->
+<!--                      rounded="lg"-->
+<!--                      density="comfortable"-->
+<!--                      variant="outlined"-->
+<!--                      color="primary"-->
+<!--                      base-color="gs60"-->
+<!--                  />-->
+<!--                </div>-->
+<!--                <div class="mb-5">-->
+<!--                  <label class="input-label">Last Name</label>-->
+<!--                  <VTextField-->
+<!--                      placeholder="e.g. Doe"-->
+<!--                      class="my-2"-->
+<!--                      hide-details-->
+<!--                      rounded="lg"-->
+<!--                      density="comfortable"-->
+<!--                      variant="outlined"-->
+<!--                      color="primary"-->
+<!--                      base-color="gs60"-->
+<!--                  />-->
+<!--                </div>-->
+<!--                <div class="mb-5">-->
+<!--                  <label class="input-label">Email</label>-->
+<!--                  <VTextField-->
+<!--                      placeholder="user@example.com"-->
+<!--                      class="my-2"-->
+<!--                      hide-details-->
+<!--                      rounded="lg"-->
+<!--                      density="comfortable"-->
+<!--                      variant="outlined"-->
+<!--                      color="primary"-->
+<!--                      base-color="gs60"-->
+<!--                  />-->
+<!--                </div>-->
+<!--                <div class="mb-5">-->
+<!--                  <label class="input-label">How can we help?</label>-->
+<!--                  <VTextarea-->
+<!--                      placeholder="E.g. Repository Issues"-->
+<!--                      class="my-2"-->
+<!--                      hide-details-->
+<!--                      rounded="lg"-->
+<!--                      density="comfortable"-->
+<!--                      variant="outlined"-->
+<!--                      color="primary"-->
+<!--                      base-color="gs60"-->
+<!--                  />-->
+<!--                </div>-->
+<!--                <VRow class="ma-0" justify="end">-->
+<!--                  <VBtnPrimaryFilled-->
+<!--                      rounded="lg"-->
+<!--                      height="44px"-->
+<!--                      width="166px"-->
+<!--                  >-->
+<!--                    Submit-->
+<!--                  </VBtnPrimaryFilled>-->
+<!--                </VRow>-->
+<!--              </div>-->
+<!--            </VRow>-->
+<!--          </VContainer>-->
+<!--        </div>-->
       <div class="">
         <VContainer>
           <p class="text-heading text-center gradient-text">
@@ -124,7 +124,7 @@ const {isMobile, isSmall} = useScreenStore();
                   </div>
                 </div>
                 <div class="d-flex ga-2">
-                  <a href="https://www.facebook.com/CMU.IDMDR/" target="_blank">
+                  <a href="https://web.facebook.com/NOMCAARRD/" target="_blank">
                     <div class="logo-icon" >
                       <IconBrandFacebookFilled :size="30" color="#050E14"/>
                     </div>

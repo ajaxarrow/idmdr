@@ -2,7 +2,6 @@
 // @ts-nocheck
 import {onMounted, onUnmounted, ref} from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
-import Footer from "../components/Footer.vue";
 import auth from "../../../assets/helpcenter/auth.png"
 import dashboard from "../../../assets/helpcenter/dashboard.png"
 import mapping from "../../../assets/helpcenter/mapping.png"
@@ -18,6 +17,7 @@ import repoTopics from "../../../assets/helpcenter/repoTopics.png"
 import repoTopics2 from "../../../assets/helpcenter/repoTopics2.png"
 import tag1 from "../../../assets/helpcenter/tag1.png"
 import tag2 from "../../../assets/helpcenter/tag1.png"
+import LINNKSFooter from "../components/LINNKSFooter.vue";
 
 const TOP_MARGIN = 0.1;
 const BOTTOM_MARGIN = 0.2;
@@ -309,7 +309,7 @@ onUnmounted(() => {
           </article>
         </div>
       </VContainer>
-      <Footer/>
+      <LINNKSFooter/>
     </Navbar>
   </VLayout>
 </template>
