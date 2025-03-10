@@ -4,8 +4,8 @@ import logo from '../../../assets/images/nomcaarrd.png';
 </script>
 
 <template>
-  <div class="bg-sb20">
-    <VContainer>
+  <div class="bg-sb20 px-2 px-lg-10">
+    <VContainer fluid>
       <RouterLink to="/linnks" class="text-decoration-none">
         <div class="d-flex align-center text-logo">
           <!--          <PhHardDrives :size="24" weight="duotone" color="#3291C7" class="ph-icon" />-->

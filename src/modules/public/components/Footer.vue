@@ -5,8 +5,8 @@ import logo from '../../../assets/images/nomcaarrd.png';
 </script>
 
 <template>
-  <div class="bg-sb20">
-    <VContainer>
+  <div class="bg-sb20 px-2 px-lg-10">
+    <VContainer fluid>
       <RouterLink to="/" class="text-decoration-none" >
         <div class="d-flex align-center text-wrapper text-logo" >
           <img style="height: 32px;" :src="logo" alt="logo" class="ph-icon"/>

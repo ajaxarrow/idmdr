@@ -152,6 +152,30 @@ const priorityCommodities: Commodity[] = [
   }
 ]
 
+const lightenColor = (hex, percent) => {
+  // Remove the # if present
+  hex = hex.replace('#', '');
+
+  // Parse the hex values to RGB
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  // Calculate the lighter values
+  const lighterR = Math.min(255, r + Math.floor(percent * 2.55));
+  const lighterG = Math.min(255, g + Math.floor(percent * 2.55));
+  const lighterB = Math.min(255, b + Math.floor(percent * 2.55));
+
+  // Convert back to hex
+  const toHex = (c) => {
+    const hex = c.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  // Return the new hex color
+  return `#${toHex(lighterR)}${toHex(lighterG)}${toHex(lighterB)}`;
+};
+
 
 const selectProgram = (program: BannerProgram) => {
   selectedProgram.value = program;
@@ -169,6 +193,7 @@ onMounted(() => {
 </script>
 
 <template>
+
   <VLayout>
     <Container class="center" v-show="loading">
       <Vue3Lottie
@@ -246,53 +271,58 @@ onMounted(() => {
               </VRow>
             </VContainer>
           </div>
-          <div class="banner-programs py-10">
+          <div class="banner-programs py-10 animated-background">
             <VContainer>
-              <p class="blockquote-question text-center pt-5">
+              <p class="blockquote-question text-center pt-5 animated-title">
                 Banner Programs
               </p>
-              <p class="text-center mb-8">These priority programs drive NOMCAARRD's S&T operations throughout the region</p>
+              <p class="text-center mb-8 subtitle-animation">
+                These priority programs drive NOMCAARRD's S&T operations throughout the region
+              </p>
 
               <VRow justify="center" class="ma-0 mt-5" align="center" v-if="isSmall">
-                <component
-                    :is="selectedProgram.icon"
-                    size="26"
-                    :color="selectedProgram.color"
-                />
-                <p :style="{color: selectedProgram.color}" class="ml-1 font-weight-bold text-h6">{{selectedProgram.title}}</p>
+                <component :is="selectedProgram.icon" size="26" :color="selectedProgram.color" class="pulse-icon" />
+                <p :style="{color: selectedProgram.color}" class="ml-1 font-weight-bold text-h6 bounce-text">
+                  {{selectedProgram.title}}
+                </p>
               </VRow>
 
               <VRow justify="center" class="ma-0 my-6 programs-container" v-else>
-                <VRow class="ma-0 mx-15 px-15" justify="space-around">
-                  <div
-                      v-for="(program) in bannerPrograms"
-                      class="d-flex flex-column align-center cursor-pointer program-item"
-                      @click="selectProgram(program)"
+                <VRow class="ma-0 mx-15 px-15 float-in" justify="space-around">
+                  <div v-for="(program) in bannerPrograms"
+                       class="d-flex flex-column align-center cursor-pointer program-item"
+                       @click="selectProgram(program)"
+                       :class="program.title == selectedProgram.title ? 'active-program' : ''"
                   >
                     <component
                         weight="bold"
                         :is="program.icon"
                         size="30"
                         :color="program.title == selectedProgram.title ? program.color : '#8C8C8C'"
+                        class="icon-hover"
                     />
-                    <p :style="{color: program.title == selectedProgram.title ? program.color : '#8C8C8C'}" class="font-weight-bold text-h6">{{program.title}}</p>
+                    <p :style="{color: program.title == selectedProgram.title ? program.color : '#8C8C8C'}"
+                       class="font-weight-bold text-h6 program-title">
+                      {{program.title}}
+                    </p>
                   </div>
                 </VRow>
               </VRow>
 
-              <VCard class="mx-auto my-8 program-card pa-4" max-width="900">
+              <VCard class="mx-auto my-8 program-card pa-4 card-animation" max-width="900" elevation="8">
                 <VCardTitle class="text-h5" :style="{color: selectedProgram.color}">
                   {{selectedProgram.title}}
                 </VCardTitle>
                 <VCardText>
-                  <p class="text-body-1">{{selectedProgram.description}}</p>
-                  <VDivider class="my-4"></VDivider>
+                  <p class="text-body-1 fade-in">{{selectedProgram.description}}</p>
+<!--                  <VDivider class="my-4 growing-divider" :style="{backgroundColor: selectedProgram.color}"></VDivider>-->
                   <VList>
-                    <VListItem v-for="(item, i) in selectedProgram.items" :key="i">
+                    <VListItem density="compact" v-for="(item, i) in selectedProgram.items" :key="i" class="list-item-animation"
+                               :style="{'animation-delay': i * 0.25 + 's'}">
                       <template v-slot:prepend>
-                        <VIcon :color="selectedProgram.color" icon="mdi-circle-small"></VIcon>
+                        <VIcon :color="selectedProgram.color" icon="mdi-circle-small" class="blinking-icon"></VIcon>
                       </template>
-                      <VListItemTitle>{{ item }}</VListItemTitle>
+                      <VListItemTitle class="slide-in-text">{{ item }}</VListItemTitle>
                     </VListItem>
                   </VList>
                 </VCardText>
@@ -385,7 +415,7 @@ onMounted(() => {
               <VRow justify="center" class="ma-0 py-5">
                 <VCol cols="12" md="10" lg="8">
                   <VCard class="service-card">
-                    <VCardTitle class="text-h5 text-primary">
+                    <VCardTitle class="text-h5 text-bs50">
                       Graduate Assistantships & Non-degree Trainings
                     </VCardTitle>
                     <VCardText>
@@ -467,8 +497,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-
-
 .blockquote-question{
   font-family: 'Satoshi', sans-serif !important;
   font-weight: 700;
@@ -941,5 +969,262 @@ onMounted(() => {
     margin-left: 15px;
     margin-right: 15px;
   }
+}
+
+/* Animated Background */
+.animated-background {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9eef2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-background::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  animation: rotate 25s linear infinite;
+}
+
+.animated-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: gradient-text 6s ease infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.subtitle-animation {
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 1.5s ease-in-out;
+  color: #555;
+  font-size: 1.1rem;
+}
+
+/* Program Icons and Titles */
+.program-item {
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 15px;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.program-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(240, 240, 240, 0.6);
+  border-radius: 12px;
+  z-index: -1;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.program-item:hover::before {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.active-program::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 3px;
+  background: v-bind('`${lightenColor(selectedProgram.color, 30)}`');;
+  border-radius: 2px;
+  animation: expandWidth 0.5s ease;
+}
+
+.icon-hover {
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.program-item:hover .icon-hover {
+  transform: scale(1.2) translateY(-5px);
+}
+
+.program-title {
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.program-item:hover .program-title {
+  transform: translateY(-3px);
+}
+
+.float-in {
+  animation: floatIn 0.8s ease-out;
+}
+
+/* Card Animations */
+.card-animation {
+  transition: all 0.5s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.card-animation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: v-bind('`linear-gradient(90deg, ${selectedProgram.color}, ${lightenColor(selectedProgram.color, 30)}`');
+  transition: all 0.5s ease;
+}
+
+.card-animation:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.card-title-animation {
+  position: relative;
+  padding-bottom: 10px;
+  animation: slideInRight 0.7s ease;
+}
+
+.card-title-animation::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: currentColor;
+  animation: expandWidth 1.5s ease-in-out infinite alternate;
+}
+
+.fade-in {
+  animation: fadeIn 1s ease;
+}
+
+.growing-divider {
+  height: 2px;
+  animation: expandWidth 1s ease;
+}
+
+.list-item-animation {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
+  transition: background-color 0.3s ease;
+}
+
+.list-item-animation:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.blinking-icon {
+  animation: pulse 2s infinite;
+}
+
+.slide-in-text {
+  animation: slideInLeft 0.5s ease;
+}
+
+/* Mobile Specific Animations */
+.pulse-icon {
+  animation: pulse 2s infinite;
+}
+
+.bounce-text {
+  animation: bounce 1s ease infinite alternate;
+}
+
+/* Animation Keyframes */
+@keyframes gradient-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes expandWidth {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>
