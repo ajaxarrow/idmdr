@@ -133,6 +133,9 @@ const handleEventClick = (clickInfo: any) => {
 
 const viewEventCallback = async () => {
   selectedEventInfo.value = null;
+}
+
+const fetchEventCallback = async( ) => {
   await fetchEventsData();
 }
 
@@ -182,6 +185,7 @@ onUnmounted(() => {
       :value="selectedEventInfo !== null"
       :event="selectedEventInfo!"
       @callback="viewEventCallback"
+      @fetchCallback="fetchEventCallback"
   />
     <div class="pa-6">
       <div v-if="pageLoading" class="loading-state-container">

@@ -108,177 +108,179 @@ onMounted(async()=> {
     <slot></slot>
   </div>
   <VDialog v-model="eventDialog" class="center" :persistent="true">
-    <VSheet class="sector-tagging-dialog-container scrollable-sidebar-container" @click.stop>
-      <p class="dialog-title pa-5">{{action}} Event Schedule</p>
-      <VDivider/>
-      <div v-if="loading" class="loading-state-container" style="height: 70vh;">
-        <VProgressCircular
-            indeterminate
-            color="#23668b"
-        ></VProgressCircular>
-      </div>
-      <div v-else class="px-5 py-2">
-
-        <VRow class="ma-0">
-          <VCol class="pa-0 pr-2" cols="6">
-            <p class="dialog-label mb-2">Start Date</p>
-            <VTextField
-                v-model="eventData.start_date_object.date"
-                type="date"
-                label="End Date"
-                required
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-            />
-          </VCol>
-          <VCol class="pa-0" cols="6">
-            <p class="dialog-label mb-2">Start Time</p>
-            <VTextField
-                v-model="eventData.start_date_object.time"
-                type="time"
-                label="End Time"
-                required
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-            />
-          </VCol>
-        </VRow>
-        <VRow class="ma-0">
-          <VCol class="pa-0 pr-2" cols="6">
-            <p class="dialog-label mb-2">End Date</p>
-            <VTextField
-                v-model="eventData.end_date_object.date"
-                type="date"
-                label="End Date"
-                required
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-            />
-          </VCol>
-          <VCol class="pa-0" cols="6">
-            <p class="dialog-label mb-2">End Time</p>
-            <VTextField
-                v-model="eventData.end_date_object.time"
-                type="time"
-                label="End Time"
-                required
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-            />
-          </VCol>
-        </VRow>
-        <div class="mb-2">
-          <p class="dialog-label mb-2">Event Title</p>
-          <VTextField
-              autofocus
-              v-model="eventData.title"
-              placeholder="Enter Event Title"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
+    <div style="overflow: hidden; border-radius: 15px;" >
+      <VSheet class="sector-tagging-dialog-container scrollable-sidebar-container" @click.stop>
+        <p class="dialog-title pa-5">{{action}} Event Schedule</p>
+        <VDivider/>
+        <div v-if="loading" class="loading-state-container" style="height: 70vh;">
+          <VProgressCircular
+              indeterminate
+              color="#23668b"
+          ></VProgressCircular>
         </div>
-        <div class="mb-2">
-          <label class="dialog-label">Associated Consortium Member Institution<span class="text-pink">*</span></label>
-          <VAutocomplete
-              v-model="eventData.organization"
-              placeholder="Select Organization"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
+        <div v-else class="px-5 py-2">
+
+          <VRow class="ma-0">
+            <VCol class="pa-0 pr-2" cols="6">
+              <p class="dialog-label mb-2">Start Date</p>
+              <VTextField
+                  v-model="eventData.start_date_object.date"
+                  type="date"
+                  label="End Date"
+                  required
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+              />
+            </VCol>
+            <VCol class="pa-0" cols="6">
+              <p class="dialog-label mb-2">Start Time</p>
+              <VTextField
+                  v-model="eventData.start_date_object.time"
+                  type="time"
+                  label="End Time"
+                  required
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+              />
+            </VCol>
+          </VRow>
+          <VRow class="ma-0">
+            <VCol class="pa-0 pr-2" cols="6">
+              <p class="dialog-label mb-2">End Date</p>
+              <VTextField
+                  v-model="eventData.end_date_object.date"
+                  type="date"
+                  label="End Date"
+                  required
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+              />
+            </VCol>
+            <VCol class="pa-0" cols="6">
+              <p class="dialog-label mb-2">End Time</p>
+              <VTextField
+                  v-model="eventData.end_date_object.time"
+                  type="time"
+                  label="End Time"
+                  required
+                  class="my-2"
+                  rounded="lg"
+                  density="comfortable"
+                  variant="outlined"
+                  color="primary"
+                  base-color="gs60"
+              />
+            </VCol>
+          </VRow>
+          <div class="mb-2">
+            <p class="dialog-label mb-2">Event Title</p>
+            <VTextField
+                autofocus
+                v-model="eventData.title"
+                placeholder="Enter Event Title"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+            />
+          </div>
+          <div class="mb-2">
+            <label class="dialog-label">Associated Consortium Member Institution<span class="text-pink">*</span></label>
+            <VAutocomplete
+                v-model="eventData.organization"
+                placeholder="Select Organization"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="organizations"
+                :item-value="organization => `${organization.uid}`"
+                :item-title="organization => `${organization.name} (${organization.acronym})`"
+            >
+              <template v-slot:item="{ props, item }">
+                <VListItem
+                    @click.stop
+                    v-bind="props"
+                    :prepend-avatar="item.raw.image"
+                    :subtitle="item.raw.email"
+                    :title="`${item.raw.name} (${item.raw.acronym})`"
+                ></VListItem>
+              </template>
+            </VAutocomplete>
+          </div>
+          <div class="mb-3">
+            <label class="dialog-label">Associated Project<span class="text-pink">*</span></label>
+            <VAutocomplete
+                v-model="eventData.repository"
+                placeholder="Select Repository"
+                class="my-2"
+                rounded="lg"
+                density="comfortable"
+                variant="outlined"
+                color="primary"
+                base-color="gs60"
+                :items="repositories"
+                :item-value="repository => `${repository.uid}`"
+                :item-title="repository => `${repository.title}`"
+            >
+              <template v-slot:item="{ props, item }">
+                <VListItem
+                    @click.stop
+                    v-bind="props"
+                    :prepend-avatar="item.raw.image as string"
+                    :subtitle="item.raw.owner_data?.username!"
+                    :title="`${item.raw.title}`"
+                ></VListItem>
+              </template>
+            </VAutocomplete>
+          </div>
+          <div class="mb-5">
+            <label class="dialog-label mb-2">Event Description</label>
+            <QuillRichTextEditor
+                :modelValue="eventData.description"
+                placeholder="Enter event description here"
+                @update:modelValue="$event => (eventData.description= $event)"
+            />
+          </div>
+
+        </div>
+        <VDivider/>
+
+        <VRow class="ma-0 pa-4" justify="end">
+          <VBtnPrimaryAlt
+              @click="eventDialog = false"
+              width="86"
               variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="organizations"
-              :item-value="organization => `${organization.uid}`"
-              :item-title="organization => `${organization.name} (${organization.acronym})`"
+              class="button-outline"
           >
-            <template v-slot:item="{ props, item }">
-              <VListItem
-                  @click.stop
-                  v-bind="props"
-                  :prepend-avatar="item.raw.image"
-                  :subtitle="item.raw.email"
-                  :title="`${item.raw.name} (${item.raw.acronym})`"
-              ></VListItem>
-            </template>
-          </VAutocomplete>
-        </div>
-        <div class="mb-3">
-          <label class="dialog-label">Associated Project<span class="text-pink">*</span></label>
-          <VAutocomplete
-              v-model="eventData.repository"
-              placeholder="Select Repository"
-              class="my-2"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-              :items="repositories"
-              :item-value="repository => `${repository.uid}`"
-              :item-title="repository => `${repository.title}`"
+            Close
+          </VBtnPrimaryAlt>
+          <VBtnPrimaryAlt
+              @click="props.formType === FormType.edit ? updateEventData() : addEventData()"
+              width="86"
+              class="submit-button"
           >
-            <template v-slot:item="{ props, item }">
-              <VListItem
-                  @click.stop
-                  v-bind="props"
-                  :prepend-avatar="item.raw.image as string"
-                  :subtitle="item.raw.owner_data?.username!"
-                  :title="`${item.raw.title}`"
-              ></VListItem>
-            </template>
-          </VAutocomplete>
-        </div>
-        <div class="mb-5">
-          <label class="dialog-label mb-2">Event Description</label>
-          <QuillRichTextEditor
-              :modelValue="eventData.description"
-              placeholder="Enter event description here"
-              @update:modelValue="$event => (eventData.description= $event)"
-          />
-        </div>
-
-      </div>
-      <VDivider/>
-
-      <VRow class="ma-0 pa-4" justify="end">
-        <VBtnPrimaryAlt
-            @click="eventDialog = false"
-            width="86"
-            variant="outlined"
-            class="button-outline"
-        >
-          Close
-        </VBtnPrimaryAlt>
-        <VBtnPrimaryAlt
-            @click="props.formType === FormType.edit ? updateEventData() : addEventData()"
-            width="86"
-            class="submit-button"
-        >
-          {{action}}
-        </VBtnPrimaryAlt>
-      </VRow>
-    </VSheet>
+            {{action}}
+          </VBtnPrimaryAlt>
+        </VRow>
+      </VSheet>
+    </div>
   </VDialog>
 </template>
 

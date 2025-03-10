@@ -280,7 +280,7 @@ onMounted(() => {
                 </VRow>
               </VRow>
 
-              <VCard class="mx-auto my-8 program-card" max-width="900">
+              <VCard class="mx-auto my-8 program-card pa-4" max-width="900">
                 <VCardTitle class="text-h5" :style="{color: selectedProgram.color}">
                   {{selectedProgram.title}}
                 </VCardTitle>

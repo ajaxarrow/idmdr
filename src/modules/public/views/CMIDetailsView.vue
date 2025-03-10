@@ -7,7 +7,7 @@ import cmis from "../../../data/cmis.ts";
 import { useRouting } from "../../../core/composables/useRouting.ts";
 import { ClusterType } from "../../../interfaces/enums/organization.enum.ts";
 import {ClusterRepresentative} from "../../../interfaces/organization.interface.ts";
-import {PhIdentificationCard, PhInfo, PhUsers} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhIdentificationCard, PhInfo, PhUsers} from "@phosphor-icons/vue";
 
 const { route } = useRouting();
 const cmi = ref<CMI | null>(null);
@@ -45,8 +45,17 @@ onMounted(async () => {
   <VLayout>
     <div style="width: 100%">
       <Navbar />
-
       <VContainer fluid class="p-0" v-if="cmi">
+        <div class="d-flex mb-5">
+          <RouterLink
+              to="/cmis"
+              class="text-decoration-none text-none"
+          >
+            <p class="cursor-pointer back-button pa-2 d-flex align-center ga-1 text-black">
+              <PhArrowLeft :size="14"/> Back To CMIs List
+            </p>
+          </RouterLink>
+        </div>
         <VParallax :src="cmi.cover" height="400" class="hero-parallax">
           <div class="hero-overlay"></div>
           <VContainer class="d-flex flex-column justify-center h-100 hero-container">
@@ -168,5 +177,13 @@ onMounted(async () => {
 .hero-container{
   position: relative;
   z-index: 2;
+}
+
+.back-button{
+  font-size: 14px;
+}
+.back-button:hover{
+  border-radius: 8px;
+  background-color: #f2f7fa;
 }
 </style>

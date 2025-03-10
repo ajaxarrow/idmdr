@@ -10,7 +10,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useEventsServices} from "../services/events.services.ts";
 
 const {showSnackbarMessage} = useSnackbarStore();
-const emits = defineEmits(['callback']);
+const emits = defineEmits(['callback', 'fetchCallback']);
 const {fetchEventByID, deleteEvent} = useEventsServices()
 const props = defineProps({
   event: {
@@ -24,16 +24,18 @@ const props = defineProps({
   value: {
     type: Boolean,
     default: false
-  }
+  },
 })
 const eventActionMenu = ref(false);
 const eventDetailsDialog = ref(props.useOutsideDialogModel ? props.value : false);
 const loading = ref(false);
+const forViewing = ref(true);
 
 
 const event = ref<OrganizationEvent>(props.event!)
 
 const updateEventCallback = async () => {
+  forViewing.value = false;
   showSnackbarMessage('Event Updated Successfully', Status.success)
   event.value = (await fetchEventByID(props.event!.uid!))!;
 }
@@ -94,9 +96,10 @@ const calculateDuration = (
 }
 const closeDialog = () => {
   eventDetailsDialog.value = false
-
-    emits('callback')
-
+  emits('callback')
+  if(!forViewing.value){
+    emits('fetchCallback')
+  }
 }
 watch(() => eventDetailsDialog.value, async() => {
   if(eventDetailsDialog.value) {
@@ -121,107 +124,109 @@ onMounted(() => {
     <slot></slot>
   </div>
   <VDialog v-model="eventDetailsDialog" class="center" :persistent="true">
-    <VSheet class="sector-tagging-dialog-container scrollable-sidebar-container" @click.stop>
-      <p class="dialog-title pa-5">Event Details</p>
-      <VDivider/>
+    <div style="overflow: hidden; border-radius: 15px;" >
+      <VSheet class="sector-tagging-dialog-container scrollable-sidebar-container" @click.stop>
+        <p class="dialog-title pa-5">Event Details</p>
+        <VDivider/>
 
-      <div v-if="loading" class="loading-state-container" style="height: 70vh;">
-        <VProgressCircular
-            indeterminate
-            color="#23668b"
-        ></VProgressCircular>
-      </div>
-
-      <div v-else class="pa-5">
-        <div class="px-6 mb-5">
-          <VRow class="ma-0 mt-2 mb-4" justify="space-between" align="center">
-            <div>
-              <div style="line-height: 20px">
-                <p class="topic-subtitle">{{ event.title }}</p>
-              </div>
-            </div>
-
-            <VMenu v-model="eventActionMenu" :close-on-content-click="false" :persistent="true">
-              <template #activator="{ props }">
-                <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
-                  Options
-                  <PhDotsThreeOutlineVertical weight="fill"/>
-                </p>
-              </template>
-
-              <VSheet width="200" class="rounded-b-lg py-2" @click.stop>
-                <div>
-                  <EventFormDialog
-                      :form-type="FormType.edit"
-                      @callback="updateEventCallback"
-                      :event="event"
-                  >
-                    <div class="cursor-pointer action-menu-item text-decoration-none text-black">
-                      <PhPencil/>
-                      Edit
-                    </div>
-
-                  </EventFormDialog>
-
-                  <DeleteDialog :event-id="event.uid" @callback="deleteEventCallback">
-                    <p class="cursor-pointer action-menu-item">
-                      <PhTrash/>
-                      Delete
-                    </p>
-                  </DeleteDialog>
-                </div>
-              </VSheet>
-            </VMenu>
-          </VRow>
-
-          <p class="text-about-heading py-3">Event Information</p>
-          <VRow class="ma-0">
-            <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-              <p class="text-subtitle text-gs20">Start Date</p>
-              <p class="text-subtitle">{{ formatDate(event.start_date_object) }}</p>
-            </VCol>
-            <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-              <p class="text-subtitle text-gs20">End Date</p>
-              <p class="text-subtitle">{{ formatDate(event.end_date_object) }}</p>
-            </VCol>
-            <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-              <p class="text-subtitle text-gs20">Duration</p>
-              <p class="text-subtitle">{{ calculateDuration(event.start_date_object, event.end_date_object) }}</p>
-            </VCol>
-            <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-              <p class="text-subtitle text-gs20">Associated CMI</p>
-              <p class="text-subtitle">{{ event.organizationData?.name || 'Not specified' }} ({{ event.organizationData?.acronym || 'Not specified' }})</p>
-            </VCol>
-            <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-              <p class="text-subtitle text-gs20">Associated Project</p>
-              <p class="text-subtitle">{{ event.repositoryData?.title || 'Not specified' }}</p>
-            </VCol>
-          </VRow>
+        <div v-if="loading" class="loading-state-container" style="height: 70vh;">
+          <VProgressCircular
+              indeterminate
+              color="#23668b"
+          ></VProgressCircular>
         </div>
 
-        <div v-if="event.description && event.description.trim().length !== 0">
-          <VDivider/>
-          <div class="px-6 mb-10">
-            <p class="text-about-heading py-3">Event Description</p>
-            <VRow class="ma-0">
-              <div class="ql-snow">
-                <div class="ql-editor" v-html="event.description"></div>
+        <div v-else class="pa-5">
+          <div class="px-6 mb-5">
+            <VRow class="ma-0 mt-2 mb-4" justify="space-between" align="center">
+              <div>
+                <div style="line-height: 20px">
+                  <p class="topic-subtitle">{{ event.title }}</p>
+                </div>
               </div>
+
+              <VMenu v-model="eventActionMenu" :close-on-content-click="false" :persistent="true">
+                <template #activator="{ props }">
+                  <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
+                    Options
+                    <PhDotsThreeOutlineVertical weight="fill"/>
+                  </p>
+                </template>
+
+                <VSheet width="200" class="rounded-b-lg py-2" @click.stop>
+                  <div>
+                    <EventFormDialog
+                        :form-type="FormType.edit"
+                        @callback="updateEventCallback"
+                        :event="event"
+                    >
+                      <div class="cursor-pointer action-menu-item text-decoration-none text-black">
+                        <PhPencil/>
+                        Edit
+                      </div>
+
+                    </EventFormDialog>
+
+                    <DeleteDialog :event-id="event.uid" @callback="deleteEventCallback">
+                      <p class="cursor-pointer action-menu-item">
+                        <PhTrash/>
+                        Delete
+                      </p>
+                    </DeleteDialog>
+                  </div>
+                </VSheet>
+              </VMenu>
+            </VRow>
+
+            <p class="text-about-heading py-3">Event Information</p>
+            <VRow class="ma-0">
+              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+                <p class="text-subtitle text-gs20">Start Date</p>
+                <p class="text-subtitle">{{ formatDate(event.start_date_object) }}</p>
+              </VCol>
+              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+                <p class="text-subtitle text-gs20">End Date</p>
+                <p class="text-subtitle">{{ formatDate(event.end_date_object) }}</p>
+              </VCol>
+              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+                <p class="text-subtitle text-gs20">Duration</p>
+                <p class="text-subtitle">{{ calculateDuration(event.start_date_object, event.end_date_object) }}</p>
+              </VCol>
+              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+                <p class="text-subtitle text-gs20">Associated CMI</p>
+                <p class="text-subtitle">{{ event.organizationData?.name || 'Not specified' }} ({{ event.organizationData?.acronym || 'Not specified' }})</p>
+              </VCol>
+              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+                <p class="text-subtitle text-gs20">Associated Project</p>
+                <p class="text-subtitle">{{ event.repositoryData?.title || 'Not specified' }}</p>
+              </VCol>
             </VRow>
           </div>
-        </div>
-      </div>
 
-      <VDivider/>
-      <VRow class="ma-0 pa-4" justify="end">
-        <VBtnPrimaryAlt
-            @click="closeDialog()"
-            class="button-outline"
-        >
-          Close
-        </VBtnPrimaryAlt>
-      </VRow>
-    </VSheet>
+          <div v-if="event.description && event.description.trim().length !== 0">
+            <VDivider/>
+            <div class="px-6 mb-10">
+              <p class="text-about-heading py-3">Event Description</p>
+              <VRow class="ma-0">
+                <div class="ql-snow">
+                  <div class="ql-editor" v-html="event.description"></div>
+                </div>
+              </VRow>
+            </div>
+          </div>
+        </div>
+
+        <VDivider/>
+        <VRow class="ma-0 pa-4" justify="end">
+          <VBtnPrimaryAlt
+              @click="closeDialog()"
+              class="button-outline"
+          >
+            Close
+          </VBtnPrimaryAlt>
+        </VRow>
+      </VSheet>
+    </div>
   </VDialog>
 </template>
 

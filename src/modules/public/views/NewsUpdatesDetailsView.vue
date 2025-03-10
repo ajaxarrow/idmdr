@@ -14,6 +14,7 @@ const { fetchPostbyID } = usePostServices();
 const { route } = useRouting();
 const imagePreviewDialog = ref(false);
 const selectedImageIndex = ref(0);
+const loading = ref(false)
 
 const formatDateString = (dateString: string) => {
   const date = new Date(dateString);
@@ -31,7 +32,9 @@ const openImagePreview = (index: number) => {
 };
 
 onMounted(async () => {
+  loading.value = true;
   post.value = await fetchPostbyID(route.params.slug as string);
+  loading.value = false;
 });
 </script>
 
@@ -39,98 +42,108 @@ onMounted(async () => {
   <VLayout>
     <Navbar>
       <VContainer>
-        <div v-if="post">
-          <div>
-            <RouterLink
-                :to="{ name: 'news-updates' }"
-                class="text-decoration-none text-none"
-            >
-              <p class="cursor-pointer back-button pa-2 d-flex align-center ga-1 text-black">
-                <PhArrowLeft :size="14"/> Back To News & Updates List
+        <VRow v-if="loading" justify="center" align="center" class="my-12" style="min-height: 80vh;">
+          <VCol cols="12" class="text-center">
+            <VProgressCircular indeterminate color="bs50" size="64"></VProgressCircular>
+            <p class="mt-4 text-body-1">Loading...</p>
+          </VCol>
+        </VRow>
+        <div v-else>
+          <div v-if="post">
+            <div>
+              <div class="d-flex">
+                <RouterLink
+                    :to="{ name: 'news-updates' }"
+                    class="text-decoration-none text-none"
+                >
+                  <p class="cursor-pointer back-button pa-2 d-flex align-center ga-1 text-black">
+                    <PhArrowLeft :size="14"/>
+                    Back To News & Updates List
+                  </p>
+                </RouterLink>
+              </div>
+
+              <h1>{{ post?.title }}</h1>
+
+              <p class="pt-4 d-flex align-center ga-1 text-gs60">
+                <PhCalendar :size="16"/> {{ formatDateString(post?.updated_at!) }}
               </p>
-            </RouterLink>
+            </div>
 
-            <h1>{{ post?.title }}</h1>
-
-            <p class="pt-4 d-flex align-center ga-1 text-gs60">
-              <PhCalendar :size="16"/> {{ formatDateString(post?.updated_at!) }}
-            </p>
-          </div>
-
-          <!-- Image Carousel -->
-          <div v-if="post!.images!.length > 0" class="my-10">
-            <VCarousel
-                :show-arrows="post!.images!.length > 1"
-                height="450"
-                hide-delimiter-background
-                cycle
-            >
-              <VCarouselItem
-                  v-for="(image, index) in post.images"
-                  :key="index"
-                  :src="image.image! as string"
-                  :lazy-src="Placeholder"
-                  cover
+            <!-- Image Carousel -->
+            <div v-if="post!.images!.length > 0" class="my-10">
+              <VCarousel
+                  :show-arrows="post!.images!.length > 1"
+                  height="450"
+                  hide-delimiter-background
+                  cycle
               >
-                <div class="image-overlay">
+                <VCarouselItem
+                    v-for="(image, index) in post.images"
+                    :key="index"
+                    :src="image.image! as string"
+                    :lazy-src="Placeholder"
+                    cover
+                >
+                  <div class="image-overlay">
+                    <VBtn
+                        icon
+                        variant="elevated"
+                        size="small"
+                        class="image-preview-btn"
+                        @click="openImagePreview(index)"
+                    >
+                      <PhImage :size="20" />
+                    </VBtn>
+                  </div>
+                </VCarouselItem>
+              </VCarousel>
+            </div>
+
+            <!-- Placeholder if no images -->
+            <VImg
+                v-else
+                :src="Placeholder"
+                height="450"
+                cover
+                class="my-10"
+                style="border-radius: 16px;"
+            />
+
+            <!-- Image Preview Dialog -->
+            <VDialog
+                v-model="imagePreviewDialog"
+                max-width="90%"
+                class="image-preview-dialog"
+            >
+              <VCard>
+                <VCardText class="pa-0 position-relative">
                   <VBtn
                       icon
-                      variant="elevated"
-                      size="small"
-                      class="image-preview-btn"
-                      @click="openImagePreview(index)"
+                      variant="text"
+                      class="close-btn"
+                      @click="imagePreviewDialog = false"
                   >
-                    <PhImage :size="20" />
+                    ✕
                   </VBtn>
-                </div>
-              </VCarouselItem>
-            </VCarousel>
+                  <VImg
+                      :src="post?.images?.[selectedImageIndex]?.image! as string"
+                      contain
+                      max-height="80vh"
+                  />
+                </VCardText>
+              </VCard>
+            </VDialog>
+
+            <div class="ql-snow">
+              <div class="ql-editor" v-html="post?.description"></div>
+            </div>
           </div>
-
-          <!-- Placeholder if no images -->
-          <VImg
-              v-else
-              :src="Placeholder"
-              height="450"
-              cover
-              class="my-10"
-              style="border-radius: 16px;"
-          />
-
-          <!-- Image Preview Dialog -->
-          <VDialog
-              v-model="imagePreviewDialog"
-              max-width="90%"
-              class="image-preview-dialog"
-          >
-            <VCard>
-              <VCardText class="pa-0 position-relative">
-                <VBtn
-                    icon
-                    variant="text"
-                    class="close-btn"
-                    @click="imagePreviewDialog = false"
-                >
-                  ✕
-                </VBtn>
-                <VImg
-                    :src="post.images?.[selectedImageIndex]?.image! as string"
-                    contain
-                    max-height="80vh"
-                />
-              </VCardText>
-            </VCard>
-          </VDialog>
-
-          <div class="ql-snow">
-            <div class="ql-editor" v-html="post.description"></div>
-          </div>
-        </div>
-
-        <div v-else style="height: 100%">
-          <div style="height:45vh" class="d-flex flex-column justify-center align-center">
-            <VImg :src="NotFound" width="300px" />
-            <p class="text-h4 font-weight-black">Post Not Found</p>
+          <div v-else style="height: 100%">
+            <div style="height:45vh" class="d-flex flex-column justify-center align-center">
+              <VImg :src="NotFound" width="300px" />
+              <p class="text-h4 font-weight-black">Post Not Found</p>
+            </div>
           </div>
         </div>
       </VContainer>
@@ -160,5 +173,13 @@ onMounted(async () => {
 
 .image-preview-dialog :deep(.v-card) {
   background: rgba(0,0,0,0.9);
+}
+
+.back-button{
+  font-size: 14px;
+}
+.back-button:hover{
+  border-radius: 8px;
+  background-color: #f2f7fa;
 }
 </style>

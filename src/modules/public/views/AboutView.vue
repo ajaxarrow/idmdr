@@ -112,7 +112,7 @@ onUnmounted(() => {
           <nav class="toc">
             <ul>
               <li>
-                <a href="#about">About the Stakeholders</a>
+                <a href="#about">About Us</a>
                 <ul>
                   <li><a href="#intro-nomcaarrd">What is NOMCAARRD?</a></li>
                 </ul>
@@ -140,9 +140,9 @@ onUnmounted(() => {
           </nav>
 
           <article class="contents">
-            <p class="text-h4 font-weight-bold">Stakeholders</p>
+            <p class="text-h4 font-weight-bold">Learn More About NOMCAARRD</p>
             <section id="about">
-              <h2>About the Stakeholders</h2>
+              <h2>About Us </h2>
               <div id="intro-nomcaarrd">
                 <h3>What is NOMCAARRD?</h3>
                 <p>

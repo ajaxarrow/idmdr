@@ -18,7 +18,7 @@ const handleHover = (isHovered: boolean) => {
 </script>
 
 <template>
-  <RouterLink to="/" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
+  <RouterLink to="/linnks" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
     <div class="d-flex align-center text-wrapper" :class="{ 'flex-column': props.useAltDesign }" @mouseover="() => handleHover(true)" @mouseout="() => handleHover(false)">
 <!--    <PhHardDrives :size="props.useAltDesign ? 32 : 24" weight="duotone" color="#3291C7" class="ph-icon" />-->
     <img :style="{height: props.useAltDesign ? '32px' : '24px'}" :src="logo" alt="logo" class="ph-icon"/>

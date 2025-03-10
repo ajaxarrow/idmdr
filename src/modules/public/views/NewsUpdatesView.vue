@@ -24,7 +24,7 @@ const formatDateString = (dateString: string) => {
 };
 
 const goToPostDetails = (post: Post) => {
-  router.push({ name: 'news-updates-details', params: { slug: post.uid } });
+  router.push({ name: 'news-updates-detail', params: { slug: post.uid } });
 };
 
 onMounted(async () => {

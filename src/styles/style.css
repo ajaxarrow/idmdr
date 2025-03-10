@@ -168,9 +168,7 @@ ul {
     margin-right: 5px;
 }
 
-
-
-.scrollable-sidebar-container{
+.scrollable-sidebar-container {
     overflow-y: auto;
 }
 
@@ -185,11 +183,6 @@ ul {
 
 .scrollable-sidebar-container::-webkit-scrollbar-thumb {
     background-color: rgba(35, 102, 139, 0.48);
+    border-radius: 16px !important;
     outline: #23668b;
-}
-
-
-.scrollable-sidebar-container > * {
-    overflow: hidden;
-
 }
