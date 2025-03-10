@@ -152,7 +152,7 @@ const priorityCommodities: Commodity[] = [
   }
 ]
 
-const lightenColor = (hex, percent) => {
+const lightenColor = (hex: any, percent: any) => {
   // Remove the # if present
   hex = hex.replace('#', '');
 
@@ -167,7 +167,7 @@ const lightenColor = (hex, percent) => {
   const lighterB = Math.min(255, b + Math.floor(percent * 2.55));
 
   // Convert back to hex
-  const toHex = (c) => {
+  const toHex = (c: any) => {
     const hex = c.toString(16);
     return hex.length === 1 ? '0' + hex : hex;
   };
