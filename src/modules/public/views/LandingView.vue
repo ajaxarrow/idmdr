@@ -41,7 +41,7 @@ interface Commodity {
   image: string
 }
 
-const {isMobile, isSmall} = useScreenStore()
+const {isSmall} = useScreenStore()
 const loading = ref(true)
 
 const highlights = [
