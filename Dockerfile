@@ -26,7 +26,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 8002
-EXPOSE 8000
+EXPOSE 8006
 
 # Start NGINX
 CMD ["nginx", "-g", "daemon off;"]
