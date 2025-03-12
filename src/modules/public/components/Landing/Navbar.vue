@@ -32,8 +32,8 @@
       link: '/contact'
     },
     {
-      title: "Visit NOMCAARD'S KMS",
-      link: '/linnks'
+      title: "Visit NOMCAARD'S KMHub",
+      link: '/kmhub'
     },
     // {
     //   title: 'Help Center',

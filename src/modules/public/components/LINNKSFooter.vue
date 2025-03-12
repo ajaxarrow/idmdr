@@ -10,7 +10,7 @@ import logo from '../../../assets/images/nomcaarrd.png';
         <div class="d-flex align-center text-logo">
           <!--          <PhHardDrives :size="24" weight="duotone" color="#3291C7" class="ph-icon" />-->
           <img style="height: 24px; " :src="logo" alt="logo"/>
-          LINNKS
+          KMHUB
         </div>
       </RouterLink>
       <p class="text-gs30">Dahay • Silvestre • Tabilla</p>

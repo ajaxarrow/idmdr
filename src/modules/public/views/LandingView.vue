@@ -2,7 +2,6 @@
 import Navbar from "../components/Landing/Navbar.vue";
 import {defineComponent, onMounted, ref, shallowRef} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import { Vue3Lottie } from "vue3-lottie";
 import Container from "../../../core/components/Container.vue";
 import {
   PhCloud,
@@ -21,6 +20,7 @@ import SoybeansImage from '../../../assets/priority-commodities/soy.jpg';
 import CMIMap from '../../../assets/landing-page/cmi.jpg';
 import LINNKSDemo from '../../../assets/landing-page/hero-main-image.svg';
 import Footer from "../components/Footer.vue";
+import LoadingStateLogo from "../../../core/components/LoadingStateLogo.vue";
 
 
 type CustomComponent = ReturnType<typeof defineComponent>;
@@ -41,7 +41,7 @@ interface Commodity {
   image: string
 }
 
-const {isMobile, isLargePhone, isSmall} = useScreenStore()
+const {isMobile, isSmall} = useScreenStore()
 const loading = ref(true)
 
 const highlights = [
@@ -184,7 +184,7 @@ const selectProgram = (program: BannerProgram) => {
 const startPage = () => {
   setTimeout(() => {
     loading.value = false;
-  }, 2000);
+  }, 2500);
 }
 
 onMounted(() => {
@@ -196,10 +196,7 @@ onMounted(() => {
 
   <VLayout>
     <Container class="center" v-show="loading">
-      <Vue3Lottie
-          animationLink="https://assets6.lottiefiles.com/packages/lf20_x62chJ.json"
-          :height="isMobile || isLargePhone ? '300' : '500'"
-          :width="isMobile || isLargePhone ? '300' : '500'" />
+      <LoadingStateLogo/>
     </Container>
     <transition name="fade" v-show="!loading">
       <div style="width: 100%" >
@@ -438,9 +435,9 @@ onMounted(() => {
             <VContainer>
               <VRow align="center">
                 <VCol cols="12" md="6" order="2" order-md="1">
-                  <h2 class="text-h4 mb-4 font-weight-bold">Introducing LINNKS</h2>
+                  <h2 class="text-h4 mb-4 font-weight-bold">Introducing KMHUB</h2>
                   <p class="text-body-1 mb-4">
-                    NOMCAARRD's Knowledge Based System (LINNKS) provides a centralized repository for all research data and projects across our member institutions.
+                    NOMCAARRD's Knowledge Based Management Hub (KMHUB) provides a centralized repository for all research data and projects across our member institutions.
                   </p>
                   <VRow>
                     <VCol cols="12" md="6">
@@ -474,13 +471,13 @@ onMounted(() => {
                       height="40px"
                       class="text-none hvr-icon-spin explore-button browse-map-button mx-1 mt-5"
                       to="/linnks">
-                    <PhPaperPlane size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">Visit LINNKS</span></span>
+                    <PhPaperPlane size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">Visit KMHub</span></span>
                   </VBtn>
                 </VCol>
                 <VCol cols="12" md="6" order="1" order-md="2" class="text-center">
                   <VImg
                       :src="LINNKSDemo"
-                      alt="LINNKS System Demo"
+                      alt="KMHub System Demo"
                       contain
                   />
                 </VCol>

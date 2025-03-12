@@ -42,8 +42,8 @@ const publicRoutes = [
         component: () => import('../../modules/public/views/ContactsView.vue')
     },
     {
-        path: '/linnks',
-        name: 'linnks',
+        path: '/kmhub',
+        name: 'kmhub',
         // @ts-ignore
         component: () => import('../../modules/public/views/LINNKSView.vue')
     },
@@ -60,8 +60,8 @@ const publicRoutes = [
         component: () => import('../../modules/public/views/CMIDetailsView.vue')
     },
     {
-        path: '/about-linnks',
-        name: 'about-linnks',
+        path: '/about-kmhub',
+        name: 'about-kmhub',
         // @ts-ignore
         component: () => import('../../modules/public/views/AboutLINNKSView.vue')
     },

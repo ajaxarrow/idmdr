@@ -159,19 +159,19 @@ onUnmounted(() => {
           </nav>
 
           <article class="contents">
-            <p class="text-h4 font-weight-bold">About LINNKS</p>
+            <p class="text-h4 font-weight-bold">About KMHUB</p>
             <section id="intro">
               <h2>Introduction</h2>
               <div id="intro-project">
                 <h3>About the Application</h3>
                 <p>
-                  Learning and Information Network for NOMCAARRD Knowledge-Based System, or LINNKS, is an interactive platform designed for NOMCAARRD to manage projects and consortium member institutions. It provides a centralized space for accessing, sharing, and organizing key data and resources across the organization.
+                  NOMCAARRD's Knowledge-Based Management Hub, or KMHub, is an interactive platform designed for NOMCAARRD to manage projects and consortium member institutions. It provides a centralized space for accessing, sharing, and organizing key data and resources across the organization.
                 </p>
                 <p>
-                  LINNKS empowers users by offering streamlined data visualization and collaboration tools. With its intuitive interface, users can easily navigate through project information, fostering transparency and informed decision-making.
+                  KMHub empowers users by offering streamlined data visualization and collaboration tools. With its intuitive interface, users can easily navigate through project information, fostering transparency and informed decision-making.
                 </p>
                 <p>
-                  The platform also supports dynamic mapping and knowledge-sharing capabilities to enhance communication among consortium members. By connecting insights and expertise, LINNKS strengthens NOMCAARRD's mission to drive innovation and growth within the organization.
+                  The platform also supports dynamic mapping and knowledge-sharing capabilities to enhance communication among consortium members. By connecting insights and expertise, KMHub strengthens NOMCAARRD's mission to drive innovation and growth within the organization.
                 </p>
               </div>
               <div id="intro-stakeholders">
@@ -193,7 +193,7 @@ onUnmounted(() => {
               <div id="dev-about">
                 <h3>About the Capstone</h3>
                 <p>
-                  LINNKS is based on the capstone project entitled Interactive Data Mapping Distribution and Repository. The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
+                  KMHub is based on the capstone project entitled Interactive Data Mapping Distribution and Repository. The project was created by Khent Mark J. Dahay, Mereal Kate C. Silvestre and Jiu Axl R. Tabilla. These 3 students single-handedly documented, designed, and created the whole system.
                 </p>
                 <p>
                   The Interactive Data Mapping Distribution and Repository aims to digitize and centralize the storage of datasets collected by NOMCAARRD. This platform will enable organization members to establish repositories, categorize datasets into specific geographical areas on a map, and visualize data.

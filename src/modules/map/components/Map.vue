@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {markRaw, onBeforeMount, onMounted, onUnmounted, shallowRef, watch} from "vue";
+import {markRaw, onBeforeMount, onMounted, onUnmounted, ref, shallowRef, watch} from "vue";
   import {Map, NavigationControl} from "maplibre-gl";
   import MapSidebar from "./MapSidebar.vue";
   import SectorDetailsSidebar from "../../sector/components/SectorDetailsSidebar.vue";
@@ -20,7 +20,7 @@ import {useFilterStore} from "../stores/filters.store.ts";
   const {removeSelectedSector, allSectors} = useSectorsStore();
   const {fetchSectors} = useSectorServices()
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
-
+  const loading = ref(false);
 
   const bounds: [number, number, number, number] = [
     120.5, 4.0,
@@ -66,10 +66,6 @@ import {useFilterStore} from "../stores/filters.store.ts";
       setupBoundaries(allSectors.value, 'Sector');
       loadRandomCoordinates(boundaries);
     })
-
-
-
-
   });
 
   onBeforeMount(() => {
@@ -81,12 +77,10 @@ import {useFilterStore} from "../stores/filters.store.ts";
     clickedBoundary.value = '';
   })
 
-
-
-
 </script>
 
 <template>
+
   <transition name="fade">
     <SectorDetailsSidebar/>
   </transition>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import Welcome from '../../../assets/images/welcome.svg';
+  import Welcome from '../../../assets/images/onboarding.svg';
   import {computed, onMounted, ref, watch} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   import {PhGithubLogo, PhGoogleLogo} from "@phosphor-icons/vue";

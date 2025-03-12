@@ -19,6 +19,8 @@ import {useSectorServices} from "../services/sector.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useFilterStore} from "../../map/stores/filters.store.ts";
 import {ChoroplethLegendControl} from "../../map/helpers/legendControl.ts"
+import mapload from "../../../assets/lottiefiles/map-load.json";
+import {Vue3Lottie} from "vue3-lottie";
 
 const {fetchOrganizations} = useOrganizationServices()
 const {user} = useUserStore()
@@ -31,7 +33,7 @@ const {fetchSectors} = useSectorServices()
 const {router} = useRouting();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const coords = ref([])
-
+const loading = ref(false);
 
 const bounds: [number, number, number, number] = [
   120.5, 4.0,
@@ -158,6 +160,7 @@ watch(provinceRepositoriesLayer, async (newValue) => {
 })
 
 onMounted(async () => {
+  loading.value = true;
   await fetchOrganizations();
   await fetchSectors();
   initMap();
@@ -198,6 +201,8 @@ onMounted(async () => {
     }
   });
 
+  loading.value = false;
+
 })
 
 
@@ -226,9 +231,17 @@ onUnmounted(()=> {
   </transition>
   <MapSidebar/>
   <div class="map-wrap">
+    <div v-if="loading" class="h-96 overflow-hidden d-flex justify-center align-center">
+      <Vue3Lottie
+          :animation-data="mapload"
+          :height="750"
+          :width="750"
+      ></Vue3Lottie>
+    </div>
     <a href="https://www.maptiler.com" class="watermark"><img
         src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"/></a>
     <div class="map" ref="mapContainer">
+
     </div>
   </div>
   <div v-if="coords.length > 0" class="calculation-box">

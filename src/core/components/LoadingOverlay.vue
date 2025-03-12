@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import catlLoad from "../../assets/lottiefiles/cat-load.json";
+import dotLoad from "../../assets/lottiefiles/dot-load.json";
 import {Vue3Lottie} from "vue3-lottie";
 const props = defineProps({
   overlay: {
@@ -13,7 +13,7 @@ const props = defineProps({
 <template>
   <VDialog v-model="props.overlay">
     <Vue3Lottie
-        :animation-data="catlLoad"
+        :animation-data="dotLoad"
         height="80%"
         width="80%"
     ></Vue3Lottie>
