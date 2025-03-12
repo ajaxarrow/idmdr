@@ -1,0 +1,10 @@
+
+
+services:
+  vue-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8006:8006"
+    restart: unless-stopped
