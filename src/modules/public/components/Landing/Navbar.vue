@@ -32,6 +32,10 @@
       link: '/contact'
     },
     {
+      title: 'Directors',
+      link: '/directors'
+    },
+    {
       title: "Visit NOMCAARD'S KMHub",
       link: '/kmhub'
     },

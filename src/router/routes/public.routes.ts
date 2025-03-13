@@ -48,6 +48,12 @@ const publicRoutes = [
         component: () => import('../../modules/public/views/LINNKSView.vue')
     },
     {
+        path: '/directors',
+        name: 'directors',
+        // @ts-ignore
+        component: () => import('../../modules/public/views/Directors.vue')
+    },
+    {
         path: '/cmis',
         name: 'cmi',
         // @ts-ignore
