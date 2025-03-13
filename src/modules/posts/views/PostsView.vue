@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus} from "@phosphor-icons/vue";
+import {PhHardDrives, PhMagnifyingGlass, PhPlus} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {onMounted, ref, watch} from "vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {usePostServices} from "../services/post.services.ts";
 import {Post} from "../../../interfaces/post.interface.ts";
 import PostItem from "../components/PostItem.vue";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 
 const {scrollTop} = useScroll()
@@ -113,7 +114,13 @@ onMounted(async () => {
                 </span>
             </p>
           </div>
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Posts Found</p>
+          <EmptyStateInfo
+              v-else
+              header="No Posts Found"
+              description="We couldn't find any posts at the moment."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
       </div>
     </div>

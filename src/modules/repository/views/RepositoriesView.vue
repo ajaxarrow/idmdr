@@ -4,7 +4,6 @@
     PhCaretDown,
     PhFaders,
     PhHardDrives,
-    PhInfo,
     PhMagnifyingGlass,
     PhPlus,
     PhX
@@ -20,6 +19,7 @@
   import Observer from "../../../core/components/Observer.vue";
   import FilterRepositoryDialog from "../components/FilterRepositoryDialog.vue";
   import {useScroll} from "../../../core/composables/useScroll.ts";
+  import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 
   const {user} = useUserStore();
@@ -238,7 +238,13 @@
               <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
             </div>
           </div>
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No {{computedTitle}} Found</p>
+          <EmptyStateInfo
+              v-else
+              :header="`No ${computedTitle} Found`"
+              description="We couldn't find any projects at the moment."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
       </div>
     </div>

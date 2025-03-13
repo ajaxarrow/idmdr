@@ -2,7 +2,7 @@
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
+import {PhFaders, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
@@ -12,6 +12,7 @@ import FilterRepositoryDialog from "../../repository/components/FilterRepository
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {scrollTop} = useScroll()
 const {route} = useRouting()
@@ -205,7 +206,13 @@ onUnmounted(() => {
             <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
           </div>
         </div>
-        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Projects Found</p>
+        <EmptyStateInfo
+            v-else
+            header="No Projects Found"
+            description="We couldn't find any projects at the moment."
+            :isCallbackNeeded="searchQuery !== ''"
+            @callback="searchQuery = ''"
+        />
       </div>
     </div>
   </OrganizationDetailsLayout>

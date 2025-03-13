@@ -5,7 +5,7 @@ import cmis from "../../../data/cmis.ts";
 import { CMI } from "../../../interfaces/cmi.interface.ts";
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import {PhArrowClockwise} from "@phosphor-icons/vue";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const router = useRouter();
 const searchQuery = ref('');
@@ -210,22 +210,13 @@ onMounted(() => {
             </section>
 
             <!-- No Results -->
-            <VRow v-if="filteredCmis.length === 0" justify="center" class="my-12">
-              <VCol cols="12" sm="8" md="6" class="text-center">
-                <VIcon icon="mdi-alert-circle-outline" size="64" color="grey" class="mb-4"></VIcon>
-                <h3 class="text-h5 mb-2">No Institutions Found</h3>
-                <p class="text-body-1 mb-4">We couldn't find any institutions matching your search criteria.</p>
-                <VBtn color="bs50"
-                      variant="elevated"
-                      height="47px"
-                      class="text-none mx-1" @click="searchQuery = ''">
-                  <PhArrowClockwise size="20" class="mr-2"/>
-                  <span>
-                    Clear Search
-                    </span>
-                </VBtn>
-              </VCol>
-            </VRow>
+            <EmptyStateInfo
+              v-if="filteredCmis.length === 0"
+              description="We couldn't find any institutions matching your search criteria."
+              header="No Institutions Found"
+              :isCallbackNeeded="true"
+              @callback="searchQuery = ''"
+            />
           </template>
         </VContainer>
         <VDivider/>

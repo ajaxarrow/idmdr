@@ -7,6 +7,7 @@ import {Expert} from "../../../interfaces/organization.interface.ts";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import OrganizationExpertItem from "../components/OrganizationExpertItem.vue";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {scrollTop} = useScroll()
 const {fetchAllExperts} = useOrganizationExpertsServices()
@@ -114,6 +115,13 @@ onMounted(async () => {
             </p>
           </div>
           <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Experts Found</p>
+          <EmptyStateInfo
+              v-else
+              header="No Experts Found"
+              description="We couldn't find any experts. Please try again later."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
       </div>
     </div>

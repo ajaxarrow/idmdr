@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import OrganizationItem from "../components/OrganizationItem.vue";
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhInfo, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
+import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {onMounted, ref, watch, onUnmounted} from "vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
@@ -9,6 +9,7 @@ import Observer from "../../../core/components/Observer.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useScroll} from "../../../core/composables/useScroll.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {scrollTop} = useScroll()
 const {user} = useUserStore();
@@ -134,9 +135,13 @@ onUnmounted(() => {
               <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
             </div>
           </div>
-          <p v-else class="d-flex align-center justify-center">
-            <PhInfo class="mr-1"/>No Consortium Member Institutions Found
-          </p>
+          <EmptyStateInfo
+              v-else
+              header="No Consortium Member Institutions Found"
+              description="We couldn't find any consortium member institutions at the moment."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
       </div>
     </div>

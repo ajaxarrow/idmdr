@@ -4,7 +4,6 @@ import {
   PhCaretDown,
   PhFaders,
   PhHardDrives,
-  PhInfo,
   PhMagnifyingGlass,
   PhPlus,
   PhX
@@ -21,6 +20,7 @@ import Observer from "../../../core/components/Observer.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import FilterRepositoryDialog from "../components/FilterRepositoryDialog.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {scrollTop} = useScroll()
 const {setSnackbarMessage} = useSnackbarStore()
@@ -219,7 +219,13 @@ onUnmounted(() => {
               <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
             </div>
           </div>
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Projects Found</p>
+          <EmptyStateInfo
+              v-else
+              header="No Projects Found"
+              description="We couldn't find any projects at the moment."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
       </div>
     </div>

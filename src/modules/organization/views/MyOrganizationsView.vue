@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhInfo, PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
+import {PhMagnifyingGlass, PhPlus, PhUsersThree} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import OrganizationItem from "../components/OrganizationItem.vue";
 import {onMounted, onUnmounted, ref, watch} from "vue";
@@ -10,6 +10,7 @@ import Observer from "../../../core/components/Observer.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useScroll} from "../../../core/composables/useScroll.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {scrollTop} = useScroll()
 const reachEnd = ref(false)
@@ -48,6 +49,7 @@ onMounted(async () => {
   pageLoading.value = true
   const fetchedData = await fetchOrganizationByUserWithPagination(lastItemValue.value);
   organizationData.value = [...fetchedData];
+  myOrganizations.value = organizationData.value;
   lastItemValue.value = lastItemValue.value + 1
   observerReady.value = true
   await setSnackbarMessage()
@@ -134,9 +136,13 @@ onUnmounted(() => {
               <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
             </div>
           </div>
-          <p v-else class="d-flex align-center justify-center">
-            <PhInfo class="mr-1"/>No Consortium Member Institutions Found
-          </p>
+          <EmptyStateInfo
+              v-else
+              header="No Consortium Member Institutions Found"
+              description="We couldn't find any consortium member institutions at the moment."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
       </div>
     </div>

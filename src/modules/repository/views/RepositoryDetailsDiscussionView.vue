@@ -3,7 +3,7 @@ import {onMounted, ref, watch} from "vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-import {PhChatCircleDots, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
+import {PhChatCircleDots, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import TopicItem from "../components/Discussion/TopicItem.vue";
 import {Topic} from "../../../interfaces/discussion.interface.ts";
 import TopicFormDialog from "../components/Discussion/TopicFormDialog.vue";
@@ -13,6 +13,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRepositoryServices} from "../services/repository.services.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {user} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
@@ -110,7 +111,13 @@ onMounted(async() => {
             :topic="topic"
             :key="topic.id"
         />
-        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Discussions Found</p>
+        <EmptyStateInfo
+            v-else
+            header="No Discussions Found"
+            description="We couldn't find any discussions for this repository at the moment."
+            :isCallbackNeeded="searchQuery !== ''"
+            @callback="searchQuery = ''"
+        />
       </div>
     </div>
   </RepositoryDetailsLayout>

@@ -2,13 +2,14 @@
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import { PhHardDrives, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
+import { PhHardDrives, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Expert, Organization} from "../../../interfaces/organization.interface.ts";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
 import OrganizationExpertItem from "../components/OrganizationExpertItem.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const {setSnackbarMessage} = useSnackbarStore()
 const {scrollTop} = useScroll()
@@ -143,7 +144,13 @@ onUnmounted(() => {
                 </span>
             </p>
         </div>
-        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Experts Found</p>
+        <EmptyStateInfo
+            v-else
+            header="No Experts Found"
+            description="We couldn't find any experts. Please try again later."
+            :isCallbackNeeded="searchQuery !== ''"
+            @callback="searchQuery = ''"
+        />
       </div>
     </div>
   </OrganizationDetailsLayout>
