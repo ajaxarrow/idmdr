@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, computed, watch} from 'vue';
+import {ref, onMounted, watch} from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
 import {PhCheckCircle, PhX} from "@phosphor-icons/vue";
