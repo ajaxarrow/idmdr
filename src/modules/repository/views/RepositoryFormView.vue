@@ -685,9 +685,11 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :items="repoType"
-              hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"
+              :item-title="item => `${item.title}`"
+              :item-value="item => `${item.value}`"
               :error-messages="errorMessage.commodity"
           />
+<!--          hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"-->
         </div>
         <div class="mb-3">
           <label class="input-label">Project Category</label>
