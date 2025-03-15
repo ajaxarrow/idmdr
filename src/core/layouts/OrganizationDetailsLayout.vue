@@ -78,6 +78,8 @@ const computedTabs = computed(() => {
       } else {
         linkName = path.value === 'organizations' ? `organization-${baseName}` : `my-organization-${baseName}`;
       }
+    } else {
+      linkName = '';
     }
 
     return {
