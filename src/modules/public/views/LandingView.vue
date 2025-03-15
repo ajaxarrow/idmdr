@@ -470,7 +470,7 @@ onMounted(() => {
                       variant="elevated"
                       height="40px"
                       class="text-none hvr-icon-spin explore-button browse-map-button mx-1 mt-5"
-                      to="/linnks">
+                      to="/kmhub">
                     <PhPaperPlane size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">Visit KMHub</span></span>
                   </VBtn>
                 </VCol>

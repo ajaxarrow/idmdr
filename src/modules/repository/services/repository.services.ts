@@ -10,6 +10,7 @@ import {useOrganizationMembersServices} from "../../organization/services/organi
 import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
 import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
 
 
 const { userData, user } = useUserStore();
@@ -22,6 +23,7 @@ const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepos
 const {addSector} = useSectorServices()
 
 const {stringToArray} = useStringArrayHelper()
+const {compareDateStrings} = useDateHelper()
 
 export const useRepositoryServices = () => {
   const errorMessageInitialState = reactive({
@@ -358,27 +360,7 @@ export const useRepositoryServices = () => {
 
       const rawData = res.data.results;
 
-      // const filteredData = rawData.filter(async (data: any) => {
-      //   if (isForUser) {
-      //     // For user-specific filtering
-      //     if (data.repo.visibility === 2) {
-      //       return data.repo.user === userData.uid;
-      //     }
-      //     return true;
-      //   } else {
-      //     if (user.value) {
-      //       const userRepo = await fetchRepositoriesByUser(userData.uid);
-      //       const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
-      //       //this part
-      //       return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong;
-      //     } else {
-      //       return data.repo.visibility === 1;
-      //     }
-      //   }
-      // }).map((data: any) => data.repo);
-      //
-      // const repositories: Repository[] = await mapRepoData(filteredData);
-
+      const userRepo = (await fetchRepositoriesByUser()).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const filteredData = await Promise.all(
         rawData.map(async (data: any) => {
           if (isForUser) {
@@ -388,9 +370,10 @@ export const useRepositoryServices = () => {
             return data;
           } else {
             if (user.value) {
-              const userRepo = await fetchRepositoriesByUser();
+              if (data.repo.visibility === 2) {
+
+              }
               const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
-              //this part
               return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data : null;
             } else {
               return data.repo.visibility === 1 ? data : null;
@@ -399,14 +382,13 @@ export const useRepositoryServices = () => {
         })
       );
 
-// Filter out the null values
+      // Filter out the null values
       const validData = filteredData.filter((data) => data !== null);
 
-// Map the valid data
+    // Map the valid data
       const repositories: Repository[] = await mapRepoData(validData.map((data: any) => data.repo));
 
-
-      const data = [...repositories].filter(repo => !repo.is_deleted);
+      let data = [...repositories].filter(repo => !repo.is_deleted).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       orgRepositories.value = data;
       return data;
 
@@ -426,8 +408,8 @@ export const useRepositoryServices = () => {
         }
       });
       const rawData = res.data.results;
-      const repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
-
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data
       return data;
@@ -445,8 +427,8 @@ export const useRepositoryServices = () => {
         }
       });
       const rawData = res.data.results;
-      const repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
-
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data
       return data;
@@ -469,6 +451,7 @@ export const useRepositoryServices = () => {
       } else {
         data = await fetchPaginatedRepositories(pageNumber, [1])
       }
+      data.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       return isForIPT ? data.filter(repo => repo.type == 'Project Repository') : data;
     } catch (e) {
       return []
@@ -485,8 +468,9 @@ export const useRepositoryServices = () => {
         return await mapRepoData(res.data.results);
       });
 
-      const results = await Promise.all(promises);
-      return results.flat().filter(repo => !repo.is_deleted);
+      let results = await Promise.all(promises);
+
+      return results.flat().filter(repo => !repo.is_deleted).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
     } catch (e) {
       return []
     }
@@ -507,6 +491,7 @@ export const useRepositoryServices = () => {
         const visibilityData = await fetchRepositoriesByVisibility([1]);
         data = visibilityData[0];
       }
+      data.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       allRepositories.value = data.filter(repo => !repo.is_deleted);
       return data.filter(repo => !repo.is_deleted);
     } catch (e) {

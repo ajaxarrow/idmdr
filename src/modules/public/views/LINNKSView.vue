@@ -188,7 +188,7 @@ onMounted(() => {
                     variant="elevated"
                     height="47px"
                     class="text-none hvr-icon-spin explore-button browse-map-button mx-1"
-                    to="/about-linnks">
+                    to="/about-kmhub">
                   <PhLightbulb size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">Learn More About KMHUB</span></span>
                 </VBtn>
               </VRow>

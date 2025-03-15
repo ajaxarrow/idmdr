@@ -12,6 +12,10 @@
 
   const baseNavLinks = [
     {
+      title: 'Home',
+      link: '/'
+    },
+    {
       title: 'About',
       link: '/about'
     },
