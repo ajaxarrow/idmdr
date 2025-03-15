@@ -5,9 +5,7 @@ import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
 import {Organization} from "../../interfaces/organization.interface.ts";
 import {onMounted} from "vue";
-import NotFound from "../../assets/images/404.svg";
 import {useScreenStore} from "../stores/screen-size.store.ts";
-import {PhArrowLeft} from "@phosphor-icons/vue";
 import {useUserStore} from "../stores/user.store.ts";
 import {useOrganizationServices} from "../../modules/organization/services/organization.services.ts";
 import Navbar from "../../modules/public/components/Landing/Navbar.vue";
@@ -182,46 +180,3 @@ onMounted(() => {
     </OrganizationLayoutHeaderContent>
   </MainLayout>
 </template>
-
-<style scoped>
-.text-repository-heading{
-  font-weight: 900;
-  font-size: 22px;
-}
-
-.circle::after {
-  content: '';
-  position: absolute;
-  left: -212px;
-  top: -453px;
-  width: 810px;
-  height: 660px;
-  border-radius: 50%;
-  background: #DEF1FB;
-  z-index: 1;
-  opacity: 75%;
-}
-
-.v-tab.v-tab.v-btn{
-  min-width: 40px;
-}
-
-.v-tab{
-  font-size: 16px;
-  letter-spacing: .7px;
-}
-
-@media (max-width: 960px) {
-  .circle::after {
-    top: -490px;
-  }
-}
-
-.back-button{
-  font-size: 14px;
-}
-.back-button:hover{
-  border-radius: 8px;
-  background-color: #d3e6ef;
-}
-</style>

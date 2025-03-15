@@ -30,7 +30,7 @@ const props = defineProps({
     default: false
   },
   computedTabs: {
-    type: Array,
+    type: Array as PropType<Array<{ name: string; linkName: string }>>,
     default: () => []
   },
   navigateTo: {
@@ -90,13 +90,13 @@ watch(()=> props.computedTabs, () => {
                 <p class="text-repository-heading d-flex align-center">
                   {{ props.organization?.name }} ({{ props.organization?.acronym }})
                 </p>
-                <p class="text-subtitle">{{ organization.president }}</p>
+                <p class="text-subtitle">{{ props.organization?.president }}</p>
                 <p class="text-subtitle text-gs20">
                   {{ props.organization?.tel_phone }}
                   <span v-if="props.organization?.tel_phone">|</span>
-                  {{ organization.phone }}
+                  {{ props.organization?.phone }}
                   <span v-if="props.organization?.email">|</span>
-                  {{ organization.email }}
+                  {{ props.organization?.email }}
                 </p>
               </div>
             </VCol>
