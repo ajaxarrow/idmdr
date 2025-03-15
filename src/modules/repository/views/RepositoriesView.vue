@@ -72,7 +72,7 @@
   const fetchMoreRepositories = async () => {
     const data = await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
     repositoryData.value = [...repositoryData.value, ...data];
-    searchedRepositories.value = repositoryData.value;
+    searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
     lastItemValue.value = lastItemValue.value + 1
     if(data.length === 0){
       reachEnd.value = true
