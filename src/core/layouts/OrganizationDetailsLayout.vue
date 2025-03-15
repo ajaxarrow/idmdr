@@ -67,6 +67,8 @@ const computedTabs = computed(() => {
       baseName = 'reports';
     } else if (tab.name === "Settings" && user.value) {
       baseName = 'settings';
+    } else {
+      baseName = '';
     }
 
     let linkName;
@@ -144,39 +146,55 @@ onMounted(() => {
 </script>
 
 <template>
-  <VLayout v-if="isInPublic" title="Consortium Member Institution Details">
-    <div style="width: 100%">
-      <Navbar />
-      <VContainer fluid>
-        <OrganizationLayoutHeaderContent
-            :organization="organization"
-            :pageLoading="pageLoading"
-            :isOrgAvailable="isOrgAvailable"
-            :path="path"
-            :tab="tab"
-            :isSmall="isSmall"
-            :computedTabs="computedTabs"
-            :navigateTo="navigateTo"
-        >
-          <slot/>
-        </OrganizationLayoutHeaderContent>
-      </VContainer>
-      <VDivider/>
-      <Footer/>
-    </div>
-  </VLayout>
-  <MainLayout v-else>
-    <OrganizationLayoutHeaderContent
-        :organization="organization"
-        :pageLoading="pageLoading"
-        :isOrgAvailable="isOrgAvailable"
-        :path="path"
-        :tab="tab"
-        :isSmall="isSmall"
-        :computedTabs="computedTabs"
-        :navigateTo="navigateTo"
-    >
-      <slot/>
-    </OrganizationLayoutHeaderContent>
-  </MainLayout>
+  <div v-if="pageLoading">
+    <VLayout title="Consortium Member Institution Details">
+      <div style="width: 100%">
+        <Navbar />
+        <VRow justify="center" class="my-12" style="min-height: 50vh;">
+          <VCol cols="12" class="text-center">
+            <VProgressCircular indeterminate color="bs50" size="64"></VProgressCircular>
+            <p class="mt-4 text-body-1">Loading institutions...</p>
+          </VCol>
+        </VRow>
+        <Footer/>
+      </div>
+    </VLayout>
+  </div>
+  <div v-else>
+    <VLayout v-if="isInPublic" title="Consortium Member Institution Details">
+      <div style="width: 100%">
+        <Navbar />
+        <VContainer fluid>
+          <OrganizationLayoutHeaderContent
+              :organization="organization"
+              :pageLoading="pageLoading"
+              :isOrgAvailable="isOrgAvailable"
+              :path="path"
+              :tab="tab"
+              :isSmall="isSmall"
+              :computedTabs="computedTabs"
+              :navigateTo="navigateTo"
+          >
+            <slot/>
+          </OrganizationLayoutHeaderContent>
+        </VContainer>
+        <VDivider/>
+        <Footer/>
+      </div>
+    </VLayout>
+    <MainLayout v-else>
+      <OrganizationLayoutHeaderContent
+          :organization="organization"
+          :pageLoading="pageLoading"
+          :isOrgAvailable="isOrgAvailable"
+          :path="path"
+          :tab="tab"
+          :isSmall="isSmall"
+          :computedTabs="computedTabs"
+          :navigateTo="navigateTo"
+      >
+        <slot/>
+      </OrganizationLayoutHeaderContent>
+    </MainLayout>
+  </div>
 </template>

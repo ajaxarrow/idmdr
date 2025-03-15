@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { CMI } from "../../../interfaces/cmi.interface.ts";
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
@@ -19,9 +17,7 @@ const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
 const pageLoading = ref(false)
-const router = useRouter();
 const searchQuery = ref('');
-const loading = ref(true);
 const {scrollTop} = useScroll()
 
 
@@ -140,7 +136,7 @@ onMounted(async() => {
                             </VRow>
                           </template>
                         </VImg>
-                        <div class="badge research-badge">{{getOrganizationType(cmi.org_type)}}</div>
+                        <div class="badge research-badge">{{getOrganizationType(cmi.org_type!)}}</div>
                       </div>
 
                       <VCardTitle class="text-center pt-4 pb-2">

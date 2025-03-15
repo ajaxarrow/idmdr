@@ -42,7 +42,7 @@ const props = defineProps({
 const tab = ref(props.tab)
 
 const backLinkName = computed(() => {
-  return props.path === 'organizations' ? 'organizations' : 'my-organizations';
+  return props.path === 'organizations' ? 'organizations' : props.path === 'cmis' ? 'cmi': 'my-organizations'
 });
 
 const backLinkText = computed(() => {
