@@ -24,6 +24,7 @@ import {Vue3Lottie} from "vue3-lottie";
 import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 import * as maplibregl from 'maplibre-gl';
+import {geocoderApi} from "../utils/geocoder.utils.ts";
 
 
 
@@ -31,7 +32,7 @@ const {fetchOrganizations} = useOrganizationServices()
 const {user} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
-const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries, geocoderApi} = useMapStore();
+const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
 const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer, provinceRepositoriesLayer, loadConsortiumRepoLayer, colorScalePink} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
 const {fetchSectors} = useSectorServices()
