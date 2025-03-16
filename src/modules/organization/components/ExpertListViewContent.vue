@@ -4,7 +4,6 @@ import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 import OrganizationExpertItem from "./OrganizationExpertItem.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import {Expert} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
@@ -18,7 +17,6 @@ const props = defineProps({
 const {route} = useRouting()
 const {scrollTop} = useScroll()
 const {fetchAllExperts, fetchExpertsByOrganization} = useOrganizationExpertsServices()
-const {isSmall} = useScreenStore();
 const searchQuery = ref('');
 const expertData = ref<Expert[]>([]);
 const searchedExperts = ref<Expert[]>([]);

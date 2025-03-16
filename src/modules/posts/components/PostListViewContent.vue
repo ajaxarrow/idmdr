@@ -4,7 +4,6 @@ import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 import PostItem from "./PostItem.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {usePostServices} from "../services/post.services.ts";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {onMounted, ref, watch, onUnmounted} from "vue";
 import {Post} from "../../../interfaces/post.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
@@ -18,7 +17,6 @@ const props = defineProps({
 const {route} = useRouting()
 const {scrollTop} = useScroll()
 const {fetchAllPosts, fetchPostByOrganization} = usePostServices()
-const {isSmall} = useScreenStore();
 const searchQuery = ref('');
 const postData = ref<Post[]>([]);
 const searchedPosts = ref<Post[]>([]);

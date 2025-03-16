@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
-import {onMounted, ref, watch} from "vue";
-import {Expert, Organization} from "../../../interfaces/organization.interface.ts";
+import {onMounted, ref} from "vue";
+import {Organization} from "../../../interfaces/organization.interface.ts";
 import ExpertListViewContent from "../components/ExpertListViewContent.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
