@@ -45,9 +45,6 @@ onMounted(async () => {
   }
   await setSnackbarMessage()
 })
-
-
-
 </script>
 
 <template>
