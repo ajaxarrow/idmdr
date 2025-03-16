@@ -192,12 +192,16 @@ onMounted(async () => {
   })
 
   // @ts-ignore
-  map.value?.on('draw.modechange', (event) => {
+  map.value?.on('draw.modechange', async(event) => {
     const { mode } = event;
     if (mode === 'draw_polygon' || mode === 'draw_line_string') {
       removeBoundaries(boundaries);
+      removeBoundaries(allSectors.value);
+      removeBoundaries(mapOrganizations.value);
     } else {
       setupBoundaries(boundaries, 'Province');
+      setupBoundaries(allSectors.value, 'Sector');
+      await setupBoundariesforOrganization(mapOrganizations.value);
     }
   });
 
