@@ -7,6 +7,8 @@ import * as turf from '@turf/turf'
 import {v4 as uuidv4} from "uuid";
 import {useMapStore} from "../../map/stores/map.store.ts";
 import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
+import * as maplibregl from 'maplibre-gl';
+
 
 const {geocoderApi} = useMapStore();
 const emit = defineEmits(['setGeoJSONData', 'closeMapPreview'])
@@ -164,8 +166,9 @@ onMounted(() => {
     );
   }
   map.value?.addControl(
-      new MaplibreGeocoder(geocoderApi, {})
-  );
+      new MaplibreGeocoder(geocoderApi, {
+        maplibregl: maplibregl
+      }));
   //@ts-ignore
   map.value.addControl(new NavigationControl(), 'bottom-right');
 
