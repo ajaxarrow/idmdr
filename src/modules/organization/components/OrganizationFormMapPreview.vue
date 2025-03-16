@@ -166,7 +166,9 @@ onMounted(() => {
     );
   }
   map.value?.addControl(
+      // @ts-ignore
       new MaplibreGeocoder(geocoderApi, {
+        // @ts-ignore
         maplibregl: maplibregl
       }));
   //@ts-ignore
