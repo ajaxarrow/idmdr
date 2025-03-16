@@ -300,7 +300,7 @@ const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
 //   }
 // }
 
-// @ts-ignore
+// @ts-nocheck
 const geocoderApi = {
   // @ts-ignore
   forwardGeocode: async (config: any) => {
@@ -336,6 +336,7 @@ const geocoderApi = {
     }
 
     return {
+      // @ts-ignore
       type: "FeatureCollection",
       features,
     };
