@@ -21,12 +21,15 @@ import {useFilterStore} from "../../map/stores/filters.store.ts";
 import {ChoroplethLegendControl} from "../../map/helpers/legendControl.ts"
 import mapload from "../../../assets/lottiefiles/map-load.json";
 import {Vue3Lottie} from "vue3-lottie";
+import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
+import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
+
 
 const {fetchOrganizations} = useOrganizationServices()
 const {user} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
-const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
+const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries, geocoderApi} = useMapStore();
 const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer, provinceRepositoriesLayer, loadConsortiumRepoLayer, colorScalePink} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
 const {fetchSectors} = useSectorServices()
@@ -169,6 +172,9 @@ onMounted(async () => {
     (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
     (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
     (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
+    map.value?.addControl(
+        new MaplibreGeocoder(geocoderApi, {})
+    );
     map.value?.addControl(new NavigationControl(), 'top-right');
     // @ts-ignore
     map.value.addControl(draw);

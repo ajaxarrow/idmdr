@@ -125,7 +125,7 @@ const sectorTaggingDialog = ref<boolean>(false);
 :deep(.v-overlay__content) {
   width: 400px !important;
   position: fixed !important;
-  top: 110px !important;
+  top: 160px !important;
   right: 20px !important;
 }
 </style>

@@ -5,7 +5,10 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf'
 import {v4 as uuidv4} from "uuid";
+import {useMapStore} from "../../map/stores/map.store.ts";
+import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
 
+const {geocoderApi} = useMapStore();
 const emit = defineEmits(['setGeoJSONData', 'closeMapPreview'])
 const props = defineProps({
   isGeoJSONPreview: {
@@ -160,7 +163,9 @@ onMounted(() => {
         })
     );
   }
-
+  map.value?.addControl(
+      new MaplibreGeocoder(geocoderApi, {})
+  );
   //@ts-ignore
   map.value.addControl(new NavigationControl(), 'bottom-right');
 
@@ -281,7 +286,5 @@ button{
 .convert-button:hover {
   background-color: #006973; /* Darker teal */
 }
-
-
 
 </style>
