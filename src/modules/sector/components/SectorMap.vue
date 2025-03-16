@@ -175,7 +175,9 @@ onMounted(async () => {
     (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
     (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
     map.value?.addControl(
+        // @ts-ignore
         new MaplibreGeocoder(geocoderApi, {
+          // @ts-ignore
           maplibregl: maplibregl
         }));
     map.value?.addControl(new NavigationControl(), 'top-right');

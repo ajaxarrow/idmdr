@@ -302,6 +302,7 @@ const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
 
 // @ts-ignore
 const geocoderApi = {
+  // @ts-ignore
   forwardGeocode: async (config: any) => {
     const features = [];
     try {
@@ -335,7 +336,7 @@ const geocoderApi = {
     }
 
     return {
-      type: "FeatureCollection", // ✅ Required for MaplibreGeocoderFeatureResults
+      type: "FeatureCollection",
       features,
     };
   },
