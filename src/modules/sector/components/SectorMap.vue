@@ -186,7 +186,6 @@ onMounted(async () => {
     map.value?.addControl(new NavigationControl(), 'top-right');
   }
 
-
   // @ts-ignore
   map.value?.on('style.load', async () => {
     await loadConsortiumLayer(true)
