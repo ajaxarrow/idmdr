@@ -106,11 +106,13 @@ const navigateTo = (linkName: string) => {
 }
 
 const initialize = async () => {
+  pageLoading.value = true; // Set first, before any other operations
+
   path.value = getFirstPath(<string>route.path);
   if (path.value === 'cmis') {
     isInPublic.value = true;
   }
-  pageLoading.value = true;
+
   const allUserOrg = await fetchOrganizationByUser();
 
   if (props.organization?.visibility === 1 || props.organization?.visibility === 4) {
@@ -128,11 +130,15 @@ const initialize = async () => {
     tab.value = props.activeTab;
   }
 
-
-  pageLoading.value = false;
+  pageLoading.value = false; // Set to false only at the very end
 };
 
 onMounted(() => {
+  path.value = getFirstPath(<string>route.path);
+  if (path.value === 'cmis') {
+    isInPublic.value = true;
+  }
+  pageLoading.value = true;
   if (props.organization) {
     initialize();
   } else {
@@ -148,36 +154,28 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="pageLoading">
-    <VLayout title="Consortium Member Institution Details">
-      <div style="width: 100%">
-        <Navbar />
-        <VRow justify="center" class="my-12" style="min-height: 50vh;">
-          <VCol cols="12" class="text-center">
-            <VProgressCircular indeterminate color="bs50" size="64"></VProgressCircular>
-            <p class="mt-4 text-body-1">Loading institutions...</p>
-          </VCol>
-        </VRow>
-        <Footer/>
-      </div>
-    </VLayout>
-  </div>
-  <div v-else>
     <VLayout v-if="isInPublic" title="Consortium Member Institution Details">
       <div style="width: 100%">
         <Navbar />
         <VContainer fluid>
+          <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
+            <VProgressCircular
+                indeterminate
+                color="#23668b"
+            ></VProgressCircular>
+          </div>
           <OrganizationLayoutHeaderContent
-              :organization="organization"
-              :pageLoading="pageLoading"
-              :isOrgAvailable="isOrgAvailable"
-              :path="path"
-              :tab="tab"
-              :isSmall="isSmall"
-              :computedTabs="computedTabs"
-              :navigateTo="navigateTo"
+            v-else
+            :organization="organization"
+            :pageLoading="pageLoading"
+          :isOrgAvailable="isOrgAvailable"
+          :path="path"
+          :tab="tab"
+          :isSmall="isSmall"
+          :computedTabs="computedTabs"
+          :navigateTo="navigateTo"
           >
-            <slot/>
+          <slot/>
           </OrganizationLayoutHeaderContent>
         </VContainer>
         <VDivider/>
@@ -185,18 +183,24 @@ onMounted(() => {
       </div>
     </VLayout>
     <MainLayout v-else>
+      <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
+        <VProgressCircular
+            indeterminate
+            color="#23668b"
+        ></VProgressCircular>
+      </div>
       <OrganizationLayoutHeaderContent
-          :organization="organization"
-          :pageLoading="pageLoading"
-          :isOrgAvailable="isOrgAvailable"
-          :path="path"
-          :tab="tab"
-          :isSmall="isSmall"
-          :computedTabs="computedTabs"
-          :navigateTo="navigateTo"
+        v-else
+        :organization="organization"
+        :pageLoading="pageLoading"
+        :isOrgAvailable="isOrgAvailable"
+        :path="path"
+        :tab="tab"
+        :isSmall="isSmall"
+        :computedTabs="computedTabs"
+        :navigateTo="navigateTo"
       >
-        <slot/>
+      <slot/>
       </OrganizationLayoutHeaderContent>
     </MainLayout>
-  </div>
 </template>
