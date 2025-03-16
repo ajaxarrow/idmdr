@@ -7,13 +7,15 @@ import {useEventsServices} from "../services/events.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {OrganizationEvent} from "../../../interfaces/organization.interface.ts";
-import FullCalendar from '@fullcalendar/vue3';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import {EventInput} from '@fullcalendar/core';
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
+import FullCalendar from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
 
 const props = defineProps({
   forOrganization: {
@@ -103,13 +105,13 @@ const handleEventRightClick = (mouseEvent: MouseEvent, event: EventInput) => {
 };
 
 const calendarOptions = computed(() => ({
-  plugins: [dayGridPlugin, interactionPlugin],
+  plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
   initialView: 'dayGridMonth',
   events: processedEvents.value,
   headerToolbar: {
-    right: 'prev,next today',
+    left: 'prev,next today',
     center: 'title',
-    left: 'dayGridMonth,timeGridWeek,timeGridDay'
+    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
   },
   eventClick: handleEventClick,
   eventDidMount: (info: any) => {
@@ -291,6 +293,10 @@ onUnmounted(() => {
 
 :deep(.fc-event) {
   cursor: pointer;
+}
+
+:deep(.fc-icon) {
+  height: unset;
 }
 
 

@@ -60,7 +60,7 @@ const addEventCallback = async () => {
   content: '';
   position: absolute;
   left: -209px;
-  top: -460px;
+  top: -480px;
   width: 590px;
   height: 585px;
   border-radius: 50%;
