@@ -209,7 +209,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
     { label: 'Affiliation: ', content: arrayToString(repository.affiliation as string[]) },
     { label: 'Commodity: ', content: arrayToString(repository.commodity as string[]) },
     { label: 'Industry: ', content: arrayToString(repository.industry as string[]) },
-    { label: 'Research Project/s: ', content: repository.rpt },
+    { label: 'Research Project/s: ', content: arrayToString(repository.rpt as string[]) },
     { label: 'Priority Level: ', content: repository.priority_level ?
           repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1) : undefined }
   ];
@@ -241,7 +241,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
     { label: 'Technology Readiness Level: ', content: repository.technology_readiness_level },
     { label: 'Technology Generator: ', content: repository.technology_generator },
     { label: 'Technology Owner: ', content: repository.tech_owner },
-    { label: 'Existing/Potential Adopters: ', content: repository.adaptors },
+    { label: 'Existing/Potential Adopters: ', content: arrayToString(repository.adaptors as string[]) },
     { label: 'Transfer Plan: ', content: repository.transfer_plan },
     { label: 'Transfer Status: ', content: repository.technology_transfer_status }
   ];

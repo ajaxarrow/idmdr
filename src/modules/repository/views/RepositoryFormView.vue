@@ -919,7 +919,7 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Affiliation<span class="text-pink">*</span></label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.affiliation as string[]"
                 placeholder="Enter Affiliation"
                 class="my-2"
