@@ -47,7 +47,7 @@ onMounted(async () => {
 <template>
   <OrganizationDetailsLayout
       :organization="organization"
-      activeTab="posts">
+      activeTab="scheduled events">
     <div v-if="organization" class="pa-6">
       <CalendarContent :for-organization="true"/>
     </div>

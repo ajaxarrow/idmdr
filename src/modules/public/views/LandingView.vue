@@ -640,7 +640,7 @@ onMounted(() => {
 
 .hero-wrapper {
   position: relative;
-  background-image: url('https://nomcaarrd.cmu.edu.ph/wp-content/uploads/2024/06/422181390_800173765472764_7068736240696033140_n-1.jpg');
+  background-image: url('../../../assets/landing-page/nomcaarrd-hero.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

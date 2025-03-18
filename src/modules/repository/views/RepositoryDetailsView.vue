@@ -240,7 +240,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             </VCol>
             <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Research Project/s Conducted</p>
-              <p class="text-subtitle pr-3">{{repository.rpt}}</p>
+              <p class="text-subtitle pr-3">{{arrayToString(repository.rpt as string[])}}</p>
             </VCol>
             <VCol v-if="repository.priority_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Priority Level</p>
@@ -280,7 +280,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           </VCol>
           <VCol v-if="repository.adaptors" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Existing or Potential Adopters</p>
-            <p class="text-subtitle pr-3">{{repository.adaptors}}</p>
+            <p class="text-subtitle pr-3">{{arrayToString(repository.adaptors as string[])}}</p>
           </VCol>
           <VCol v-if="repository.transfer_plan" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Transfer Plan</p>

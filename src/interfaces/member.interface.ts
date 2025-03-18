@@ -21,4 +21,13 @@ interface User{
   profile_picture?: string
 }
 
-export type {Member, OrgMember, User}
+interface CustomUserData{
+  type?: string
+  data?: User
+}
+interface CustomUser{
+  type?: string,
+  id?: string
+}
+
+export type {Member, OrgMember, User, CustomUser, CustomUserData}

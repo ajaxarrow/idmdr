@@ -82,6 +82,8 @@ const previousFundingAgencies = ref<string[]>([])
 const previousCommodities = ref<string[]>([])
 const previousIndustries = ref<string[]>([])
 const previousAffiliations = ref<string[]>([])
+const previousRPTs = ref<string[]>([])
+const previousAdopters = ref<string[]>([])
 const formType = ref<FormType>(FormType.create);
 const file = ref<File | null>(null);
 const repositoryDataIntialState = reactive<Repository>({
@@ -99,7 +101,7 @@ const repositoryDataIntialState = reactive<Repository>({
   organization: "",
   priority_level: "high",
   project_component: "",
-  rpt: "",
+  rpt: [],
   slug: "",
   start_date: '',
   type: 'Project Repository',
@@ -114,7 +116,7 @@ const repositoryDataIntialState = reactive<Repository>({
   transfer_plan: "Extension",
   uid: "",
   visibility: 1,
-  adaptors: 'Farmers',
+  adaptors: [],
   com_extra: {},
   image: '',
   author: '',
@@ -405,6 +407,10 @@ const addRepositoryData = async () => {
     previousAffiliations.value = <string[]>repositoryData.affiliation
     previousIndustries.value = <string[]>repositoryData.industry
     previousFundingAgencies.value = <string[]>repositoryData.funding_agency
+    previousRPTs.value = <string[]>repositoryData.rpt
+    previousAdopters.value = <string[]>repositoryData.adaptors
+    repositoryData.adaptors = arrayToString(<string[]>repositoryData.adaptors)
+    repositoryData.rpt = arrayToString(<string[]>repositoryData.rpt)
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
     repositoryData.commodity = arrayToString(<string[]>repositoryData.commodity)
     repositoryData.industry = arrayToString(<string[]>repositoryData.industry)
@@ -461,6 +467,10 @@ const updateRepositoryData = async () => {
     previousAffiliations.value = <string[]>repositoryData.affiliation
     previousIndustries.value = <string[]>repositoryData.industry
     previousFundingAgencies.value = <string[]>repositoryData.funding_agency
+    previousRPTs.value = <string[]>repositoryData.rpt
+    previousAdopters.value = <string[]>repositoryData.adaptors
+    repositoryData.adaptors = arrayToString(<string[]>repositoryData.adaptors)
+    repositoryData.rpt = arrayToString(<string[]>repositoryData.rpt)
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
     repositoryData.commodity = arrayToString(<string[]>repositoryData.commodity)
     repositoryData.industry = arrayToString(<string[]>repositoryData.industry)
@@ -751,7 +761,7 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Commodity</label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.commodity as string[]"
                 placeholder="Select Commodity"
                 class="my-2"
@@ -769,7 +779,7 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Industry</label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.industry as string[]"
                 placeholder="Select Industry"
                 class="my-2"
@@ -860,8 +870,8 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Research Project/s Conducted</label>
-            <VTextField
-                v-model="repositoryData.rpt"
+            <VCombobox
+                v-model="repositoryData.rpt as string[]"
                 placeholder="Enter Research Project/s Conducted"
                 class="my-2"
                 rounded="lg"
@@ -870,6 +880,9 @@ onMounted( async () => {
                 color="primary"
                 base-color="gs60"
                 :error-messages="errorMessage.rpt"
+                multiple
+                chips
+                closable-chips
             />
           </div>
           <div class="mb-3">
@@ -923,10 +936,10 @@ onMounted( async () => {
             />
           </div>
           <div class="mb-3">
-            <label class="input-label">Technology Owners</label>
+            <label class="input-label">Technology Owner(s)</label>
             <VTextField
                 v-model="repositoryData.tech_owner"
-                placeholder="Select Technology Owners"
+                placeholder="Enter Technology Owners"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
@@ -938,8 +951,8 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Existing or Potential Adopters</label>
-            <VAutocomplete
-                v-model="repositoryData.adaptors"
+            <VCombobox
+                v-model="repositoryData.adaptors as string[]"
                 placeholder="Select Adopter"
                 class="my-2"
                 rounded="lg"
@@ -949,6 +962,9 @@ onMounted( async () => {
                 base-color="gs60"
                 :items="adopters"
                 :error-messages="errorMessage.adaptors"
+                multiple
+                chips
+                closable-chips
             />
           </div>
           <div class="mb-3">
@@ -1151,7 +1167,7 @@ onMounted( async () => {
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
-          <VAutocomplete
+          <VCombobox
               placeholder="E.g. Soil Health, Agriculture Data, Global Farming, Agricultural Lands,"
               class="my-2"
               rounded="lg"

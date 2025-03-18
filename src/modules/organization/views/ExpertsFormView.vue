@@ -202,7 +202,7 @@ onMounted(async () => {
         </div>
         <div class="mb-3">
           <label class="input-label">Expertise</label>
-          <VAutocomplete
+          <VCombobox
               v-model="expertData.expertise as string[]"
               placeholder="Select expertise"
               class="my-2"
@@ -210,7 +210,6 @@ onMounted(async () => {
               density="comfortable"
               variant="outlined"
               color="primary"
-              :items="expertise"
               base-color="gs60"
               multiple
               chips
