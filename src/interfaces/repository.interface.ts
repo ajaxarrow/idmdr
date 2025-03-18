@@ -1,5 +1,5 @@
 import {Organization} from "./organization.interface.ts";
-import {User} from "./member.interface.ts";
+import {CustomUserData, User} from "./member.interface.ts";
 
 interface Repository {
   type?: string,
@@ -41,6 +41,7 @@ interface Repository {
   updated_at?: string,
   owner_id?: string,
   author?: string,
+  authorsData?: CustomUserData[],
   lead?: string,
   proj_type?: string,
   additional_info?: string,

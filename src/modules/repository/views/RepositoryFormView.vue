@@ -36,12 +36,15 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
 
 const {arrayToString} = useStringArrayHelper()
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
 const {fetchAttachmentsByRepository, deleteAttachment} = useRepositoryAttachmentServices()
+const {fetchCustomUsers} = useRepositoryMemberServices();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore()
 const {tags, fetchTags} = useTags();
@@ -84,6 +87,7 @@ const previousIndustries = ref<string[]>([])
 const previousAffiliations = ref<string[]>([])
 const previousRPTs = ref<string[]>([])
 const previousAdopters = ref<string[]>([])
+const customUsers = ref<CustomUserData[]>([])
 const formType = ref<FormType>(FormType.create);
 const file = ref<File | null>(null);
 const repositoryDataIntialState = reactive<Repository>({
@@ -116,6 +120,7 @@ const repositoryDataIntialState = reactive<Repository>({
   transfer_plan: "Extension",
   uid: "",
   visibility: 1,
+  authorsData: [],
   adaptors: [],
   com_extra: {},
   image: '',
@@ -167,6 +172,34 @@ const attachmentData = reactive<Attachment>({
   isNameUpdated: false
 })
 const active = ref(false)
+
+
+const searchQuery = ref('');
+
+// Function to handle search input
+const handleSearch = (query) => {
+  searchQuery.value = query;
+};
+
+const addCustomUser = () => {
+  const newUser: CustomUserData = {
+    type: 'custom',
+    data: {
+      username: searchQuery.value,
+      email: '',
+      uid: ''
+    }
+  };
+
+  if (repositoryData.authorsData) {
+    repositoryData.authorsData?.push(newUser);
+  } else {
+    repositoryData.authorsData = [newUser];
+  }
+
+  searchQuery.value = '';
+};
+
 
 const toggleActive = () => {
   active.value = !active.value
@@ -497,6 +530,7 @@ const updateRepositoryData = async () => {
 onMounted( async () => {
   fetchTags();
   organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  customUsers.value = await fetchCustomUsers();
   repositoryData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
@@ -541,26 +575,26 @@ onMounted( async () => {
   <MainLayout :title="formType === FormType.edit ? 'Edit Project' : 'New Project'">
     <VForm id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
-       <div class="d-flex">
-         <RouterLink
-             :to="{
+        <div class="d-flex">
+          <RouterLink
+              :to="{
           name: path == 'repositories' ?  'repositories' : 'my-repositories'
         }"
-             class="text-decoration-none text-none">
-           <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
-             <PhArrowLeft size="14" class="mr-1"/>
-             Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
-           </p>
-         </RouterLink>
-       </div>
-          <div>
-            <p class="text-heading d-flex align-center">
-              {{formType === FormType.edit ? 'Edit Project' : 'Create New Project'}}
+              class="text-decoration-none text-none">
+            <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+              <PhArrowLeft size="14" class="mr-1"/>
+              Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
             </p>
-            <p class="text-subtitle">
-              A project contain all related project of a certain project of the organization
-            </p>
-          </div>
+          </RouterLink>
+        </div>
+        <div>
+          <p class="text-heading d-flex align-center">
+            {{formType === FormType.edit ? 'Edit Project' : 'Create New Project'}}
+          </p>
+          <p class="text-subtitle">
+            A project contain all related project of a certain project of the organization
+          </p>
+        </div>
       </div>
       <VDivider/>
       <p class="mx-6 my-3 text-note">Required fields are marked with an asterisk (<span class="text-red">*</span>).</p>
@@ -613,15 +647,15 @@ onMounted( async () => {
         <div class="mb-3">
           <label class="input-label">Project Title<span class="text-pink">*</span></label>
           <VTextField
-            v-model="repositoryData.title"
-            placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
-            class="my-2"
-            rounded="lg"
-            density="comfortable"
-            variant="outlined"
-            color="primary"
-            base-color="gs60"
-            :error-messages="errorMessage.title"
+              v-model="repositoryData.title"
+              placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.title"
           />
         </div>
         <div class="mb-5">
@@ -699,7 +733,7 @@ onMounted( async () => {
               :item-value="item => `${item.value}`"
               :error-messages="errorMessage.commodity"
           />
-<!--          hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"-->
+          <!--          hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"-->
         </div>
         <div class="mb-3">
           <label class="input-label">Project Category</label>
@@ -716,9 +750,12 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Author</label>
-          <VTextField
-              v-model="repositoryData.author"
+          <label class="input-label">Author(s)</label>
+          {{repositoryData.authorsData}}
+          <VCombobox
+              :items="customUsers"
+              :item-title="item => item.data?.username"
+              v-model="repositoryData.authorsData"
               placeholder="Enter Author"
               class="my-2"
               rounded="lg"
@@ -727,7 +764,20 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :error-messages="errorMessage.commodity"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser">
+                <VListItemTitle>
+                  Add "{{ searchQuery }}" as a new user
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3">
           <label class="input-label">Project Lead</label>
@@ -741,6 +791,9 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :error-messages="errorMessage.commodity"
+              multiple
+              chips
+              closable-chips
           />
         </div>
         <div v-if="repositoryData.type === 'Project Repository'">
@@ -1239,12 +1292,12 @@ onMounted( async () => {
           <div v-if="attachments.length == 0">
             <label class="input-label">File</label>
             <div
-              class="my-2 file-upload-container"
-              :class="{'dropzone-active': active}"
-              @dragover.prevent
-              @dragenter.prevent="toggleActive"
-              @dragleave.prevent="toggleActive"
-              @drop.prevent="handleBulkAttachmentsUpload">
+                class="my-2 file-upload-container"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
               <PhFileDashed size="50"/>
               <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
               <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
@@ -1276,16 +1329,16 @@ onMounted( async () => {
                       <span>Remove Attachment</span>
                     </VTooltip>
                     <VTooltip location="bottom">
-                    <template v-slot:activator="{ props }">
-                      <component
-                          :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
-                          v-bind="props"
-                          class="cursor-pointer"
-                          @click="attachment.showFiles = !attachment.showFiles"
-                      />
-                    </template>
-                    <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
-                  </VTooltip>
+                      <template v-slot:activator="{ props }">
+                        <component
+                            :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
+                            v-bind="props"
+                            class="cursor-pointer"
+                            @click="attachment.showFiles = !attachment.showFiles"
+                        />
+                      </template>
+                      <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
+                    </VTooltip>
                   </div>
                 </div>
                 <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
@@ -1448,10 +1501,10 @@ onMounted( async () => {
         </div>
         <VRow class="ma-0" justify="end">
           <VBtnPrimaryFilled
-            @click="formType === FormType.edit ? updateRepositoryData() : addRepositoryData()"
-            rounded="lg"
-            height="44px"
-            width="166px"
+              @click="formType === FormType.edit ? updateRepositoryData() : addRepositoryData()"
+              rounded="lg"
+              height="44px"
+              width="166px"
           >
             Submit
           </VBtnPrimaryFilled>
