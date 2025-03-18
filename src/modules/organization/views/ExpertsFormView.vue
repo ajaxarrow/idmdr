@@ -210,6 +210,7 @@ onMounted(async () => {
               density="comfortable"
               variant="outlined"
               color="primary"
+              :items="expertise"
               base-color="gs60"
               multiple
               chips
