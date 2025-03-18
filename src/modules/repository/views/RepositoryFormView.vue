@@ -177,7 +177,7 @@ const active = ref(false)
 const searchQuery = ref('');
 
 // Function to handle search input
-const handleSearch = (query) => {
+const handleSearch = (query: string) => {
   searchQuery.value = query;
 };
 
