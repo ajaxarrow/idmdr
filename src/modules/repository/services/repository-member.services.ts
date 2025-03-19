@@ -2,7 +2,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {ref} from "vue";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
-import {CustomUser, CustomUserData, OrgMember} from "../../../interfaces/member.interface.ts";
+import {CustomUserData, OrgMember} from "../../../interfaces/member.interface.ts";
 import {server} from "../../../plugins/axios.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryServices} from "./repository.services.ts";
@@ -20,8 +20,8 @@ export const useRepositoryMemberServices = () => {
 
   const {mapOrgMembers} = useOrganizationMembersServices();
   const {fetchRepositoryData} = useRepositoryServices()
-  const {fetchUsers, fetchUser} = useOrganizationMembersServices();
-  const {fetchAllExperts, fetchExpertById} = useOrganizationExpertsServices();
+  const {fetchUsers} = useOrganizationMembersServices();
+  const {fetchAllExperts} = useOrganizationExpertsServices();
 
   const fetchCustomUsers = async (): Promise<CustomUserData[]> => {
     try {
@@ -51,49 +51,7 @@ export const useRepositoryMemberServices = () => {
   };
 
 
-  const mapCustomUsers = async (userData: CustomUser[]): Promise<CustomUserData[]> => {
-    try {
-      return await Promise.all(
-          userData.map(async (customUser) => {
-            if (customUser.type === 'user') {
-              const user = await fetchUser(customUser.id!);
-              return {
-                type: 'user', data: {
-                  uid: user?.uid ?? '',
-                  username: user?.username ?? '',
-                  email: user?.email ?? '',
-                }
-              };
-            }
 
-            if (customUser.type === 'expert') {
-              const expert = await fetchExpertById(customUser.id!);
-              return {
-                type: 'expert',
-                data: {
-                  uid: expert?.uid ?? '',
-                  // @ts-ignore
-                  username: `${expert?.name?.first_name ?? ''} ${expert?.name?.middle_name ?? ''} ${expert?.name?.last_name ?? ''} ${expert?.name?.extension ?? ''}`.trim(),
-                  email: ''
-                }
-              };
-            }
-            // Default case
-            return {
-              type: 'custom',
-              data: {
-                uid: '',
-                username: customUser.id ?? '',
-                email: ''
-              }
-            };
-          })
-      );
-    } catch (e: any) {
-      console.error(e);
-      return [];
-    }
-  };
 
 
 
@@ -260,7 +218,6 @@ export const useRepositoryMemberServices = () => {
     updateRepoMember,
     removeRepoMember,
     fetchCustomUsers,
-    mapCustomUsers
   }
 
 }

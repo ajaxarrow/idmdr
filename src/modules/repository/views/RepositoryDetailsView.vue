@@ -195,11 +195,16 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           </VCol>
           <VCol v-if="repository.lead" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Lead</p>
-            <p class="text-subtitle pr-3">{{ repository.lead}}</p>
+            <p class="text-subtitle pr-3">{{repository.leadData.data && repository.leadData.data.username.length > 0 ? repository!.leadData.data.username : 'N/A'}}</p>
           </VCol>
           <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Author</p>
-            <p class="text-subtitle pr-3">{{ repository.author}}</p>
+            <p class="text-subtitle text-gs20">Author<span v-if="repository.authorsData?.length != 0">(s)</span></p>
+            <p class="text-subtitle pr-3">
+              <span v-if="repository.authorsData?.length == 0">N/A</span>
+              <span v-else v-for="(author, index) in repository.authorsData">
+                {{author.data.username}}<span v-if="index != repository.authorsData?.length - 1">, </span>
+              </span>
+            </p>
           </VCol>
           <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Status</p>
@@ -271,12 +276,22 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             <p class="text-subtitle pr-3">{{ repository.technology_readiness_level}}</p>
           </VCol>
           <VCol v-if="repository.technology_generator" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Technology Generator</p>
-            <p class="text-subtitle pr-3">{{ repository.technology_generator}}</p>
+            <p class="text-subtitle text-gs20">Technology Generator<span v-if="repository.techGeneratorData.length != 0">(s)</span></p>
+            <p class="text-subtitle pr-3">
+              <span v-if="repository.techGeneratorData.length == 0">N/A</span>
+              <span v-else v-for="(techGen, index) in repository.techGeneratorData">
+                {{techGen.data.username}}<span v-if="index != repository.techGeneratorData?.length - 1">, </span>
+              </span>
+            </p>
           </VCol>
           <VCol v-if="repository.tech_owner" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Technology Owner</p>
-            <p class="text-subtitle pr-3">{{repository.tech_owner}}</p>
+            <p class="text-subtitle text-gs20">Technology Owner<span v-if="repository.techOwnerData.length != 0">(s)</span></p>
+            <p class="text-subtitle pr-3">
+              <span v-if="repository.techOwnerData.length == 0">N/A</span>
+              <span v-else v-for="(owner, index) in repository.techOwnerData">
+                {{owner.data.username}}<span v-if="index != repository.techOwnerData?.length - 1">, </span>
+              </span>
+            </p>
           </VCol>
           <VCol v-if="repository.adaptors" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Existing or Potential Adopters</p>

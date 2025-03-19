@@ -11,6 +11,8 @@ import {useRepositoryAttachmentServices} from "./repository-attachments.services
 import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useOrganizationExpertsServices} from "../../organization/services/organization-experts.services.ts";
 
 
 const { userData, user } = useUserStore();
@@ -18,12 +20,12 @@ const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.acc
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
-const {fetchOrgMembers} = useOrganizationMembersServices()
+const {fetchOrgMembers, fetchUser} = useOrganizationMembersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
 const {addSector} = useSectorServices()
-
 const {stringToArray} = useStringArrayHelper()
 const {compareDateStrings} = useDateHelper()
+const {fetchExpertById} = useOrganizationExpertsServices();
 
 export const useRepositoryServices = () => {
   const errorMessageInitialState = reactive({
@@ -260,9 +262,78 @@ export const useRepositoryServices = () => {
     }
   }
 
+  const mapCustomUsers = async (userData: CustomUserData[]): Promise<CustomUserData[]> => {
+    try {
+      return await Promise.all(
+          userData.map(async (customUser) => {
+            if (customUser.type === 'user') {
+              const user = await fetchUser(customUser.data?.uid!);
+              if (user) {
+                return {
+                  type: 'user',
+                  data: {
+                    uid: user?.uid ?? '',
+                    username: user?.username ?? '',
+                    email: user?.email ?? '',
+                  }
+                };
+              }
+              return {
+                type: 'user', data: {
+                  uid: customUser.data?.uid ?? '',
+                  username: customUser.data?.username ?? '',
+                  email: customUser.data?.email ?? '',
+                }
+              };
+            }
+
+            if (customUser.type === 'expert') {
+              const expert = await fetchExpertById(customUser.data?.uid!);
+              if(expert) {
+                return {
+                  type: 'expert',
+                  data: {
+                    uid: expert?.uid ?? '',
+                    // @ts-ignore
+                    username: `${expert?.name?.first_name ?? ''} ${expert?.name?.middle_name ?? ''} ${expert?.name?.last_name ?? ''} ${expert?.name?.extension ?? ''}`.trim(),
+                    email: ''
+                  }
+                };
+              } else {
+                return {
+                  type: 'expert', data: {
+                    uid: customUser.data?.uid ?? '',
+                    username: customUser.data?.username ?? '',
+                    email: customUser.data?.email ?? '',
+                  }
+                };
+              }
+
+            }
+            // Default case
+            return {
+              type: 'custom',
+              data: {
+                uid: '',
+                username: customUser.data?.username ?? '',
+                email: ''
+              }
+            };
+          })
+      );
+    } catch (e: any) {
+      console.error(e);
+      return [];
+    }
+  };
+
   const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
     return Promise.all(
       rawData.map(async (repo: any) => {
+        const authors = await mapCustomUsers(JSON.parse(repo.author).data);
+        const techOwners = await mapCustomUsers(JSON.parse(repo.tech_owner).data);
+        const techGenerators = await mapCustomUsers(JSON.parse(repo.technology_generator).data);
+        const lead = await mapCustomUsers(isEmptyObject(repo.lead) ? [] : [JSON.parse(repo.lead)])
         const attachments = await fetchAttachmentsByRepository(repo.uid, type)
         return {
           is_member: false,
@@ -286,8 +357,10 @@ export const useRepositoryServices = () => {
           start_date: repo.start_date || "",
           tags: repo.tags ? stringToArray(repo.tags) : "",
           tech_owner: repo.tech_owner || "",
+          techOwnerData: techOwners,
           technology_category: repo.technology_category || '',
           technology_generator: repo.technology_generator || "",
+          techGeneratorData: techGenerators,
           technology_readiness_level: repo.technology_readiness_level || '',
           technology_status: repo.technology_status || "",
           technology_transfer_status: repo.technology_transfer_status || "",
@@ -306,7 +379,9 @@ export const useRepositoryServices = () => {
           org_data: repo.org_data || {},
           files: attachments,
           author: repo.author || "",
-          lead: repo.lead || "",
+          authorsData: authors,
+          lead: repo.lead,
+          leadData: lead[0] || {},
           proj_type: repo.proj_type || "",
           additional_info: repo.additional_info || "",
           status: repo.status || "",
