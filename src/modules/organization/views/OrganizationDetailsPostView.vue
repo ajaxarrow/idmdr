@@ -9,7 +9,7 @@ import PostListViewContent from "../../posts/components/PostListViewContent.vue"
 
 const {setSnackbarMessage} = useSnackbarStore()
 const {route, router} = useRouting()
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const path = ref('organizations')
 const organization = ref<Organization | null>();
 
@@ -25,7 +25,7 @@ const getFirstPath = (url: string) => {
 
 onMounted(async () => {
   path.value = getFirstPath(<string>route.path)
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   organization.value = await fetchOrganizationData(route.params.slug as string);
 
   if(organization.value){

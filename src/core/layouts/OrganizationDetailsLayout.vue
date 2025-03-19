@@ -13,7 +13,7 @@ import Footer from "../../modules/public/components/Footer.vue";
 import OrganizationLayoutHeaderContent from "../../modules/organization/components/OrganizationLayoutHeaderContent.vue";
 
 const {user} = useUserStore();
-const {fetchOrganizationByUser} = useOrganizationServices()
+const {fetchOrganizationIDsByUser} = useOrganizationServices()
 const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
 
@@ -113,7 +113,7 @@ const initialize = async () => {
     isInPublic.value = true;
   }
 
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
 
   if (props.organization?.visibility === 1 || props.organization?.visibility === 4) {
     isOrgAvailable.value = true;

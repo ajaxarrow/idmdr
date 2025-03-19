@@ -9,7 +9,7 @@ import RepoAccessRequestCharts from "../components/Reports/RepoAccessRequestChar
 
 
 const {repository} = useRepositoryStore();
-const {fetchRepositoryData, fetchRepositoriesByUser} = useRepositoryServices()
+const {fetchRepositoryData, fetchRepositoryIDsByUser} = useRepositoryServices()
 
 const {route, router} = useRouting()
 const loading = ref(false)
@@ -28,7 +28,7 @@ onMounted(async () => {
   await fetchRepositoryData(route.params.slug as string);
   path.value = getFirstPath(<string>route.path)
 
-  const allUserRepo = await fetchRepositoriesByUser();
+  const allUserRepo = await fetchRepositoryIDsByUser();
 
   if(repository.value){
     if(isSlugInRepoList(repository.value, allUserRepo)) {

@@ -512,6 +512,28 @@ export const useRepositoryServices = () => {
     }
   }
 
+  const fetchRepositoryIDsByUser = async(pageSize: number = 100): Promise<Repository[]> => {
+    try{
+      const res = await server.get(`/repositories/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results.filter((repo: any) => !repo.is_deleted);
+      let repositories: Repository[] = rawData.map((repo: any) => {
+        return {
+          slug: repo.uid,
+        }
+      })
+      const data = [...repositories];
+      myRepositories.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
+
   const fetchRepositoriesWithPagination = async (pageNumber: number, isForIPT: boolean = false): Promise<Repository[]> => {
     try{
       let data: Repository[] = []
@@ -646,6 +668,7 @@ export const useRepositoryServices = () => {
     fetchRepositoriesWithPagination,
     fetchRepositoriesByUser,
     fetchRepositoriesByUserWithPagination,
+    fetchRepositoryIDsByUser
   }
 
 }

@@ -20,7 +20,7 @@ import {useRepositoryMemberServices} from "../../modules/repository/services/rep
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
 const {addNotification} = useNotificationsServices()
 const {fetchRepoMembers} = useRepositoryMemberServices()
-const {fetchRepositoriesByUser} = useRepositoryServices();
+const {fetchRepositoryIDsByUser} = useRepositoryServices();
 const {user, userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {router, route} = useRouting()
@@ -147,7 +147,7 @@ const initialize = async () => {
     tab.value = props.activeTab
   }
   path.value = getFirstPath(<string>route.path)
-  const allUserRepo = await fetchRepositoriesByUser();
+  const allUserRepo = await fetchRepositoryIDsByUser();
   if (props.repository?.visibility === 1 || props.repository?.visibility === 4) {
     isRepoAvailable.value = true;
   } else {

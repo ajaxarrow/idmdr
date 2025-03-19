@@ -18,7 +18,7 @@ import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue"
 
 const {route, router} = useRouting()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {fetchPostbyID, deletePost, managePostStatus} = usePostServices()
 
 const postActionMenu = ref(false);
@@ -61,7 +61,7 @@ const openImagePreview = (index: number) => {
 onMounted(async () => {
   pageLoading.value = true
   path.value = getFirstPath(<string>route.path)
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   organization.value = await fetchOrganizationData(route.params.slug as string);
   if(organization.value){
     if( isSlugInOrgList(organization.value, allUserOrg)){

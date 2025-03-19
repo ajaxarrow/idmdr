@@ -24,7 +24,7 @@ const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
 const currentOrg = ref<Organization | null>(null)
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationByUser, deleteOrganization} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser, deleteOrganization} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
 const overlayLoading = ref(false);
@@ -329,7 +329,7 @@ const deleteOrgCallback = async () => {
 
 onMounted(async () => {
   loading.value = true
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   path.value = getFirstPath(<string>route.path)
   currentOrg.value = await fetchOrganizationData(route.params.slug as string);
 

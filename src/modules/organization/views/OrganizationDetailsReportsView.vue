@@ -10,7 +10,7 @@ import OrgRepoCharts from "../components/Reports/OrgRepoCharts.vue";
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const loading = ref(false)
 const path = ref('organizations')
 
@@ -27,7 +27,7 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
 
 onMounted(async () => {
   loading.value = true
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
 

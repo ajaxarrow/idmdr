@@ -382,6 +382,28 @@ export const useOrganizationServices = () => {
     }
   }
 
+  const fetchOrganizationIDsByUser = async () : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/user/${userData.uid}/organizations`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = rawData.map((org: any) => {
+        return {
+          uid: org.organization.uid,
+          slug: org.organization.uid
+        }
+      })
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
   const fetchOrganizationsWithPagination = async (pageNumber: number): Promise<Organization[]> => {
     let data: Organization[] = [];
     try {
@@ -486,5 +508,6 @@ export const useOrganizationServices = () => {
     fetchOrganizations,
     fetchOrganizationsWithPagination,
     fetchOrganizationData,
+    fetchOrganizationIDsByUser
   };
 };

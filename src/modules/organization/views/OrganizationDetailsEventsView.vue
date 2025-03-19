@@ -7,7 +7,7 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import CalendarContent from "../../events/components/CalendarContent.vue";
 
 const {route, router} = useRouting()
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const organization = ref<Organization | null>();
 
 const path = ref('organizations')
@@ -23,7 +23,7 @@ const getFirstPath = (url: string) => {
 
 onMounted(async () => {
   path.value = getFirstPath(<string>route.path)
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   organization.value = await fetchOrganizationData(route.params.slug as string);
 
   if(organization.value){

@@ -26,7 +26,7 @@ const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
-const {fetchRepositoryData, fetchRepositoriesByUser, deleteRepository} = useRepositoryServices()
+const {fetchRepositoryData, fetchRepositoryIDsByUser, deleteRepository} = useRepositoryServices()
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
 
@@ -388,7 +388,7 @@ onMounted(async () => {
   accessRequestData.value = accessRequests.value
   path.value = getFirstPath(<string>route.path)
 
-  const allUserRepo = await fetchRepositoriesByUser();
+  const allUserRepo = await fetchRepositoryIDsByUser();
 
   if(currentRepo.value){
     if(isSlugInRepoList(currentRepo.value, allUserRepo)) {

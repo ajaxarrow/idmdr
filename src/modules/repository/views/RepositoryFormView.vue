@@ -190,11 +190,12 @@ const searchQueries = {
 
 // Reusable function to handle search for any field
 const handleSearch = (field: string, query: any) => {
+  // @ts-ignore
   searchQueries[field].value = query;
 };
 
 // Reusable function to add custom user for any field
-const addCustomUser = (field) => {
+const addCustomUser = (field: string) => {
   if (field === 'author' && authorRef.value) {
     const newUser: CustomUserData = {
       type: 'custom',

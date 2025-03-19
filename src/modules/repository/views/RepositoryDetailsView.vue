@@ -38,7 +38,7 @@ const {setSnackbarMessage} = useSnackbarStore()
 const selectedFileName = ref('');
 const selectedFileDescription = ref('');
 const selectedFileAttachment= ref('');
-const {fetchRepositoriesByUser} = useRepositoryServices();
+const {fetchRepositoryIDsByUser} = useRepositoryServices();
 const isMember = ref(false)
 
 const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
@@ -138,7 +138,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
 
   onMounted(async () => {
     await fetchRepositoryData(<string>route.params.slug);
-    const allUserRepo = await fetchRepositoriesByUser();
+    const allUserRepo = await fetchRepositoryIDsByUser();
     if(isSlugInRepoList(repository.value, allUserRepo)) {
       isMember.value = true;
     }
@@ -195,14 +195,14 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           </VCol>
           <VCol v-if="repository.lead" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Lead</p>
-            <p class="text-subtitle pr-3">{{repository.leadData.data && repository.leadData.data.username.length > 0 ? repository!.leadData.data.username : 'N/A'}}</p>
+            <p class="text-subtitle pr-3">{{repository.leadData?.data && repository.leadData?.data.username.length > 0 ? repository!.leadData?.data.username : 'N/A'}}</p>
           </VCol>
           <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Author<span v-if="repository.authorsData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
               <span v-if="repository.authorsData?.length == 0">N/A</span>
               <span v-else v-for="(author, index) in repository.authorsData">
-                {{author.data.username}}<span v-if="index != repository.authorsData?.length - 1">, </span>
+                {{author.data?.username}}<span v-if="index != repository.authorsData?.length! - 1">, </span>
               </span>
             </p>
           </VCol>
@@ -280,7 +280,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             <p class="text-subtitle pr-3">
               <span v-if="repository.techGeneratorData.length == 0">N/A</span>
               <span v-else v-for="(techGen, index) in repository.techGeneratorData">
-                {{techGen.data.username}}<span v-if="index != repository.techGeneratorData?.length - 1">, </span>
+                {{techGen.data?.username}}<span v-if="index != repository.techGeneratorData?.length - 1">, </span>
               </span>
             </p>
           </VCol>
@@ -289,7 +289,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             <p class="text-subtitle pr-3">
               <span v-if="repository.techOwnerData.length == 0">N/A</span>
               <span v-else v-for="(owner, index) in repository.techOwnerData">
-                {{owner.data.username}}<span v-if="index != repository.techOwnerData?.length - 1">, </span>
+                {{owner.data?.username}}<span v-if="index != repository.techOwnerData?.length - 1">, </span>
               </span>
             </p>
           </VCol>
