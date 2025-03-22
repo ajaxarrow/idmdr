@@ -12,7 +12,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {PhArrowLeft, PhFile, PhFileDashed, PhImage, PhTrash, PhX} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 
-const {errorMessage, fetchRepositoryVisibility, loading} = useRepositoryServices();
+const {fetchRepositoryVisibility, loading} = useRepositoryServices();
 const {fetchAttachmentsByRepository, deleteAttachment, updateAttachment, addAttachment} = useRepositoryAttachmentServices()
 const visibilityInfo = [
   {
