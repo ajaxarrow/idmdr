@@ -26,9 +26,9 @@ const visibilityDialog = ref(false);
 
 const changeVisibility = () => {
   if(props.type === 'organization') {
-    changeOrganizationVisibility(<string>props.id, visibilityData.value)
+    changeOrganizationVisibility(<string>props.id, <number>visibilityData.value)
   } else {
-    changeRepositoryVisibility(<string>props.id, visibilityData.value)
+    changeRepositoryVisibility(<string>props.id, <number>visibilityData.value)
   }
   emits('callback', visibilityData.value)
   visibilityDialog.value = false
