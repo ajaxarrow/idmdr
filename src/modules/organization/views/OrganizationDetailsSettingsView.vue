@@ -86,134 +86,239 @@ const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: numb
   return currentY + lineHeight;
 };
 
-const formatLabelAndContent = (doc: jsPDF, label: string, content: string, x: number, y: number, maxWidth: number): number => {
-  doc.setFont('helvetica', 'bold');
-  doc.text(label, x, y);
-
-  const labelWidth = doc.getTextWidth(label);
-  doc.setFont('helvetica', 'normal');
-
-  // If content is too long, wrap it
-  if (doc.getTextWidth(content) > maxWidth - labelWidth) {
-    return wrapText(doc, content, x + labelWidth, y, maxWidth - labelWidth);
-  } else {
-    doc.text(content, x + labelWidth, y);
-    return y + 7;
-  }
-};
 
 const downloadOrganizationDataPDF = async (organization: Organization) => {
+  // Initialize PDF
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4'
   });
 
+  // Define minimal color palette
+  const colors = {
+    primary: "#2c3e50",    // Dark blue-gray
+    accent: "#3498db",     // Blue accent
+    text: "#333333",       // Text color
+    light: "#f8f9fa",      // Light background
+    white: "#FFFFFF"
+  };
+
+  // Set up document variables
   const margin = 20;
   const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
   const contentWidth = pageWidth - (margin * 2);
-  let currentY = margin;
+  let currentY = 40;
 
-// Header Section with blue background
-  doc.setFillColor(0, 123, 255);
-  doc.rect(0, 0, doc.internal.pageSize.width, 50, 'F'); // Draws a filled rectangle for the header
-
-// Repository title in white
-  doc.setTextColor(255, 255, 255); // Set text color to white
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
-
-// Split text to fit within the page width for wrapping
-  const titleLines = doc.splitTextToSize(`${organization.name} (${organization.acronym})`, doc.internal.pageSize.width - 2 * margin);
-  doc.text(titleLines, margin, 25);
-
-// Reset text color for body
-  doc.setTextColor(0, 0, 0);
-  currentY = 60;
-
-  // Contact Information Section
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-
-  const contactInfo = [
-    `President: ${organization.president}`,
-    `Telephone: ${organization.tel_phone || 'N/A'}`,
-    `Cell Number: ${organization.phone || 'N/A'}`,
-    `Email: ${organization.email || 'N/A'}`,
-    `Website: ${organization.website || 'N/A'}`
-  ];
-
-  contactInfo.forEach(info => {
-    const infoWidth = doc.getTextWidth(info);
-    if (infoWidth > contentWidth) {
-      currentY = wrapText(doc, info, margin, currentY, contentWidth);
-    } else {
-      doc.text(info, margin, currentY);
-      currentY += 7;
+  // Helper function to add page numbers
+  const addPageNumber = (doc: any) => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(colors.text);
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin - 15, pageHeight - 10);
     }
-  });
+  };
 
-  currentY += 5;
+  // Helper function to add simple header and footer
+  const addHeaderAndFooter = (doc: any) => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
 
-  // About Section
+      // Minimal header - just a thin line
+      doc.setDrawColor(colors.accent);
+      doc.setLineWidth(0.5);
+      doc.line(margin, 20, pageWidth - margin, 20);
+
+      // Footer with thin line
+      doc.setDrawColor(colors.accent);
+      doc.setLineWidth(0.5);
+      doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
+
+      // Add date in footer
+      doc.setFontSize(9);
+      doc.setTextColor(colors.text);
+      const today = new Date().toLocaleDateString();
+      doc.text(`Generated on: ${today}`, margin, pageHeight - 10);
+    }
+  };
+
+  // Cover page - clean and minimal
+  doc.setFillColor(colors.white);
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+  // Simple accent bar
+  doc.setFillColor(colors.accent);
+  doc.rect(0, 0, 10, pageHeight, 'F');
+
+  // Title on cover page
+  doc.setTextColor(colors.primary);
+  doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('About Organization', margin, currentY);
+
+  const titleLines = doc.splitTextToSize(`${organization.name} (${organization.acronym})`, pageWidth - (margin * 4));
+  doc.text(titleLines, margin + 10, pageHeight/3);
+
+  // Organization type
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'normal');
+  doc.text(getOrganizationType(<number>organization.org_type) || 'Organization', margin + 10, pageHeight/3 + 30);
+
+  // President info
+  if (organization?.president) {
+    doc.setFontSize(14);
+    doc.text(`President: ${organization.president}`, margin + 10, pageHeight/3 + 40);
+  }
+
+  // Add new page for content
+  doc.addPage();
+  currentY = 40;
+
+  // Table of contents
+  doc.setTextColor(colors.primary);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Table of Contents', margin, currentY);
   currentY += 10;
 
+  const sections = ['Contact Information', 'About Organization', 'Consortium Type', 'Cluster Representatives'];
+
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(12);
-  const cleanDescription = stripHtml(organization.description);
-  currentY = wrapText(doc, cleanDescription, margin, currentY, contentWidth, 'justify');
+  doc.setTextColor(colors.text);
+  sections.forEach((section, index) => {
+    doc.text(`${index + 1}. ${section}`, margin + 5, currentY);
+    currentY += 7;
+  });
 
   currentY += 15;
 
-  // Check if we need a new page
-  if (currentY > doc.internal.pageSize.height - 60) {
+  // Contact Information Section
+  doc.addPage();
+  currentY = 40;
+
+  // Simple section heading with underline
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.primary);
+  doc.text('Contact Information', margin, currentY);
+  doc.setDrawColor(colors.accent);
+  doc.setLineWidth(0.5);
+  doc.line(margin, currentY + 2, margin + 60, currentY + 2);
+  currentY += 12;
+
+  doc.setTextColor(colors.text);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+
+  // Contact items in single column for clarity
+  const contactItems = [
+    { label: 'President:', content: organization.president || 'N/A' },
+    { label: 'Telephone:', content: organization.tel_phone || 'N/A' },
+    { label: 'Cell Number:', content: organization.phone || 'N/A' },
+    { label: 'Email:', content: organization.email || 'N/A' },
+    { label: 'Website:', content: organization.website || 'N/A' }
+  ];
+
+  contactItems.forEach(({ label, content }) => {
+    doc.setFont('helvetica', 'bold');
+    doc.text(label, margin, currentY);
+    doc.setFont('helvetica', 'normal');
+
+    if (content && doc.getTextWidth(content) > contentWidth - 70) {
+      currentY = wrapText(doc, content, margin + 70, currentY, contentWidth - 70);
+    } else {
+      doc.text(content, margin + 70, currentY);
+      currentY += 8;
+    }
+  });
+
+  // About Organization Section
+  currentY += 10;
+  if (currentY > pageHeight - 40) {
     doc.addPage();
-    currentY = margin;
+    currentY = 40;
   }
 
-  doc.setFont('helvetica', 'bold');
+  // Section heading with underline
   doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.primary);
+  doc.text('About Organization', margin, currentY);
+  doc.setDrawColor(colors.accent);
+  doc.setLineWidth(0.5);
+  doc.line(margin, currentY + 2, margin + 60, currentY + 2);
+  currentY += 12;
+
+  doc.setTextColor(colors.text);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  const cleanDescription = stripHtml(organization.description);
+  currentY = wrapText(doc, cleanDescription, margin, currentY, contentWidth);
+
+  // Consortium Type Section
+  currentY += 10;
+  if (currentY > pageHeight - 40) {
+    doc.addPage();
+    currentY = 40;
+  }
+
+  // Section heading with underline
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.primary);
   doc.text('Consortium Type', margin, currentY);
+  doc.setDrawColor(colors.accent);
+  doc.setLineWidth(0.5);
+  doc.line(margin, currentY + 2, margin + 50, currentY + 2);
+  currentY += 12;
+
+  doc.setTextColor(colors.text);
+  doc.setFontSize(11);
+
+  // Organization type items in single column
+  const typeItems = [
+    { label: 'Organization Type:', content: getOrganizationType(<number>organization.org_type) || 'N/A' },
+    { label: 'Organization Sub Type:', content: getOrganizationSubType(<number>organization.sub_org_type) || 'N/A' }
+  ];
+
+  typeItems.forEach(({ label, content }) => {
+    doc.setFont('helvetica', 'bold');
+    doc.text(label, margin, currentY);
+    doc.setFont('helvetica', 'normal');
+
+    if (content && doc.getTextWidth(content) > contentWidth - 70) {
+      currentY = wrapText(doc, content, margin + 70, currentY, contentWidth - 70);
+    } else {
+      doc.text(content, margin + 70, currentY);
+      currentY += 8;
+    }
+  });
+
+  // Cluster Representatives Section
   currentY += 10;
-
-  doc.setFontSize(12);
-  currentY = formatLabelAndContent(
-      doc,
-      'Organization Type: ',
-      getOrganizationType(<number>organization.org_type) || 'N/A',
-      margin,
-      currentY,
-      contentWidth
-  );
-
-  currentY = formatLabelAndContent(
-      doc,
-      'Organization Sub Type: ',
-      getOrganizationSubType(<number>organization.sub_org_type) || 'N/A',
-      margin,
-      currentY,
-      contentWidth
-  );
-
-
-  currentY += 8;
-
-  // Check if we need a new page for representatives
-  if (currentY > doc.internal.pageSize.height - 60) {
+  if (currentY > pageHeight - 40) {
     doc.addPage();
-    currentY = margin;
+    currentY = 40;
   }
 
-  // Representatives Section
-  doc.setFont('helvetica', 'bold');
+  // Section heading with underline
   doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.primary);
   doc.text('Cluster Representatives', margin, currentY);
-  currentY += 10;
+  doc.setDrawColor(colors.accent);
+  doc.setLineWidth(0.5);
+  doc.line(margin, currentY + 2, margin + 70, currentY + 2);
+  currentY += 12;
 
-  doc.setFontSize(12);
+  doc.setTextColor(colors.text);
+  doc.setFontSize(11);
+
+  // Representatives in single column with improved formatting
   const representatives = [
     { title: 'Research & Development', rep: organization.rd_rep },
     { title: 'Technology Transfer', rep: organization.tt_rep },
@@ -222,56 +327,32 @@ const downloadOrganizationDataPDF = async (organization: Organization) => {
   ];
 
   representatives.forEach(({ title, rep }) => {
-    if (currentY > doc.internal.pageSize.height - 20) {
+    if (currentY > pageHeight - 30) {
       doc.addPage();
-      currentY = margin;
+      currentY = 40;
     }
-
-    const repInfo = `${rep.full_name || 'N/A'}${rep.email ? ` | ${rep.email}` : ''}`;
-    const availableWidth = contentWidth - (margin + 70); // Space available for the info
 
     doc.setFont('helvetica', 'bold');
     doc.text(`${title}:`, margin, currentY);
     doc.setFont('helvetica', 'normal');
 
-    if (doc.getTextWidth(repInfo) > availableWidth) {
-      // Split the text into lines that fit the available width
-      const words = repInfo.split(' ');
-      let currentLine = '';
-      let firstLine = true;
+    const repInfo = `${rep.full_name || 'N/A'}${rep.email ? ` | ${rep.email}` : ''}`;
 
-      words.forEach((word) => {
-        const testLine = currentLine + (currentLine ? ' ' : '') + word;
-        if (doc.getTextWidth(testLine) > availableWidth) {
-          // Print the current line
-          doc.text(currentLine, firstLine ? margin + 70 : margin + 70, currentY);
-          currentY += 7;
-          currentLine = word;
-          firstLine = false;
-        } else {
-          currentLine = testLine;
-        }
-      });
-
-      // Print the last line
-      if (currentLine) {
-        doc.text(currentLine, firstLine ? margin + 70 : margin + 70, currentY);
-        currentY += 7;
-      }
-
-      // Add some extra spacing after wrapped text
-      currentY += 3;
+    if (repInfo && doc.getTextWidth(repInfo) > contentWidth - 70) {
+      currentY = wrapText(doc, repInfo, margin + 70, currentY, contentWidth - 70);
     } else {
-      // No wrapping needed
       doc.text(repInfo, margin + 70, currentY);
-      currentY += 7;
+      currentY += 8;
     }
   });
+
+  // Add minimal header, footer and page numbers
+  addHeaderAndFooter(doc);
+  addPageNumber(doc);
 
   // Save the PDF
   doc.save(`${organization.name}-Info.pdf`);
 };
-
 
 const filterOrganizationMembersBySearchQuery = () => {
   if(searchQuery.value) {
