@@ -757,6 +757,24 @@ onMounted(async () => {
              </VBtnPrimaryFilled>
            </VRow>
          </div>
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
+           <VRow  class="ma-0" justify="space-between" align="center">
+             <div>
+               <p class="section-title">Upload Project Files</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Upload files to your project</p>
+             </div>
+             <VBtnPrimaryFilled
+                 :to="{ name: path == 'repositories' ? 'upload-files-repository' : 'upload-files-repository-my', params: {slug: repository?.slug}}"
+                 height="41px"
+                 rounded="lg"
+                 class="satoshi-md"
+                 style="font-size: 14px !important;">
+               Upload Project Files
+             </VBtnPrimaryFilled>
+           </VRow>
+         </div>
+
          <VDivider v-if="currentRepo?.is_member" class="my-5"/>
          <div class="mt-2">
            <VRow v-if="currentRepo?.is_member" class="ma-0" justify="space-between" align="center">

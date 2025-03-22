@@ -418,6 +418,20 @@ export const useRepositoryServices = () => {
     }
   };
 
+  const fetchRepositoryVisibility = async (id: string) : Promise<number> => {
+    try {
+      const res = await server.get(`/repositories/${id}`, {
+        headers: authorizationHeader
+      });
+
+      return res.data.visibility
+    } catch (e: any) {
+      console.log(e)
+      return 1;
+
+    }
+  }
+
   const filterRepositoriesbyTags = (repositoryList: Repository[], repositoryData: Repository[], selectedTags: string[]) : Repository[] => {
     if (selectedTags.length > 0) {
       repositoryData = repositoryList.filter(repo =>
@@ -685,7 +699,8 @@ export const useRepositoryServices = () => {
     fetchRepositoriesByUser,
     fetchRepositoriesByUserWithPagination,
     fetchRepositoryIDsByUser,
-    changeRepositoryVisibility
+    changeRepositoryVisibility,
+    fetchRepositoryVisibility
   }
 
 }
