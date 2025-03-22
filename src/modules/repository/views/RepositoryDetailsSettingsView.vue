@@ -124,7 +124,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   let currentY = 40;
 
   // Helper function to add page numbers
-  const addPageNumber = (doc) => {
+  const addPageNumber = (doc: any) => {
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
@@ -135,7 +135,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   };
 
   // Helper function to add simple header and footer
-  const addHeaderAndFooter = (doc) => {
+  const addHeaderAndFooter = (doc: any) => {
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
