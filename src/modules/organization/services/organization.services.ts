@@ -25,6 +25,8 @@ const {isEmptyObject} = useObjectChecker()
 // const {router} = useRouting()
 const {myOrganizations, allOrganizations, mapOrganizations, organization, searchedMapOrganizations} = useOrganizationStore();
 
+
+
 export const useOrganizationServices = () => {
   const errorMessageIntialState = reactive({
     name: '',
@@ -346,6 +348,22 @@ export const useOrganizationServices = () => {
     });
   };
 
+  const changeOrganizationVisibility = async (id: string, visibility: number) => {
+    try {
+      await server.patch(`/v1/organization/${id}/update`, {
+        visibility: visibility
+      },{
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      // console.log(res.data);
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
 
   // @ts-ignore
   const fetchOrganizationByUserWithPagination = async (pageNumber: number) : Promise<Organization[]> => {
@@ -508,6 +526,7 @@ export const useOrganizationServices = () => {
     fetchOrganizations,
     fetchOrganizationsWithPagination,
     fetchOrganizationData,
-    fetchOrganizationIDsByUser
+    fetchOrganizationIDsByUser,
+    changeOrganizationVisibility
   };
 };

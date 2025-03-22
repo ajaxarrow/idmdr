@@ -242,6 +242,22 @@ export const useRepositoryServices = () => {
     await saveRepository(repository, `/repositories/${id}`, 'update', id)
   }
 
+  const changeRepositoryVisibility = async (id: string, visibility: number) => {
+    try {
+      await server.patch(`/repositories/${id}`, {
+        visibility: visibility
+      }, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      // console.log(res.data);
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
   const deleteRepository = async (id: string) => {
     try {
       await server.patch(`/repositories/${id}`, {
@@ -668,7 +684,8 @@ export const useRepositoryServices = () => {
     fetchRepositoriesWithPagination,
     fetchRepositoriesByUser,
     fetchRepositoriesByUserWithPagination,
-    fetchRepositoryIDsByUser
+    fetchRepositoryIDsByUser,
+    changeRepositoryVisibility
   }
 
 }

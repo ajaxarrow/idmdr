@@ -19,6 +19,7 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import jsPDF from 'jspdf';
 import DOMPurify from 'dompurify';
 import {useOrgType} from "../composables/useOrgType.ts";
+import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
@@ -394,6 +395,11 @@ const deleteMemberCallback = async (member: OrgMember) => {
   memberActionMenu.value = false
 }
 
+const changeVisibilityCallback = (newVisibility: number) => {
+  showSnackbarMessage("CMI Visibility Changed Successfully", Status.success)
+  organization!.value!.visibility = newVisibility
+}
+
 
 const fetchMembers = async () => {
   const data = await fetchOrgMembers(<string>route.params.slug)
@@ -454,6 +460,29 @@ onMounted(async () => {
           </VBtnPrimaryFilled>
         </VRow>
         <div v-if="currentOrg.is_member">
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
+            <VRow  class="ma-0" justify="space-between" align="center">
+              <div>
+                <p class="section-title">Update CMI Visibility</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your consortium member institution visibility</p>
+              </div>
+              <ChangeVisibilityDialog
+                  :id="<string>organization?.uid!"
+                  :visibility="organization?.visibility"
+                  type="organization"
+                  @callback="changeVisibilityCallback"
+              >
+                <VBtnPrimaryFilled
+                    height="41px"
+                    rounded="lg"
+                    class="satoshi-md"
+                    style="font-size: 14px !important;">
+                  Change CMI Visibility
+                </VBtnPrimaryFilled>
+              </ChangeVisibilityDialog>
+            </VRow>
+          </div>
           <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="my-5"/>
           <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">

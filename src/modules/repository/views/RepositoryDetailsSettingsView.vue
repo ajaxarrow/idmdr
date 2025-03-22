@@ -22,6 +22,7 @@ import {AccessRequest} from "../../../interfaces/access-request.interface.ts";
 import AccessRequestConfirmationDialog from "../components/AccessRequestConfirmationDialog.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
+import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
@@ -655,6 +656,11 @@ const manageRequestCallback = async (id: string, isApproved: boolean, accessRequ
   memberActionMenu.value = false
 }
 
+const changeVisibilityCallback = async (newVisibility: number) => {
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  repository!.value!.visibility = newVisibility
+}
+
 watch(() => searchQuery.value, () => {
   filterRepoMembersBySearchQuery()
 });
@@ -711,6 +717,29 @@ onMounted(async () => {
          </VBtnPrimaryFilled>
        </VRow>
        <div v-if="currentRepo.is_member">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
+           <VRow  class="ma-0" justify="space-between" align="center">
+             <div>
+               <p class="section-title">Update Project Visibility</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project visibility </p>
+             </div>
+             <ChangeVisibilityDialog
+               :id="<string>repository?.uid!"
+               :visibility="repository?.visibility"
+               type="project"
+              @callback="changeVisibilityCallback"
+             >
+               <VBtnPrimaryFilled
+                   height="41px"
+                   rounded="lg"
+                   class="satoshi-md"
+                   style="font-size: 14px !important;">
+                 Change Project Visibility
+               </VBtnPrimaryFilled>
+             </ChangeVisibilityDialog>
+           </VRow>
+         </div>
          <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
