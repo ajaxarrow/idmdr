@@ -241,173 +241,175 @@ onMounted(async ()=>{
         </div>
       </div>
       <VDivider/>
-      <div class="mb-10 pa-6">
-        <div v-if="attachments.length == 0">
-          <label class="input-label">File</label>
-          <div
-              class="my-2 file-upload-container"
-              :class="{'dropzone-active': active}"
-              @dragover.prevent
-              @dragenter.prevent="toggleActive"
-              @dragleave.prevent="toggleActive"
-              @drop.prevent="handleBulkAttachmentsUpload">
-            <PhFileDashed size="50"/>
-            <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
-            <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
-          </div>
-        </div>
-        <div v-else>
-          <label class="input-label mb-5">Files</label>
-          <div class="attachments-container mt-2">
+      <div class="pa-6">
+        <div class="mb-10">
+          <div v-if="attachments.length == 0">
+            <label class="input-label">File</label>
             <div
-                v-for="(attachment, index) in attachments"
-                :key="index"
-            >
-              <VDivider  v-if="index != 0"/>
-              <div :class="{'mb-5': !attachment.showFiles}"  class="d-flex align-center justify-space-between mt-5">
-                <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : (attachment.attachment != '' ? attachment.name as string : 'New File')}}</p>
-                <div class="d-flex align-center justify-space-between ga-2">
-                  <DeleteDialog v-if="attachment.type == 'update'" @callback="deleteAttachmentCallback(<string>attachment.uid, index)">
-                    <VTooltip location="bottom" >
+                class="my-2 file-upload-container"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
+              <PhFileDashed size="50"/>
+              <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
+            </div>
+          </div>
+          <div v-else>
+            <label class="input-label mb-5">Files</label>
+            <div class="attachments-container mt-2">
+              <div
+                  v-for="(attachment, index) in attachments"
+                  :key="index"
+              >
+                <VDivider  v-if="index != 0"/>
+                <div :class="{'mb-5': !attachment.showFiles}"  class="d-flex align-center justify-space-between mt-5">
+                  <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : (attachment.attachment != '' ? attachment.name as string : 'New File')}}</p>
+                  <div class="d-flex align-center justify-space-between ga-2">
+                    <DeleteDialog v-if="attachment.type == 'update'" @callback="deleteAttachmentCallback(<string>attachment.uid, index)">
+                      <VTooltip location="bottom" >
+                        <template v-slot:activator="{ props }">
+                          <PhTrash v-bind="props" class="cursor-pointer" />
+                        </template>
+                        <span>Delete Attachment</span>
+                      </VTooltip>
+                    </DeleteDialog>
+                    <VTooltip location="bottom" v-else>
                       <template v-slot:activator="{ props }">
-                        <PhTrash v-bind="props" class="cursor-pointer" />
+                        <PhX v-bind="props" class="cursor-pointer" @click="removeAttachment(index)"/>
                       </template>
-                      <span>Delete Attachment</span>
+                      <span>Remove Attachment</span>
                     </VTooltip>
-                  </DeleteDialog>
-                  <VTooltip location="bottom" v-else>
-                    <template v-slot:activator="{ props }">
-                      <PhX v-bind="props" class="cursor-pointer" @click="removeAttachment(index)"/>
-                    </template>
-                    <span>Remove Attachment</span>
-                  </VTooltip>
-                  <VTooltip location="bottom">
-                    <template v-slot:activator="{ props }">
-                      <component
-                          :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
-                          v-bind="props"
-                          class="cursor-pointer"
-                          @click="attachment.showFiles = !attachment.showFiles"
-                      />
-                    </template>
-                    <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
-                  </VTooltip>
-                </div>
-              </div>
-              <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
-              <div v-if="attachment.showFiles">
-                <div class="mt-5 mb-3">
-                  <label class="input-label">Attachment</label>
-                  <div v-if="attachment.file || attachment.attachment != ''" class="my-3">
-                    <VDivider/>
-                    <div class="d-flex align-center justify-space-between pa-2" >
-                      <p class="dialog-boundary-title d-flex align-center">
-                        <PhImage class="mr-1"/>
-                        {{attachment.file ? attachment.file.name : attachment.name }}
-                      </p>
-                      <div class="d-flex align-center ga-2">
-                        <VTooltip location="bottom">
-                          <template v-slot:activator="{ props }">
-                            <PhX v-bind="props" class="cursor-pointer" @click="clearAttachment(index)"/>
-                          </template>
-                          <span>Remove File</span>
-                        </VTooltip>
-                      </div>
-                    </div>
-                    <VDivider/>
-                    <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="attachment.errorMessage">{{attachment.errorMessage}}</p>
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <component
+                            :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
+                            v-bind="props"
+                            class="cursor-pointer"
+                            @click="attachment.showFiles = !attachment.showFiles"
+                        />
+                      </template>
+                      <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
+                    </VTooltip>
                   </div>
-                  <VFileInput
-                      v-else
-                      @change="handleIndividualAttachmentsUpload($event, index)"
-                      label="Choose File by Clicking Here"
-                      class="my-2"
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                      chips
-                      prepend-icon=""
-                      :error-messages="attachments[index].errorMessage as string"
-                  >
-                    <template v-slot:prepend-inner>
-                      <PhFile/>
-                    </template>
-                  </VFileInput>
                 </div>
-                <div class="mb-3">
-                  <label class="input-label">Attachment Name</label>
-                  <VTextField
-                      v-model="attachments[index].name"
-                      label="Enter File Name"
-                      class="my-2"
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="input-label">Attachment Description</label>
-                  <VTextField
-                      v-model="attachments[index].description"
-                      label="Enter File Description"
-                      class="my-2"
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="input-label d-flex justify-space-between">
-                    Attachment Visibility
-                    <span style="font-size: 14px; font-weight: 400;">
+                <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
+                <div v-if="attachment.showFiles">
+                  <div class="mt-5 mb-3">
+                    <label class="input-label">Attachment</label>
+                    <div v-if="attachment.file || attachment.attachment != ''" class="my-3">
+                      <VDivider/>
+                      <div class="d-flex align-center justify-space-between pa-2" >
+                        <p class="dialog-boundary-title d-flex align-center">
+                          <PhImage class="mr-1"/>
+                          {{attachment.file ? attachment.file.name : attachment.name }}
+                        </p>
+                        <div class="d-flex align-center ga-2">
+                          <VTooltip location="bottom">
+                            <template v-slot:activator="{ props }">
+                              <PhX v-bind="props" class="cursor-pointer" @click="clearAttachment(index)"/>
+                            </template>
+                            <span>Remove File</span>
+                          </VTooltip>
+                        </div>
+                      </div>
+                      <VDivider/>
+                      <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="attachment.errorMessage">{{attachment.errorMessage}}</p>
+                    </div>
+                    <VFileInput
+                        v-else
+                        @change="handleIndividualAttachmentsUpload($event, index)"
+                        label="Choose File by Clicking Here"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                        chips
+                        prepend-icon=""
+                        :error-messages="attachments[index].errorMessage as string"
+                    >
+                      <template v-slot:prepend-inner>
+                        <PhFile/>
+                      </template>
+                    </VFileInput>
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Name</label>
+                    <VTextField
+                        v-model="attachments[index].name"
+                        label="Enter File Name"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Description</label>
+                    <VTextField
+                        v-model="attachments[index].description"
+                        label="Enter File Description"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label d-flex justify-space-between">
+                      Attachment Visibility
+                      <span style="font-size: 14px; font-weight: 400;">
                     <AttachmentsVisibilityInfoDialog/>
                   </span>
-                  </label>
-                  <VAutocomplete
-                      v-model="attachments[index].visibility"
-                      :items="visibilityInfo"
-                      :item-title="item => item.name"
-                      :item-value="item => item.value"
-                      label="Enter File Visibility"
-                      class="my-2"
-                      rounded="lg"
-                      density="comfortable"
-                      variant="outlined"
-                      color="primary"
-                      base-color="gs60"
-                  />
+                    </label>
+                    <VAutocomplete
+                        v-model="attachments[index].visibility"
+                        :items="visibilityInfo"
+                        :item-title="item => item.name"
+                        :item-value="item => item.value"
+                        label="Enter File Visibility"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
                 </div>
+                <VDivider v-if="index != attachments.length - 1 "/>
               </div>
-              <VDivider v-if="index != attachments.length - 1 "/>
-            </div>
-            <div class="d-flex justify-end">
-              <VBtnPrimaryFilled
-                  @click="addFileAttachment"
-                  rounded="lg"
-                  style="font-size: 14px !important;"
-              >
-                Add More File
-              </VBtnPrimaryFilled>
+              <div class="d-flex justify-end">
+                <VBtnPrimaryFilled
+                    @click="addFileAttachment"
+                    rounded="lg"
+                    style="font-size: 14px !important;"
+                >
+                  Add More File
+                </VBtnPrimaryFilled>
+              </div>
             </div>
           </div>
         </div>
+        <VRow class="ma-0" justify="end">
+          <VBtnPrimaryFilled
+              @click="uploadProjectFiles"
+              rounded="lg"
+              height="44px"
+              width="166px"
+          >
+            Submit
+          </VBtnPrimaryFilled>
+        </VRow>
       </div>
-      <VRow class="ma-0" justify="end">
-        <VBtnPrimaryFilled
-            @click="uploadProjectFiles"
-            rounded="lg"
-            height="44px"
-            width="166px"
-        >
-          Submit
-        </VBtnPrimaryFilled>
-      </VRow>
     </VForm>
   </MainLayout>
 </template>
