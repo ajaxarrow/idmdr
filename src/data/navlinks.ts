@@ -5,7 +5,7 @@ import {
   PhSignOut,
   PhUsersFour,
   PhUsersThree,
-  PhAirplaneLanding, PhUserCircle, PhLightbulbFilament, PhUsers, PhPen, PhCalendar
+  PhAirplaneLanding, PhUserCircle, PhLightbulbFilament, PhUsers, PhPen, PhCalendar, PhLeaf
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
@@ -25,6 +25,11 @@ export const navLinks = [
     name: 'IP Technologies',
     link: '/ip-technologies',
     icon: PhLightbulbFilament
+  },
+  {
+    name: 'ATBI',
+    link: '/atbi',
+    icon: PhLeaf
   },
   {
     name: 'CMIs',
