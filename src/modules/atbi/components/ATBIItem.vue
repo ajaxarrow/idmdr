@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, PropType, ref} from "vue";
-import {Expert} from "../../../interfaces/organization.interface.ts";
 import {ATBI} from "../../../interfaces/atbi.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 const {arrayToString} = useStringArrayHelper()
@@ -13,7 +11,6 @@ const props = defineProps({
   }
 })
 
-const {isDesktop} = useScreenStore();
 const {route} = useRouting()
 
 const getFirstPath = (url: string) => {
@@ -32,11 +29,11 @@ onMounted(() => {
         <div class="ml-2">
           <p class="organization-title">
             {{
-             props.atbi.name
+             props.atbi?.name
             }}
           </p>
 
-          <p class="organization-subtitle">Owners: {{arrayToString(props.atbi.owner)}}</p>
+          <p class="organization-subtitle">Owners: {{arrayToString(props.atbi?.owner as string[])}}</p>
         </div>
       </div>
       <VBtn

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {onMounted, ref, watch} from "vue";
 import {ATBI} from "../../../interfaces/atbi.interface.ts";
@@ -8,7 +7,6 @@ import {PhHardDrives, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 import ATBIItem from "./ATBIItem.vue";
 
-const {route} = useRouting()
 const {scrollTop} = useScroll()
 
 const searchQuery = ref('');

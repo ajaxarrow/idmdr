@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { ATBI, Facility } from "../../../interfaces/atbi.interface.ts";
+import { ATBI } from "../../../interfaces/atbi.interface.ts";
 
 const props = defineProps({
   atbi: {

@@ -77,7 +77,7 @@ onMounted(() => {
               </p>
               <!-- <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>-->
               <p class="text-subtitle">
-                Owners: {{ arrayToString(atbiData?.owner) }}
+                Owners: {{ arrayToString(atbiData?.owner as string[]) }}
               </p>
               <p class="text-subtitle">
                 {{ atbiData?.mobile }} · <a class="text-decoration-none text-bs50" href="mailto:{{ atbiData?.email }}">Email</a> · <a class="text-decoration-none text-bs50" href="{{ atbiData?.facebook }}">Facebook</a>
