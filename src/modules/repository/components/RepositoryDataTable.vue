@@ -3,10 +3,11 @@ import { useScreenStore } from "../../../core/stores/screen-size.store.ts";
 import { ref, watch } from "vue";
 import { useRepositoryServices } from "../services/repository.services.ts";
 import { PhPlus } from "@phosphor-icons/vue";
+import {Repository} from "../../../interfaces/repository.interface.ts";
 
 const { fetchAllRepositories } = useRepositoryServices();
 
-const repositories = ref([]);
+const repositories = ref<Repository[]>([]);
 const totalItems = ref(0);
 const loading = ref(false);
 const search = ref("");
