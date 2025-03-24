@@ -3,22 +3,32 @@ import {routes} from "./routes.ts";
 import {useLoadingStore} from "../core/stores/progress-bar.store.ts";
 import {useAuthStore} from "../modules/auth/stores/auth.store.ts";
 import {useMiddleware} from "../middlewares/middlewares.ts";
+import {useUserStore} from "../core/stores/user.store.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: routes
 })
 
+const {userData} = useUserStore()
+
 const {handleLogout} = useAuthStore();
 const {checkAuth, checkIfAuthenticated} = useMiddleware();
+const protectedUserPages = [
+    'my-organization-posts-details', 'my-organization-posts', 'my-organizations', 'new-organization-my', 'edit-organization-my', 'my-organization', 'my-repositories', 'my-organization-data', 'my-organization-settings', 'my-organization-repositories', 'my-repository-data', 'my-repository-settings', 'my-repository-discussions', 'my-repository-discussions-topic', 'my-organization-settings',
+]
 const protectedPages = [
-    'settings', 'my-organizations', 'settings-account', 'settings-organizations', 'sectors', 'repository-settings', 'my-organization-settings', 'organization-settings', 'new-organization', 'edit-organization', 'new-organization-my', 'edit-organization-my', 'new-repository', 'edit-repository', 'notifications', 'profile', 'my-organization', 'my-repositories', 'my-organization-data', 'my-organization-settings', 'my-organization-repositories', 'my-repository-data', 'my-repository-settings', 'my-repository-discussions', 'my-repository-discussions-topic', 'organization-experts', 'my-organization-experts', 'experts', 'edit-expert', 'new-expert', 'posts', 'new-post', 'edit-post', 'post-details', 'organization-events', 'my-organization-events', 'events', 'organization-posts-details', 'organization-posts', 'my-organization-posts-details', 'my-organization-posts'
+    'settings', 'settings-account', 'settings-organizations', 'sectors', 'repository-settings', 'organization-settings', 'new-organization', 'edit-organization', 'new-repository', 'edit-repository', 'notifications', 'profile',  'organization-experts', 'my-organization-experts', 'experts', 'edit-expert', 'new-expert', 'posts', 'new-post', 'edit-post', 'post-details', 'organization-events', 'my-organization-events', 'events', 'organization-posts-details', 'organization-post', ...protectedUserPages
 ];
 
 router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNext) => {
     const {isLoading} = useLoadingStore();
     isLoading.value = true;
     window.scrollTo({top: 0, behavior: 'smooth'});
+
+    if (protectedUserPages.includes(to.name as string) && userData.is_superuser) {
+        return next({ path: '/' });
+    }
 
     if (to.name === 'signout') {
         await handleLogout();

@@ -503,6 +503,24 @@ export const useRepositoryServices = () => {
     }
   };
 
+  const fetchAllRepositories = async(pageNumber: number): Promise<Repository[]> => {
+    try{
+      const res = await server.get(`/repositories/?ordering=-updated_at&page=${pageNumber}`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      const data = [...repositories];
+      myRepositories.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
 
 
   const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
@@ -700,7 +718,8 @@ export const useRepositoryServices = () => {
     fetchRepositoriesByUserWithPagination,
     fetchRepositoryIDsByUser,
     changeRepositoryVisibility,
-    fetchRepositoryVisibility
+    fetchRepositoryVisibility,
+    fetchAllRepositories
   }
 
 }
