@@ -71,7 +71,7 @@ onUpdated(async()=>{
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">
               <p class="text-name text-container mb-1">{{userData.username}}</p>
-              <p class="text-right text-name-subtitle">{{ userData.email }}</p>
+              <p class="text-right text-name-subtitle">{{ userData.is_superuser ? 'Super Admin' : userData.email }}</p>
             </div>
             <UserAvatarMenu/>
 <!--            <VAvatar-->
