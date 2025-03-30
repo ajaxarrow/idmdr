@@ -531,7 +531,7 @@ onUnmounted(() => {
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
-          <VAutocomplete
+          <VCombobox
               placeholder="E.g. Soil Health, Agriculture Data, Global Farming, Agricultural Lands,"
               class="my-2"
               rounded="lg"
