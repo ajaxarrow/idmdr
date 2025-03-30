@@ -16,13 +16,13 @@ const menu = ref(false)
 
 const navs = [
   {
-    title: "My Repositories",
-    link: "/my-repositories",
+    title: userData.is_superuser ? 'Projects' : 'My Projects',
+    link: userData.is_superuser ? '/repositories' : '/my-repositories',
     icon: PhCloud,
   },
   {
-    title: "My Organizations",
-    link: "/my-organizations",
+    title: userData.is_superuser ? 'CMIs' : 'My CMIs',
+    link: userData.is_superuser ? '/organizations' : '/my-organizations',
     icon: PhUsersFour,
   },
   {
@@ -30,11 +30,11 @@ const navs = [
     link: "/notifications",
     icon: PhBell,
   },
-  {
-    title: "My Profile",
-    link: "/profile",
-    icon: PhUserCircle,
-  },
+    ...(userData.is_superuser ? [] : [{
+      title: "My Profile",
+      link: "/profile",
+      icon: PhUserCircle,
+    }]),
   // {
   //   title: "Account Settings",
   //   link: "/settings/account",
