@@ -47,7 +47,7 @@ const visibleHeaders = computed(() => {
   return headers.value.filter(header => selectedColumns.value.includes(header.key));
 });
 
-const updateColumnVisibility = (selectedKeys) => {
+const updateColumnVisibility = (selectedKeys: string) => {
   headers.value.forEach(header => {
     header.visible = selectedKeys.includes(header.key);
   });
@@ -261,7 +261,7 @@ onMounted(async () => {
                 </VAvatar>
                 <div>
                   <p class="font-weight-medium mb-0">{{ item.title }}</p>
-                  <p class="text-caption text-medium-emphasis mb-0">{{item.org_data.name}}({{item.org_data.acronym}}) | {{ formatDate(item.updated_at) }}</p>
+                  <p class="text-caption text-medium-emphasis mb-0">{{item.org_data?.name}}({{item.org_data?.acronym}}) | {{ formatDate(item.updated_at) }}</p>
                 </div>
               </div>
             </template>
