@@ -5,7 +5,7 @@ import ATBIListViewContent from "../components/ATBIListViewContent.vue";
 </script>
 
 <template>
-  <MainLayout title="Experts">
+  <MainLayout title="ATBI">
     <div style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
