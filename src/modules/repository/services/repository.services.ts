@@ -357,7 +357,7 @@ export const useRepositoryServices = () => {
           affiliation: repo.affiliation ? stringToArray(repo.affiliation) : "",
           commodity: repo.commodity ? stringToArray(repo.commodity) : "",
           description: repo.description || "",
-          end_date: repo.end_date || "",
+          end_date: repo.end_date || "N/A",
           funding_agency: repo.funding_agency ? stringToArray(repo.funding_agency) : "",
           industry: repo.industry ? stringToArray(repo.industry) : "",
           is_active: repo.is_active,
@@ -370,7 +370,7 @@ export const useRepositoryServices = () => {
           project_component: repo.project_component || "",
           rpt: repo.rpt ? stringToArray(repo.rpt) : "",
           slug: repo.uid || "",
-          start_date: repo.start_date || "",
+          start_date: repo.start_date || "N/A",
           tags: repo.tags ? stringToArray(repo.tags) : "",
           tech_owner: repo.tech_owner || "",
           techOwnerData: techOwners,
@@ -507,7 +507,8 @@ export const useRepositoryServices = () => {
       pageNumber: number,
       pageSize: number,
       searchQuery?: string,
-      priorityLevel?: string
+      priorityLevel?: string,
+      organization?: string
   ): Promise<Repository[]> => {
     try {
       let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
@@ -516,6 +517,9 @@ export const useRepositoryServices = () => {
       }
       if (priorityLevel) {
         url += `&priority_level=${encodeURIComponent(priorityLevel.toLowerCase())}`;
+      }
+      if (organization?.trim()) {
+        url += `&organization=${encodeURIComponent(organization)}`;
       }
 
       const res = await server.get(url, {

@@ -511,6 +511,33 @@ export const useOrganizationServices = () => {
 
   }
 
+  const fetchAllOrganizations = async (
+      pageNumber: number,
+      pageSize: number,
+  ) : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/organization/?page=${pageNumber}&page_size=${pageSize}`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = rawData.map((org: any) => {
+        return {
+          uid: org.uid,
+          slug: org.uid,
+          name: org.name,
+          acronym: org.acronym
+        }
+      })
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
 
 
   return {
@@ -527,6 +554,7 @@ export const useOrganizationServices = () => {
     fetchOrganizationsWithPagination,
     fetchOrganizationData,
     fetchOrganizationIDsByUser,
-    changeOrganizationVisibility
+    changeOrganizationVisibility,
+    fetchAllOrganizations
   };
 };

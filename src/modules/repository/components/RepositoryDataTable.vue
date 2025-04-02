@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import {ref, onMounted, watch} from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {PhPlus} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {usePageSizeHelper} from "../../../core/composables/usePageSizeHelper.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 
 const { isSmall, isTablet } = useScreenStore();
 const { fetchAllRepositories, fetchRepositoryIDsByUser } = useRepositoryServices();
-const {generatePageSizeIncrements} = usePageSizeHelper()
+const {fetchAllOrganizations} = useOrganizationServices();
+const {generatePageSizeIncrements} = usePageSizeHelper();
+const selectedOrganization = ref<string>('');
 
 const repositories = ref<Repository[]>([]);
 const loading = ref(false);
@@ -17,6 +21,7 @@ const itemsPerPage = ref(10);
 const page = ref(1);
 const totalItems = ref(0);
 const selectedPriorityLevel = ref('');
+const organizations = ref<any[]>([]);
 
 
 const priorityLevelOptions = [
@@ -26,24 +31,39 @@ const priorityLevelOptions = [
   { title: 'Low', value: 'low' },
 ];
 
-// Table headers
+
+
 const headers = ref([
-  { title: 'Project', key: 'title', sortable: true },
-  { title: 'Priority', key: 'priority_level', sortable: true },
-  { title: 'Start Date', key: 'start_date', sortable: true },
-  { title: 'End Date', key: 'end_date', sortable: true },
-  { title: 'Actions', key: 'actions', sortable: false },
+  { title: 'Project', key: 'title', sortable: true, visible: true },
+  { title: 'Priority', key: 'priority_level', sortable: true, visible: true },
+  { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
+  { title: 'End Date', key: 'end_date', sortable: true, visible: false },
+  { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);
 
+const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
+
+const visibleHeaders = computed(() => {
+  return headers.value.filter(header => selectedColumns.value.includes(header.key));
+});
+
+const updateColumnVisibility = (selectedKeys) => {
+  headers.value.forEach(header => {
+    header.visible = selectedKeys.includes(header.key);
+  });
+};
+
+const isColumnVisible = (key: string) => {
+  const column = headers.value.find(h => h.key === key);
+  return column ? column.visible : false;
+};
 
 
-watch([search, selectedPriorityLevel, itemsPerPage], () => {
+watch([search, selectedPriorityLevel, itemsPerPage, selectedOrganization], () => {
   page.value = 1;
   loadRepositories();
   updateTotalCount()
 });
-
-
 
 
 const loadRepositories = async () => {
@@ -53,7 +73,8 @@ const loadRepositories = async () => {
         page.value,
         itemsPerPage.value,
         search.value,
-        selectedPriorityLevel.value
+        selectedPriorityLevel.value,
+        selectedOrganization.value
     );
     repositories.value = data;
   } catch (error) {
@@ -110,6 +131,7 @@ const updateTotalCount = async () => {
 };
 
 onMounted(async () => {
+  organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizations(1, 1000))];
   await updateTotalCount();
   await loadRepositories();
 });
@@ -161,6 +183,41 @@ onMounted(async () => {
             />
             <div class="flex-grow-1"></div>
             <VSelect
+                v-model="selectedColumns"
+                :items="headers"
+                item-title="title"
+                item-value="key"
+                label="Filter Columns"
+                multiple
+                clearable
+                chips
+                density="compact"
+                class="me-3 mb-3"
+                variant="outlined"
+                rounded="md"
+                color="primary"
+                base-color="gs60"
+                style="max-width: 250px"
+                hide-details
+                @update:model-value="updateColumnVisibility"
+            />
+            <VSelect
+                v-model="selectedOrganization"
+                :items="organizations"
+                :item-title="organization => organization.acronym ? `${organization.name} (${organization.acronym})` : organization.name"
+                :item-value="organization => `${organization.uid}`"
+                label="Organization"
+                hide-details
+                density="compact"
+                class="me-3 mb-3"
+                variant="outlined"
+                rounded="md"
+                color="primary"
+                base-color="gs60"
+                style="max-width: 250px"
+            />
+            <VSelect
+                v-if="isColumnVisible('priority_level')"
                 v-model="selectedPriorityLevel"
                 :items="priorityLevelOptions"
                 label="Priority"
@@ -172,12 +229,12 @@ onMounted(async () => {
                 color="primary"
                 base-color="gs60"
                 style="max-width: 150px"
-            />
+                />
           </VCardTitle>
 
           <VDataTableServer
               v-model:items-per-page="itemsPerPage"
-              :headers="headers"
+              :headers="visibleHeaders"
               :items="repositories"
               :loading="loading"
               :items-length="totalItems"
@@ -204,7 +261,7 @@ onMounted(async () => {
                 </VAvatar>
                 <div>
                   <p class="font-weight-medium mb-0">{{ item.title }}</p>
-                  <p class="text-caption text-medium-emphasis mb-0">{{ formatDate(item.updated_at) }}</p>
+                  <p class="text-caption text-medium-emphasis mb-0">{{item.org_data.name}}({{item.org_data.acronym}}) | {{ formatDate(item.updated_at) }}</p>
                 </div>
               </div>
             </template>
@@ -218,10 +275,10 @@ onMounted(async () => {
               </VChip>
             </template>
             <template v-slot:item.actions="{ item }">
-              <VBtn icon size="small" variant="text" color="primary" :to="`/repository/${item.slug}`">
+              <VBtn icon size="small" variant="text" color="primary" :to="{ name: 'repository-data', params: { slug: item.slug }}">
                 <VIcon size="20">mdi-eye</VIcon>
               </VBtn>
-              <VBtn icon size="small" variant="text" color="warning" :to="`/repository/${item.slug}/edit`">
+              <VBtn icon size="small" variant="text" color="warning" :to="{ name: 'edit-repository', params: { slug: item.slug }}">
                 <VIcon size="20">mdi-pencil</VIcon>
               </VBtn>
               <VBtn icon size="small" variant="text" color="error">
@@ -229,13 +286,12 @@ onMounted(async () => {
               </VBtn>
             </template>
             <template v-slot:no-data>
-              <div class="d-flex flex-column align-center pa-6">
-                <VIcon size="64" color="grey-lighten-1" icon="mdi-folder-open-outline" />
-                <p class="text-h6 mt-4">No Projects Found</p>
-                <p class="text-body-2 text-center text-medium-emphasis">
-                  There are no projects matching your search criteria
-                </p>
-              </div>
+              <EmptyStateInfo
+                  header="No Projects Found"
+                  description="There are no projects matching your search criteria"
+                  :isCallbackNeeded="search !== ''"
+                  @callback="search = ''"
+              />
             </template>
           </VDataTableServer>
         </VSheet>
