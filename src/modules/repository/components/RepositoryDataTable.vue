@@ -47,7 +47,7 @@ const visibleHeaders = computed(() => {
   return headers.value.filter(header => selectedColumns.value.includes(header.key));
 });
 
-const updateColumnVisibility = (selectedKeys: string) => {
+const updateColumnVisibility = (selectedKeys: string[]) => {
   headers.value.forEach(header => {
     header.visible = selectedKeys.includes(header.key);
   });
