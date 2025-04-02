@@ -179,7 +179,6 @@ onMounted(async () => {
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items="repositories"
-              :items-per-page="itemsPerPage"
               :loading="loading"
               :items-length="totalItems"
               :items-per-page-options="generatePageSizeIncrements(totalItems)"
@@ -201,7 +200,7 @@ onMounted(async () => {
                     class="me-2"
                     v-else
                 >
-                  <VImg :src="item.image" alt="Project" />
+                  <VImg :src="item.image as string" alt="Project" />
                 </VAvatar>
                 <div>
                   <p class="font-weight-medium mb-0">{{ item.title }}</p>
