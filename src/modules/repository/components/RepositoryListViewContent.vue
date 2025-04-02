@@ -149,7 +149,7 @@ onUnmounted(() => {
             </VBtnPrimaryFilled>
             <VBtnPrimaryFilled :to="{ name: forUser ? 'new-repository-my' : 'new-repository'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
               <PhPlus size="16" class="mr-2"/>
-              New {{path == 'ip-technologies' ?  'IP technologies' : 'projects'}}
+              New {{path == 'ip-technologies' ?  'IP Technology' : 'Project'}}
             </VBtnPrimaryFilled>
           </div>
         </VRow>
@@ -169,7 +169,7 @@ onUnmounted(() => {
             <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
           </template>
           <template v-slot:label>
-            <p class="text-gs20">Search {{path == 'repositories' ?  'projects' : 'IP technologies'}} by title, keyword, tags.</p>
+            <p class="text-gs20">Search {{path == 'ip-technologies' ?  'IP technologies' : 'projects'}} by title, keyword, tags.</p>
           </template>
         </VTextField>
         <VRow class="ma-0 mt-2" align="center">
@@ -238,7 +238,7 @@ onUnmounted(() => {
             <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
             <div class="pa-3" v-if="reachEnd">
               <p class="text-center">
-                All {{path == 'repositories' ?  'projects' : 'IP technologies'}} are loaded!
+                All {{path == 'ip-technologies' ?  'IP technologies' : 'projects'}} are loaded!
                 <span
                     @click="scrollTop"
                     class="text-bs50 cursor-pointer scroll-top-link"
