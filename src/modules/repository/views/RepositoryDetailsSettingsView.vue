@@ -33,7 +33,7 @@ const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
 
 const {arrayToString} = useStringArrayHelper()
-const {route, router} = useRouting()
+const {route} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
 const currentRepo = ref<Repository | null>(null)
@@ -745,7 +745,7 @@ onMounted(async () => {
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Update {{entityTitle}} Visibility (Current Visibility: {{getVisibilityLabel(repository?.visibility)}})</p>
+               <p class="section-title">Update {{entityTitle}} Visibility (Current Visibility: {{getVisibilityLabel(repository?.visibility as number)}})</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project visibility </p>
              </div>
              <ChangeVisibilityDialog

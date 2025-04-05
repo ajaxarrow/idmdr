@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, watch, computed, onUpdated} from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {
