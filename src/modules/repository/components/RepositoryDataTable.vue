@@ -10,7 +10,9 @@ import {
   PhPencil,
   PhDotsThreeOutlineVertical,
   PhEye,
-  PhGear
+  PhGear,
+  PhFunnel, // Added for filter icon
+  PhMagnifyingGlass // Added for search icon
 } from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {usePageSizeHelper} from "../../../core/composables/usePageSizeHelper.ts";
@@ -42,6 +44,9 @@ const selectedType = ref('');
 const selectedProjectStatus = ref<string | boolean>('');
 const selectedProjectPublicStatus = ref<string | boolean>('');
 const path = computed(() => route.path)
+
+// Added for filter drawer
+const showFilterDrawer = ref(false);
 
 const manageRepoStatusCallback = async (id: string, isActive: boolean) => {
   await manageRepositoryStatus(id, isActive);
@@ -105,10 +110,6 @@ const projectPublicStatusOptions = [
   { title: 'Inactive', value: false },
 ];
 
-
-
-
-
 const headers = computed(() => [
   { title: 'Project', key: 'title', sortable: true, visible: true },
   { title: 'Status', key: 'status', sortable: true, visible: true },
@@ -138,13 +139,35 @@ const isColumnVisible = (key: string) => {
   return column ? column.visible : false;
 };
 
+// Computed for active filter count
+// const activeFilterCount = computed(() => {
+//   let count = 0;
+//   if (selectedPriorityLevel.value) count++;
+//   if (selectedOrganization.value) count++;
+//   if (selectedType.value) count++;
+//   if (selectedProjectStatus.value !== '') count++;
+//   if (selectedProjectPublicStatus.value !== '') count++;
+//   if (selectedColumns.value.length !== headers.value.filter(h => h.visible).length) count++;
+//   return count;
+// });
+
+// Reset all filters function
+const resetAllFilters = () => {
+  selectedPriorityLevel.value = '';
+  selectedOrganization.value = '';
+  selectedType.value = '';
+  selectedProjectStatus.value = '';
+  selectedProjectPublicStatus.value = '';
+  selectedColumns.value = headers.value.filter(h => h.key !== 'priority_level' && h.key !== 'start_date' && h.key !== 'end_date').map(h => h.key);
+  updateColumnVisibility(selectedColumns.value);
+};
 
 watch([search, selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectStatus, selectedProjectPublicStatus],
     () => {
-  page.value = 1;
-  loadRepositories();
-  updateTotalCount();
-});
+      page.value = 1;
+      loadRepositories();
+      updateTotalCount();
+    });
 
 watch([selectedProjectPublicStatus],
     () => {
@@ -153,7 +176,6 @@ watch([selectedProjectPublicStatus],
       loadRepositories();
       updateTotalCount();
     });
-
 
 const loadRepositories = async () => {
   loading.value = true;
@@ -176,12 +198,10 @@ const loadRepositories = async () => {
   }
 };
 
-
 const handlePageChange = async (newPage: number) => {
   page.value = newPage;
   await loadRepositories();
 };
-
 
 const getInitials = (name: string): string => {
   return name
@@ -231,7 +251,6 @@ watch(()=> route.path, async () => {
   await loadRepositories()
 })
 
-
 onMounted(async () => {
   organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizations(1, 1000))];
   await updateTotalCount();
@@ -241,11 +260,14 @@ onMounted(async () => {
 
 <template>
   <div class="relative-container circle-quarter" style="height: 100%">
+    <!-- Header Section with subtle improvements -->
     <div class="pa-6 relative-container" style="z-index: 20">
       <VRow justify="space-between" align="center" class="ma-0">
         <div>
-          <p class="text-heading d-flex align-center">All {{ path == '/repositories' ?  'Projects' : 'IP Technologies' }}</p>
-          <p class="text-subtitle">Create and manage all {{path == '/repositories' ?  'projects' : 'IP technologies'}} across NOMCAARRD</p>
+          <p class="text-heading d-flex align-center">
+            All {{ path == '/repositories' ? 'Projects' : 'IP Technologies' }}
+          </p>
+          <p class="text-subtitle">Create and manage all {{path == '/repositories' ? 'projects' : 'IP technologies'}} across NOMCAARRD</p>
         </div>
         <div>
           <VBtnPrimaryFilled :to="{ name: 'new-repository' }" v-if="isSmall || isTablet" icon>
@@ -260,140 +282,190 @@ onMounted(async () => {
               style="font-size: 14px !important"
           >
             <PhPlus size="16" class="mr-2" />
-            New {{path == '/repositories' ?  'Project' : 'IP Technology'}}
+            New {{path == '/repositories' ? 'Project' : 'IP Technology'}}
           </VBtnPrimaryFilled>
         </div>
       </VRow>
     </div>
     <VDivider />
+
+    <!-- Main Content Section with improved layout -->
     <div class="pa-6">
       <VContainer fluid>
-        <VSheet class="datatable-container" >
-          <VCardTitle class="d-flex align-center flex-wrap pt-4 px-4">
-            <VTextField
-                v-model="search"
-                prepend-inner-icon="mdi-magnify"
-                placeholder="Search..."
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                style="max-width: 300px"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-            />
-            <div class="flex-grow-1"></div>
-            <VSelect
-                v-model="selectedColumns"
-                :items="headers"
-                item-title="title"
-                item-value="key"
-                label="Filter Columns"
-                multiple
-                clearable
-                chips
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 250px"
-                hide-details
-                @update:model-value="updateColumnVisibility"
-            />
-            <VSelect
-                v-model="selectedOrganization"
-                :items="organizations"
-                :item-title="organization => organization.acronym ? `${organization.name} (${organization.acronym})` : organization.name"
-                :item-value="organization => `${organization.uid}`"
-                label="Organization"
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 250px"
-            />
-            <VSelect
-                v-if="isColumnVisible('priority_level')"
-                v-model="selectedPriorityLevel"
-                :items="priorityLevelOptions"
-                label="Priority"
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 150px"
-            />
-            <VSelect
-                v-if="isColumnVisible('priority_level')"
-                v-model="selectedPriorityLevel"
-                :items="priorityLevelOptions"
-                label="Priority"
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 150px"
-            />
-            <VSelect
-                v-model="selectedProjectStatus"
-                :items="projectStatusOptions"
-                :item-title="type => type.title"
-                :item-value="type => type.value"
-                :label="`${path == '/repositories' ?  'Project' : 'IP Technology'} Admin Status`"
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 150px"
-            />
-            <VSelect
-                v-model="selectedProjectPublicStatus"
-                :items="projectPublicStatusOptions"
-                :item-title="type => type.title"
-                :item-value="type => type.value"
-                :label="`${path == '/repositories' ?  'Project' : 'IP Technology'} Public Status`"
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 150px"
-            />
-            <VSelect
-                v-if="isColumnVisible('type') && path == '/repositories'"
-                v-model="selectedType"
-                :items="typeOptions"
-                :item-title="type => type.title"
-                :item-value="type => type.value"
-                label="Project Type"
-                hide-details
-                density="compact"
-                class="me-3 mb-3"
-                variant="outlined"
-                rounded="md"
-                color="primary"
-                base-color="gs60"
-                style="max-width: 150px"
-            />
-          </VCardTitle>
+        <VSheet class="datatable-container rounded-lg elevation-1">
+          <!-- Search and filter bar - simplified with filter button -->
+          <div class="d-flex flex-wrap align-center justify-space-between px-4 pt-4 pb-2">
+            <!-- Search field -->
+            <div class="search-container d-flex align-center flex-grow-1" style="max-width: 350px">
+              <VTextField
+                  v-model="search"
+                  placeholder="Search projects..."
+                  hide-details
+                  density="compact"
+                  class="search-field"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+              >
+                <template v-slot:prepend-inner>
+                  <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
+                </template>
+              </VTextField>
+            </div>
 
+            <!-- Filter button with badge showing active filter count -->
+            <div class="d-flex align-center">
+              <VBtn
+                  color="blue-grey-darken-1"
+                  variant="tonal"
+                  rounded="md"
+                  class="filter-btn ml-2 px-3"
+                  @click="showFilterDrawer = !showFilterDrawer"
+              >
+                <div class="d-flex align-center">
+                  <PhFunnel size="16" class="mr-2" />
+                  <span class="text-body-2">Filters</span>
+                </div>
+              </VBtn>
+            </div>
+          </div>
+
+          <!-- Expandable filter area -->
+          <VExpandTransition>
+            <div v-if="showFilterDrawer" class="filter-drawer px-4 pb-3">
+              <div class="d-flex justify-space-between align-center my-2">
+                <p class="text-subtitle-1 font-weight-medium mb-0">Filter Options</p>
+                <VBtn
+                    variant="text"
+                    density="compact"
+                    color="primary"
+                    @click="resetAllFilters"
+                >
+                  Clear All
+                </VBtn>
+              </div>
+
+              <VDivider class="mb-3"></VDivider>
+
+              <VRow>
+                <!-- Column visibility filter -->
+                <VCol cols="12" sm="6" md="4" lg="3">
+                  <VSelect
+                      v-model="selectedColumns"
+                      :items="headers"
+                      item-title="title"
+                      item-value="key"
+                      label="Table Columns"
+                      multiple
+                      chips
+                      closable-chips
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      hide-details
+                      class="mb-3"
+                      @update:model-value="updateColumnVisibility"
+                  />
+                </VCol>
+
+                <!-- Organization filter -->
+                <VCol cols="12" sm="6" md="4" lg="3">
+                  <VSelect
+                      v-model="selectedOrganization"
+                      :items="organizations"
+                      :item-title="organization => organization.acronym ? `${organization.name} (${organization.acronym})` : organization.name"
+                      :item-value="organization => `${organization.uid}`"
+                      label="Organization"
+                      hide-details
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      class="mb-3"
+                  />
+                </VCol>
+
+                <!-- Priority filter -->
+                <VCol cols="12" sm="6" md="4" lg="3">
+                  <VSelect
+                      v-if="isColumnVisible('priority_level')"
+                      v-model="selectedPriorityLevel"
+                      :items="priorityLevelOptions"
+                      label="Priority"
+                      hide-details
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      class="mb-3"
+                  />
+                </VCol>
+
+                <!-- Project Status filter -->
+                <VCol cols="12" sm="6" md="4" lg="3">
+                  <VSelect
+                      v-if="isColumnVisible('status')"
+                      v-model="selectedProjectStatus"
+                      :items="projectStatusOptions"
+                      :item-title="type => type.title"
+                      :item-value="type => type.value"
+                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} Admin Status`"
+                      hide-details
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      class="mb-3"
+                  />
+                </VCol>
+
+                <!-- Project Public Status filter -->
+                <VCol cols="12" sm="6" md="4" lg="3">
+                  <VSelect
+                      v-if="isColumnVisible('status')"
+                      v-model="selectedProjectPublicStatus"
+                      :items="projectPublicStatusOptions"
+                      :item-title="type => type.title"
+                      :item-value="type => type.value"
+                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} Public Status`"
+                      hide-details
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      class="mb-3"
+                  />
+                </VCol>
+
+                <!-- Type filter - only for repositories path -->
+                <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('type') && path == '/repositories'">
+                  <VSelect
+                      v-model="selectedType"
+                      :items="typeOptions"
+                      :item-title="type => type.title"
+                      :item-value="type => type.value"
+                      label="Project Type"
+                      hide-details
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      class="mb-3"
+                  />
+                </VCol>
+              </VRow>
+            </div>
+          </VExpandTransition>
+
+          <!-- Data Table with improved styling -->
           <VDataTableServer
               v-model:items-per-page="itemsPerPage"
               :headers="visibleHeaders"
@@ -402,6 +474,7 @@ onMounted(async () => {
               :items-length="totalItems"
               :items-per-page-options="generatePageSizeIncrements(totalItems)"
               @update:page="handlePageChange"
+              class="elevation-0"
           >
             <template v-slot:item.title="{ item }">
               <div class="d-flex align-center" style="max-width: 400px;">
@@ -443,12 +516,12 @@ onMounted(async () => {
                 </template>
               </VTooltip>
             </template>
+
             <template v-if="path === '/repositories'" v-slot:item.type="{ item }">
               <VChip size="small">
                 {{ item.type === 'Document Repository' ? 'Document Project' : 'IP Technology' }}
               </VChip>
             </template>
-
 
             <template v-slot:item.priority_level="{ item }">
               <VChip
@@ -462,61 +535,72 @@ onMounted(async () => {
 
             <template v-slot:item.actions="{ item }">
               <VMenu
-                  location="bottom"
+                  location="bottom end"
                   :close-on-content-click="false"
+                  transition="slide-y-transition"
               >
                 <template #activator="{ props }">
-                  <p class="action-button cursor-pointer d-flex justify-space-between align-center ga-2" v-bind="props">
-                      Options
+                  <VBtn icon variant="text" v-bind="props" density="comfortable">
                     <PhDotsThreeOutlineVertical weight="fill"/>
-                  </p>
+                  </VBtn>
                 </template>
-                <VSheet width="200" class="rounded-b-lg py-2">
-                  <RouterLink class="text-decoration-none" :to="{ name: 'repository-data', params: { slug: item.slug }}">
-                    <p class="cursor-pointer action-menu-item">
-                      <PhEye/>
-                      View {{pageEntity}}
-                    </p>
-                  </RouterLink>
-                  <RouterLink class="text-decoration-none" :to="{ name: 'edit-repository', params: { slug: item.slug }}">
-                    <p class="cursor-pointer action-menu-item">
-                      <PhPencil/>
-                      Edit {{pageEntity}}
-                    </p>
-                  </RouterLink>
-                  <RouterLink class="text-decoration-none" :to="{ name: 'repository-settings', params: { slug: item.slug }}">
-                    <p class="cursor-pointer action-menu-item">
-                      <PhGear/>
-                      Configure {{pageEntity}} Settings
-                    </p>
-                  </RouterLink>
-                  <ConfirmationDialog
-                      @callback="manageRepoAdminStatusCallback(item.uid as string, !item.is_approved)"
-                      :confirm-content="item.is_approved ? `Disable ${pageEntity}` : `Enable ${pageEntity}`"
-                      :content="item.is_approved ? `Are you sure you want to disable this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?` : `Are you sure you want to enable this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?`"
-                  >
+                <VCard class="action-menu rounded-lg" min-width="220" elevation="3">
+                  <VList density="compact" nav>
+                    <VListItem :to="{ name: 'repository-data', params: { slug: item.slug }}" class="action-menu-item">
+                      <template v-slot:prepend>
+                        <PhEye class="mr-2" />
+                      </template>
+                      <VListItemTitle>View {{pageEntity}}</VListItemTitle>
+                    </VListItem>
 
-                    <p class="cursor-pointer action-menu-item">
-                      <PhPower/>
-                      {{ item.is_approved ? `Disable ${pageEntity}` : `Enable ${pageEntity}` }}
-                    </p>
+                    <VListItem :to="{ name: 'edit-repository', params: { slug: item.slug }}" class="action-menu-item">
+                      <template v-slot:prepend>
+                        <PhPencil class="mr-2" />
+                      </template>
+                      <VListItemTitle>Edit {{pageEntity}}</VListItemTitle>
+                    </VListItem>
 
-                  </ConfirmationDialog>
-                  <ConfirmationDialog
-                      v-if="item.is_approved"
-                      @callback="manageRepoStatusCallback(item.uid as string, !item.is_active)"
-                      :confirm-content="item.is_active ? 'Deactivate Project' : 'Activate Project'"
-                      :content="item.is_active ? 'Are you sure you want to deactivate this project? All project data will be deleted.' : 'Are you sure you want to activate this project?'"
-                  >
-                    <p class="cursor-pointer action-menu-item">
-                      <PhX v-if="item.is_active"/>
-                      <PhCheck v-else  />
-                      {{item.is_active ? 'Deactivate Project' : 'Activate Project'}}
-                    </p>
-                  </ConfirmationDialog>
-                </VSheet>
+                    <VListItem :to="{ name: 'repository-settings', params: { slug: item.slug }}" class="action-menu-item">
+                      <template v-slot:prepend>
+                        <PhGear class="mr-2" />
+                      </template>
+                      <VListItemTitle>Configure {{pageEntity}} Settings</VListItemTitle>
+                    </VListItem>
+
+                    <VDivider class="my-1"></VDivider>
+
+                    <ConfirmationDialog
+                        @callback="manageRepoAdminStatusCallback(item.uid as string, !item.is_approved)"
+                        :confirm-content="item.is_approved ? `Disable ${pageEntity}` : `Enable ${pageEntity}`"
+                        :content="item.is_approved ? `Are you sure you want to disable this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?` : `Are you sure you want to enable this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?`"
+                    >
+                      <VListItem class="action-menu-item">
+                        <template v-slot:prepend>
+                          <PhPower class="mr-2" />
+                        </template>
+                        <VListItemTitle>{{ item.is_approved ? `Disable ${pageEntity}` : `Enable ${pageEntity}` }}</VListItemTitle>
+                      </VListItem>
+                    </ConfirmationDialog>
+
+                    <ConfirmationDialog
+                        v-if="item.is_approved"
+                        @callback="manageRepoStatusCallback(item.uid as string, !item.is_active)"
+                        :confirm-content="item.is_active ? 'Deactivate Project' : 'Activate Project'"
+                        :content="item.is_active ? 'Are you sure you want to deactivate this project? All project data will be deleted.' : 'Are you sure you want to activate this project?'"
+                    >
+                      <VListItem class="action-menu-item">
+                        <template v-slot:prepend>
+                          <PhX v-if="item.is_active" class="mr-2" />
+                          <PhCheck v-else class="mr-2" />
+                        </template>
+                        <VListItemTitle>{{item.is_active ? 'Deactivate Project' : 'Activate Project'}}</VListItemTitle>
+                      </VListItem>
+                    </ConfirmationDialog>
+                  </VList>
+                </VCard>
               </VMenu>
             </template>
+
             <template v-slot:no-data>
               <EmptyStateInfo
                   :header="`No ${path === '/repositories' ? 'Projects' : 'Repositories'} Found`"
@@ -533,30 +617,40 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.action-button{
-  font-size: 14px;
-  border-radius: 8px;
-  padding: 10px;
-  border: 2px solid #e6e6e6;
+/* Improved styling */
+.datatable-container {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
-.action-button:hover{
-  background-color: #F0F5F9;
+.search-container {
+  position: relative;
 }
 
-.action-menu-item{
-  padding: 10px 15px !important;
-  font-size: 14px;
-  display: flex;
-  align-items: center !important;
-  gap: 10px !important;
-  color: black !important;
+.filter-btn {
+  height: 40px;
+  transition: all 0.2s ease;
 }
 
-.action-menu-item:hover{
-  background-color: #e0e3e3;
+.filter-drawer {
+  background-color: #f9fafc;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+.action-menu {
+  overflow: hidden;
+}
+
+.action-menu-item {
+  transition: background-color 0.2s ease;
+}
+
+.action-menu-item:hover {
+  background-color: #f0f5f9;
+}
+
+/* Background styles */
 .circle-quarter::after {
   content: "";
   position: absolute;
@@ -570,14 +664,31 @@ onMounted(async () => {
   opacity: 75%;
 }
 
-:deep(.v-field__outline){
+/* Form field styling */
+:deep(.v-field__outline) {
   opacity: 20%;
   color: #8C8C8C;
   --v-field-border-width: 1.75px !important;
 }
 
-:deep(input::placeholder){
+:deep(input::placeholder) {
   color: #5F6061;
   opacity: 90%;
+}
+
+/* Table enhancements */
+:deep(.v-data-table) {
+  font-family: 'Satoshi', sans-serif;
+}
+
+:deep(.v-data-table__td) {
+  padding: 12px 16px;
+}
+
+:deep(.v-data-table__th) {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  background-color: #f9fafc;
 }
 </style>
