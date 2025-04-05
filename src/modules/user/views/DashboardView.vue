@@ -84,7 +84,7 @@ onMounted(async () => {
               v-if="repositoryData.length > 0"
               v-for="repository in repositoryData"
               :repository="repository" />
-          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Repositories Found</p>
+          <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Projects Found</p>
         </div>
       </div>
     </div>
