@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
   // import {
   //   PhFile, PhFileArchive,
@@ -40,6 +40,14 @@ const selectedFileDescription = ref('');
 const selectedFileAttachment= ref('');
 const {fetchRepositoryIDsByUser} = useRepositoryServices();
 const isMember = ref(false)
+const entityTitle = computed(() => {
+  return repository.value
+      ? repository.value?.type! === 'Project Repository'
+          ? 'IP Technology'
+          : 'Project'
+      : 'Project';
+});
+
 
 const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
   return repoList.some(org => org.slug === repository?.slug);
@@ -49,6 +57,7 @@ const isSlugInRepoList = (repository: Repository | null | undefined, repoList: R
 const downloadRepoFiles = (): void => {
   window.open(`${import.meta.env.VITE_BASE_API_URL_DJANGO}/v1/repository/attachments/download/${repository.value?.slug}`, '_blank');
 };
+
 
 
 const downloadFile = (attachment: string): void => {
@@ -153,7 +162,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
       <div class="px-5 py-4">
         <VRow class="ma-0">
           <VCol cols="12" sm="12" md="8" lg="9" xxl="9" xl="9">
-            <p class="text-about-heading py-2">About Repository</p>
+            <p class="text-about-heading py-2">About {{entityTitle}}</p>
             <div class="ql-snow">
               <div class="ql-editor" v-html="repository.description"></div>
             </div>
@@ -183,7 +192,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
       </div>
       <VDivider/>
       <div class="px-7 py-5">
-        <p class="text-about-heading py-3">Project Components</p>
+        <p class="text-about-heading py-3">{{entityTitle}} Components</p>
         <VRow class="ma-0">
           <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Type</p>
@@ -207,7 +216,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             </p>
           </VCol>
           <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Project Status</p>
+            <p class="text-subtitle text-gs20">{{entityTitle}} Status</p>
             <p class="text-subtitle pr-3">{{ repository.status}}</p>
           </VCol>
           <VCol v-if="repository.org_data" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
@@ -390,7 +399,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
                 <template v-slot:activator="{ props }">
                   <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>
                 </template>
-                <span>Download Repository Files</span>
+                <span>Download {{entityTitle}} Files</span>
               </VTooltip>
 
             </VRow>

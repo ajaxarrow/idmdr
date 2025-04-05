@@ -258,20 +258,41 @@ export const useRepositoryServices = () => {
     }
   }
 
-  const deleteRepository = async (id: string) => {
+  const manageRepositoryStatus = async (id: string, isActive: boolean) => {
+    try {
+      if (userData.is_superuser) {
+        await server.patch(`/repositories/${id}`, {
+          is_approved: true,
+          is_active: isActive
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken}`
+          }
+        });
+      } else {
+        await server.patch(`/repositories/${id}`, {
+          is_active: isActive
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken}`
+          }
+        });
+      }
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
+  const manageRepositoryAdminStatus = async (id: string, isEnabled: boolean) => {
     try {
       await server.patch(`/repositories/${id}`, {
-        is_deleted: true
-      },{
+        is_approved: isEnabled
+      }, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
-      await localStorage.setItem('snackbarmessage', JSON.stringify({
-        message: 'Repository deleted successfully',
-        status: 'success'
-      }))
-      // console.log(res.data);
     } catch (e: any) {
       console.log(e.response?.data);
       return;
@@ -463,7 +484,7 @@ export const useRepositoryServices = () => {
         }
       });
 
-      const rawData = res.data.results;
+      const rawData = res.data.results.filter((data: any) => !data.repo.is_deleted && data.repo.is_active && data.repo.is_approved);
 
       const userRepo = (await fetchRepositoriesByUser()).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const filteredData = await Promise.all(
@@ -493,7 +514,7 @@ export const useRepositoryServices = () => {
     // Map the valid data
       const repositories: Repository[] = await mapRepoData(validData.map((data: any) => data.repo));
 
-      let data = [...repositories].filter(repo => !repo.is_deleted).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      let data = [...repositories].filter(repo => !repo.is_deleted && repo.is_approved).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       orgRepositories.value = data;
       return data;
 
@@ -508,10 +529,14 @@ export const useRepositoryServices = () => {
       pageSize: number,
       searchQuery?: string,
       priorityLevel?: string,
-      organization?: string
+      organization?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+      type?: string
   ): Promise<Repository[]> => {
     try {
-      let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
+      let url = `/repositories/?page=${pageNumber}&page_size=${pageSize}`;
+
       if (searchQuery) {
         url += `&search=${encodeURIComponent(searchQuery)}`;
       }
@@ -521,12 +546,22 @@ export const useRepositoryServices = () => {
       if (organization?.trim()) {
         url += `&organization=${encodeURIComponent(organization)}`;
       }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      if (type?.trim()) {
+        url += `&type=${encodeURIComponent(type)}`;
+      }
 
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
       });
 
       const rawData = res.data.results;
+
       let repositories: Repository[] = await mapRepoData(
           rawData.filter((repo: any) => !repo.is_deleted)
       );
@@ -542,6 +577,7 @@ export const useRepositoryServices = () => {
 
 
 
+
   const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
     try{
       const res = await server.get(`/repositories/?ordering=-updated_at&user=${userData.uid}&page=${pageNumber}`, {
@@ -550,7 +586,7 @@ export const useRepositoryServices = () => {
         }
       });
       const rawData = res.data.results;
-      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
       repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data
@@ -569,7 +605,7 @@ export const useRepositoryServices = () => {
         }
       });
       const rawData = res.data.results;
-      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
       repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data
@@ -605,9 +641,10 @@ export const useRepositoryServices = () => {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
       });
 
-      const rawData = res.data.results.filter((repo: any) => !repo.is_deleted);
+      const rawData = user ? res.data.results.filter((repo: any) => !repo.is_deleted && repo.is_approved) : res.data.results.filter((repo: any) => !repo.is_deleted);
       const repositories: Repository[] = rawData.map((repo: any) => ({
-        slug: repo.uid
+        slug: repo.uid,
+        type: repo.type
       }));
 
       myRepositories.value = [...repositories];
@@ -652,7 +689,7 @@ export const useRepositoryServices = () => {
 
       let results = await Promise.all(promises);
 
-      return results.flat().filter(repo => !repo.is_deleted).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      return results.flat().filter(repo => !repo.is_deleted && repo.is_active && repo.is_approved).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
     } catch (e) {
       return []
     }
@@ -664,18 +701,20 @@ export const useRepositoryServices = () => {
       if(user.value){
         const visibilityData = await fetchRepositoriesByVisibility([1, 4], pageSize);
         const userRepo = await fetchRepositoriesByUser(pageSize);
-        let combinedData = [...visibilityData.flat(), ...userRepo];
+
+        const filteredVisibilityData = visibilityData.flat().filter((repo: any) => repo.is_active && repo.is_approved);
+        let combinedData = [...filteredVisibilityData, ...userRepo];
         const uniqueData = Array.from(new Set(combinedData.map(repo => repo.slug)))
           .map(slug => combinedData.find(repo => repo.slug === slug));
         // @ts-ignore
         data = uniqueData ;
       } else {
         const visibilityData = await fetchRepositoriesByVisibility([1]);
-        data = visibilityData[0];
+        data = visibilityData[0].filter((repo: any) => repo.is_active && repo.is_approved);
       }
       data.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
-      allRepositories.value = data.filter(repo => !repo.is_deleted);
-      return data.filter(repo => !repo.is_deleted);
+      allRepositories.value = data.filter(repo => !repo.is_deleted && repo.is_approved);
+      return data.filter(repo => !repo.is_deleted && repo.is_approved);
     } catch (e) {
       return []
     }
@@ -735,15 +774,14 @@ export const useRepositoryServices = () => {
   };
 
 
-
-
   return {
     filterRepositoriesBySearchQuery,
     filterRepositoriesbyTags,
     fetchRepositoriesByOrganization,
     addRepository,
     updateRepository,
-    deleteRepository,
+    manageRepositoryStatus,
+    manageRepositoryAdminStatus,
     errorMessage,
     clearErrorMessage,
     hasErrorMessages,

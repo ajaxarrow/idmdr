@@ -400,6 +400,24 @@ export const useOrganizationServices = () => {
     }
   }
 
+  const fetchOrganizationByAdmin = async () : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/organization`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
+      const data = [ ...organizations];
+      // myOrganizations.value = [...myOrganizations.value, ...data];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
   const fetchOrganizationIDsByUser = async () : Promise<Organization[]> => {
     try{
       const res = await server.get(`/v1/user/${userData.uid}/organizations`, {
@@ -549,6 +567,7 @@ export const useOrganizationServices = () => {
     clearErrorMessage,
     hasErrorMessages,
     fetchOrganizationByUser,
+    fetchOrganizationByAdmin,
     fetchOrganizationByUserWithPagination,
     fetchOrganizations,
     fetchOrganizationsWithPagination,

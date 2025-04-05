@@ -54,11 +54,8 @@ const computedTitle = computed(() => {
 
 
 const filterRepositoryCallback = (currentSelectedTags: string[]) => {
-  const newTags = currentSelectedTags.filter(tag =>
-      !selectedTags.value.includes(tag) && !currentTags.value.includes(tag)
-  );
-  selectedTags.value = [...selectedTags.value, ...newTags];
-  currentTags.value = [...currentTags.value, ...newTags];
+  selectedTags.value = [...new Set([...selectedTags.value, ...currentSelectedTags])];
+  currentTags.value = [...new Set([...currentTags.value, ...currentSelectedTags])];
 };
 
 

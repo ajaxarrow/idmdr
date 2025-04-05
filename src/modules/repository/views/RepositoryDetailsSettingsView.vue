@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, computed} from "vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
@@ -23,11 +23,12 @@ import AccessRequestConfirmationDialog from "../components/AccessRequestConfirma
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
+import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
-const {fetchRepositoryData, fetchRepositoryIDsByUser, deleteRepository} = useRepositoryServices()
+const {fetchRepositoryData, fetchRepositoryIDsByUser, manageRepositoryStatus} = useRepositoryServices()
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
 
@@ -36,6 +37,13 @@ const {route, router} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
 const currentRepo = ref<Repository | null>(null)
+const entityTitle = computed(() => {
+  return currentRepo.value
+      ? currentRepo.value?.type! === 'Project Repository'
+          ? 'IP Technology'
+          : 'Project'
+      : 'Project';
+});
 const accessRequestSearchQuery = ref('')
 const memberActionMenu = ref(false)
 const overlayLoading = ref(false)
@@ -46,6 +54,20 @@ const accessRequests = ref<AccessRequest[]>([])
 const accessRequestData = ref<AccessRequest[]>([])
 const userRepoInfo = ref<OrgMember | null | undefined>(null)
 
+const getVisibilityLabel = (value: number): string => {
+  switch (value) {
+    case 1:
+      return 'Public'
+    case 2:
+      return 'Private'
+    case 3:
+      return 'Within Organization'
+    case 4:
+      return 'Within All Organization'
+    default:
+      return 'Unknown'
+  }
+}
 const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', {
     month: 'long',
@@ -99,6 +121,7 @@ const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: numb
 
   return currentY + lineHeight;
 };
+
 
 const downloadRepositoryDataPDF = async (repository: Repository) => {
   // Initialize PDF
@@ -624,11 +647,12 @@ const fetchMembers = async () => {
   repoMemberData.value = data
 }
 
-const deleteRepoCallback = async () => {
+const manageRepoStatusCallback = async (isActive: boolean) => {
   overlayLoading.value = true
-  await deleteRepository(route.params.slug as string)
+  await manageRepositoryStatus(route.params.slug as string, isActive)
   overlayLoading.value = false
-  await router.push({ name: 'my-repositories' })
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  repository!.value!.is_active = isActive!
 }
 
 const manageRequestCallback = async (id: string, isApproved: boolean, accessRequest: AccessRequest) => {
@@ -679,7 +703,7 @@ onMounted(async () => {
   const allUserRepo = await fetchRepositoryIDsByUser();
 
   if(currentRepo.value){
-    if(isSlugInRepoList(currentRepo.value, allUserRepo)) {
+    if(isSlugInRepoList(currentRepo.value, allUserRepo)|| userData.is_superuser) {
       if("is_member" in currentRepo.value){
         currentRepo.value.is_member = true;
       }
@@ -704,8 +728,8 @@ onMounted(async () => {
      <div v-if="currentRepo" class="px-6 py-7">
        <VRow  class="ma-0" justify="space-between" align="center">
          <div>
-           <p class="section-title">Download Project Information</p>
-           <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Project Information in PDF</p>
+           <p class="section-title">Download {{entityTitle}} Information</p>
+           <p class="text-gs20 mb-2" style="font-size: 14px;">Download the {{entityTitle}} Information in PDF</p>
          </div>
          <VBtnPrimaryFilled
              @click="downloadRepositoryDataPDF(currentRepo)"
@@ -713,7 +737,7 @@ onMounted(async () => {
              rounded="lg"
              class="satoshi-md"
              style="font-size: 14px !important;">
-           Download Repository Info
+           Download {{entityTitle}} Info
          </VBtnPrimaryFilled>
        </VRow>
        <div v-if="currentRepo.is_member">
@@ -721,7 +745,7 @@ onMounted(async () => {
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Update Project Visibility</p>
+               <p class="section-title">Update {{entityTitle}} Visibility (Current Visibility: {{getVisibilityLabel(repository?.visibility)}})</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project visibility </p>
              </div>
              <ChangeVisibilityDialog
@@ -735,7 +759,7 @@ onMounted(async () => {
                    rounded="lg"
                    class="satoshi-md"
                    style="font-size: 14px !important;">
-                 Change Project Visibility
+                 Change {{entityTitle}} Visibility
                </VBtnPrimaryFilled>
              </ChangeVisibilityDialog>
            </VRow>
@@ -744,7 +768,7 @@ onMounted(async () => {
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Update Project Information</p>
+               <p class="section-title">Update {{entityTitle}} Information</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project details and information</p>
              </div>
              <VBtnPrimaryFilled
@@ -753,7 +777,7 @@ onMounted(async () => {
                  rounded="lg"
                  class="satoshi-md"
                  style="font-size: 14px !important;">
-               Update Project Info
+               Update {{entityTitle}} Info
              </VBtnPrimaryFilled>
            </VRow>
          </div>
@@ -761,7 +785,7 @@ onMounted(async () => {
          <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Upload Project Files</p>
+               <p class="section-title">Upload {{entityTitle}} Files</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Upload files to your project</p>
              </div>
              <VBtnPrimaryFilled
@@ -770,7 +794,7 @@ onMounted(async () => {
                  rounded="lg"
                  class="satoshi-md"
                  style="font-size: 14px !important;">
-               Upload Project Files
+               Upload {{entityTitle}} Files
              </VBtnPrimaryFilled>
            </VRow>
          </div>
@@ -779,7 +803,7 @@ onMounted(async () => {
          <div class="mt-2">
            <VRow v-if="currentRepo?.is_member" class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Project Members</p>
+               <p class="section-title">{{entityTitle}} Members</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage project members and their roles. <AccessLeveLInfoDialog/></p>
              </div>
              <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
@@ -858,7 +882,7 @@ onMounted(async () => {
            </div>
            <div class="my-5 mx-1" v-else>
              <p class="d-flex align-center justify-center">
-               <PhInfo class="mr-1"/>No Project Members Found
+               <PhInfo class="mr-1"/>No {{entityTitle}} Members Found
              </p>
            </div>
          </div>
@@ -955,20 +979,22 @@ onMounted(async () => {
          <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2">
            <VRow class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Delete Project Information</p>
-               <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire project</p>
+               <p class="section-title">Manage {{entityTitle}} Status Information (Current Status: {{repository?.is_active ? 'Active' : 'Inactive'}})</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">This will change the status of the project</p>
              </div>
-             <DeleteDialog
-                 @callback="deleteRepoCallback"
+             <ConfirmationDialog
+                 @callback="manageRepoStatusCallback(!repository?.is_active)"
+                 :confirm-content="repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`"
+                 :content="repository?.is_active ? 'Are you sure you want to deactivate this project? All project data will be deleted.' : 'Are you sure you want to activate this project?'"
              >
                <VBtnPrimaryFilled
                    height="41px"
                    rounded="lg"
                    class="satoshi-md"
                    style="font-size: 14px !important; background-color: #b00020 !important">
-                 Delete Project
+                 {{repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`}}
                </VBtnPrimaryFilled>
-             </DeleteDialog>
+             </ConfirmationDialog>
            </VRow>
          </div>
        </div>

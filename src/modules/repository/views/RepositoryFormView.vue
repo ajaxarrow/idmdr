@@ -41,7 +41,7 @@ import {useRepositoryMemberServices} from "../services/repository-member.service
 
 const {arrayToString} = useStringArrayHelper()
 const {isEmptyObject} = useObjectChecker()
-const {fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
 const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
 const {fetchAttachmentsByRepository, deleteAttachment} = useRepositoryAttachmentServices()
 const {fetchCustomUsers} = useRepositoryMemberServices();
@@ -98,8 +98,8 @@ const repositoryDataIntialState = reactive<Repository>({
   funding_agency: [],
   geojson: {},
   industry: [],
-  is_active: false,
-  is_approved: false,
+  is_active: true,
+  is_approved: true,
   is_deleted: false,
   location: "",
   organization: "",
@@ -605,7 +605,7 @@ const updateRepositoryData = async () => {
 
 onMounted( async () => {
   fetchTags();
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   customUsers.value = await fetchCustomUsers();
   repositoryData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
