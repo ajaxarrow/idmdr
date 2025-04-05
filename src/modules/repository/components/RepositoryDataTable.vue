@@ -333,7 +333,7 @@ onMounted(async () => {
 
           <!-- Expandable filter area -->
           <VExpandTransition>
-            <div v-if="showFilterDrawer" class="filter-drawer px-4 pb-3">
+            <div v-if="showFilterDrawer" class="filter-drawer px-4 pb-3 pt-2">
               <div class="d-flex justify-space-between align-center my-2">
                 <p class="text-subtitle-1 font-weight-medium mb-0">Filter Options</p>
                 <VBtn
