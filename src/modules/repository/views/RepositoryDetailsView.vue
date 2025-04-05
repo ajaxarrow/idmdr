@@ -204,7 +204,20 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           </VCol>
           <VCol v-if="repository.lead" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Lead</p>
-            <p class="text-subtitle pr-3">{{repository.leadData?.data && repository.leadData?.data.first_name?.length > 0 ? repository!.leadData?.data.first_name : 'N/A'}} {{repository.leadData?.data && repository.leadData?.data.last_name?.length > 0 ? repository!.leadData?.data.last_name : ''}}</p>
+<!--            <p class="text-subtitle pr-3">{{repository.leadData?.data && repository.leadData?.data.first_name?.length > 0 ? repository!.leadData?.data.first_name : 'N/A'}} {{repository.leadData?.data && repository.leadData?.data.last_name?.length > 0 ? repository!.leadData?.data.last_name : ''}}</p>-->
+            <p class="text-subtitle pr-3">
+              {{
+                repository.leadData?.data?.first_name?.length
+                    ? repository.leadData.data.first_name
+                    : 'N/A'
+              }}
+              {{
+                repository.leadData?.data?.last_name?.length
+                    ? repository.leadData.data.last_name
+                    : ''
+              }}
+            </p>
+
           </VCol>
           <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Author<span v-if="repository.authorsData?.length != 0">(s)</span></p>
