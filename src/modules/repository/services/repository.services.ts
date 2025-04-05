@@ -311,6 +311,8 @@ export const useRepositoryServices = () => {
                   data: {
                     uid: user?.uid ?? '',
                     username: user?.username ?? '',
+                    first_name: user?.first_name ?? '',
+                    last_name: user?.last_name ?? '',
                     email: user?.email ?? '',
                   }
                 };
@@ -319,6 +321,8 @@ export const useRepositoryServices = () => {
                 type: 'user', data: {
                   uid: customUser.data?.uid ?? '',
                   username: customUser.data?.username ?? '',
+                  first_name: customUser.data?.first_name ?? '',
+                  last_name: customUser.data?.last_name ?? '',
                   email: customUser.data?.email ?? '',
                 }
               };
@@ -333,6 +337,10 @@ export const useRepositoryServices = () => {
                     uid: expert?.uid ?? '',
                     // @ts-ignore
                     username: `${expert?.name?.first_name ?? ''} ${expert?.name?.middle_name ?? ''} ${expert?.name?.last_name ?? ''} ${expert?.name?.extension ?? ''}`.trim(),
+                    // @ts-ignore
+                    first_name: expert?.name?.first_name ?? '',
+                    // @ts-ignore
+                    last_name: expert?.name?.last_name ?? '',
                     email: ''
                   }
                 };
@@ -341,6 +349,8 @@ export const useRepositoryServices = () => {
                   type: 'expert', data: {
                     uid: customUser.data?.uid ?? '',
                     username: customUser.data?.username ?? '',
+                    first_name: customUser.data?.first_name ?? '',
+                    last_name: customUser.data?.last_name ?? '',
                     email: customUser.data?.email ?? '',
                   }
                 };
@@ -353,6 +363,8 @@ export const useRepositoryServices = () => {
               data: {
                 uid: '',
                 username: customUser.data?.username ?? '',
+                first_name: customUser.data?.first_name ?? '',
+                last_name: customUser.data?.last_name ?? '',
                 email: ''
               }
             };

@@ -12,7 +12,15 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import AccessLeveLInfoDialog from "../../organization/components/AccessLeveLInfoDialog.vue";
-import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhArrowDown,
+  PhDotsThreeOutlineVertical,
+  PhInfo,
+  PhMagnifyingGlass,
+  PhPencil,
+  PhTrash,
+  PhWarning
+} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import AddRepoMemberDialog from "../components/AddRepoMemberDialog.vue";
 import jsPDF from 'jspdf';
@@ -24,6 +32,7 @@ import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelp
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
 const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
@@ -31,7 +40,7 @@ const {repository} = useRepositoryStore();
 const {fetchRepositoryData, fetchRepositoryIDsByUser, manageRepositoryStatus} = useRepositoryServices()
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
-
+const {getVisibilityLabel} = useVisibilityHelper()
 const {arrayToString} = useStringArrayHelper()
 const {route} = useRouting()
 const loading = ref(false)
@@ -54,19 +63,12 @@ const accessRequests = ref<AccessRequest[]>([])
 const accessRequestData = ref<AccessRequest[]>([])
 const userRepoInfo = ref<OrgMember | null | undefined>(null)
 
-const getVisibilityLabel = (value: number): string => {
-  switch (value) {
-    case 1:
-      return 'Public'
-    case 2:
-      return 'Private'
-    case 3:
-      return 'Within Organization'
-    case 4:
-      return 'Within All Organization'
-    default:
-      return 'Unknown'
-  }
+const scrollToStatus = () => {
+  // @ts-ignore
+  document.getElementById('repository-status').scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
 }
 const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -725,6 +727,30 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
    <div v-else>
+     <VAlert
+         v-if="repository && !repository.is_active"
+         color="#ff9800"
+         variant="tonal"
+         border="start"
+         class="inactive-repo-banner mb-4"
+     >
+       <div class="d-flex align-center">
+         <div class="warning-icon-container me-3">
+           <PhWarning size="24" weight="fill" class="warning-icon" />
+         </div>
+         <div class="warning-content">
+           <VAlert-title class="warning-title">
+             {{entityTitle}} Is Currently Inactive
+           </VAlert-title>
+           <div class="warning-message">
+             This {{entityTitle}} is not visible to the public. Only members can view it.
+             <a href="#repository-status" class="status-link" @click="scrollToStatus">
+               Change status now <PhArrowDown class="ms-1" />
+             </a>
+           </div>
+         </div>
+       </div>
+     </VAlert>
      <div v-if="currentRepo" class="px-6 py-7">
        <VRow  class="ma-0" justify="space-between" align="center">
          <div>
@@ -843,7 +869,7 @@ onMounted(async () => {
                      <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
                    </VAvatar>
                    <div class="mr-2">
-                     <p class="text-name text-container">{{member.user.username}}</p>
+                     <p class="text-name text-container">{{member.user.first_name}} {{member.user.last_name}}</p>
                      <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
                    </div>
                  </div>
@@ -925,7 +951,7 @@ onMounted(async () => {
                      <VImg :src="accessRequest.requestor_user_obj?.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
                    </VAvatar>
                    <div class="mr-2">
-                     <p class="text-name text-container">{{accessRequest.requestor_user_obj?.username}}</p>
+                     <p class="text-name text-container">{{accessRequest.requestor_user_obj?.first_name}} {{accessRequest.requestor_user_obj?.last_name}}</p>
                      <p class="text-name-subtitle">{{accessRequest.requestor_user_obj?.email}} · {{accessRequest.is_reviewed ? 'Denied' : 'Pending'}}</p>
                    </div>
                  </div>
@@ -976,7 +1002,7 @@ onMounted(async () => {
            </div>
          </div>
          <VDivider v-if="userRepoInfo?.access_level == 'owner'" class="my-5"/>
-         <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2">
+         <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2" id="repository-status">
            <VRow class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Manage {{entityTitle}} Status Information (Current Status: {{repository?.is_active ? 'Active' : 'Inactive'}})</p>
@@ -1004,6 +1030,68 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.inactive-repo-banner {
+  position: relative;
+  padding: 16px;
+  margin: 16px 16px 24px;
+  border-radius: 12px;
+  border-left-width: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, rgba(255, 242, 212, 0.7) 0%, rgba(254, 220, 151, 0.2) 100%);
+  backdrop-filter: blur(8px);
+  border-color: #ff9800 !important;
+}
+
+.warning-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(255, 152, 0, 0.2);
+}
+
+.warning-icon {
+  color: #ff9800;
+}
+
+.warning-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #945600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.warning-message {
+  font-size: 14px;
+  color: #66400c;
+}
+
+.status-link {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  color: #ff9800;
+  text-decoration: none;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.status-link:hover {
+  color: #ff5722;
+  text-decoration: underline;
+}
+
+.status-activate-btn {
+  background-color: #4caf50 !important;
+}
+
+.status-deactivate-btn {
+  background-color: #b00020 !important;
+}
+
 .action-button{
   font-size: 14px;
   border-radius: 8px;

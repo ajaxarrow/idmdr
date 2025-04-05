@@ -39,6 +39,10 @@ export const useRepositoryMemberServices = () => {
           uid: expert.uid,
           // @ts-ignore
           username: `${expert.name.first_name ?? ''} ${expert.name.middle_name ?? ''} ${expert.name.last_name ?? ''} ${expert.name.extension ?? ''}`.trim(),
+          // @ts-ignore
+          first_name: expert.name.first_name ?? '',
+          // @ts-ignore
+          last_name: expert.name.last_name ?? '',
           email: ''
         }
       }));
@@ -49,8 +53,6 @@ export const useRepositoryMemberServices = () => {
       return [];
     }
   };
-
-
 
 
 

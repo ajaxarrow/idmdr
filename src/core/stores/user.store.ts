@@ -15,6 +15,8 @@ const userData = reactive({
   is_superuser: user.value ? user.value.user.is_superuser : false,
   accessToken: user.value ? user.value.accessToken : '1000',
   refreshToken: user.value ? user.value.refreshToken : '1000',
+  firstName: user.value ? user.value.user.first_name : 'Guest',
+  lastName: user.value ? user.value.user.last_name : 'User'
 });
 
 export const useUserStore = createGlobalState(() => ({ user, userData}));

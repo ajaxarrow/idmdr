@@ -20,6 +20,7 @@ import jsPDF from 'jspdf';
 import DOMPurify from 'dompurify';
 import {useOrgType} from "../composables/useOrgType.ts";
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
+import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
@@ -28,6 +29,7 @@ const {showSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationIDsByUser, deleteOrganization} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
+const {getVisibilityLabel} = useVisibilityHelper()
 const overlayLoading = ref(false);
 const loading = ref(false)
 const {userData} = useUserStore();
@@ -464,7 +466,7 @@ onMounted(async () => {
           <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
-                <p class="section-title">Update CMI Visibility</p>
+                <p class="section-title">Update CMI Visibility (Current Visibility: {{getVisibilityLabel(organization?.visibility as number)}})</p>
                 <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your consortium member institution visibility</p>
               </div>
               <ChangeVisibilityDialog
@@ -544,7 +546,7 @@ onMounted(async () => {
                       <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
                     </VAvatar>
                     <div class="mr-2">
-                      <p class="text-name text-container">{{member.user.username}}</p>
+                      <p class="text-name text-container">{{member.user.first_name}} {{member.user.last_name}}</p>
                       <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
                     </div>
                   </div>

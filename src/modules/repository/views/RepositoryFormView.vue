@@ -201,6 +201,8 @@ const addCustomUser = (field: string) => {
       type: 'custom',
       data: {
         username: searchQueries.author.value as string,
+        first_name: searchQueries.author.value as string,
+        last_name: '',
         email: '',
         uid: ''
       }
@@ -214,6 +216,8 @@ const addCustomUser = (field: string) => {
       type: 'custom',
       data: {
         username: searchQueries.techOwner.value as string,
+        first_name: searchQueries.techOwner.value as string,
+        last_name: '',
         email: '',
         uid: ''
       }
@@ -227,6 +231,8 @@ const addCustomUser = (field: string) => {
       type: 'custom',
       data: {
         username: searchQueries.lead.value as string,
+        first_name: searchQueries.lead.value as string,
+        last_name: '',
         email: '',
         uid: ''
       }
@@ -240,6 +246,8 @@ const addCustomUser = (field: string) => {
       type: 'custom',
       data: {
         username: searchQueries.techGen.value as string,
+        first_name: searchQueries.techGen.value as string,
+        last_name: '',
         email: '',
         uid: ''
       }
@@ -831,7 +839,7 @@ onMounted( async () => {
           <VCombobox
               ref="authorRef"
               :items="customUsers"
-              :item-title="item => item.data?.username"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
               v-model="repositoryData.authorsData"
               placeholder="Enter Author"
               class="my-2"
@@ -861,7 +869,7 @@ onMounted( async () => {
           <VCombobox
               ref="leadRef"
               :items="customUsers"
-              :item-title="item => item.data?.username"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
               v-model="repositoryData.leadData"
               placeholder="Enter Project Lead"
               class="my-2"
@@ -1048,7 +1056,7 @@ onMounted( async () => {
             <VCombobox
                 ref="techGenRef"
                 :items="customUsers"
-                :item-title="item => item.data?.username"
+                :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
                 v-model="repositoryData.techGeneratorData"
                 placeholder="Select Technology Generator"
                 class="my-2"
@@ -1096,7 +1104,7 @@ onMounted( async () => {
             <VCombobox
                 ref="techOwnerRef"
                 :items="customUsers"
-                :item-title="item => item.data?.username"
+                :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
                 v-model="repositoryData.techOwnerData"
                 placeholder="Select Technology Owners"
                 class="my-2"
