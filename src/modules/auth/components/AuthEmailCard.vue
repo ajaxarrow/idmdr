@@ -2,7 +2,6 @@
 import Container from "../../../core/components/Container.vue";
 import AuthCardContent from "./AuthCardContent.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import Logo from "../../../core/components/Logo.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import AuthEmailCardContent from "./AuthEmailCardContent.vue";
 

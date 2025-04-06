@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhArrowDown, PhCloud, PhFactory, PhHandWaving, PhInfo, PhUsersThree, PhWarning} from "@phosphor-icons/vue";
+import {PhCloud, PhFactory, PhHandWaving, PhInfo, PhUsersThree, PhWarning} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import HeadlineCard from "../../../core/components/Dashboard/HeadlineCard.vue";
 import DataCard from "../../../core/components/Dashboard/DataCard.vue";

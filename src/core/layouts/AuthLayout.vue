@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import AuthCard from "../../modules/auth/components/AuthCard.vue";
-</script>
-
 <template>
   <VLayout class="circle-top-left circle-bottom-right">
     <slot></slot>

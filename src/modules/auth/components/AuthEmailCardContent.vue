@@ -8,11 +8,9 @@ import { useScreenStore } from "../../../core/stores/screen-size.store.ts";
 import { Vue3Lottie } from "vue3-lottie";
 
 import {
-  PhMagnifyingGlass,
   PhEye,
   PhEyeSlash,
   PhCheck,
-  PhX,
   PhEnvelope,
   PhLock,
   PhUser,

@@ -3,10 +3,8 @@
   import AuthCardContent from "./AuthCardContent.vue";
   import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
   import Logo from "../../../core/components/Logo.vue";
-  import {useRouting} from "../../../core/composables/useRouting.ts";
 
   const {isMobile} = useScreenStore();
-  const {route} = useRouting()
 </script>
 
 <template>

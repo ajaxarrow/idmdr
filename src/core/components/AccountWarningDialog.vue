@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {ref} from "vue";
 import {PhWarning} from "@phosphor-icons/vue";
 
 const props = defineProps({
