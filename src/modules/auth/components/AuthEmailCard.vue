@@ -2,11 +2,9 @@
 import Container from "../../../core/components/Container.vue";
 import AuthCardContent from "./AuthCardContent.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import AuthEmailCardContent from "./AuthEmailCardContent.vue";
 
 const {isMobile} = useScreenStore();
-const {route} = useRouting()
 </script>
 
 <template>
