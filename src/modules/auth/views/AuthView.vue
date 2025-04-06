@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AuthLayout from "../../../core/layouts/AuthLayout.vue";
 import AuthCard from "../components/AuthCard.vue";
 import {onMounted, ref} from "vue";
@@ -7,6 +7,7 @@ import AccountWarningDialog from "../../../core/components/AccountWarningDialog.
 const warningDialog = ref(false)
 
 onMounted(async() => {
+  //@ts-ignore
   const warningMessage = JSON.parse(localStorage.getItem('inactivityWarning'))
   if(warningMessage) {
     warningDialog.value = true
