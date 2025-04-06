@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhCloud, PhFactory, PhHandWaving, PhInfo, PhUsersThree} from "@phosphor-icons/vue";
+import {PhArrowDown, PhCloud, PhFactory, PhHandWaving, PhInfo, PhUsersThree, PhWarning} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import HeadlineCard from "../../../core/components/Dashboard/HeadlineCard.vue";
 import DataCard from "../../../core/components/Dashboard/DataCard.vue";
@@ -59,14 +59,36 @@ onMounted(async () => {
     <div v-else>
       <div class="pa-6">
         <p class="text-heading d-flex align-center">
-          Hello, {{user ? userData.username : 'Guest User'}}! <PhHandWaving weight="bold" class="flip-horizontal ml-2"/>
+          Hello, {{user ? userData.firstName + ' ' + userData.lastName : 'Guest User'}}! <PhHandWaving weight="bold" class="flip-horizontal ml-2"/>
         </p>
         <p class="text-subtitle">Welcome back to your dashboard</p>
       </div>
       <VDivider/>
       <div class="pa-6 mt-3">
+        <VAlert
+            v-if="!userData.is_approved && user"
+            color="#ff9800"
+            variant="tonal"
+            border="start"
+            class="inactive-repo-banner mb-4"
+        >
+          <div class="d-flex align-center">
+            <div class="warning-icon-container me-3">
+              <PhWarning size="24" weight="fill" class="warning-icon" />
+            </div>
+            <div class="warning-content">
+              <VAlert-title class="warning-title font-weight-bold">
+                Account Awaiting Approval
+              </VAlert-title>
+              <div class="warning-message">
+                Your account has not yet been approved, and access is currently restricted. Reach out to the system administrator to request approval and gain full user privileges.
+              </div>
+
+            </div>
+          </div>
+        </VAlert>
         <VRow align="center" class="mx-0" >
-          <VCol cols="auto" style="padding: unset;" v-if="user">
+          <VCol cols="auto" style="padding: unset;" v-if="user && userData.is_approved">
             <HeadlineCard/>
           </VCol>
           <VCol cols="auto" style="padding: unset;">

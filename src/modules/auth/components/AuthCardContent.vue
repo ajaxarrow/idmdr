@@ -2,7 +2,7 @@
   import Welcome from '../../../assets/images/onboarding.svg';
   import {computed, onMounted, ref, watch} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
-  import {PhGithubLogo, PhGoogleLogo} from "@phosphor-icons/vue";
+  import {PhEnvelope, PhGithubLogo, PhGoogleLogo} from "@phosphor-icons/vue";
   import {LocationQueryValue} from "vue-router";
   import googleLoad from "../../../assets/lottiefiles/google-load.json"
   import githubLoad from "../../../assets/lottiefiles/github-load.json"
@@ -32,6 +32,18 @@
       title: 'Github',
       icon: PhGithubLogo,
       method: getGithubUrl
+    },
+    {
+      title: 'Email',
+      icon: PhEnvelope,
+      method: () => {
+        router.push({
+          name: 'auth-email',
+          query: {
+            tab: tab.value
+          }
+        })
+      }
     }
   ]
 

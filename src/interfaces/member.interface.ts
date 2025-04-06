@@ -21,6 +21,8 @@ interface User{
   username: string,
   email: string,
   profile_picture?: string
+  is_active?: boolean
+  is_approved?: boolean
 }
 
 interface CustomUserData{

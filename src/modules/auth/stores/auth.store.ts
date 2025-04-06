@@ -7,13 +7,21 @@ const {user} = useUserStore();
 const handleGithub = async (code: string, state: string, ) => {
   try{
     const res = await server.get(`/api/github-oauth2/login/raw/callback/?code=${code}&state=${state}`)
-    const user = {
-      user: res.data.user,
-      accessToken: res.data.access,
-      refreshToken: res.data.refresh
+    if(res.data.user.is_active){
+      const user = {
+        user: res.data.user,
+        accessToken: res.data.access,
+        refreshToken: res.data.refresh
+      }
+      await localStorage.setItem('user', JSON.stringify(user));
+      window.location.href = '/dashboard'
+    } else {
+      await localStorage.setItem('inactivityWarning', JSON.stringify({
+        message: 'Account is Disabled',
+      }))
+      window.location.href = '/auth'
     }
-    await localStorage.setItem('user', JSON.stringify(user));
-    window.location.href = '/dashboard'
+
     // router.push({path: '/dashboard'}).then(() => {
     //   setTimeout(() => {
     //     router.push({path: '/dashboard'})
@@ -28,18 +36,20 @@ const handleGithub = async (code: string, state: string, ) => {
 const handleGoogle = async (code: string, state: string, ) => {
   try{
     const res = await server.get(`/api/google-oauth2/login/raw/callback/?code=${code}&state=${state}`)
-    const user = {
-      user: res.data.user,
-      accessToken: res.data.access,
-      refreshToken: res.data.refresh
+    if(res.data.user.is_active){
+      const user = {
+        user: res.data.user,
+        accessToken: res.data.access,
+        refreshToken: res.data.refresh
+      }
+      await localStorage.setItem('user', JSON.stringify(user))
+      window.location.href = '/dashboard'
+    } else {
+      await localStorage.setItem('inactivityWarning', JSON.stringify({
+        message: 'Account is Disabled',
+      }))
+      window.location.href = '/auth'
     }
-    await localStorage.setItem('user', JSON.stringify(user))
-    window.location.href = '/dashboard'
-    // router.push({path: '/dashboard'}).then(() => {
-    //   setTimeout(() => {
-    //     router.push({path: '/dashboard'})
-    //   }, 3000);
-    // })
   } catch (e) {
     console.log(e)
   }

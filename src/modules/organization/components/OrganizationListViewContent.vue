@@ -10,6 +10,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const props = defineProps({
   forUser: {
@@ -17,7 +18,7 @@ const props = defineProps({
     default: false
   },
 })
-
+const {user, userData} = useUserStore()
 const {scrollTop} = useScroll()
 const reachEnd = ref(false)
 const lastItemValue = ref(1);
@@ -81,7 +82,7 @@ onUnmounted(() => {
             </div>
           </VCol>
           <VCol md="3" class="pa-0">
-            <VRow class="ma-0 justify-end">
+            <VRow class="ma-0 justify-end" v-if="user && userData.is_approved">
               <VBtnPrimaryFilled :to="{ name: forUser ? 'new-organization-my' : 'new-organization'}" v-if="isSmall || isTablet" icon >
                 <PhPlus size="16"/>
               </VBtnPrimaryFilled>

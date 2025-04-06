@@ -359,7 +359,7 @@ const downloadOrganizationDataPDF = async (organization: Organization) => {
 
 const filterOrganizationMembersBySearchQuery = () => {
   if(searchQuery.value) {
-    orgMembers.value = orgMemberData.value.filter(member => member.user.username.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
+    orgMembers.value = orgMemberData.value.filter(member => member.user.first_name?.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) || member.user.last_name?.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
   } else {
     orgMembers.value = orgMemberData.value
   }

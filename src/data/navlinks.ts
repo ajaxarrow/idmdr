@@ -42,7 +42,7 @@ export const navLinks = [
     icon: PhMapPinLine
   },
   // Conditionally include "My Organizations" and "Settings" links
-  ...(user.value && !userData.is_superuser ? [
+  ...(user.value && !userData.is_superuser && userData.is_approved? [
     {
       name: 'My Projects',
       link: '/my-repositories',

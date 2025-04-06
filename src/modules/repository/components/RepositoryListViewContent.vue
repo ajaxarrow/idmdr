@@ -31,7 +31,7 @@ const props = defineProps({
   },
 })
 
-const {user} = useUserStore();
+const {user, userData} = useUserStore();
 const {tags, selectedTags, fetchTags} = useTags();
 const {fetchRepositoriesWithPagination, filterRepositoriesbyTags, filterRepositoriesBySearchQuery, fetchRepositoriesByUserWithPagination} = useRepositoryServices();
 const {scrollTop} = useScroll()
@@ -140,7 +140,7 @@ onUnmounted(() => {
               within your organization!
             </p>
           </div>
-          <div v-if="user">
+          <div v-if="user && userData.is_approved">
             <VBtnPrimaryFilled :to="{ name: forUser ? 'new-repository-my' : 'new-repository'}" v-if="isSmall || isTablet" icon >
               <PhPlus size="16"/>
             </VBtnPrimaryFilled>

@@ -42,14 +42,14 @@ export const useOrganizationMembersServices = () => {
       });
 
       return res.data.results
-        .filter((user: any) => user.username)
+        .filter((user: any) => user.is_approved && user.is_active)
         .map((user: any) => ({
           uid: user.uid,
-          username: user.username,
-          first_name: user.first_name,
+          username: user.username ?? `${user.first_name} ${user.last_name}`,
+          first_name: user.first_name ?? user.username,
           last_name: user.last_name,
           email: user.email,
-          profile_picture: user.profile_picture,
+          profile_picture: user.profile_picture ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
         }));
     } catch {
       return [];

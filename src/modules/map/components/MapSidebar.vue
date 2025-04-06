@@ -23,7 +23,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
   type CustomComponent = ReturnType<typeof defineComponent>;
 
 
-  const {user} = useUserStore()
+  const {user, userData} = useUserStore()
   const {router} = useRouting();
   const {storedGeoJSON, handleGeoJSON, confirmDialog, fileName} = useSectorMapStore();
   const addSectorDialogMenu = ref(false);
@@ -124,7 +124,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
        <VDivider/>
        <div class="mt-2">
          <VList>
-           <VRow v-if="user" class="ma-0 justify-center mt-2 mb-4">
+           <VRow v-if="user && userData.is_approved" class="ma-0 justify-center mt-2 mb-4">
              <VMenu v-model="addSectorDialogMenu" :close-on-content-click="false">
                <template #activator="{ props }">
                  <PhPlusCircle

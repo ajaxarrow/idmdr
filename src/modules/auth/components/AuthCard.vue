@@ -3,9 +3,10 @@
   import AuthCardContent from "./AuthCardContent.vue";
   import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
   import Logo from "../../../core/components/Logo.vue";
+  import {useRouting} from "../../../core/composables/useRouting.ts";
 
   const {isMobile} = useScreenStore();
-
+  const {route} = useRouting()
 </script>
 
 <template>
@@ -13,14 +14,13 @@
     <AuthCardContent/>
   </VContainer>
   <Container class="center" v-else>
-
     <VSheet
         border="md"
         class="mx-auto rounded-xl circle-quarter relative-container"
         color="white"
-        max-width="400"
+        :max-width="400"
         width="400"
-        height="520"
+        height="600"
     >
       <AuthCardContent/>
       <Logo class="logo"/>

@@ -177,7 +177,7 @@ onUpdated(async () => {
               :item-value="user => user"
               v-model="selectedMember"
               :items="users"
-              :item-title="user => `${user.username}`"
+              :item-title="user => `${user.first_name} ${user.last_name}`"
               class="my-2"
               rounded="lg"
               density="comfortable"
@@ -190,9 +190,9 @@ onUpdated(async () => {
               <VListItem
                   :disabled="!!checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted"
                   v-bind="props"
-                  :prepend-avatar="item.raw.profile_picture"
+                  :prepend-avatar="item.raw.profile_picture as string || 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'"
                   :subtitle="checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted ? checkIfMember(item.raw.uid as string).access_level : item.raw.email as string"
-                  :title="item.raw.username as string"
+                  :title="`${item.raw.first_name} ${item.raw.last_name}`"
               ></VListItem>
             </template>
           </VAutocomplete>

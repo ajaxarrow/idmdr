@@ -13,6 +13,8 @@ const userData = reactive({
   profilePicture: user.value ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
   uid: user.value ? user.value.user.uid: '',
   is_superuser: user.value ? user.value.user.is_superuser : false,
+  is_active: user.value ? user.value.user.is_active : false,
+  is_approved: user.value ? user.value.user.is_approved : false,
   accessToken: user.value ? user.value.accessToken : '1000',
   refreshToken: user.value ? user.value.refreshToken : '1000',
   firstName: user.value ? user.value.user.first_name : 'Guest',

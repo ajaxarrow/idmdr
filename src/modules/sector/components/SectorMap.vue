@@ -26,10 +26,8 @@ import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 import * as maplibregl from 'maplibre-gl';
 import {geocoderApi} from "../utils/geocoder.utils.ts";
 
-
-
 const {fetchOrganizations} = useOrganizationServices()
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
@@ -172,7 +170,7 @@ onMounted(async () => {
   await fetchOrganizations();
   await fetchSectors();
   initMap();
-  if(user.value){
+  if(user.value && userData.is_approved){
     (MapboxDraw as any).constants = MapboxDraw.constants || {};
     (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
     (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
