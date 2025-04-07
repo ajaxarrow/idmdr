@@ -14,6 +14,7 @@ const {userData} = useUserStore()
 
 const {handleLogout} = useAuthStore();
 const {checkAuth, checkIfAuthenticated} = useMiddleware();
+const adminPages = ['/users'];
 const protectedUserPages = [
     'my-organization-posts-details', 'my-organization-posts', 'my-organizations', 'new-organization-my', 'edit-organization-my', 'my-organization', 'my-repositories', 'my-organization-data', 'my-organization-settings', 'my-organization-repositories', 'my-repository-data', 'my-repository-settings', 'my-repository-discussions', 'my-repository-discussions-topic', 'my-organization-settings',
 ]
@@ -38,6 +39,11 @@ router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNe
 })
 
 router.beforeResolve((to) => {
+    if(adminPages.includes(<string>to.path)){
+        if(!userData.is_superuser){
+            return {name: 'landing'}
+        }
+    }
     if (protectedPages.includes(<string>to.name)) {
         checkIfAuthenticated();
     }
