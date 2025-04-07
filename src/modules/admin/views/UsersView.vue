@@ -311,7 +311,7 @@ onMounted(async () => {
                     <VImg :src="item.profile_picture as string ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'" alt="Project" />
                   </VAvatar>
                   <div>
-                    <p class="font-weight-medium mb-0">{{ item.first_name ? item.first_name : item.username }} {{item.full_name}}</p>
+                    <p class="font-weight-medium mb-0">{{ item.first_name ? item.first_name : item.username }} {{item.last_name}}</p>
                     <p class="text-caption text-medium-emphasis mb-0">{{item.email}}</p>
                   </div>
                 </div>
@@ -377,7 +377,7 @@ onMounted(async () => {
 
                       <ConfirmationDialog
                           v-if="item.is_active"
-                          @callback="manageUserStatusCallback(item.uid as string, !item.approved, false)"
+                          @callback="manageUserStatusCallback(item.uid as string, !item.is_approved, false)"
                           :confirm-content="item.is_approved ? 'Deactivate User' : 'Activate User Account'"
                           :content="item.is_approved ? 'Are you sure you want to deactivate this account? All project data will be deleted.' : 'Are you sure you want to activate this account?'"
                       >
