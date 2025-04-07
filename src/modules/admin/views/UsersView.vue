@@ -22,11 +22,7 @@ const page = ref(1);
 const totalItems = ref(0);
 const users = ref<User[]>([]);
 
-watch([selectedUserAccountStatus, selectedUserAvailabilityStatus], async () => {
-  page.value = 1;
-  await loadUsers();
-  await fetchTotalUsers();
-})
+
 
 const manageUserStatusCallback = async (id: string, value: boolean, isForAccount: boolean) => {
   await manageUserStatus(id, value, isForAccount);
@@ -87,6 +83,12 @@ const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key)
 
 const updateColumnVisibility = (selectedKeys: string[]) => {
   selectedColumns.value = selectedKeys;
+};
+
+const loadData = async () => {
+  page.value = 1;
+  await updateTotalCount();
+  await loadUsers();
 };
 
 // Configure filters for the BaseDataTable component
@@ -154,9 +156,12 @@ const updateTotalCount = async () => {
   }
 };
 
+watch([selectedUserAccountStatus, selectedUserAvailabilityStatus], async () => {
+  await loadData();
+})
+
 onMounted(async () => {
-  await updateTotalCount();
-  await loadUsers();
+  await loadData()
 });
 </script>
 
@@ -180,6 +185,7 @@ onMounted(async () => {
         @loadData="loadUsers"
         @clearFilters="clearFilters"
         @update:filter="handleFilterUpdate"
+        @refreshData="loadData"
     >
       <!-- Full Name column slot -->
       <template #item.full_name="{ item }">

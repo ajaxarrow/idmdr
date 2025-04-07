@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref, computed, watch, PropType} from 'vue';
-import { PhFunnel, PhMagnifyingGlass } from "@phosphor-icons/vue";
+import {PhArrowClockwise, PhFunnel, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {usePageSizeHelper} from "../../../../core/composables/usePageSizeHelper.ts";
 import EmptyStateInfo from "../../../../core/components/EmptyStateInfo.vue";
 
@@ -56,7 +56,8 @@ const emit = defineEmits([
   'update:selectedColumns',
   'loadData',
   'clearFilters',
-  'update:filter'
+  'update:filter',
+  'refreshData'
 ]);
 
 const { generatePageSizeIncrements } = usePageSizeHelper()
@@ -88,6 +89,7 @@ const handlePageChange = (newPage: number) => {
 };
 
 const resetAllFilters = () => {
+  page.value = 1;
   emit('clearFilters');
   const defaultColumns = props.headers!.filter((h: any) => h.visible).map((h: any) => h.key);
   selectedColumns.value = defaultColumns;
@@ -96,6 +98,7 @@ const resetAllFilters = () => {
 
 const updateFilterValue = (filterKey: any, value: any) => {
   emit('update:filter', { key: filterKey, value });
+  page.value = 1;
 };
 
 watch(search, (newValue) => {
@@ -111,6 +114,11 @@ watch(itemsPerPage, (newValue) => {
   emit('update:page', 1);
   emit('loadData');
 });
+
+const refresh = () => {
+  page.value = 1;
+  emit('refreshData')
+}
 </script>
 
 <template>
@@ -158,6 +166,18 @@ watch(itemsPerPage, (newValue) => {
 
             <!-- Filter button -->
             <div class="d-flex align-center">
+              <VBtn
+                  color="blue-grey-darken-1"
+                  variant="tonal"
+                  rounded="md"
+                  class="filter-btn ml-2 px-3"
+                  @click="refresh()"
+              >
+                <div class="d-flex align-center">
+                  <PhArrowClockwise size="16" class="mr-2" />
+                  <span class="text-body-2">Refresh</span>
+                </div>
+              </VBtn>
               <VBtn
                   color="blue-grey-darken-1"
                   variant="tonal"
@@ -241,6 +261,7 @@ watch(itemsPerPage, (newValue) => {
 
           <!-- Data Table -->
           <VDataTableServer
+              v-model:page="page"
               v-model:items-per-page="itemsPerPage"
               :headers="visibleHeaders"
               :items="items as any[]"
