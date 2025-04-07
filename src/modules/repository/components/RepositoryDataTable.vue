@@ -41,8 +41,9 @@ const totalItems = ref(0);
 const selectedPriorityLevel = ref('');
 const organizations = ref<any[]>([]);
 const selectedType = ref('');
-const selectedProjectStatus = ref<string | boolean>('');
-const selectedProjectPublicStatus = ref<string | boolean>('');
+const selectedProjectState = ref<string | boolean>('');
+const selectedProjectPublicState = ref<string | boolean>('');
+const selectedProjectStatus = ref<string>('');
 const path = computed(() => route.path)
 
 // Added for filter drawer
@@ -98,21 +99,31 @@ const typeOptions = [
   { title: 'With Technology', value: 'Project Repository' },
 ];
 
-const projectStatusOptions = [
-  { title: 'All Statuses', value: '' },
+const projectStateOptions = [
+  { title: 'All States', value: '' },
   { title: 'Disabled', value: false},
   { title: 'Enabled', value: true },
 ];
 
-const projectPublicStatusOptions = [
-  { title: 'All Status', value: '' },
+const projectPublicStateOptions = [
+  { title: 'All', value: '' },
   { title: 'Active', value: true },
   { title: 'Inactive', value: false },
 ];
 
+const projectStatusOptions = [
+  { title: 'All', value: '' },
+  { title: 'Ongoing', value: 'Ongoing' },
+  { title: 'Completed', value: 'Completed' },
+  { title: 'Suspended', value: 'Suspended' },
+  { title: 'Terminated', value: 'Terminated' },
+  { title: 'Unliquidated', value: 'Unliquidated' },
+]
+
 const headers = computed(() => [
   { title: 'Project', key: 'title', sortable: true, visible: true },
   { title: 'Status', key: 'status', sortable: true, visible: true },
+  { title: 'State', key: 'state', sortable: true, visible: true },
   ...(route.path === '/repositories'
       ? [{ title: 'Type', key: 'type', sortable: true, visible: true }]
       : []),
@@ -156,22 +167,23 @@ const resetAllFilters = () => {
   selectedPriorityLevel.value = '';
   selectedOrganization.value = '';
   selectedType.value = '';
+  selectedProjectState.value = '';
+  selectedProjectPublicState.value = '';
   selectedProjectStatus.value = '';
-  selectedProjectPublicStatus.value = '';
   selectedColumns.value = headers.value.filter(h => h.key !== 'priority_level' && h.key !== 'start_date' && h.key !== 'end_date').map(h => h.key);
   updateColumnVisibility(selectedColumns.value);
 };
 
-watch([search, selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectStatus, selectedProjectPublicStatus],
+watch([search, selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus],
     () => {
       page.value = 1;
       loadRepositories();
       updateTotalCount();
     });
 
-watch([selectedProjectPublicStatus],
+watch([selectedProjectPublicState],
     () => {
-      selectedProjectStatus.value = true;
+      selectedProjectState.value = true;
       page.value = 1;
       loadRepositories();
       updateTotalCount();
@@ -186,9 +198,10 @@ const loadRepositories = async () => {
         search.value,
         selectedPriorityLevel.value,
         selectedOrganization.value,
-        selectedProjectStatus.value,
-        selectedProjectPublicStatus.value,
+        selectedProjectState.value,
+        selectedProjectPublicState.value,
         path.value == '/ip-technologies' ? 'Project Repository' : selectedType.value ,
+        selectedProjectStatus.value
     );
     repositories.value = data;
   } catch (error) {
@@ -230,6 +243,17 @@ const getPriorityColor = (priority: string): string => {
   };
   return priorityMap[priority.toLowerCase()] || 'grey';
 };
+
+const getStatusColor = (status: string): string => {
+  const statusMap: Record<string, string> = {
+    Ongoing: 'light-blue',
+    Completed: 'green',
+    Suspended: 'orange-lighten-1',
+    Terminated: 'red',
+    Unliquidated: 'blue-grey-darken-1',
+  };
+  return statusMap[status] || 'grey-lighten-1';
+}
 
 const updateTotalCount = async () => {
   try {
@@ -390,9 +414,8 @@ onMounted(async () => {
                 </VCol>
 
                 <!-- Priority filter -->
-                <VCol cols="12" sm="6" md="4" lg="3">
+                <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('priority_level')">
                   <VSelect
-                      v-if="isColumnVisible('priority_level')"
                       v-model="selectedPriorityLevel"
                       :items="priorityLevelOptions"
                       label="Priority"
@@ -407,14 +430,13 @@ onMounted(async () => {
                 </VCol>
 
                 <!-- Project Status filter -->
-                <VCol cols="12" sm="6" md="4" lg="3">
+                <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('state')">
                   <VSelect
-                      v-if="isColumnVisible('status')"
-                      v-model="selectedProjectStatus"
-                      :items="projectStatusOptions"
+                      v-model="selectedProjectState"
+                      :items="projectStateOptions"
                       :item-title="type => type.title"
                       :item-value="type => type.value"
-                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} Admin Status`"
+                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} State`"
                       hide-details
                       density="compact"
                       variant="outlined"
@@ -426,14 +448,28 @@ onMounted(async () => {
                 </VCol>
 
                 <!-- Project Public Status filter -->
-                <VCol cols="12" sm="6" md="4" lg="3">
+                <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('state')">
                   <VSelect
-                      v-if="isColumnVisible('status')"
-                      v-model="selectedProjectPublicStatus"
-                      :items="projectPublicStatusOptions"
+                      v-model="selectedProjectPublicState"
+                      :items="projectPublicStateOptions"
                       :item-title="type => type.title"
                       :item-value="type => type.value"
-                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} Public Status`"
+                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} Availability`"
+                      hide-details
+                      density="compact"
+                      variant="outlined"
+                      rounded="md"
+                      color="primary"
+                      base-color="gs60"
+                      class="mb-3"
+                  />
+                </VCol>
+
+                <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('status')">
+                  <VSelect
+                      v-model="selectedProjectStatus"
+                      :items="projectStatusOptions"
+                      :label="`${path == '/repositories' ? 'Project' : 'IP Technology'} Status`"
                       hide-details
                       density="compact"
                       variant="outlined"
@@ -500,8 +536,17 @@ onMounted(async () => {
                 </div>
               </div>
             </template>
-
             <template v-slot:item.status="{ item }">
+              <VChip
+                  :color="getStatusColor(item.status ? item.status : '')"
+                  size="small"
+                  class="text-capitalize"
+              >
+                {{ item.status ? item.status : 'N/A' }}
+              </VChip>
+            </template>
+
+            <template v-slot:item.state="{ item }">
               <VTooltip :text="getStatusInfo(item).tooltip">
                 <template v-slot:activator="{ props }">
                   <VChip
@@ -516,6 +561,7 @@ onMounted(async () => {
                 </template>
               </VTooltip>
             </template>
+
 
             <template v-if="path === '/repositories'" v-slot:item.type="{ item }">
               <VChip size="small">

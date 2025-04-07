@@ -49,12 +49,16 @@ export const useOrganizationMembersServices = () => {
           first_name: user.first_name ?? user.username,
           last_name: user.last_name,
           email: user.email,
+          is_active: user.is_active,
+          is_approved: user.is_approved,
           profile_picture: user.profile_picture ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
         }));
     } catch {
       return [];
     }
   }
+
+
 
   const fetchUser = async (uid: string): Promise<User | null> => {
     try {

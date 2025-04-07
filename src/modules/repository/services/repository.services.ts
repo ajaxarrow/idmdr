@@ -544,7 +544,8 @@ export const useRepositoryServices = () => {
       organization?: string,
       isApproved?: string | boolean,
       isActive?: string | boolean,
-      type?: string
+      type?: string,
+      status?: string,
   ): Promise<Repository[]> => {
     try {
       let url = `/repositories/?page=${pageNumber}&page_size=${pageSize}`;
@@ -566,6 +567,9 @@ export const useRepositoryServices = () => {
       }
       if (type?.trim()) {
         url += `&type=${encodeURIComponent(type)}`;
+      }
+      if (status?.trim()) {
+        url += `&status=${encodeURIComponent(status)}`;
       }
 
       const res = await server.get(url, {
