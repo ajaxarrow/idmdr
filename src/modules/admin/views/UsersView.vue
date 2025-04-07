@@ -85,7 +85,7 @@ const headers = computed(() => [
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
 
-const updateColumnVisibility = (selectedKeys) => {
+const updateColumnVisibility = (selectedKeys: string[]) => {
   selectedColumns.value = selectedKeys;
 };
 
@@ -96,8 +96,8 @@ const tableFilters = computed(() => [
     label: 'User Availability Status',
     value: selectedUserAvailabilityStatus.value,
     items: userStatusOptions,
-    itemTitle: (type) => type.title,
-    itemValue: (type) => type.value,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
     visibleKey: 'status'
   },
   {
@@ -105,8 +105,8 @@ const tableFilters = computed(() => [
     label: 'User Account Status',
     value: selectedUserAccountStatus.value,
     items: userAccountStatusOptions,
-    itemTitle: (type) => type.title,
-    itemValue: (type) => type.value,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
     visibleKey: 'status'
   }
 ]);
@@ -128,7 +128,7 @@ const loadUsers = async () => {
   }
 };
 
-const handleFilterUpdate = ({ key, value }) => {
+const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
   if (key === 'userAvailabilityStatus') {
     selectedUserAvailabilityStatus.value = value;
     // Auto-set active accounts when selecting an availability status
@@ -139,6 +139,7 @@ const handleFilterUpdate = ({ key, value }) => {
     selectedUserAccountStatus.value = value;
   }
 };
+
 
 const clearFilters = () => {
   selectedUserAccountStatus.value = '';
@@ -181,7 +182,7 @@ onMounted(async () => {
         @update:filter="handleFilterUpdate"
     >
       <!-- Full Name column slot -->
-      <template #item.full_name="{ item }: { item: User }">
+      <template #item.full_name="{ item }">
         <div class="d-flex align-center" style="max-width: 400px;">
           <VAvatar
               size="36"
@@ -197,7 +198,7 @@ onMounted(async () => {
       </template>
 
       <!-- Status column slot -->
-      <template #item.status="{ item }: { item: User }">
+      <template #item.status="{ item }">
         <VTooltip :text="getStatusInfo(item).tooltip">
           <template v-slot:activator="{ props }">
             <VChip
@@ -214,7 +215,7 @@ onMounted(async () => {
       </template>
 
       <!-- Actions column slot -->
-      <template #item.actions="{ item }: { item: User }">
+      <template #item.actions="{ item }">
         <VMenu
             location="bottom end"
             :close-on-content-click="false"

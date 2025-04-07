@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import {ref, computed, watch, PropType} from 'vue';
 import { PhFunnel, PhMagnifyingGlass } from "@phosphor-icons/vue";
 import {usePageSizeHelper} from "../../../../core/composables/usePageSizeHelper.ts";
 import EmptyStateInfo from "../../../../core/components/EmptyStateInfo.vue";
@@ -15,7 +15,7 @@ const props = defineProps({
     default: ''
   },
   headers: {
-    type: Array,
+    type: Array as PropType<any[]>,
     required: true,
     default: () => []
   },
@@ -44,7 +44,7 @@ const props = defineProps({
     default: 'There are no items matching your search criteria'
   },
   filters: {
-    type: Array,
+    type: Array as PropType<any[]>,
     default: () => []
   }
 });
@@ -66,22 +66,22 @@ const itemsPerPage = ref(5);
 const page = ref(1);
 const showFilterDrawer = ref(false);
 
-const selectedColumns = ref(props.headers!.filter(h => h.visible).map(h => h.key));
+const selectedColumns = ref(props.headers!.filter((h: any) => h.visible).map((h: any) => h.key));
 
 const visibleHeaders = computed(() => {
-  return props.headers!.filter(header => selectedColumns.value.includes(header.key));
+  return props.headers!.filter((header: any) => selectedColumns.value.includes(header.key));
 });
 
-const updateColumnVisibility = (selectedKeys) => {
+const updateColumnVisibility = (selectedKeys: string[]) => {
   emit('update:selectedColumns', selectedKeys);
 };
 
-const isColumnVisible = (key) => {
-  const column = props.headers!.find(h => h.key === key);
+const isColumnVisible = (key: string) => {
+  const column = props.headers!.find((h: any) => h.key === key);
   return column ? selectedColumns.value.includes(key) : false;
 };
 
-const handlePageChange = (newPage) => {
+const handlePageChange = (newPage: number) => {
   page.value = newPage;
   emit('update:page', newPage);
   emit('loadData');
@@ -89,12 +89,12 @@ const handlePageChange = (newPage) => {
 
 const resetAllFilters = () => {
   emit('clearFilters');
-  const defaultColumns = props.headers!.filter(h => h.visible).map(h => h.key);
+  const defaultColumns = props.headers!.filter((h: any) => h.visible).map((h: any) => h.key);
   selectedColumns.value = defaultColumns;
   emit('update:selectedColumns', defaultColumns);
 };
 
-const updateFilterValue = (filterKey, value) => {
+const updateFilterValue = (filterKey: any, value: any) => {
   emit('update:filter', { key: filterKey, value });
 };
 
@@ -243,7 +243,7 @@ watch(itemsPerPage, (newValue) => {
           <VDataTableServer
               v-model:items-per-page="itemsPerPage"
               :headers="visibleHeaders"
-              :items="items"
+              :items="items as any[]"
               :loading="loading"
               :items-length="totalItems"
               :items-per-page-options="generatePageSizeIncrements(totalItems)"
