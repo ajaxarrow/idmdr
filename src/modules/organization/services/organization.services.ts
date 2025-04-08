@@ -162,6 +162,7 @@ export const useOrganizationServices = () => {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
         {
+
           tel_phone: organization.tel_phone,
           sub_org_type: organization.sub_org_type,
           description: organization.description,
@@ -180,6 +181,7 @@ export const useOrganizationServices = () => {
           scc_rep: organization.sc_rep,
           additional_info: organization.additional_info,
           is_active: true,
+          is_approved: true
         },
         {
           headers: {
@@ -206,7 +208,8 @@ export const useOrganizationServices = () => {
           website: organization.website,
           geojson: organization.geojson,
           additional_info: organization.additional_info,
-          is_active: true,
+          is_active: organization.is_active,
+          is_approved: organization.is_approved
         },
         {
           headers: {

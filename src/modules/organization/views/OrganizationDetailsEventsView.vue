@@ -6,7 +6,7 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import CalendarContent from "../../events/components/CalendarContent.vue";
 
-const {route, router} = useRouting()
+const {route} = useRouting()
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const organization = ref<Organization | null>();
 
@@ -31,13 +31,6 @@ onMounted(async () => {
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
 })

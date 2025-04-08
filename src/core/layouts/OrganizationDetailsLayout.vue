@@ -12,7 +12,7 @@ import Navbar from "../../modules/public/components/Landing/Navbar.vue";
 import Footer from "../../modules/public/components/Footer.vue";
 import OrganizationLayoutHeaderContent from "../../modules/organization/components/OrganizationLayoutHeaderContent.vue";
 
-const {user} = useUserStore();
+const {user, userData} = useUserStore();
 const {fetchOrganizationIDsByUser} = useOrganizationServices()
 const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
@@ -37,11 +37,11 @@ const getTabs = () => {
   return [
     { name: "About" },
     { name: "Projects" },
-    ...(user.value && isMember.value ? [{ name: "Experts" }] : []),
-    ...(user.value && isMember.value ? [{ name: "Posts" }] : []),
-    ...(user.value && isMember.value ? [{ name: "Scheduled Events" }] : []),
-    ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
-    ...(user.value && isMember.value && !isInPublic.value ? [{ name: "Settings" }] : [])
+    { name: "Experts" },
+    { name: "Posts" },
+    { name: "Scheduled Events" },
+    { name: "Reports" },
+    ...((user.value && isMember.value && !isInPublic.value) || userData.is_superuser ? [{ name: "Settings" }] : [])
   ]
 }
 
@@ -57,13 +57,13 @@ const computedTabs = computed(() => {
       baseName = 'data';
     } else if (tab.name === "Projects") {
       baseName = 'repositories';
-    } else if (tab.name === "Experts" && user.value && isMember.value) {
+    } else if (tab.name === "Experts") {
       baseName = 'experts';
-    } else if (tab.name === "Posts" && user.value && isMember.value) {
+    } else if (tab.name === "Posts") {
       baseName = 'posts';
-    } else if (tab.name === "Scheduled Events" && user.value && isMember.value) {
+    } else if (tab.name === "Scheduled Events") {
       baseName = 'events';
-    } else if (tab.name === "Reports" && user.value && isMember.value) {
+    } else if (tab.name === "Reports") {
       baseName = 'reports';
     } else if (tab.name === "Settings" && user.value) {
       baseName = 'settings';

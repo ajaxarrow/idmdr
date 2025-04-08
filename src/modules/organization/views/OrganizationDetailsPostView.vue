@@ -8,7 +8,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import PostListViewContent from "../../posts/components/PostListViewContent.vue";
 
 const {setSnackbarMessage} = useSnackbarStore()
-const {route, router} = useRouting()
+const {route} = useRouting()
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const path = ref('organizations')
 const organization = ref<Organization | null>();
@@ -33,13 +33,6 @@ onMounted(async () => {
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
   await setSnackbarMessage()

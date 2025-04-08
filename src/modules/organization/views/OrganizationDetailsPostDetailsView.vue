@@ -68,13 +68,6 @@ onMounted(async () => {
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
   postData.value = await fetchPostbyID(route.params.post as string);
