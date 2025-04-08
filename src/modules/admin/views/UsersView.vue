@@ -240,6 +240,7 @@ onMounted(async () => {
           <VCard class="action-menu rounded-lg" min-width="220" elevation="3">
             <VList density="compact" nav>
               <ConfirmationDialog
+                  :isWarning="item?.is_active"
                   @callback="manageUserStatusCallback(item.uid as string, !item.is_active, true)"
                   :confirm-content="item.is_active ? `Disable Account` : `Enable Account`"
                   :content="item.is_active ? 'Are you sure you want to disable this account? All project data will be deleted.' : 'Are you sure you want to enable this account?'"
@@ -254,6 +255,7 @@ onMounted(async () => {
 
               <ConfirmationDialog
                   v-if="item.is_active"
+                  :isWarning="item?.is_approved"
                   @callback="manageUserStatusCallback(item.uid as string, !item.is_approved, false)"
                   :confirm-content="item.is_approved ? 'Deactivate User' : 'Activate User Account'"
                   :content="item.is_approved ? 'Are you sure you want to deactivate this account? All project data will be deleted.' : 'Are you sure you want to activate this account?'"

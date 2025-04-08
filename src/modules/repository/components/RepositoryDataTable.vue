@@ -470,6 +470,7 @@ onMounted(async () => {
             <VDivider class="my-1"></VDivider>
 
             <ConfirmationDialog
+                :isWarning="item?.is_approved"
                 @callback="manageRepoAdminStatusCallback(item.uid as string, !item.is_approved)"
                 :confirm-content="item.is_approved ? `Disable ${pageEntity}` : `Enable ${pageEntity}`"
                 :content="item.is_approved ? `Are you sure you want to disable this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?` : `Are you sure you want to enable this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?`"
@@ -483,6 +484,7 @@ onMounted(async () => {
             </ConfirmationDialog>
 
             <ConfirmationDialog
+                :isWarning="item?.is_active"
                 v-if="item.is_approved"
                 @callback="manageRepoStatusCallback(item.uid as string, !item.is_active)"
                 :confirm-content="item.is_active ? 'Deactivate Project' : 'Activate Project'"
