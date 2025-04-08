@@ -34,7 +34,7 @@ const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
 const currentOrg = ref<Organization | null>(null)
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationIDsByUser, deleteOrganization, manageOrgStatus} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser, manageOrgStatus} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
 const {getVisibilityLabel} = useVisibilityHelper()
@@ -424,12 +424,12 @@ const fetchMembers = async () => {
   orgMemberData.value = data
 }
 
-const deleteOrgCallback = async () => {
-  overlayLoading.value = true
-  await deleteOrganization(route.params.slug as string)
-  overlayLoading.value = false
-  await router.push({ name: 'my-organizations' })
-}
+// const deleteOrgCallback = async () => {
+//   overlayLoading.value = true
+//   await deleteOrganization(route.params.slug as string)
+//   overlayLoading.value = false
+//   await router.push({ name: 'my-organizations' })
+// }
 
 onMounted(async () => {
   loading.value = true

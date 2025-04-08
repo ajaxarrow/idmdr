@@ -33,7 +33,7 @@ import {useNotificationsServices} from "../../user/services/notifications.servic
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
-import {useScroll} from "../../../core/composables/useScroll.ts";
+
 const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
