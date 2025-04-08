@@ -417,7 +417,6 @@ export const useOrganizationServices = () => {
       const rawData = res.data.results;
       const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted && org.is_approved))
       const data = [ ...organizations];
-      // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data
       return data;
     } catch (e) {
@@ -566,6 +565,41 @@ export const useOrganizationServices = () => {
     }
   }
 
+  const manageOrgStatus = async (id: string, isActive: boolean) => {
+    try {
+      if(userData.is_superuser) {
+        await server.patch(`/v1/organization/${id}/update`, {
+          is_approved: true,
+          is_active: isActive
+        }, {
+          headers: authorizationHeader
+        });
+      } else {
+         await server.patch(`/v1/organization/${id}/update`, {
+          is_active: isActive
+        }, {
+          headers: authorizationHeader
+        });
+      }
+    } catch (e) {
+      console.log(e)
+      return;
+    }
+  }
+
+  const manageOrgAdminStatus = async (id: string, isEnabled: boolean) => {
+    try {
+      await server.patch(`/v1/organization/${id}/update`, {
+        is_approved: isEnabled
+      }, {
+        headers: authorizationHeader
+      });
+    } catch (e) {
+      console.log(e)
+      return;
+    }
+  }
+
 
 
   return {
@@ -584,6 +618,8 @@ export const useOrganizationServices = () => {
     fetchOrganizationData,
     fetchOrganizationIDsByUser,
     changeOrganizationVisibility,
-    fetchAllOrganizations
+    fetchAllOrganizations,
+    manageOrgStatus,
+    manageOrgAdminStatus
   };
 };

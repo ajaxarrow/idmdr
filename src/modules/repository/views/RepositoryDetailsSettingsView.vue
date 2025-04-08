@@ -33,6 +33,7 @@ import {useNotificationsServices} from "../../user/services/notifications.servic
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
+import {useScroll} from "../../../core/composables/useScroll.ts";
 const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
@@ -63,13 +64,6 @@ const accessRequests = ref<AccessRequest[]>([])
 const accessRequestData = ref<AccessRequest[]>([])
 const userRepoInfo = ref<OrgMember | null | undefined>(null)
 
-const scrollToStatus = () => {
-  // @ts-ignore
-  document.getElementById('repository-status').scrollIntoView({
-    behavior: 'smooth',
-    block: 'center'
-  });
-}
 const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', {
     month: 'long',
@@ -744,7 +738,7 @@ onMounted(async () => {
            </VAlert-title>
            <div class="warning-message">
              This {{entityTitle}} is not visible to the public. Only members can view it.
-             <a href="#repository-status" class="status-link" @click="scrollToStatus">
+             <a href="#repository-status" class="status-link">
                Change status now <PhArrowDown class="ms-1" />
              </a>
            </div>
@@ -1011,7 +1005,7 @@ onMounted(async () => {
              <ConfirmationDialog
                  @callback="manageRepoStatusCallback(!repository?.is_active)"
                  :confirm-content="repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`"
-                 :content="repository?.is_active ? 'Are you sure you want to deactivate this project? All project data will be deleted.' : 'Are you sure you want to activate this project?'"
+                 :content="repository?.is_active ? 'Are you sure you want to deactivate this project? All project data will not be available to the public.' : 'Are you sure you want to activate this project?'"
              >
                <VBtnPrimaryFilled
                    height="41px"
@@ -1030,59 +1024,9 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.inactive-repo-banner {
-  position: relative;
-  padding: 16px;
-  margin: 16px 16px 24px;
-  border-radius: 12px;
-  border-left-width: 6px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  background: linear-gradient(135deg, rgba(255, 242, 212, 0.7) 0%, rgba(254, 220, 151, 0.2) 100%);
-  backdrop-filter: blur(8px);
-  border-color: #ff9800 !important;
-}
 
-.warning-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background-color: rgba(255, 152, 0, 0.2);
-}
 
-.warning-icon {
-  color: #ff9800;
-}
 
-.warning-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #945600;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-
-.warning-message {
-  font-size: 14px;
-  color: #66400c;
-}
-
-.status-link {
-  display: inline-flex;
-  align-items: center;
-  font-weight: 600;
-  color: #ff9800;
-  text-decoration: none;
-  margin-left: 8px;
-  transition: all 0.2s ease;
-}
-
-.status-link:hover {
-  color: #ff5722;
-  text-decoration: underline;
-}
 
 .status-activate-btn {
   background-color: #4caf50 !important;

@@ -7,7 +7,14 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import AddMemberDialog from "../components/AddMemberDialog.vue";
 import AccessLeveLInfoDialog from "../components/AccessLeveLInfoDialog.vue";
-import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhArrowDown,
+  PhDotsThreeOutlineVertical,
+  PhInfo,
+  PhMagnifyingGlass,
+  PhPencil,
+  PhTrash, PhWarning
+} from "@phosphor-icons/vue";
 import {OrgMember} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 import {watch} from "vue";
@@ -21,12 +28,13 @@ import DOMPurify from 'dompurify';
 import {useOrgType} from "../composables/useOrgType.ts";
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
+import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 
 const {route, router} = useRouting()
 const {organization} = useOrganizationStore();
 const currentOrg = ref<Organization | null>(null)
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationIDsByUser, deleteOrganization} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser, deleteOrganization, manageOrgStatus} = useOrganizationServices();
 const {fetchOrgMembers, removeOrgMember} = useOrganizationMembersServices()
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
 const {getVisibilityLabel} = useVisibilityHelper()
@@ -402,6 +410,13 @@ const changeVisibilityCallback = (newVisibility: number) => {
   organization!.value!.visibility = newVisibility
 }
 
+const manageOrgStatusCallback = async (isActive: boolean) => {
+  overlayLoading.value = true
+  await manageOrgStatus(route.params.slug as string, isActive)
+  overlayLoading.value = false
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  organization!.value!.is_active = isActive!
+}
 
 const fetchMembers = async () => {
   const data = await fetchOrgMembers(<string>route.params.slug)
@@ -423,7 +438,7 @@ onMounted(async () => {
   currentOrg.value = await fetchOrganizationData(route.params.slug as string);
 
   if(currentOrg.value){
-    if( isSlugInOrgList(currentOrg.value, allUserOrg)){
+    if( isSlugInOrgList(currentOrg.value, allUserOrg) || userData.is_superuser){
       if ("is_member" in currentOrg.value) {
         currentOrg.value.is_member = true;
       }
@@ -446,6 +461,30 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
     <div v-else>
+      <VAlert
+          v-if="currentOrg && !currentOrg.is_active"
+          color="#ff9800"
+          variant="tonal"
+          border="start"
+          class="inactive-repo-banner mb-4"
+      >
+        <div class="d-flex align-center">
+          <div class="warning-icon-container me-3">
+            <PhWarning size="24" weight="fill" class="warning-icon" />
+          </div>
+          <div class="warning-content">
+            <VAlert-title class="warning-title">
+              CMI Is Currently Inactive
+            </VAlert-title>
+            <div class="warning-message">
+              This CMI is not visible to the public. Only members can view it.
+              <a href="#organization-status" class="status-link">
+                Change status now <PhArrowDown class="ms-1" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </VAlert>
       <div v-if="currentOrg" class="py-6 px-7">
         <VRow  class="ma-0" justify="space-between" align="center">
           <div>
@@ -595,20 +634,22 @@ onMounted(async () => {
           <div v-if="userOrgInfo?.access_level == 'owner'" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
-                  <p class="section-title">Delete Consortium Member Institution Information</p>
-                <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire consortium member institution</p>
+                  <p class="section-title">Manage Consortium Member Institution Status (Current Status: {{currentOrg.is_active ? 'Active' : 'Inactive'}})</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">This will change the status of consortium member institution</p>
               </div>
-              <DeleteDialog
-                @callback="deleteOrgCallback"
+              <ConfirmationDialog
+                  @callback="manageOrgStatusCallback(!currentOrg?.is_active)"
+                  :confirm-content="currentOrg?.is_active ? 'Deactivate CMI' : 'Activate CMI'"
+                  :content="currentOrg?.is_active ? 'Are you sure you want to deactivate this CMI? All CMI data not will be available to the public.' : 'Are you sure you want to activate this CMI?'"
               >
                 <VBtnPrimaryFilled
                     height="41px"
                     rounded="lg"
                     class="satoshi-md"
                     style="font-size: 14px !important; background-color: #b00020 !important">
-                  Delete Consortium Member Institution
+                  {{currentOrg?.is_active ? 'Deactivate CMI' : 'Activate CMI'}}
                 </VBtnPrimaryFilled>
-              </DeleteDialog>
+              </ConfirmationDialog>
             </VRow>
           </div>
         </div>
