@@ -31,6 +31,8 @@ const file = ref<File | null>(null);
 const {route} = useRouting();
 
 const organizationDataInitialState = reactive<Organization>({
+  is_active: true,
+  is_approved: true,
   name: '',
   acronym: '',
   description: ``,

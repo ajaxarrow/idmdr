@@ -26,6 +26,8 @@ interface Organization {
   ic_rep: Representative,
   sc_rep: Representative,
   additional_info?: string,
+  is_active?: boolean,
+  is_approved?: boolean,
   // clusterRepresentatives: ClusterRepresentative[]
 }
 

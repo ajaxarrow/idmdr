@@ -302,6 +302,8 @@ export const useOrganizationServices = () => {
     return rawData.map((org: any) => {
       const organization = org.organization || org;
       return {
+        is_active: organization?.is_active,
+        is_approved: organization?.is_approved,
         additional_info: organization?.additional_info ?? '',
         is_member: false,
         is_deleted: organization?.is_deleted,
@@ -374,10 +376,12 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results
-      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
+      const organizations: Organization[] = (await mapOrgData(rawData)).filter((org: any) => !org.is_deleted && org.is_approved)
+      console.log(organizations)
       myOrganizations.value = [...myOrganizations.value,...organizations];
       return organizations;
     } catch (e) {
+      console.log(e)
       return []
     }
   }
@@ -390,7 +394,7 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
+      const organizations: Organization[] = (await mapOrgData(rawData)).filter((org: any) => !org.is_deleted && org.is_approved)
       const data = [ ...organizations];
       // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data
@@ -408,7 +412,7 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
+      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted && org.is_approved))
       const data = [ ...organizations];
       // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data
@@ -425,6 +429,7 @@ export const useOrganizationServices = () => {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
+
       const rawData = res.data.results;
       const organizations: Organization[] = rawData.map((org: any) => {
         return {
@@ -436,6 +441,7 @@ export const useOrganizationServices = () => {
       myOrganizations.value = data
       return data;
     } catch (e) {
+      console.log(e)
       return []
     }
   }
@@ -470,7 +476,7 @@ export const useOrganizationServices = () => {
     });
 
     const results = await Promise.all(promises);
-    return results.flat();
+    return results.flat().filter((org: any) => !org.is_deleted && org.is_active && org.is_approved);
   };
 
 
@@ -480,18 +486,19 @@ export const useOrganizationServices = () => {
       if (user.value) {
         const visibilityData = await fetchOrganizationsByVisibility([1, 4]);
         const userOrg = await fetchOrganizationByUser();
-        let combinedData = [...visibilityData.flat(), ...userOrg];
+        const filteredVisibilityData = visibilityData.flat().filter((org: any) => org.is_active && org.is_approved);
+        let combinedData = [...filteredVisibilityData, ...userOrg];
         const uniqueData = Array.from(new Set(combinedData.map(org => org.slug)))
           .map(slug => combinedData.find(org => org.slug === slug));
         // @ts-ignore
         data = uniqueData ;
       } else {
         const visibilityData = await fetchOrganizationsByVisibility([1]);
-        data = visibilityData[0];
+        data = visibilityData[0].filter((org: any) => org.is_active && org.is_approved);
       }
-      mapOrganizations.value = data.filter(org =>  !org.is_deleted);
-      allOrganizations.value = data;
-      searchedMapOrganizations.value = data.filter(org =>  !org.is_deleted);
+      mapOrganizations.value = data.filter(org =>  !org.is_deleted && org.is_approved);
+      allOrganizations.value = data.filter(org =>  !org.is_deleted && org.is_approved);
+      searchedMapOrganizations.value = data.filter(org =>  !org.is_deleted && org.is_approved);
       return data;
     } catch (e) {
       return [];
