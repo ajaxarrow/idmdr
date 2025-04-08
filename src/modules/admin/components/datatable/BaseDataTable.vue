@@ -68,7 +68,7 @@ const emit = defineEmits([
 const { generatePageSizeIncrements } = usePageSizeHelper()
 
 const search = ref('');
-const itemsPerPage = ref<Number>(<Number>props.itemsPerPageOptions);
+const itemsPerPage = ref<number>(<number>props.itemsPerPageOptions);
 const page = ref(1);
 const showFilterDrawer = ref(false);
 
@@ -272,7 +272,7 @@ const refresh = () => {
           <!-- Data Table -->
           <VDataTableServer
               v-model:page="page"
-              v-model:items-per-page="itemsPerPage as Number"
+              v-model:items-per-page="itemsPerPage as number"
               :headers="visibleHeaders"
               :items="items as any[]"
               :loading="loading"
