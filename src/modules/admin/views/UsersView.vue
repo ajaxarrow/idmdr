@@ -147,6 +147,16 @@ const clearFilters = () => {
   selectedUserAvailabilityStatus.value = '';
 };
 
+<<<<<<<<<<<<<<  ✨ Codeium Command ⭐ >>>>>>>>>>>>>>>>
+/**
+ * Asynchronously updates the total count of users based on the current filters and search query.
+ * Retrieves the total number of users from the server using the `fetchTotalUsers` function.
+ *
+ * @returns {Promise<void>} - Resolves when the total count is successfully updated.
+ * Logs an error message if the fetch operation fails.
+ */
+
+<<<<<<<  007388b6-9302-42d2-9c96-f6784565bedd  >>>>>>>
 const updateTotalCount = async () => {
   try {
     totalItems.value = await fetchTotalUsers(

@@ -272,7 +272,7 @@ const refresh = () => {
           <!-- Data Table -->
           <VDataTableServer
               v-model:page="page"
-              v-model:items-per-page="itemsPerPage"
+              v-model:items-per-page="itemsPerPage as Number"
               :headers="visibleHeaders"
               :items="items as any[]"
               :loading="loading"

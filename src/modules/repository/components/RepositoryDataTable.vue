@@ -42,8 +42,6 @@ const selectedProjectPublicState = ref<string | boolean>('');
 const selectedProjectStatus = ref<string>('');
 const path = computed(() => route.path)
 
-// Added for filter drawer
-const showFilterDrawer = ref(false);
 
 const manageRepoStatusCallback = async (id: string, isActive: boolean) => {
   await manageRepositoryStatus(id, isActive);
@@ -167,7 +165,7 @@ const tableFilters = computed(() => [
   },
   {
     key: 'projectState',
-    label: `${path == '/repositories' ? 'Project' : 'IP Technology'} State`,
+    label: `${path.value == '/repositories' ? 'Project' : 'IP Technology'} State`,
     value: selectedProjectState.value,
     items: projectStateOptions,
     itemTitle: (type: any) => type.title,
@@ -176,7 +174,7 @@ const tableFilters = computed(() => [
   },
   {
     key: 'projectPublicState',
-    label: `${path == '/repositories' ? 'Project' : 'IP Technology'} Availability`,
+    label: `${path.value == '/repositories' ? 'Project' : 'IP Technology'} Availability`,
     value: selectedProjectPublicState.value,
     items: projectPublicStateOptions,
     itemTitle: (type: any) => type.title,
@@ -185,7 +183,7 @@ const tableFilters = computed(() => [
   },
   {
     key: 'projectStatus',
-    label: `${path == '/repositories' ? 'Project' : 'IP Technology'} Status`,
+    label: `${path.value == '/repositories' ? 'Project' : 'IP Technology'} Status`,
     value: selectedProjectStatus.value,
     items: projectStatusOptions,
     itemTitle: (type: any) => type.title,
