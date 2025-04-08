@@ -159,7 +159,7 @@ const initialize = async () => {
   } else {
     isRepoAvailable.value =  userData.is_superuser ? true : isSlugInRepoList(props.repository, allUserRepo)
   }
-  if(isSlugInRepoList(props.repository, allUserRepo)) {
+  if(isSlugInRepoList(props.repository, allUserRepo) || userData.is_superuser) {
     isMember.value = true;
     tabs.value = getTabs()
   }

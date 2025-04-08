@@ -118,10 +118,10 @@ const initialize = async () => {
   if (props.organization?.visibility === 1 || props.organization?.visibility === 4) {
     isOrgAvailable.value = true;
   } else {
-    isOrgAvailable.value = isSlugInOrgList(props.organization, allUserOrg);
+    isOrgAvailable.value = userData.is_superuser ? true : isSlugInOrgList(props.organization, allUserOrg);
   }
 
-  if(isSlugInOrgList(props.organization, allUserOrg)){
+  if(isSlugInOrgList(props.organization, allUserOrg) || userData.is_superuser){
     isMember.value = true
     tabs.value = getTabs()
   }

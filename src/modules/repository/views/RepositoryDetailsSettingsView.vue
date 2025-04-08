@@ -699,7 +699,7 @@ onMounted(async () => {
   const allUserRepo = await fetchRepositoryIDsByUser();
 
   if(currentRepo.value){
-    if(isSlugInRepoList(currentRepo.value, allUserRepo)|| userData.is_superuser) {
+    if(isSlugInRepoList(currentRepo.value, allUserRepo) || userData.is_superuser) {
       if("is_member" in currentRepo.value){
         currentRepo.value.is_member = true;
       }
@@ -760,9 +760,9 @@ onMounted(async () => {
            Download {{entityTitle}} Info
          </VBtnPrimaryFilled>
        </VRow>
-       <div v-if="currentRepo.is_member">
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
-         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
+       <div v-if="currentRepo.is_member|| userData.is_superuser">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Update {{entityTitle}} Visibility (Current Visibility: {{getVisibilityLabel(repository?.visibility as number)}})</p>
@@ -784,8 +784,8 @@ onMounted(async () => {
              </ChangeVisibilityDialog>
            </VRow>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
-         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Update {{entityTitle}} Information</p>
@@ -801,8 +801,8 @@ onMounted(async () => {
              </VBtnPrimaryFilled>
            </VRow>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
-         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Upload {{entityTitle}} Files</p>
@@ -826,7 +826,7 @@ onMounted(async () => {
                <p class="section-title">{{entityTitle}} Members</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage project members and their roles. <AccessLeveLInfoDialog/></p>
              </div>
-             <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
+             <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" @callback="fetchMembersCallback">
                <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                  Add Member
                </VBtnPrimaryFilled>
@@ -868,7 +868,7 @@ onMounted(async () => {
                    </div>
                  </div>
                  <VMenu
-                     v-if="member.user.uid != userData.uid && (userRepoInfo?.access_level == 'owner' || userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userRepoInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin'))"
+                     v-if="member.user.uid != userData.uid && (userRepoInfo?.access_level == 'owner' || userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userRepoInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin')) || userData.is_superuser"
                      location="bottom"
                      :close-on-content-click="false"
                  >
@@ -906,9 +906,9 @@ onMounted(async () => {
              </p>
            </div>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
-         <div v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'"  class="mt-2">
-           <VRow v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="ma-0" justify="space-between" align="center">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser"  class="mt-2">
+           <VRow v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Access Requests</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage access requests in the project </p>
@@ -995,8 +995,8 @@ onMounted(async () => {
              </p>
            </div>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner'" class="my-5"/>
-         <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2" id="repository-status">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' || userData.is_superuser" class="my-5"/>
+         <div v-if="userRepoInfo?.access_level == 'owner' || userData.is_superuser" class="mt-2" id="repository-status">
            <VRow class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Manage {{entityTitle}} Status Information (Current Status: {{repository?.is_active ? 'Active' : 'Inactive'}})</p>

@@ -500,9 +500,9 @@ onMounted(async () => {
             Download CMI Info
           </VBtnPrimaryFilled>
         </VRow>
-        <div v-if="currentOrg.is_member">
-          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="my-5"/>
-          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
+        <div v-if="currentOrg.is_member || userData.is_superuser">
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
                 <p class="section-title">Update CMI Visibility (Current Visibility: {{getVisibilityLabel(organization?.visibility as number)}})</p>
@@ -524,8 +524,8 @@ onMounted(async () => {
               </ChangeVisibilityDialog>
             </VRow>
           </div>
-          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="my-5"/>
-          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" class="mt-2">
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" class="mt-2">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
                 <p class="section-title">Update Consortium Member Institution Information</p>
@@ -541,14 +541,14 @@ onMounted(async () => {
               </VBtnPrimaryFilled>
             </VRow>
           </div>
-          <VDivider v-if="currentOrg?.is_member" class="my-5"/>
+          <VDivider v-if="currentOrg?.is_member || userData.is_superuser" class="my-5"/>
           <div class="mt-2">
-            <VRow v-if="currentOrg?.is_member" class="ma-0" justify="space-between" align="center">
+            <VRow v-if="currentOrg?.is_member || userData.is_superuser" class="ma-0" justify="space-between" align="center">
               <div>
                 <p class="section-title">Consortium Member Institution Members</p>
                 <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage consortium member institution members and their roles. <AccessLeveLInfoDialog/></p>
               </div>
-              <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
+              <AddMemberDialog :form-type="FormType.create" v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" @callback="fetchMembersCallback">
                 <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                   Add Member
                 </VBtnPrimaryFilled>
@@ -590,7 +590,7 @@ onMounted(async () => {
                     </div>
                   </div>
                   <VMenu
-                      v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userOrgInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin'))"
+                      v-if="member.user.uid != userData.uid && (userOrgInfo?.access_level == 'owner' || userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userOrgInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin')) || userData.is_superuser"
                       location="bottom"
                       :close-on-content-click="false"
                   >
@@ -630,8 +630,8 @@ onMounted(async () => {
               </p>
             </div>
           </div>
-          <VDivider v-if="userOrgInfo?.access_level == 'owner'" class="my-5"/>
-          <div v-if="userOrgInfo?.access_level == 'owner'" class="mt-2" id="organization-status">
+          <VDivider v-if="userOrgInfo?.access_level == 'owner'|| userData.is_superuser" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner'|| userData.is_superuser" class="mt-2" id="organization-status">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
                   <p class="section-title">Manage Consortium Member Institution Status (Current Status: {{currentOrg.is_active ? 'Active' : 'Inactive'}})</p>

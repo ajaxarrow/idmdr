@@ -75,7 +75,7 @@ onUnmounted(() => {
           <VCol md="9" class="pa-0">
             <div>
               <p class="text-heading d-flex align-center">
-                <span v-if="forUser">My</span> Consortium Member Institutions
+                <span v-if="forUser" class="mr-1">My </span> Consortium Member Institutions
               </p>
               <p class="text-subtitle">Browse and explore the consortium of agencies and institutions undertaking research and development
                 in agriculture, aquatic, and natural resources in Northern Mindanao. </p>

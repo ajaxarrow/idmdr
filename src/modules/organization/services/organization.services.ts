@@ -537,7 +537,7 @@ export const useOrganizationServices = () => {
 
   }
 
-  const fetchAllOrganizations = async (
+  const fetchAllOrganizationsBasicData = async (
       pageNumber: number,
       pageSize: number,
   ) : Promise<Organization[]> => {
@@ -599,6 +599,67 @@ export const useOrganizationServices = () => {
     }
   }
 
+  const fetchAllOrganizations = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+  ) : Promise<Organization[]> => {
+    try{
+      let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      const res = await server.get(url, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = await mapOrgData(rawData)
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
+  const fetchOrganizationCount= async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+  ) : Promise<number> => {
+    try{
+      let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      const res = await server.get(url, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      return res.data.results.length;
+    } catch (e) {
+      return 0
+    }
+  }
 
 
   return {
@@ -617,8 +678,10 @@ export const useOrganizationServices = () => {
     fetchOrganizationData,
     fetchOrganizationIDsByUser,
     changeOrganizationVisibility,
-    fetchAllOrganizations,
+    fetchAllOrganizationsBasicData,
     manageOrgStatus,
-    manageOrgAdminStatus
+    manageOrgAdminStatus,
+    fetchAllOrganizations,
+    fetchOrganizationCount
   };
 };

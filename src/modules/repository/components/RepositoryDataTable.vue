@@ -24,7 +24,7 @@ const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
 const { fetchAllRepositories, fetchRepositoryIDsByUser, manageRepositoryStatus, manageRepositoryAdminStatus } = useRepositoryServices();
-const {fetchAllOrganizations} = useOrganizationServices();
+const {fetchAllOrganizationsBasicData} = useOrganizationServices();
 const selectedOrganization = ref<string>('');
 const pageEntity = computed(() => route.path === '/repositories' ? 'Project' : 'IP Technology');
 
@@ -321,7 +321,7 @@ watch(()=> route.path, async () => {
 })
 
 onMounted(async () => {
-  organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizations(1, 1000))];
+  organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
   await loadData()
 });
 </script>
