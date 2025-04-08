@@ -30,7 +30,7 @@ import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDia
 import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 
-const {route, router} = useRouting()
+const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const currentOrg = ref<Organization | null>(null)
 const {showSnackbarMessage} = useSnackbarStore();
