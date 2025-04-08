@@ -15,11 +15,9 @@ import {useOrganizationServices} from "../../organization/services/organization.
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 
-const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
 const {fetchAllOrganizations, fetchOrganizationCount, manageOrgStatus, manageOrgAdminStatus} = useOrganizationServices();
