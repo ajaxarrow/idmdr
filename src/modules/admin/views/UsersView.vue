@@ -142,7 +142,6 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
   }
 };
 
-
 const clearFilters = () => {
   selectedUserAccountStatus.value = '';
   selectedUserAvailabilityStatus.value = '';
@@ -150,7 +149,13 @@ const clearFilters = () => {
 
 const updateTotalCount = async () => {
   try {
-    totalItems.value = await fetchTotalUsers();
+    totalItems.value = await fetchTotalUsers(
+        page.value,
+        100000,
+        search.value,
+        selectedUserAvailabilityStatus.value,
+        selectedUserAccountStatus.value,
+    );
   } catch (error) {
     console.error('Failed to get total count:', error);
   }
@@ -174,6 +179,7 @@ onMounted(async () => {
         :items="users"
         :loading="loading"
         :totalItems="totalItems"
+        :itemsPerPageOptions="itemsPerPage"
         searchPlaceholder="Search users..."
         emptyStateHeader="No Users Found"
         emptyStateDescription="There are no users found matching your search criteria"

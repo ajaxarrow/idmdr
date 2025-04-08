@@ -31,6 +31,11 @@ const props = defineProps({
     type: Number,
     default: 0
   },
+  itemsPerPageOptions: {
+    type: Number,
+    default: 0,
+    required: false
+  },
   searchPlaceholder: {
     type: String,
     default: 'Search...'
@@ -63,7 +68,7 @@ const emit = defineEmits([
 const { generatePageSizeIncrements } = usePageSizeHelper()
 
 const search = ref('');
-const itemsPerPage = ref(5);
+const itemsPerPage = ref<Number>(<Number>props.itemsPerPageOptions);
 const page = ref(1);
 const showFilterDrawer = ref(false);
 
@@ -105,14 +110,21 @@ watch(search, (newValue) => {
   emit('update:search', newValue);
   page.value = 1;
   emit('update:page', 1);
-  emit('loadData');
+  emit('refreshData');
 });
 
 watch(itemsPerPage, (newValue) => {
   emit('update:itemsPerPage', newValue);
   page.value = 1;
   emit('update:page', 1);
-  emit('loadData');
+  emit('refreshData');
+});
+
+
+watch(()=> props.itemsPerPageOptions, (newValue) => {
+  if (newValue != null) {
+    itemsPerPage.value = newValue
+  }
 });
 
 const refresh = () => {
@@ -232,7 +244,7 @@ const refresh = () => {
                       @update:model-value="updateColumnVisibility"
                   />
                 </VCol>
-
+                <slot name="additional-filters"></slot>
                 <!-- Dynamic filters from props -->
                 <template v-for="filter in filters" :key="filter.key">
                   <VCol cols="12" sm="6" md="4" lg="3" v-if="!filter.visibleKey || isColumnVisible(filter.visibleKey)">
@@ -254,8 +266,6 @@ const refresh = () => {
                   </VCol>
                 </template>
               </VRow>
-
-              <slot name="additional-filters"></slot>
             </div>
           </VExpandTransition>
 

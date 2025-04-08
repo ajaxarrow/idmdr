@@ -46,12 +46,30 @@ export const useUserManagementServices = () => {
         }
     }
 
-    const fetchTotalUsers = async (): Promise<number> => {
+    const fetchTotalUsers = async (
+        pageNumber: number,
+        pageSize: number,
+        searchQuery?: string,
+        isApproved?: string | boolean,
+        isActive?: string | boolean,
+    ): Promise<number> => {
         try {
-            const res = await server.get(`/users/?page_size=100000`, {
-                headers: authorizationHeader,
+            let url = `/users/?page=${pageNumber}&page_size=${pageSize}`;
+
+            if (searchQuery?.trim()) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+            if (typeof isApproved === 'boolean') {
+                url += `&is_approved=${isApproved}`;
+            }
+            if (typeof isActive === 'boolean') {
+                url += `&is_active=${isActive}`;
+            }
+            const res = await server.get(url, {
+                headers: authorizationHeader
             });
-            return res.data.count - 1;
+            console.log(res.data.results.length)
+            return res.data.results.length
         } catch {
             return 0;
         }

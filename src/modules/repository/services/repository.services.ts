@@ -635,7 +635,12 @@ export const useRepositoryServices = () => {
       pageSize: number = 100,
       user: boolean = true,
       searchQuery?: string,
-      priorityLevel?: string
+      priorityLevel?: string,
+      organization?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+      type?: string,
+      status?: string,
   ): Promise<Repository[]> => {
     try {
       // Start with the base URL based on whether user filtering is enabled
@@ -651,6 +656,21 @@ export const useRepositoryServices = () => {
       // Append priority_level parameter if provided
       if (priorityLevel && priorityLevel.trim()) {
         url += `&priority_level=${encodeURIComponent(priorityLevel.trim().toLowerCase())}`;
+      }
+      if (organization?.trim()) {
+        url += `&organization=${encodeURIComponent(organization)}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      if (type?.trim()) {
+        url += `&type=${encodeURIComponent(type)}`;
+      }
+      if (status?.trim()) {
+        url += `&status=${encodeURIComponent(status)}`;
       }
 
       const res = await server.get(url, {
