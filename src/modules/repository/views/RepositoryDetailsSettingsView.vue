@@ -738,7 +738,7 @@ onMounted(async () => {
            </VAlert-title>
            <div class="warning-message">
              This {{entityTitle}} is not visible to the public. Only members can view it.
-             <a href="#repository-status" class="status-link">
+             <a v-if="userRepoInfo?.access_level == 'owner'" href="#repository-status" class="status-link" >
                Change status now <PhArrowDown class="ms-1" />
              </a>
            </div>
@@ -1003,6 +1003,7 @@ onMounted(async () => {
                <p class="text-gs20 mb-2" style="font-size: 14px;">This will change the status of the project</p>
              </div>
              <ConfirmationDialog
+                 :isWarning="repository?.is_active"
                  @callback="manageRepoStatusCallback(!repository?.is_active)"
                  :confirm-content="repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`"
                  :content="repository?.is_active ? 'Are you sure you want to deactivate this project? All project data will not be available to the public.' : 'Are you sure you want to activate this project?'"
@@ -1011,7 +1012,8 @@ onMounted(async () => {
                    height="41px"
                    rounded="lg"
                    class="satoshi-md"
-                   style="font-size: 14px !important; background-color: #b00020 !important">
+                   :color="repository?.is_active ? '#C83246' : '#01579B'"
+                   style="font-size: 14px !important; color: white !important;">
                  {{repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`}}
                </VBtnPrimaryFilled>
              </ConfirmationDialog>

@@ -10,6 +10,10 @@ const props = defineProps({
   confirmContent: {
     type: String,
     default: 'Yes'
+  },
+  isWarning: {
+    type: Boolean,
+    default: false
   }
 })
 const emit = defineEmits(['callback'])
@@ -30,11 +34,11 @@ const handleConfirm = () => {
   </div>
   <VDialog v-model="confirmationDialog" class="center">
     <VSheet class="delete-dialog-container" @click.stop>
-      <PhQuestion color="#01579B" weight="duotone" size="50"/>
+      <PhQuestion :color="props.isWarning ? '#C83246' : '#01579B'" weight="duotone" size="50"/>
       <p class="font-weight-black text-h6">Are you sure?</p>
       <p class="text-center px-1 mb-3">{{ props.content }}</p>
       <VBtnPrimaryAlt
-          color="#01579B"
+          :color="props.isWarning ? '#C83246' : '#01579B'"
           @click="handleConfirm"
           width="98%"
           class="submit-button"
@@ -42,7 +46,7 @@ const handleConfirm = () => {
         {{props.confirmContent}}
       </VBtnPrimaryAlt>
       <VBtnPrimaryAlt
-          color="#01579B"
+          :color="props.isWarning ? '#C83246' : '#01579B'"
           @click="confirmationDialog = false"
           width="98%"
           variant="outlined"

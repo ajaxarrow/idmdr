@@ -478,7 +478,7 @@ onMounted(async () => {
             </VAlert-title>
             <div class="warning-message">
               This CMI is not visible to the public. Only members can view it.
-              <a href="#organization-status" class="status-link">
+              <a v-if="userOrgInfo?.access_level == 'owner'" href="#organization-status" class="status-link">
                 Change status now <PhArrowDown class="ms-1" />
               </a>
             </div>
@@ -631,13 +631,14 @@ onMounted(async () => {
             </div>
           </div>
           <VDivider v-if="userOrgInfo?.access_level == 'owner'" class="my-5"/>
-          <div v-if="userOrgInfo?.access_level == 'owner'" class="mt-2">
+          <div v-if="userOrgInfo?.access_level == 'owner'" class="mt-2" id="organization-status">
             <VRow  class="ma-0" justify="space-between" align="center">
               <div>
                   <p class="section-title">Manage Consortium Member Institution Status (Current Status: {{currentOrg.is_active ? 'Active' : 'Inactive'}})</p>
                 <p class="text-gs20 mb-2" style="font-size: 14px;">This will change the status of consortium member institution</p>
               </div>
               <ConfirmationDialog
+                  :isWarning="currentOrg?.is_active"
                   @callback="manageOrgStatusCallback(!currentOrg?.is_active)"
                   :confirm-content="currentOrg?.is_active ? 'Deactivate CMI' : 'Activate CMI'"
                   :content="currentOrg?.is_active ? 'Are you sure you want to deactivate this CMI? All CMI data not will be available to the public.' : 'Are you sure you want to activate this CMI?'"
@@ -646,7 +647,8 @@ onMounted(async () => {
                     height="41px"
                     rounded="lg"
                     class="satoshi-md"
-                    style="font-size: 14px !important; background-color: #b00020 !important">
+                    :color="currentOrg?.is_active ? '#C83246' : '#01579B'"
+                    style="font-size: 14px !important; color: white !important;">
                   {{currentOrg?.is_active ? 'Deactivate CMI' : 'Activate CMI'}}
                 </VBtnPrimaryFilled>
               </ConfirmationDialog>

@@ -380,7 +380,6 @@ export const useOrganizationServices = () => {
       });
       const rawData = res.data.results
       const organizations: Organization[] = (await mapOrgData(rawData)).filter((org: any) => !org.is_deleted && org.is_approved)
-      console.log(organizations)
       myOrganizations.value = [...myOrganizations.value,...organizations];
       return organizations;
     } catch (e) {
