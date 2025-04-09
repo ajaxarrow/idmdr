@@ -12,6 +12,8 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const path = ref('organizations')
@@ -19,6 +21,7 @@ const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {organization} = useOrganizationStore();
 const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
+const {fetchCustomUsers} = useRepositoryMemberServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const isGeoJSONPreview = ref(false);
@@ -27,7 +30,7 @@ const isImagePreviewed = ref(false);
 const hasImage = ref(false);
 const previewImage = ref('');
 const file = ref<File | null>(null);
-
+const customUsers = ref<CustomUserData[]>([])
 const {route} = useRouting();
 
 const organizationDataInitialState = reactive<Organization>({
@@ -49,31 +52,105 @@ const organizationDataInitialState = reactive<Organization>({
   email: '',
   additional_info: '',
   president: '',
-  rd_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
-  tt_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
-  ic_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
-  sc_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
+  rd_rep: '',
+  tt_rep: '',
+  ic_rep: '',
+  sc_rep: '',
+  rd_repData: [],
+  tt_repData: [],
+  ic_repData: [],
+  sc_repData: []
 });
 
 const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
+
+const active = ref(false)
+const rd_repRef = ref(null);
+const tt_repRef = ref(null);
+const ic_repRef = ref(null);
+const sc_repRef = ref(null);
+
+// Reusable search query handling
+const searchQueries = {
+  rd_rep: ref(''),
+  tt_rep: ref(''),
+  ic_rep: ref(''),
+  sc_rep: ref('')
+};
+
+// Reusable function to handle search for any field
+const handleSearch = (field: string, query: any) => {
+  // @ts-ignore
+  searchQueries[field].value = query;
+};
+
+// Reusable function to add custom user for any field
+const addCustomUser = (field: string) => {
+  if (field === 'rd_rep' && rd_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.rd_rep.value as string,
+        first_name: searchQueries.rd_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.rd_repData?.push(newUser);
+    searchQueries.rd_rep.value = '';
+    //@ts-ignore
+    rd_repRef.value.search = '';
+  } else if (field === 'tt_rep' && tt_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.tt_rep.value as string,
+        first_name: searchQueries.tt_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.tt_repData?.push(newUser);
+    searchQueries.tt_rep.value = '';
+    //@ts-ignore
+    tt_repRef.value.search = '';
+  } else if (field === 'ic_rep' && ic_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.ic_rep.value as string,
+        first_name: searchQueries.ic_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.ic_repData?.push(newUser);
+    searchQueries.ic_rep.value = '';
+    //@ts-ignore
+    ic_repRef.value.search = '';
+    // leadRef.value.search = '';
+  } else if (field === 'sc_rep' && sc_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.sc_rep.value as string,
+        first_name: searchQueries.sc_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.sc_repData?.push(newUser);
+    searchQueries.sc_rep.value = '';
+    //@ts-ignore
+    sc_repRef.value.search = '';
+  }
+};
 
 const removeImage = () => {
   file.value = null;
@@ -125,6 +202,18 @@ const addOrganizationData = async () => {
   } else {
     delete organizationData.image;
   }
+  organizationData.rd_rep = JSON.stringify({
+    data: organizationData.rd_repData,
+  })
+  organizationData.tt_rep = JSON.stringify({
+    data: organizationData.tt_repData,
+  })
+  organizationData.ic_rep = JSON.stringify({
+    data: organizationData.ic_repData,
+  })
+  organizationData.sc_rep = JSON.stringify({
+    data: organizationData.sc_repData,
+  })
   await addOrganization(organizationData)
   if(hasErrorMessages(errorMessage)){
     scrollToFirstErrorMessage()
@@ -140,6 +229,18 @@ const updateOrganizationData = async () => {
   } else {
     delete organizationData.image;
   }
+  organizationData.rd_rep = JSON.stringify({
+    data: organizationData.rd_repData,
+  })
+  organizationData.tt_rep = JSON.stringify({
+    data: organizationData.tt_repData,
+  })
+  organizationData.ic_rep = JSON.stringify({
+    data: organizationData.ic_repData,
+  })
+  organizationData.sc_rep = JSON.stringify({
+    data: organizationData.sc_repData,
+  })
   await updateOrganization(organizationData, organizationData.slug)
   if(hasErrorMessages(errorMessage)){
     scrollToFirstErrorMessage()
@@ -231,6 +332,7 @@ const formatDate = (): string=> {
 
 onMounted(async () => {
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
+  customUsers.value = await fetchCustomUsers();
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
@@ -498,7 +600,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Telephone Number<span class="text-pink">*</span></label>
+          <label class="input-label">Telephone Number</label>
           <VTextField
               v-model="organizationData.tel_phone"
               placeholder="E.g. 000-888-000"
@@ -582,172 +684,122 @@ onMounted(async () => {
 <!--          </div>-->
 <!--        </div>-->
         <div class="mb-3">
-          <label class="input-label">Research & Development Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.rd_rep.full_name"
-              placeholder="E.g. John Doe"
+          <label class="input-label">Research & Development Representatives</label>
+          <VCombobox
+              ref="rd_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.rd_repData"
+              placeholder="Select Representatives"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.full_name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('rd_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('rd_rep')">
+                <VListItemTitle>
+                  Add "{{ searchQueries.rd_rep }}" as a research & development representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3">
-        <label class="input-label">Research & Development Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.rd_rep.email"
-              placeholder="E.g. johndoe@example.com"
+          <label class="input-label">Technology Transfer Representatives</label>
+          <VCombobox
+              ref="tt_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.tt_repData"
+              placeholder="Select Representatives"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('tt_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('tt_rep')">
+                <VListItemTitle>
+                  Add "{{ searchQueries.tt_rep }}" as a technology transfer representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
+        </div>
+
+        <div class="mb-3">
+          <label class="input-label">Information Communication Representatives</label>
+          <VCombobox
+              ref="ic_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.ic_repData"
+              placeholder="Select Representatives"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('ic_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('ic_rep')">
+                <VListItemTitle>
+                  Add "{{ searchQueries.ic_rep }}" as an information communication representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
+
         </div>
         <div class="mb-3">
-          <label class="input-label">Research & Development Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.rd_rep.phone"
-              placeholder="E.g. 09123456789"
+          <label class="input-label">Science Communication Representatives</label>
+          <VCombobox
+              ref="sc_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.sc_repData"
+              placeholder="Select Representatives"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.tt_rep.full_name"
-              placeholder="E.g. John Doe"
-              class="my-2"
-              :error-messages="errorMessage.tt_rep.full_name"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.tt_rep.email"
-              placeholder="E.g. johndoe@example.com"
-              class="my-2"
-              :error-messages="errorMessage.tt_rep.email"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.tt_rep.phone"
-              placeholder="E.g. 09123456789"
-              class="my-2"
-              :error-messages="errorMessage.tt_rep.phone"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Information Communication Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.ic_rep.full_name"
-              placeholder="E.g. John Doe"
-              class="my-2"
-              :error-messages="errorMessage.ic_rep.full_name"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Information Communication Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.ic_rep.email"
-              placeholder="E.g. johndoe@example.com"
-              class="my-2"
-              :error-messages="errorMessage.ic_rep.email"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Information Communication Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.ic_rep.phone"
-              placeholder="E.g. 09123456789"
-              class="my-2"
-              :error-messages="errorMessage.ic_rep.phone"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Science Communication Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.sc_rep.full_name"
-              placeholder="E.g. John Doe"
-              class="my-2"
-              :error-messages="errorMessage.sc_rep.full_name"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Science Communication Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.sc_rep.email"
-              placeholder="E.g. johndoe@example.com"
-              class="my-2"
-              :error-messages="errorMessage.sc_rep.email"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Science Communication Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.sc_rep.phone"
-              placeholder="E.g. 09123456789"
-              class="my-2"
-              :error-messages="errorMessage.sc_rep.phone"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('sc_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('sc_rep')">
+                <VListItemTitle>
+                  Add "{{ searchQueries.sc_rep }}" as a science communication representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3" v-if="organizationData.additional_info">
           <label class="input-label">Additional Info</label>

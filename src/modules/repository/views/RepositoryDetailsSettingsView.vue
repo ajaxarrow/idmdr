@@ -289,7 +289,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   doc.setFont('helvetica', 'bold');
   doc.text('Lead:', margin, currentY);
   doc.setFont('helvetica', 'normal');
-  doc.text(repository?.leadData?.data?.username || 'N/A', margin + 70, currentY);
+  doc.text(repository?.leadData?.data?.first_name ? `${repository?.leadData?.data?.first_name} ${repository?.leadData?.data?.last_name}`: 'N/A', margin + 70, currentY);
   currentY += 8;
 
   doc.setFont('helvetica', 'bold');
@@ -298,7 +298,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   doc.text(
       !repository?.authorsData || repository.authorsData.length === 0
           ? 'N/A'
-          : repository.authorsData.map(owner => owner?.data?.username).filter(Boolean).join(', '),
+          : repository.authorsData.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', '),
       margin + 70, currentY
   );
   currentY += 8;
@@ -428,9 +428,10 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
       { label: 'Technology Status:', content: repository?.technology_status || 'N/A' },
       { label: 'Technology Readiness Level:', content: repository?.technology_readiness_level || 'N/A' },
       { label: 'Technology Generator:', content: !repository?.techGeneratorData || repository.techGeneratorData.length === 0 ?
-            'N/A' : repository.techGeneratorData.map(owner => owner?.data?.username).filter(Boolean).join(', ') },
-      { label: 'Technology Owner:', content: !repository?.techOwnerData || repository.techOwnerData.length === 0 ?
-            'N/A' : repository.techOwnerData.map(owner => owner?.data?.username).filter(Boolean).join(', ') },
+            'N/A' : repository.techGeneratorData.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', ') },
+      { label: 'Technology Owner:', content: !repository?.techOwnerData || repository.techOwnerData?.length === 0 ?
+            'N/A' : repository.techOwnerData?.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', ') },
+
       { label: 'Existing/Potential Adopters:', content: arrayToString(repository?.adaptors as string[] || []) || 'N/A' },
       { label: 'Transfer Plan:', content: repository?.transfer_plan || 'N/A' },
       { label: 'Transfer Status:', content: repository?.technology_transfer_status || 'N/A' }

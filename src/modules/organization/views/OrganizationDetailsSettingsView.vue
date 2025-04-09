@@ -331,10 +331,10 @@ const downloadOrganizationDataPDF = async (organization: Organization) => {
 
   // Representatives in single column with improved formatting
   const representatives = [
-    { title: 'Research & Development', rep: organization.rd_rep },
-    { title: 'Technology Transfer', rep: organization.tt_rep },
-    { title: 'Information Communication', rep: organization.ic_rep },
-    { title: 'Science Communication', rep: organization.sc_rep }
+    { title: 'Research & Development', rep: organization.rd_repData },
+    { title: 'Technology Transfer', rep: organization.tt_repData },
+    { title: 'Information Communication', rep: organization.ic_repData },
+    { title: 'Science Communication', rep: organization.sc_repData }
   ];
 
   representatives.forEach(({ title, rep }) => {
@@ -347,12 +347,13 @@ const downloadOrganizationDataPDF = async (organization: Organization) => {
     doc.text(`${title}:`, margin, currentY);
     doc.setFont('helvetica', 'normal');
 
-    const repInfo = `${rep.full_name || 'N/A'}${rep.email ? ` | ${rep.email}` : ''}`;
+    const repInfo = rep?.length === 0 ?
+        'N/A' : rep?.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', ')
 
     if (repInfo && doc.getTextWidth(repInfo) > contentWidth - 70) {
       currentY = wrapText(doc, repInfo, margin + 70, currentY, contentWidth - 70);
     } else {
-      doc.text(repInfo, margin + 70, currentY);
+      doc.text(repInfo!, margin + 70, currentY);
       currentY += 8;
     }
   });

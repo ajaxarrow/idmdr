@@ -110,7 +110,6 @@ export const useOrganizationExpertsServices = () => {
         }
       });
       const userOrgUids = userOrg.data.results.map((org: any) => org.organization.uid);
-      console.log(userOrgUids);
       const res = await server.get(`/experts/`, {
         headers: authorizationHeader,
       });
