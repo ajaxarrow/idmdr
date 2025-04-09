@@ -298,18 +298,18 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             <p class="text-subtitle pr-3">{{ repository.technology_readiness_level}}</p>
           </VCol>
           <VCol v-if="repository.technology_generator" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Technology Generator<span v-if="repository.techGeneratorData.length != 0">(s)</span></p>
+            <p class="text-subtitle text-gs20">Technology Generator<span v-if="repository.techGeneratorData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
-              <span v-if="repository.techGeneratorData.length == 0">N/A</span>
+              <span v-if="repository.techGeneratorData?.length == 0">N/A</span>
               <span v-else v-for="(techGen, index) in repository.techGeneratorData">
                 {{techGen.data?.first_name}} {{techGen.data?.last_name}}<span v-if="index != repository.techGeneratorData?.length - 1">, </span>
               </span>
             </p>
           </VCol>
           <VCol v-if="repository.tech_owner" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Technology Owner<span v-if="repository.techOwnerData.length != 0">(s)</span></p>
+            <p class="text-subtitle text-gs20">Technology Owner<span v-if="repository.techOwnerData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
-              <span v-if="repository.techOwnerData.length == 0">N/A</span>
+              <span v-if="repository.techOwnerData?.length == 0">N/A</span>
               <span v-else v-for="(owner, index) in repository.techOwnerData">
                 {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != repository.techOwnerData?.length - 1">, </span>
               </span>

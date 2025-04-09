@@ -85,36 +85,40 @@
          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Research & Development</p>
            <p class="text-subtitle">
-             {{ organization.rd_rep.full_name ? organization.rd_rep.full_name : 'N/A' }}
-             <span v-if="organization.rd_rep.email">|</span>
-             {{ organization.rd_rep.email ? organization.rd_rep.email : 'N/A' }}
+             <span v-if="organization.rd_repData?.length == 0">N/A</span>
+             <span v-else v-for="(rep, index) in organization.rd_repData">
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.rd_repData?.length - 1">, </span>
+              </span>
            </p>
          </VCol>
 
          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Technology Transfer</p>
            <p class="text-subtitle">
-             {{ organization.tt_rep.full_name ? organization.tt_rep.full_name : 'N/A' }}
-             <span v-if="organization.tt_rep.email">|</span>
-             {{ organization.tt_rep.email ? organization.tt_rep.email : 'N/A' }}
+             <span v-if="organization.tt_repData?.length == 0">N/A</span>
+             <span v-else v-for="(rep, index) in organization.tt_repData">
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.tt_repData?.length - 1">, </span>
+              </span>
            </p>
          </VCol>
 
          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Information Communication</p>
            <p class="text-subtitle">
-             {{ organization.ic_rep.full_name ? organization.ic_rep.full_name : 'N/A' }}
-             <span v-if="organization.ic_rep.email">|</span>
-             {{ organization.ic_rep.email ? organization.ic_rep.email : 'N/A' }}
+             <span v-if="organization.ic_repData?.length == 0">N/A</span>
+             <span v-else v-for="(rep, index) in organization.ic_repData">
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.ic_repData?.length - 1">, </span>
+              </span>
            </p>
          </VCol>
 
          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
            <p class="text-subtitle text-gs20">Science Communication</p>
            <p class="text-subtitle">
-             {{ organization.sc_rep.full_name ? organization.sc_rep.full_name : 'N/A' }}
-             <span v-if="organization.sc_rep.email">|</span>
-             {{ organization.sc_rep.email ? organization.sc_rep.email : 'N/A' }}
+             <span v-if="organization.sc_repData?.length == 0">N/A</span>
+             <span v-else v-for="(rep, index) in organization.sc_repData">
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.sc_repData?.length - 1">, </span>
+              </span>
            </p>
          </VCol>
 

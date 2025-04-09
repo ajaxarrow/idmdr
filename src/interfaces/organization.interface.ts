@@ -1,5 +1,6 @@
 import {ClusterType} from "./enums/organization.enum";
 import {Repository} from "./repository.interface.ts";
+import {CustomUserData} from "./member.interface.ts";
 
 interface Organization {
   is_deleted?: boolean,
@@ -21,10 +22,14 @@ interface Organization {
   phone?: string,
   email?: string,
   president?: string,
-  rd_rep: Representative,
-  tt_rep: Representative,
-  ic_rep: Representative,
-  sc_rep: Representative,
+  rd_repData?: CustomUserData[],
+  tt_repData?: CustomUserData[],
+  ic_repData?: CustomUserData[],
+  sc_repData?: CustomUserData[],
+  rd_rep?: string,
+  tt_rep?: string,
+  ic_rep?: string,
+  sc_rep?: string,
   additional_info?: string,
   is_active?: boolean,
   is_approved?: boolean,

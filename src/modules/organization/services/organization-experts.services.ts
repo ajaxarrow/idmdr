@@ -2,13 +2,11 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {ref} from "vue";
 import {Expert} from "../../../interfaces/organization.interface.ts";
 import {server} from "../../../plugins/axios.ts";
-import {useOrganizationServices} from "./organization.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
 
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
-const {fetchOrganizationByUser} = useOrganizationServices()
 const {stringToArray} = useStringArrayHelper()
 
 export const useOrganizationExpertsServices = () => {
@@ -106,8 +104,13 @@ export const useOrganizationExpertsServices = () => {
 
   const fetchAllExperts = async (): Promise<Expert[]> => {
     try {
-      const userOrg = await fetchOrganizationByUser();
-      const userOrgUids = userOrg.map((org: any) => org.uid);
+      const userOrg = await server.get(`/v1/user/${userData.uid}/organizations`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const userOrgUids = userOrg.data.results.map((org: any) => org.organization.uid);
+      console.log(userOrgUids);
       const res = await server.get(`/experts/`, {
         headers: authorizationHeader,
       });

@@ -11,8 +11,8 @@ import {useRepositoryAttachmentServices} from "./repository-attachments.services
 import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
-import {CustomUserData} from "../../../interfaces/member.interface.ts";
-import {useOrganizationExpertsServices} from "../../organization/services/organization-experts.services.ts";
+import {useCustomUsersServices} from "./custom-users.services.ts";
+
 
 
 const { userData, user } = useUserStore();
@@ -20,12 +20,12 @@ const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.acc
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
-const {fetchOrgMembers, fetchUser} = useOrganizationMembersServices()
+const {fetchOrgMembers} = useOrganizationMembersServices()
+const {mapCustomUsers} = useCustomUsersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
 const {addSector} = useSectorServices()
 const {stringToArray} = useStringArrayHelper()
 const {compareDateStrings} = useDateHelper()
-const {fetchExpertById} = useOrganizationExpertsServices();
 
 export const useRepositoryServices = () => {
   const errorMessageInitialState = reactive({
@@ -299,148 +299,85 @@ export const useRepositoryServices = () => {
     }
   }
 
-  const mapCustomUsers = async (userData: CustomUserData[]): Promise<CustomUserData[]> => {
-    try {
-      return await Promise.all(
-          userData.map(async (customUser) => {
-            if (customUser.type === 'user') {
-              const user = await fetchUser(customUser.data?.uid!);
-              if (user) {
-                return {
-                  type: 'user',
-                  data: {
-                    uid: user?.uid ?? '',
-                    username: user?.username ?? '',
-                    first_name: user?.first_name ?? '',
-                    last_name: user?.last_name ?? '',
-                    email: user?.email ?? '',
-                  }
-                };
-              }
-              return {
-                type: 'user', data: {
-                  uid: customUser.data?.uid ?? '',
-                  username: customUser.data?.username ?? '',
-                  first_name: customUser.data?.first_name ?? '',
-                  last_name: customUser.data?.last_name ?? '',
-                  email: customUser.data?.email ?? '',
-                }
-              };
-            }
+  const mapRepoFields = async (repo: any, type: string, isAssociatedDataIncluded: boolean): Promise<Repository> => {
+    const baseData = {
+      is_member: false,
+      visibility: repo.visibility,
+      affiliation: repo.affiliation ? stringToArray(repo.affiliation) : "",
+      commodity: repo.commodity ? stringToArray(repo.commodity) : "",
+      description: repo.description || "",
+      end_date: repo.end_date || "N/A",
+      funding_agency: repo.funding_agency ? stringToArray(repo.funding_agency) : "",
+      industry: repo.industry ? stringToArray(repo.industry) : "",
+      is_active: repo.is_active,
+      is_approved: repo.is_approved,
+      type: repo.type || "",
+      is_deleted: repo.is_deleted,
+      location: repo.location || "",
+      organization: repo.organization || "",
+      priority_level: repo.priority_level || "",
+      project_component: repo.project_component || "",
+      rpt: repo.rpt ? stringToArray(repo.rpt) : "",
+      slug: repo.uid || "",
+      start_date: repo.start_date || "N/A",
+      tags: repo.tags ? stringToArray(repo.tags) : "",
+      tech_owner: repo.tech_owner || "",
+      technology_category: repo.technology_category || '',
+      technology_generator: repo.technology_generator || "",
+      technology_readiness_level: repo.technology_readiness_level || '',
+      technology_status: repo.technology_status || "",
+      technology_transfer_status: repo.technology_transfer_status || "",
+      title: repo.title || "",
+      transfer_plan: repo.transfer_plan || "",
+      uid: repo.uid || "",
+      adaptors: repo.adaptors ? stringToArray(repo.adaptors) : "",
+      geojson: isEmptyObject(repo.geojson) ? {} : repo.geojson,
+      com_extra: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
+      commercialization: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
+      image: repo.image || 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
+      created_at: repo.created_at || "",
+      updated_at: repo.updated_at || "",
+      owner_id: repo.owner_id || "",
+      owner_data: repo.owner_data || {},
+      org_data: repo.org_data || {},
+      author: repo.author || "",
+      lead: repo.lead,
+      proj_type: repo.proj_type || "",
+      additional_info: repo.additional_info || "",
+      status: repo.status || "",
+      abh: repo.abh || "",
+      atbi: repo.atbi || "",
+      is_patentable: repo.is_patentable || false,
+    };
 
-            if (customUser.type === 'expert') {
-              const expert = await fetchExpertById(customUser.data?.uid!);
-              if(expert) {
-                return {
-                  type: 'expert',
-                  data: {
-                    uid: expert?.uid ?? '',
-                    // @ts-ignore
-                    username: `${expert?.name?.first_name ?? ''} ${expert?.name?.middle_name ?? ''} ${expert?.name?.last_name ?? ''} ${expert?.name?.extension ?? ''}`.trim(),
-                    // @ts-ignore
-                    first_name: expert?.name?.first_name ?? '',
-                    // @ts-ignore
-                    last_name: expert?.name?.last_name ?? '',
-                    email: ''
-                  }
-                };
-              } else {
-                return {
-                  type: 'expert', data: {
-                    uid: customUser.data?.uid ?? '',
-                    username: customUser.data?.username ?? '',
-                    first_name: customUser.data?.first_name ?? '',
-                    last_name: customUser.data?.last_name ?? '',
-                    email: customUser.data?.email ?? '',
-                  }
-                };
-              }
+    if (!isAssociatedDataIncluded) return baseData;
 
-            }
-            // Default case
-            return {
-              type: 'custom',
-              data: {
-                uid: '',
-                username: customUser.data?.username ?? '',
-                first_name: customUser.data?.first_name ?? '',
-                last_name: customUser.data?.last_name ?? '',
-                email: ''
-              }
-            };
-          })
-      );
-    } catch (e: any) {
-      console.error(e);
-      return [];
-    }
+    const [authors, techOwners, techGenerators, lead, attachments] = await Promise.all([
+      mapCustomUsers(JSON.parse(repo.author).data),
+      mapCustomUsers(JSON.parse(repo.tech_owner).data),
+      mapCustomUsers(JSON.parse(repo.technology_generator).data),
+      mapCustomUsers(isEmptyObject(repo.lead) ? [] : [JSON.parse(repo.lead)]),
+      fetchAttachmentsByRepository(repo.uid, type)
+    ]);
+
+    return {
+      ...baseData,
+      techOwnerData: techOwners,
+      techGeneratorData: techGenerators,
+      authorsData: authors,
+      leadData: lead[0] || {},
+      files: attachments
+    };
   };
 
-  const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
-    return Promise.all(
-      rawData.map(async (repo: any) => {
-        const authors = await mapCustomUsers(JSON.parse(repo.author).data);
-        const techOwners = await mapCustomUsers(JSON.parse(repo.tech_owner).data);
-        const techGenerators = await mapCustomUsers(JSON.parse(repo.technology_generator).data);
-        const lead = await mapCustomUsers(isEmptyObject(repo.lead) ? [] : [JSON.parse(repo.lead)])
-        const attachments = await fetchAttachmentsByRepository(repo.uid, type)
-        return {
-          is_member: false,
-          visibility: repo.visibility,
-          affiliation: repo.affiliation ? stringToArray(repo.affiliation) : "",
-          commodity: repo.commodity ? stringToArray(repo.commodity) : "",
-          description: repo.description || "",
-          end_date: repo.end_date || "N/A",
-          funding_agency: repo.funding_agency ? stringToArray(repo.funding_agency) : "",
-          industry: repo.industry ? stringToArray(repo.industry) : "",
-          is_active: repo.is_active,
-          is_approved: repo.is_approved,
-          type: repo.type || "",
-          is_deleted: repo.is_deleted,
-          location: repo.location || "",
-          organization: repo.organization || "",
-          priority_level: repo.priority_level || "",
-          project_component: repo.project_component || "",
-          rpt: repo.rpt ? stringToArray(repo.rpt) : "",
-          slug: repo.uid || "",
-          start_date: repo.start_date || "N/A",
-          tags: repo.tags ? stringToArray(repo.tags) : "",
-          tech_owner: repo.tech_owner || "",
-          techOwnerData: techOwners,
-          technology_category: repo.technology_category || '',
-          technology_generator: repo.technology_generator || "",
-          techGeneratorData: techGenerators,
-          technology_readiness_level: repo.technology_readiness_level || '',
-          technology_status: repo.technology_status || "",
-          technology_transfer_status: repo.technology_transfer_status || "",
-          title: repo.title || "",
-          transfer_plan: repo.transfer_plan || "",
-          uid: repo.uid || "",
-          adaptors: repo.adaptors ? stringToArray(repo.adaptors) : "",
-          geojson: isEmptyObject(repo.geojson) ? {} : repo.geojson,
-          com_extra: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
-          commercialization: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
-          image: repo.image ? repo.image : 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
-          created_at: repo.created_at || "",
-          updated_at: repo.updated_at || "",
-          owner_id: repo.owner_id || "",
-          owner_data: repo.owner_data || {},
-          org_data: repo.org_data || {},
-          files: attachments,
-          author: repo.author || "",
-          authorsData: authors,
-          lead: repo.lead,
-          leadData: lead[0] || {},
-          proj_type: repo.proj_type || "",
-          additional_info: repo.additional_info || "",
-          status: repo.status || "",
-          abh: repo.abh || "",
-          atbi: repo.atbi || "",
-          is_patentable: repo.is_patentable || false,
-        };
-      })
-    );
+  const mapRepoData = async (
+      rawData: any[],
+      type: string = 'create',
+      isAssociatedDataIncluded: boolean = false
+  ): Promise<Repository[]> => {
+    return Promise.all(rawData.map(repo => mapRepoFields(repo, type, isAssociatedDataIncluded)));
   };
+
 
 
   const filterRepositoriesBySearchQuery = async (searchQuery: string, repositoryData: Repository[]) : Promise<Repository[]> => {
@@ -795,7 +732,7 @@ export const useRepositoryServices = () => {
         headers: authorizationHeader
       });
       const rawData = [res.data];
-      const repositoryList = await mapRepoData(rawData, type);
+      const repositoryList = await mapRepoData(rawData, type, true);
       if (repositoryList) {
         repository.value = repositoryList[0];
         return repositoryList[0];
@@ -830,7 +767,7 @@ export const useRepositoryServices = () => {
     fetchRepositoryIDsByUser,
     changeRepositoryVisibility,
     fetchRepositoryVisibility,
-    fetchAllRepositories
+    fetchAllRepositories,
   }
 
 }

@@ -6,6 +6,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+import {useCustomUsersServices} from "../../repository/services/custom-users.services.ts";
 
 // const transformRepData = (rep: any) => ({
 //   full_name: rep?.full_name,
@@ -18,6 +19,7 @@ import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 //   email: rep?.email,
 //   phone: rep?.phone,
 // });
+const {mapCustomUsers} = useCustomUsersServices()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
@@ -41,26 +43,10 @@ export const useOrganizationServices = () => {
     phone: '',
     email: '',
     president: '',
-    rd_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
-    tt_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
-    ic_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
-    sc_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
+    rd_rep: '',
+    tt_rep: '',
+    ic_rep: '',
+    sc_rep:'',
   });
 
   const loading = ref(false);
@@ -301,56 +287,55 @@ export const useOrganizationServices = () => {
     }
   }
 
-  const mapOrgData = async (rawData: any): Promise<Organization[]> => {
-    return rawData.map((org: any) => {
-      const organization = org.organization || org;
-      return {
-        is_active: organization?.is_active,
-        is_approved: organization?.is_approved,
-        additional_info: organization?.additional_info ?? '',
-        is_member: false,
-        is_deleted: organization?.is_deleted,
-        access_level: org?.access_level ?? '',
-        visibility: organization?.visibility ?? '',
-        sub_org_type: organization?.sub_org_type ?? '',
-        org_type: organization?.org_type ?? '',
-        uid: organization?.uid ?? '',
-        acronym: organization?.acronym ?? '',
-        name: organization?.name ?? '',
-        address: organization?.address ?? '',
-        phone: organization?.phone ?? '',
-        email: organization?.email ?? '',
-        website: organization?.website ?? '',
-        tt_rep: {
-          email: organization?.ttc_rep?.email ?? '',
-          full_name: organization?.ttc_rep?.full_name ?? '',
-          phone: organization?.ttc_rep?.phone ?? '',
-        },
-        ic_rep: {
-          email: organization?.icc_rep?.email ?? '',
-          full_name: organization?.icc_rep?.full_name ?? '',
-          phone: organization?.icc_rep?.phone ?? '',
-        },
-        sc_rep: {
-          email: organization?.scc_rep?.email ?? '',
-          full_name: organization?.scc_rep?.full_name ?? '',
-          phone: organization?.scc_rep?.phone ?? '',
-        },
-        rd_rep: {
-          email: organization?.rdc_rep?.email ?? '',
-          full_name: organization?.rdc_rep?.full_name ?? '',
-          phone: organization?.rdc_rep?.phone ?? '',
-        },
-        geojson: isEmptyObject(organization?.geojson) ? {} : organization.geojson,
-        is_public: organization?.is_public ?? false,
-        image: organization?.image ?? 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
-        type: organization?.org_type ?? '',
-        tel_phone: organization?.tel_phone ?? '',
-        president: organization?.president ?? '',
-        slug: organization?.uid ?? '',
-        description: organization?.description ?? ''
-      };
-    });
+  const mapOrgFields = async (org: any, isAssociatedDataIncluded: boolean): Promise<Organization> => {
+    const organization = org.organization || org;
+    const baseData = {
+      is_active: organization?.is_active,
+      is_approved: organization?.is_approved,
+      additional_info: organization?.additional_info ?? '',
+      is_member: false,
+      is_deleted: organization?.is_deleted,
+      access_level: org?.access_level ?? '',
+      visibility: organization?.visibility ?? '',
+      sub_org_type: organization?.sub_org_type ?? '',
+      org_type: organization?.org_type ?? '',
+      uid: organization?.uid ?? '',
+      acronym: organization?.acronym ?? '',
+      name: organization?.name ?? '',
+      address: organization?.address ?? '',
+      phone: organization?.phone ?? '',
+      email: organization?.email ?? '',
+      website: organization?.website ?? '',
+      geojson: isEmptyObject(organization?.geojson) ? {} : organization.geojson,
+      is_public: organization?.is_public ?? false,
+      image: organization?.image ?? 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+      type: organization?.org_type ?? '',
+      tel_phone: organization?.tel_phone ?? '',
+      president: organization?.president ?? '',
+      slug: organization?.uid ?? '',
+      description: organization?.description ?? ''
+    }
+
+    if (!isAssociatedDataIncluded) return baseData;
+
+    const [rd_rep, tt_rep, ic_rep, sc_rep] = await Promise.all([
+      mapCustomUsers(JSON.parse(organization?.rdc_rep).data),
+      mapCustomUsers(JSON.parse(organization?.ttc_rep).data),
+      mapCustomUsers(JSON.parse(organization?.icc_rep).data),
+      mapCustomUsers(JSON.parse(organization?.scc_rep).data),
+    ])
+
+    return {
+      ...baseData,
+      rd_repData: rd_rep,
+      tt_repData: tt_rep,
+      ic_repData: ic_rep,
+      sc_repData: sc_rep
+    }
+  };
+
+  const mapOrgData = async (rawData: any, isAssociatedDataIncluded: boolean = false): Promise<Organization[]> => {
+    return Promise.all(rawData.map((org: any) => mapOrgFields(org, isAssociatedDataIncluded)));
   };
 
   const changeOrganizationVisibility = async (id: string, visibility: number) => {
@@ -523,10 +508,10 @@ export const useOrganizationServices = () => {
         headers: authorizationHeader
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
-      if (organizations) {
-        organization.value = organizations[0];
-        return organizations[0];
+      const organizationData: Organization = await mapOrgFields(rawData[0], true)
+      if (organizationData) {
+        organization.value = organizationData
+        return organizationData
       } else {
         console.error('no org')
         return null;
