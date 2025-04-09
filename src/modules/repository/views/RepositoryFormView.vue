@@ -1164,40 +1164,40 @@ onMounted( async () => {
                 :error-messages="errorMessage.funding_agency"
             />
           </div>
-          <div class="mb-3" v-if="repositoryData.abh">
-            <label class="input-label">Agri-Aqua Business Hub</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.abh"
-                @update:modelValue="$event => (repositoryData.abh = $event)"
-                placeholder="Enter information related to agri aqua business hub to this project"
-            />
-          </div>
-          <div class="mb-5" v-else>
-            <label class="input-label">Agri-Aqua Business Hub</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.abh"
-                @update:modelValue="$event => (repositoryData.abh = $event)"
-                placeholder="Enter information related to agri aqua business hub to this project"
-            />
-            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
-          </div>
-          <div class="mb-3" v-if="repositoryData.atbi">
-            <label class="input-label">Agri-Aqua Technology Business Incubator</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.atbi"
-                @update:modelValue="$event => (repositoryData.atbi = $event)"
-                placeholder="Enter information about technology business incubator that is related to this project"
-            />
-          </div>
-          <div class="mb-5" v-else>
-            <label class="input-label">Agri-Aqua Technology Business Incubator</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.atbi"
-                @update:modelValue="$event => (repositoryData.atbi = $event)"
-                placeholder="Enter information about technology business incubator that is related to this project"
-            />
-            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
-          </div>
+<!--          <div class="mb-3" v-if="repositoryData.abh">-->
+<!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
+<!--            <QuillRichTextEditor-->
+<!--                :modelValue="repositoryData.abh"-->
+<!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
+<!--                placeholder="Enter information related to agri aqua business hub to this project"-->
+<!--            />-->
+<!--          </div>-->
+<!--          <div class="mb-5" v-else>-->
+<!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
+<!--            <QuillRichTextEditor-->
+<!--                :modelValue="repositoryData.abh"-->
+<!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
+<!--                placeholder="Enter information related to agri aqua business hub to this project"-->
+<!--            />-->
+<!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
+<!--          </div>-->
+<!--          <div class="mb-3" v-if="repositoryData.atbi">-->
+<!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
+<!--            <QuillRichTextEditor-->
+<!--                :modelValue="repositoryData.atbi"-->
+<!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
+<!--                placeholder="Enter information about technology business incubator that is related to this project"-->
+<!--            />-->
+<!--          </div>-->
+<!--          <div class="mb-5" v-else>-->
+<!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
+<!--            <QuillRichTextEditor-->
+<!--                :modelValue="repositoryData.atbi"-->
+<!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
+<!--                placeholder="Enter information about technology business incubator that is related to this project"-->
+<!--            />-->
+<!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
+<!--          </div>-->
           <div class="mb-3">
             <label class="input-label">Technology Transfer Plan</label>
             <VAutocomplete

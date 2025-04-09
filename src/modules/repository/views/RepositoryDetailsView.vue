@@ -368,28 +368,28 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
           </VRow>
         </div>
       </div>
-      <div v-if="repository.atbi && repository.atbi.trim().length != 0 && repository.type === 'Project Repository'">
-        <VDivider/>
-        <div class="px-7 py-5">
-          <p class="text-about-heading py-3">Agri-Aqua Technology Business Incubator</p>
-          <VRow class="ma-0">
-            <div class="ql-snow">
-              <div class="ql-editor" v-html="repository.atbi"></div>
-            </div>
-          </VRow>
-        </div>
-      </div>
-      <div v-if="repository.abh && repository.abh.trim().length != 0 && repository.type === 'Project Repository'">
-        <VDivider/>
-        <div class="px-7 py-5">
-          <p class="text-about-heading py-3">Agri-Aqua Business Hub</p>
-          <VRow class="ma-0">
-            <div class="ql-snow">
-              <div class="ql-editor" v-html="repository.abh"></div>
-            </div>
-          </VRow>
-        </div>
-      </div>
+<!--      <div v-if="repository.atbi && repository.atbi.trim().length != 0 && repository.type === 'Project Repository'">-->
+<!--        <VDivider/>-->
+<!--        <div class="px-7 py-5">-->
+<!--          <p class="text-about-heading py-3">Agri-Aqua Technology Business Incubator</p>-->
+<!--          <VRow class="ma-0">-->
+<!--            <div class="ql-snow">-->
+<!--              <div class="ql-editor" v-html="repository.atbi"></div>-->
+<!--            </div>-->
+<!--          </VRow>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div v-if="repository.abh && repository.abh.trim().length != 0 && repository.type === 'Project Repository'">-->
+<!--        <VDivider/>-->
+<!--        <div class="px-7 py-5">-->
+<!--          <p class="text-about-heading py-3">Agri-Aqua Business Hub</p>-->
+<!--          <VRow class="ma-0">-->
+<!--            <div class="ql-snow">-->
+<!--              <div class="ql-editor" v-html="repository.abh"></div>-->
+<!--            </div>-->
+<!--          </VRow>-->
+<!--        </div>-->
+<!--      </div>-->
       <div v-if="repository.additional_info && repository.additional_info?.trim().length > 0">
         <VDivider/>
         <div class="px-7 py-5">

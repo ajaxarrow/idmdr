@@ -226,12 +226,12 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
     if (repository?.transfer_plan === 'Commercialization' && repository?.commercialization) {
       sections.push('Commercialization');
     }
-    if (repository?.atbi && repository.atbi.trim().length !== 0) {
-      sections.push('Agri-Aqua Technology Business Incubator');
-    }
-    if (repository?.abh && repository.abh.trim().length !== 0) {
-      sections.push('Agri-Aqua Business Hub');
-    }
+    // if (repository?.atbi && repository.atbi.trim().length !== 0) {
+    //   sections.push('Agri-Aqua Technology Business Incubator');
+    // }
+    // if (repository?.abh && repository.abh.trim().length !== 0) {
+    //   sections.push('Agri-Aqua Business Hub');
+    // }
   }
   if (repository?.additional_info && repository.additional_info.trim().length > 0) {
     sections.push('Additional Information');
@@ -503,58 +503,58 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
     }
 
     // ATBI Section (conditional)
-    if (repository?.atbi && repository.atbi.trim().length !== 0) {
-      currentY += 10;
-      if (currentY > pageHeight - 40) {
-        doc.addPage();
-        currentY = 40;
-      }
-
-      // Section heading with underline
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(16);
-      doc.setTextColor(colors.primary);
-      doc.text('Agri-Aqua Technology Business Incubator', margin, currentY);
-      doc.setDrawColor(colors.accent);
-      doc.setLineWidth(0.5);
-      doc.line(margin, currentY + 2, margin + 100, currentY + 2);
-      currentY += 12;
-
-      doc.setTextColor(colors.text);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-
-      // Clean HTML and wrap text
-      const cleanATBI = stripHtml(repository.atbi);
-      currentY = wrapText(doc, cleanATBI, margin, currentY, contentWidth);
-    }
+    // if (repository?.atbi && repository.atbi.trim().length !== 0) {
+    //   currentY += 10;
+    //   if (currentY > pageHeight - 40) {
+    //     doc.addPage();
+    //     currentY = 40;
+    //   }
+    //
+    //   // Section heading with underline
+    //   doc.setFont('helvetica', 'bold');
+    //   doc.setFontSize(16);
+    //   doc.setTextColor(colors.primary);
+    //   doc.text('Agri-Aqua Technology Business Incubator', margin, currentY);
+    //   doc.setDrawColor(colors.accent);
+    //   doc.setLineWidth(0.5);
+    //   doc.line(margin, currentY + 2, margin + 100, currentY + 2);
+    //   currentY += 12;
+    //
+    //   doc.setTextColor(colors.text);
+    //   doc.setFontSize(11);
+    //   doc.setFont('helvetica', 'normal');
+    //
+    //   // Clean HTML and wrap text
+    //   const cleanATBI = stripHtml(repository.atbi);
+    //   currentY = wrapText(doc, cleanATBI, margin, currentY, contentWidth);
+    // }
 
     // ABH Section (conditional)
-    if (repository?.abh && repository.abh.trim().length !== 0) {
-      currentY += 10;
-      if (currentY > pageHeight - 40) {
-        doc.addPage();
-        currentY = 40;
-      }
-
-      // Section heading with underline
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(16);
-      doc.setTextColor(colors.primary);
-      doc.text('Agri-Aqua Business Hub', margin, currentY);
-      doc.setDrawColor(colors.accent);
-      doc.setLineWidth(0.5);
-      doc.line(margin, currentY + 2, margin + 70, currentY + 2);
-      currentY += 12;
-
-      doc.setTextColor(colors.text);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-
-      // Clean HTML and wrap text
-      const cleanABH = stripHtml(repository.abh);
-      currentY = wrapText(doc, cleanABH, margin, currentY, contentWidth);
-    }
+    // if (repository?.abh && repository.abh.trim().length !== 0) {
+    //   currentY += 10;
+    //   if (currentY > pageHeight - 40) {
+    //     doc.addPage();
+    //     currentY = 40;
+    //   }
+    //
+    //   // Section heading with underline
+    //   doc.setFont('helvetica', 'bold');
+    //   doc.setFontSize(16);
+    //   doc.setTextColor(colors.primary);
+    //   doc.text('Agri-Aqua Business Hub', margin, currentY);
+    //   doc.setDrawColor(colors.accent);
+    //   doc.setLineWidth(0.5);
+    //   doc.line(margin, currentY + 2, margin + 70, currentY + 2);
+    //   currentY += 12;
+    //
+    //   doc.setTextColor(colors.text);
+    //   doc.setFontSize(11);
+    //   doc.setFont('helvetica', 'normal');
+    //
+    //   // Clean HTML and wrap text
+    //   const cleanABH = stripHtml(repository.abh);
+    //   currentY = wrapText(doc, cleanABH, margin, currentY, contentWidth);
+    // }
   }
 
   // Additional Information Section (conditional)
