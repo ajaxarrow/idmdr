@@ -87,7 +87,7 @@
            <p class="text-subtitle">
              <span v-if="organization.rd_repData?.length == 0">N/A</span>
              <span v-else v-for="(rep, index) in organization.rd_repData">
-                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.rd_repData?.length - 1">, </span>
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.rd_repData?.length! - 1">, </span>
               </span>
            </p>
          </VCol>
@@ -97,7 +97,7 @@
            <p class="text-subtitle">
              <span v-if="organization.tt_repData?.length == 0">N/A</span>
              <span v-else v-for="(rep, index) in organization.tt_repData">
-                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.tt_repData?.length - 1">, </span>
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.tt_repData?.length! - 1">, </span>
               </span>
            </p>
          </VCol>
@@ -107,7 +107,7 @@
            <p class="text-subtitle">
              <span v-if="organization.ic_repData?.length == 0">N/A</span>
              <span v-else v-for="(rep, index) in organization.ic_repData">
-                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.ic_repData?.length - 1">, </span>
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.ic_repData?.length! - 1">, </span>
               </span>
            </p>
          </VCol>
@@ -117,7 +117,7 @@
            <p class="text-subtitle">
              <span v-if="organization.sc_repData?.length == 0">N/A</span>
              <span v-else v-for="(rep, index) in organization.sc_repData">
-                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.sc_repData?.length - 1">, </span>
+                {{rep.data?.first_name}} {{rep.data?.last_name}}<span v-if="index != organization.sc_repData?.length! - 1">, </span>
               </span>
            </p>
          </VCol>

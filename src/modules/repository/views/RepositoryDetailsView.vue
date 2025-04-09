@@ -302,7 +302,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             <p class="text-subtitle pr-3">
               <span v-if="repository.techGeneratorData?.length == 0">N/A</span>
               <span v-else v-for="(techGen, index) in repository.techGeneratorData">
-                {{techGen.data?.first_name}} {{techGen.data?.last_name}}<span v-if="index != repository.techGeneratorData?.length - 1">, </span>
+                {{techGen.data?.first_name}} {{techGen.data?.last_name}}<span v-if="index != repository.techGeneratorData?.length! - 1">, </span>
               </span>
             </p>
           </VCol>
@@ -311,7 +311,7 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
             <p class="text-subtitle pr-3">
               <span v-if="repository.techOwnerData?.length == 0">N/A</span>
               <span v-else v-for="(owner, index) in repository.techOwnerData">
-                {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != repository.techOwnerData?.length - 1">, </span>
+                {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != repository.techOwnerData?.length! - 1">, </span>
               </span>
             </p>
           </VCol>

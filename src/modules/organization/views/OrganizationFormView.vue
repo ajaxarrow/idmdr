@@ -66,7 +66,6 @@ const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
 
-const active = ref(false)
 const rd_repRef = ref(null);
 const tt_repRef = ref(null);
 const ic_repRef = ref(null);
