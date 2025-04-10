@@ -1432,7 +1432,13 @@ onMounted( async () => {
           </div>
           <div v-else>
             <label class="input-label mb-5">Files</label>
-            <div class="attachments-container mt-2">
+            <div
+                class="attachments-container mt-2"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
               <div
                   v-for="(attachment, index) in attachments"
                   :key="index"
