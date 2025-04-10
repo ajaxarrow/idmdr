@@ -222,12 +222,15 @@ onMounted(async ()=>{
         <div class="d-flex">
           <RouterLink
               :to="{
-          name: path == 'repositories' ?  'repositories' : 'my-repositories'
-        }"
+                name: 'my-repository-settings',
+                params: {
+                  slug: <string>route.params.slug
+                }
+              }"
               class="text-decoration-none text-none">
             <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
               <PhArrowLeft size="14" class="mr-1"/>
-              Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
+              Back To Settings
             </p>
           </RouterLink>
         </div>

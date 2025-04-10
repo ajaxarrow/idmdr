@@ -546,6 +546,7 @@ const addRepositoryData = async () => {
   }
 }
 
+
 const updateRepositoryData = async () => {
   if(validateAttachments()){
     for (let i = 0; i < attachments.value.length; i++) {
@@ -663,12 +664,13 @@ onMounted( async () => {
         <div class="d-flex">
           <RouterLink
               :to="{
-          name: path == 'repositories' ?  'repositories' : 'my-repositories'
-        }"
+                name: formType === FormType.edit ? 'my-repository-settings' : 'my-repositories',
+                ...(formType === FormType.edit ? { params: { slug: route.params.slug } } : {})
+              }"
               class="text-decoration-none text-none">
             <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
               <PhArrowLeft size="14" class="mr-1"/>
-              Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
+              Back To {{formType === FormType.edit ?  'Settings' : 'My Projects'}}
             </p>
           </RouterLink>
         </div>
