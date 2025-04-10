@@ -20,7 +20,8 @@ import {
   PhFilePpt,
   PhFileVideo,
   PhFileXls,
-  PhInfo
+  PhInfo,
+  PhImage
 } from "@phosphor-icons/vue";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
