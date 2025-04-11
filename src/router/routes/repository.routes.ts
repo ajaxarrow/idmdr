@@ -30,8 +30,8 @@ const repositoryRoutes = [
     component: () => import('../../modules/repository/views/RepositoryFormView.vue')
   },
   {
-    path: '/repositories/upload-files/:slug',
-    name: 'upload-files-repository',
+    path: '/my-repositories/upload-files/:slug',
+    name: 'upload-files-repository-my',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryFilesUpload.vue')
   },

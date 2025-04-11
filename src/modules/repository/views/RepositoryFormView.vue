@@ -642,7 +642,6 @@ onMounted( async () => {
       })
     }
 
-
     previewImage.value = <string>repositoryData.image
     hasImage.value = true
   }

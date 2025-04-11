@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhEye, PhFileDashed, PhFileImage, PhPolygon, PhX} from "@phosphor-icons/vue";
+import {onMounted, reactive, ref, watch} from "vue";
+import {
+  PhArrowLeft,
+  PhEye,
+  PhFile,
+  PhFileDashed,
+  PhFileImage,
+  PhImage,
+  PhPolygon,
+  PhTrash,
+  PhX
+} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
-import {Organization} from "../../../interfaces/organization.interface.ts";
+import {Organization, OrganizationAttachment} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
@@ -14,6 +24,12 @@ import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
+import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import AttachmentsVisibilityInfoDialog from "../../repository/components/AttachmentsVisibilityInfoDialog.vue";
+import {Attachment} from "../../../interfaces/repository.interface.ts";
+import {useOrganizationAttachmentServices} from "../services/organization-attachments.services.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const path = ref('organizations')
@@ -21,6 +37,8 @@ const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {organization} = useOrganizationStore();
 const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
+const {showSnackbarMessage} = useSnackbarStore();
+const {fetchAttachmentsByOrganization, deleteAttachment} = useOrganizationAttachmentServices()
 const {fetchCustomUsers} = useRepositoryMemberServices();
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
@@ -32,6 +50,24 @@ const previewImage = ref('');
 const file = ref<File | null>(null);
 const customUsers = ref<CustomUserData[]>([])
 const {route} = useRouting();
+const visibilityInfo = [
+  {
+    name: 'Public',
+    value: 1
+  },
+  {
+    name: 'Private',
+    value: 2
+  },
+  {
+    name: 'Within Organization',
+    value: 3
+  },
+  {
+    name: 'Within All Organizations',
+    value: 4
+  }
+]
 
 const organizationDataInitialState = reactive<Organization>({
   is_active: true,
@@ -59,12 +95,35 @@ const organizationDataInitialState = reactive<Organization>({
   rd_repData: [],
   tt_repData: [],
   ic_repData: [],
-  sc_repData: []
+  sc_repData: [],
+  files: []
 });
 
 const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
+
+const attachments = ref<OrganizationAttachment[]>([])
+const attachmentData = reactive<OrganizationAttachment>({
+  organization: '',
+  attachment: '',
+  file: null,
+  file_type: '',
+  mime_type: '',
+  name: '',
+  description: '',
+  created_at: '',
+  updated_at: '',
+  is_deleted: false,
+  deleted_at: '',
+  visibility: organizationData.visibility,
+  type: 'create',
+  errorMessage: '',
+  showFiles: false,
+  isDescriptionUpdated: false,
+  isFileUpdated: false,
+  isNameUpdated: false
+})
 
 const rd_repRef = ref(null);
 const tt_repRef = ref(null);
@@ -84,6 +143,7 @@ const handleSearch = (field: string, query: any) => {
   // @ts-ignore
   searchQueries[field].value = query;
 };
+const active = ref(false)
 
 // Reusable function to add custom user for any field
 const addCustomUser = (field: string) => {
@@ -171,6 +231,103 @@ const handleUploadChange = (e: any) => {
   }
 };
 
+const toggleActive = () => {
+  active.value = !active.value
+}
+
+const removeAttachment = (index: number) => {
+  attachments.value.splice(index, 1);
+  active.value = false
+}
+
+const addAttachment = () => {
+  attachments.value.push({
+    ...attachmentData
+  })
+}
+
+const handleBulkAttachmentsUpload = (e: any) => {
+  const files = e.target?.files || e.dataTransfer?.files;
+
+  if (files && files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      attachments.value.push({
+        ...attachmentData,
+        file: files[i],
+        attachment: files[i],
+      });
+    }
+  }
+}
+
+const handleIndividualAttachmentsUpload = (e: any, index: number) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    if(attachments.value[index].type === 'update'){
+      attachments.value[index].isFileUpdated = true
+    }
+    attachments.value[index].file = target.files[0];
+    attachments.value[index].attachment = target.files[0];
+  }
+}
+
+watch(
+    () => attachments.value.map(attachment => attachment.description),
+    (newDescriptions, oldDescriptions) => {
+      newDescriptions.forEach((description, index) => {
+        if (oldDescriptions[index] !== undefined && description !== oldDescriptions[index] && attachments.value[index].type === 'update') {
+          attachments.value[index].isDescriptionUpdated = true
+        }
+      });
+    }
+);
+
+watch(
+    () => attachments.value.map(attachment => attachment.name),
+    (newName, oldName) => {
+      newName.forEach((name, index) => {
+        if (oldName[index] !== undefined && name !== oldName[index] && attachments.value[index].type === 'update') {
+          attachments.value[index].isNameUpdated = true
+        }
+      });
+    }
+);
+
+const validateAttachments = () => {
+  let isValid = true;
+  for (let i = 0; i < attachments.value.length; i++) {
+    if(attachments.value[i].type == 'update' && !attachments.value[i].file && attachments.value[i].attachment == ''){
+      attachments.value[i].errorMessage = 'File is required';
+      return false;
+    }
+    if(attachments.value[i].type == 'update'){
+      isValid = true;
+    } else {
+      if (!attachments.value[i].file) {
+        attachments.value[i].errorMessage = 'File is required';
+        isValid = false;
+      } else {
+        attachments.value[i].errorMessage = '';
+      }
+    }
+
+  }
+
+  return isValid;
+}
+
+const deleteAttachmentCallback = async (id: string, index: number) => {
+  await deleteAttachment(id);
+  attachments.value.splice(index, 1);
+  showSnackbarMessage('Attachment Deleted Successfully', Status.success)
+}
+
+const clearAttachment = (index: number) => {
+  attachments.value[index].file = null
+  attachments.value[index].attachment = ''
+}
+
+
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
@@ -195,56 +352,83 @@ const scrollToFirstErrorMessage = () => {
 }
 
 const addOrganizationData = async () => {
-  if(file.value){
-    //@ts-ignore
-    organizationData.image = file.value as File
-  } else {
-    delete organizationData.image;
-  }
-  organizationData.rd_rep = JSON.stringify({
-    data: organizationData.rd_repData,
-  })
-  organizationData.tt_rep = JSON.stringify({
-    data: organizationData.tt_repData,
-  })
-  organizationData.ic_rep = JSON.stringify({
-    data: organizationData.ic_repData,
-  })
-  organizationData.sc_rep = JSON.stringify({
-    data: organizationData.sc_repData,
-  })
-  await addOrganization(organizationData)
-  if(hasErrorMessages(errorMessage)){
-    scrollToFirstErrorMessage()
-  } else {
-    clearFields();
+  if(validateAttachments()){
+    for (let i = 0; i < attachments.value.length; i++) {
+      if (attachments.value[i].description == ''){
+        attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
+      }
+      if(attachments.value[i].type == 'create'){
+        attachments.value[i].name = attachments.value[i].file?.name!
+      }
+    }
+    if(attachments.value.length > 0){
+      organizationData.files = attachments.value
+    }
+    if(file.value){
+      //@ts-ignore
+      organizationData.image = file.value as File
+    } else {
+      delete organizationData.image;
+    }
+    organizationData.rd_rep = JSON.stringify({
+      data: organizationData.rd_repData,
+    })
+    organizationData.tt_rep = JSON.stringify({
+      data: organizationData.tt_repData,
+    })
+    organizationData.ic_rep = JSON.stringify({
+      data: organizationData.ic_repData,
+    })
+    organizationData.sc_rep = JSON.stringify({
+      data: organizationData.sc_repData,
+    })
+    await addOrganization(organizationData)
+    if(hasErrorMessages(errorMessage)){
+      scrollToFirstErrorMessage()
+    } else {
+      clearFields();
+    }
   }
 }
 
 const updateOrganizationData = async () => {
-  if(file.value){
-    //@ts-ignore
-    organizationData.image = file.value as File
-  } else {
-    delete organizationData.image;
-  }
-  organizationData.rd_rep = JSON.stringify({
-    data: organizationData.rd_repData,
-  })
-  organizationData.tt_rep = JSON.stringify({
-    data: organizationData.tt_repData,
-  })
-  organizationData.ic_rep = JSON.stringify({
-    data: organizationData.ic_repData,
-  })
-  organizationData.sc_rep = JSON.stringify({
-    data: organizationData.sc_repData,
-  })
-  await updateOrganization(organizationData, organizationData.slug)
-  if(hasErrorMessages(errorMessage)){
-    scrollToFirstErrorMessage()
-  } else {
-    clearFields();
+  if(validateAttachments()){
+    for (let i = 0; i < attachments.value.length; i++) {
+      if (attachments.value[i].description == ''){
+        attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
+      }
+      if((!attachments.value[i].isFileUpdated && (!attachments.value[i].isDescriptionUpdated || !attachments.value[i].isNameUpdated) && attachments.value[i].type == 'updated') || (!attachments.value[i].isFileUpdated && (attachments.value[i].isDescriptionUpdated || attachments.value[i].isNameUpdated))){
+        delete attachments.value[i].attachment
+      }
+
+    }
+    if(attachments.value.length > 0){
+      organizationData.files = attachments.value
+    }
+    if(file.value){
+      //@ts-ignore
+      organizationData.image = file.value as File
+    } else {
+      delete organizationData.image;
+    }
+    organizationData.rd_rep = JSON.stringify({
+      data: organizationData.rd_repData,
+    })
+    organizationData.tt_rep = JSON.stringify({
+      data: organizationData.tt_repData,
+    })
+    organizationData.ic_rep = JSON.stringify({
+      data: organizationData.ic_repData,
+    })
+    organizationData.sc_rep = JSON.stringify({
+      data: organizationData.sc_repData,
+    })
+    await updateOrganization(organizationData, organizationData.slug)
+    if(hasErrorMessages(errorMessage)){
+      scrollToFirstErrorMessage()
+    } else {
+      clearFields();
+    }
   }
 }
 
@@ -342,6 +526,16 @@ onMounted(async () => {
     if(!isEmptyObject(organizationData.geojson)){
       isGeoJSONPreview.value = true
     }
+    const fetchedFiles = await fetchAttachmentsByOrganization(<string>route.params.slug, 'update')
+    for(let i = 0; i < fetchedFiles.length; i++){
+      attachments.value.push({
+        ...fetchedFiles[i],
+        file: null,
+        attachment: fetchedFiles[i].attachment,
+        isDescriptionUpdated: false,
+        isFileUpdated: false
+      })
+    }
     previewImage.value = <string>organizationData.image
     hasImage.value = true
   }
@@ -365,12 +559,13 @@ onMounted(async () => {
          <div class="d-flex">
            <RouterLink
                :to="{
-            name: path == 'organizations' ?  'organizations' : 'my-organizations'
-            }"
+                  name: formType === FormType.edit ? 'my-organization-settings' : 'my-organizations',
+                  ...(formType === FormType.edit ? { params: { slug: route.params.slug } } : {})
+                }"
                class="text-decoration-none text-none">
              <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                <PhArrowLeft size="14" class="mr-1"/>
-               Back To {{path == 'organizations' ?  'Consortium Member Institutions' : 'My Consortium Member Institutions'}}
+               Back To {{formType === FormType.edit  ?  'Settings' : 'My Consortium Member Institutions'}}
              </p>
            </RouterLink>
          </div>
@@ -870,6 +1065,169 @@ onMounted(async () => {
           </VFileInput>
         </div>
         <div class="mb-10">
+          <div v-if="attachments.length == 0">
+            <label class="input-label">File</label>
+            <div
+                class="my-2 file-upload-container"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
+              <PhFileDashed size="50"/>
+              <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
+            </div>
+          </div>
+          <div v-else>
+            <label class="input-label mb-5">Files</label>
+            <div
+                class="attachments-container mt-2"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
+              <div
+                  v-for="(attachment, index) in attachments"
+                  :key="index"
+              >
+                <VDivider  v-if="index != 0"/>
+                <div :class="{'mb-5': !attachment.showFiles}"  class="d-flex align-center justify-space-between mt-5">
+                  <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : (attachment.attachment != '' ? attachment.name as string : 'New File')}}</p>
+                  <div class="d-flex align-center justify-space-between ga-2">
+                    <DeleteDialog v-if="attachment.type == 'update'" @callback="deleteAttachmentCallback(<string>attachment.uid, index)">
+                      <VTooltip location="bottom" >
+                        <template v-slot:activator="{ props }">
+                          <PhTrash v-bind="props" class="cursor-pointer" />
+                        </template>
+                        <span>Delete Attachment</span>
+                      </VTooltip>
+                    </DeleteDialog>
+                    <VTooltip location="bottom" v-else>
+                      <template v-slot:activator="{ props }">
+                        <PhX v-bind="props" class="cursor-pointer" @click="removeAttachment(index)"/>
+                      </template>
+                      <span>Remove Attachment</span>
+                    </VTooltip>
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <component
+                            :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
+                            v-bind="props"
+                            class="cursor-pointer"
+                            @click="attachment.showFiles = !attachment.showFiles"
+                        />
+                      </template>
+                      <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
+                    </VTooltip>
+                  </div>
+                </div>
+                <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
+                <div v-if="attachment.showFiles">
+                  <div class="mt-5 mb-3">
+                    <label class="input-label">Attachment</label>
+                    <div v-if="attachment.file || attachment.attachment != ''" class="my-3">
+                      <VDivider/>
+                      <div class="d-flex align-center justify-space-between pa-2" >
+                        <p class="dialog-boundary-title d-flex align-center">
+                          <PhImage class="mr-1"/>
+                          {{attachment.file ? attachment.file.name : attachment.name }}
+                        </p>
+                        <div class="d-flex align-center ga-2">
+                          <VTooltip location="bottom">
+                            <template v-slot:activator="{ props }">
+                              <PhX v-bind="props" class="cursor-pointer" @click="clearAttachment(index)"/>
+                            </template>
+                            <span>Remove File</span>
+                          </VTooltip>
+                        </div>
+                      </div>
+                      <VDivider/>
+                      <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="attachment.errorMessage">{{attachment.errorMessage}}</p>
+                    </div>
+                    <VFileInput
+                        v-else
+                        @change="handleIndividualAttachmentsUpload($event, index)"
+                        label="Choose File by Clicking Here"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                        chips
+                        prepend-icon=""
+                        :error-messages="attachments[index].errorMessage as string"
+                    >
+                      <template v-slot:prepend-inner>
+                        <PhFile/>
+                      </template>
+                    </VFileInput>
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Name</label>
+                    <VTextField
+                        v-model="attachments[index].name"
+                        label="Enter File Name"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Description</label>
+                    <VTextField
+                        v-model="attachments[index].description"
+                        label="Enter File Description"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label d-flex justify-space-between">
+                      Attachment Visibility
+                      <span style="font-size: 14px; font-weight: 400;">
+                    <AttachmentsVisibilityInfoDialog/>
+                  </span>
+                    </label>
+                    <VAutocomplete
+                        v-model="attachments[index].visibility"
+                        :items="visibilityInfo"
+                        :item-title="item => item.name"
+                        :item-value="item => item.value"
+                        label="Enter File Visibility"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                </div>
+                <VDivider v-if="index != attachments.length - 1 "/>
+              </div>
+              <div class="d-flex justify-end">
+                <VBtnPrimaryFilled
+                    @click="addAttachment"
+                    rounded="lg"
+                    style="font-size: 14px !important;"
+                >
+                  Add More File
+                </VBtnPrimaryFilled>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mb-10">
           <label class="input-label">Location/Area</label>
           <OrganizationFormMapPreview
               class="my-2"
@@ -940,6 +1298,44 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.attachments-container{
+  max-height: 400px;
+  overflow-y: scroll;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 20px 25px;
+  transition: height 1s ease;
+}
+.file-upload-container{
+  width: 100%;
+  height: 144px;
+  display: flex;
+  border-radius: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 16px;
+  border: 2px dashed #E6E6E6;
+  background-color: #fff;
+  transition: .3s ease all;
+}
+
+.dropzone-active{
+  border: 4px dashed #00838F !important;
+  background-color: #f2f2f2;
+}
+
+
+.text-dropzone{
+  font-size: 14px;
+}
+
+.file-label{
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 :deep(.ql-toolbar){
   margin-top: 8px;
   border: 1.75px solid rgba(140, 140, 140, 0.2) !important;

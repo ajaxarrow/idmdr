@@ -542,6 +542,23 @@ onMounted(async () => {
               </VBtnPrimaryFilled>
             </VRow>
           </div>
+          <VDivider v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+          <div v-if="userOrgInfo?.access_level == 'owner' ||userOrgInfo?.access_level == 'admin' || userOrgInfo?.access_level == 'manager' || userData.is_superuser" class="mt-2">
+            <VRow  class="ma-0" justify="space-between" align="center">
+              <div>
+                <p class="section-title">Upload CMI Files</p>
+                <p class="text-gs20 mb-2" style="font-size: 14px;">Upload files to your consortium member institution</p>
+              </div>
+              <VBtnPrimaryFilled
+                  :to="{ name: path == 'organizations' ? 'upload-files-organizations' : 'upload-files-organizations-my', params: {slug: organization?.slug}}"
+                  height="41px"
+                  rounded="lg"
+                  class="satoshi-md"
+                  style="font-size: 14px !important;">
+                Update CMI Files
+              </VBtnPrimaryFilled>
+            </VRow>
+          </div>
           <VDivider v-if="currentOrg?.is_member || userData.is_superuser" class="my-5"/>
           <div class="mt-2">
             <VRow v-if="currentOrg?.is_member || userData.is_superuser" class="ma-0" justify="space-between" align="center">

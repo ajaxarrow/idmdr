@@ -7,6 +7,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import {useCustomUsersServices} from "../../repository/services/custom-users.services.ts";
+import {useOrganizationAttachmentServices} from "./organization-attachments.services.ts";
 
 // const transformRepData = (rep: any) => ({
 //   full_name: rep?.full_name,
@@ -24,6 +25,7 @@ const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker()
+const {fetchAttachmentsByOrganization, addAttachment, updateAttachment} = useOrganizationAttachmentServices()
 // const {router} = useRouting()
 const {myOrganizations, allOrganizations, mapOrganizations, organization, searchedMapOrganizations} = useOrganizationStore();
 
@@ -207,6 +209,13 @@ export const useOrganizationServices = () => {
       );
 
       if(type == 'create'){
+        // @ts-ignore
+        if(organization.files?.length > 0  && organization.files) {
+          for (let i = 0; i < organization.files.length; i++) {
+            organization.files[i].organization! = res.data.uid
+            await addAttachment(organization.files[i]);
+          }
+        }
         await addMemberToOrganization(res.data.uid);
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Organization created successfully',
@@ -219,6 +228,19 @@ export const useOrganizationServices = () => {
 
         // await router.push({path: '/my-organizations'});
       } else if(type == 'update'){
+        // @ts-ignore
+        if(organization.files?.length > 0  && organization.files) {
+          for (let i = 0; i < organization.files.length; i++) {
+            organization.files[i].organization! = res.data.uid
+            if(organization.files[i].type == 'create') {
+              await addAttachment(organization.files[i]);
+            } else {
+              if(organization.files[i].isDescriptionUpdated || organization.files[i].isFileUpdated) {
+                await updateAttachment(organization.files[i]);
+              }
+            }
+          }
+        }
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Organization updated successfully',
           status: 'success'
@@ -288,7 +310,7 @@ export const useOrganizationServices = () => {
     }
   }
 
-  const mapOrgFields = async (org: any, isAssociatedDataIncluded: boolean): Promise<Organization> => {
+  const mapOrgFields = async (org: any, type: string, isAssociatedDataIncluded: boolean): Promise<Organization> => {
     const organization = org.organization || org;
     const baseData = {
       is_active: organization?.is_active,
@@ -319,11 +341,11 @@ export const useOrganizationServices = () => {
 
     if (!isAssociatedDataIncluded) return baseData;
 
-    const [rd_rep, tt_rep, ic_rep, sc_rep] = await Promise.all([
+    const [rd_rep, tt_rep, ic_rep, sc_rep, attachments] = await Promise.all([
       mapCustomUsers(JSON.parse(organization?.rdc_rep).data),
-      mapCustomUsers(JSON.parse(organization?.ttc_rep).data),
-      mapCustomUsers(JSON.parse(organization?.icc_rep).data),
+      mapCustomUsers(JSON.parse(organization?.ttc_rep).data),mapCustomUsers(JSON.parse(organization?.icc_rep).data),
       mapCustomUsers(JSON.parse(organization?.scc_rep).data),
+      fetchAttachmentsByOrganization(organization.uid, type)
     ])
 
     return {
@@ -331,12 +353,13 @@ export const useOrganizationServices = () => {
       rd_repData: rd_rep,
       tt_repData: tt_rep,
       ic_repData: ic_rep,
-      sc_repData: sc_rep
+      sc_repData: sc_rep,
+      files: attachments
     }
   };
 
-  const mapOrgData = async (rawData: any, isAssociatedDataIncluded: boolean = false): Promise<Organization[]> => {
-    return Promise.all(rawData.map((org: any) => mapOrgFields(org, isAssociatedDataIncluded)));
+  const mapOrgData = async (rawData: any, type: string = 'create', isAssociatedDataIncluded: boolean = false): Promise<Organization[]> => {
+    return Promise.all(rawData.map((org: any) => mapOrgFields(org, type, isAssociatedDataIncluded)));
   };
 
   const changeOrganizationVisibility = async (id: string, visibility: number) => {
@@ -503,13 +526,13 @@ export const useOrganizationServices = () => {
   };
 
 
-  const fetchOrganizationData = async (slug: string): Promise<Organization | null> => {
+  const fetchOrganizationData = async (slug: string, type: string = 'create'): Promise<Organization | null> => {
     try{
       const res = await server.get(`/v1/organization/${slug}/`, {
         headers: authorizationHeader
       });
       const rawData = res.data.results;
-      const organizationData: Organization = await mapOrgFields(rawData[0], true)
+      const organizationData: Organization = await mapOrgFields(rawData[0], type,true)
       if (organizationData) {
         organization.value = organizationData
         return organizationData
@@ -647,6 +670,19 @@ export const useOrganizationServices = () => {
     }
   }
 
+  const fetchOrganizationVisibility = async (id: string) : Promise<number> => {
+    try {
+      const res = await server.get(`/v1/organizations/${id}`, {
+        headers: authorizationHeader
+      });
+
+      return res.data.results[0].visibility
+    } catch (e: any) {
+      console.log(e)
+      return 1;
+
+    }
+  }
 
   return {
     loading,
@@ -668,6 +704,7 @@ export const useOrganizationServices = () => {
     manageOrgStatus,
     manageOrgAdminStatus,
     fetchAllOrganizations,
-    fetchOrganizationCount
+    fetchOrganizationCount,
+    fetchOrganizationVisibility
   };
 };

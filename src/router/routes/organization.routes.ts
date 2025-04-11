@@ -161,6 +161,18 @@ const organizationRoutes = [
     // @ts-ignore
     component: () => import('../../modules/organization/views/ExpertsView.vue')
   },
+  {
+    path: '/organizations/upload-files/:slug',
+    name: 'upload-files-organizations',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationFileUpload.vue')
+  },
+  {
+    path: '/my-organizations/upload-files/:slug',
+    name: 'upload-files-organizations-my',
+    // @ts-ignore
+    component: () => import('../../modules/organization/views/OrganizationFileUpload.vue')
+  },
 ]
 
 export default organizationRoutes

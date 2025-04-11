@@ -33,6 +33,7 @@ interface Organization {
   additional_info?: string,
   is_active?: boolean,
   is_approved?: boolean,
+  files?: OrganizationAttachment[],
   // clusterRepresentatives: ClusterRepresentative[]
 }
 
@@ -97,4 +98,26 @@ interface OrganizationEvent{
 
 }
 
-export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent}
+interface OrganizationAttachment{
+  uid?: string,
+  file: File | null,
+  organization: string,
+  attachment?: File | string,
+  file_type?: string,
+  mime_type?: string,
+  name?: string,
+  description?: string,
+  created_at?: string,
+  updated_at?: string,
+  is_deleted?: boolean,
+  deleted_at?: string,
+  visibility?: number,
+  type: string,
+  errorMessage?: string
+  showFiles?: boolean,
+  isDescriptionUpdated?: boolean
+  isFileUpdated?: boolean
+  isNameUpdated?: boolean
+}
+
+export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent, OrganizationAttachment}

@@ -210,8 +210,6 @@ onMounted(async ()=>{
     })
   }
 })
-
-
 </script>
 
 <template>
