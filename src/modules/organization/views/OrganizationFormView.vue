@@ -26,7 +26,6 @@ import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import AttachmentsVisibilityInfoDialog from "../../repository/components/AttachmentsVisibilityInfoDialog.vue";
-import {Attachment} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationAttachmentServices} from "../services/organization-attachments.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";

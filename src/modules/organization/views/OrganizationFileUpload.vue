@@ -4,7 +4,6 @@ import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, reactive, ref, watch} from "vue";
-import {Attachment} from "../../../interfaces/repository.interface.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {PhArrowLeft, PhFile, PhFileDashed, PhImage, PhTrash, PhX} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
