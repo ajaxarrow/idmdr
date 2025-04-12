@@ -15,6 +15,7 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {usePostServices} from "../../posts/services/post.services.ts";
 import {Post} from "../../../interfaces/post.interface.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 
 const {route, router} = useRouting()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
@@ -28,6 +29,13 @@ const organization = ref<Organization | null>();
 const pageLoading = ref(false)
 const imagePreviewDialog = ref(false);
 const selectedImageIndex = ref(0);
+const previewImage = ref('')
+const isImagePreviewed = ref(false)
+const openImagePreview = (index: number) => {
+  selectedImageIndex.value = index;
+  previewImage.value = postData.value?.images?.[selectedImageIndex.value].image as string
+  isImagePreviewed.value = true;
+};
 
 const deletePostCallback = async () => {
   showSnackbarMessage('Post Deleted Successfully', Status.success)
@@ -53,10 +61,6 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
   return orgList.some(org => org.slug === organization?.slug);
 };
 
-const openImagePreview = (index: number) => {
-  selectedImageIndex.value = index;
-  imagePreviewDialog.value = true;
-};
 
 onMounted(async () => {
   pageLoading.value = true
@@ -78,6 +82,11 @@ onMounted(async () => {
 </script>
 
 <template>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <OrganizationDetailsLayout
       :organization="organization"
       activeTab="posts"
@@ -214,28 +223,28 @@ onMounted(async () => {
       </div>
 
 
-      <VDialog
-          v-model="imagePreviewDialog"
-          max-width="90%"
-          class="image-preview-dialog"
-      >
-        <VCard>
-          <VCardText class="pa-0 position-relative">
-            <VBtn
-                icon
-                variant="text"
-                class="close-btn"
-                @click="imagePreviewDialog = false"
-            >
-              ✕
-            </VBtn>
-            <VImg
-                :src="postData.images?.[selectedImageIndex]?.image! as string"
-                max-height="80vh"
-            />
-          </VCardText>
-        </VCard>
-      </VDialog>
+<!--      <VDialog-->
+<!--          v-model="imagePreviewDialog"-->
+<!--          max-width="90%"-->
+<!--          class="image-preview-dialog"-->
+<!--      >-->
+<!--        <VCard>-->
+<!--          <VCardText class="pa-0 position-relative">-->
+<!--            <VBtn-->
+<!--                icon-->
+<!--                variant="text"-->
+<!--                class="close-btn"-->
+<!--                @click="imagePreviewDialog = false"-->
+<!--            >-->
+<!--              ✕-->
+<!--            </VBtn>-->
+<!--            <VImg-->
+<!--                :src="postData.images?.[selectedImageIndex]?.image! as string"-->
+<!--                max-height="80vh"-->
+<!--            />-->
+<!--          </VCardText>-->
+<!--        </VCard>-->
+<!--      </VDialog>-->
     </div>
 
     <div v-else style="height: 100%">
