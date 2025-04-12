@@ -432,9 +432,7 @@ export const useRepositoryServices = () => {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
-
-      const rawData = res.data.results.filter((data: any) => !data.repo.is_deleted && data.repo.is_active && data.repo.is_approved);
-
+      const rawData = res.data.results.filter((data: any) => !data.repo.is_deleted && data.repo.is_approved);
       const userRepo = (await fetchRepositoriesByUser()).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const filteredData = await Promise.all(
         rawData.map(async (data: any) => {
@@ -449,7 +447,8 @@ export const useRepositoryServices = () => {
 
               }
               const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
-              return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data : null;
+              return ( (data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong )|| (data.repo.visibility === 1 && data.repo.is_active) ? data : null;
+
             } else {
               return data.repo.visibility === 1 ? data : null;
             }
@@ -463,7 +462,7 @@ export const useRepositoryServices = () => {
     // Map the valid data
       const repositories: Repository[] = await mapRepoData(validData.map((data: any) => data.repo));
 
-      let data = [...repositories].filter(repo => !repo.is_deleted && repo.is_approved).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      let data = [...repositories].filter(repo => !repo.is_deleted).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       orgRepositories.value = data;
       return data;
 
