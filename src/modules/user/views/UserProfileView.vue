@@ -88,15 +88,15 @@ onMounted(async () => {
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">User Statistics</p>
         <VRow class="ma-0">
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Consortium Member Institutions</p>
             <p class="text-subtitle pr-3">{{orgLength}}</p>
           </VCol>
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Projects</p>
             <p class="text-subtitle pr-3">{{repoLength}}</p>
           </VCol>
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Sectors</p>
             <p class="text-subtitle pr-3">{{sectorsLength}}</p>
           </VCol>

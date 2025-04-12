@@ -24,6 +24,7 @@ import {
 } from "@phosphor-icons/vue";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 
 // Define the Attachment interface to match the description
 interface Attachment {
@@ -57,6 +58,7 @@ const selectedFileName = ref('');
 const selectedFileDescription = ref('');
 const selectedFileAttachment= ref('');
 const selectedImageIndex = ref(-1);
+const isImagePreviewed = ref(false)
 const {fetchRepositoryIDsByUser} = useRepositoryServices();
 const isMember = ref(false)
 const entityTitle = computed(() => {
@@ -66,6 +68,13 @@ const entityTitle = computed(() => {
           : 'Project'
       : 'Project';
 });
+const previewImage = ref('')
+
+const openImagePreview = (index: number) => {
+  selectedImageIndex.value = index;
+  previewImage.value = imageFiles.value[selectedImageIndex.value].attachment as string
+  isImagePreviewed.value = true;
+};
 
 // Separate files and images
 const imageFiles = computed(() => {
@@ -110,9 +119,6 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
   }
 }
 
-const selectImage = (index: number) => {
-  selectedImageIndex.value = selectedImageIndex.value === index ? -1 : index;
-}
 
 const getFileExtension = (filename: string): string | null => {
   const lastDotIndex = filename.lastIndexOf('.');
@@ -190,6 +196,11 @@ onMounted(async () => {
 </script>
 
 <template>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <RepositoryDetailsLayout :repository="repository" activeTab="data">
     <div v-if="repository">
       <div class="px-5 py-4">
@@ -225,15 +236,15 @@ onMounted(async () => {
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">{{entityTitle}} Components</p>
         <VRow class="ma-0">
-          <VCol v-if="repository.type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.type" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Type</p>
             <p class="text-subtitle pr-3">{{ repository.type}}</p>
           </VCol>
-          <VCol v-if="repository.proj_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.proj_type" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Category</p>
             <p class="text-subtitle pr-3">{{ repository.proj_type}}</p>
           </VCol>
-          <VCol v-if="repository.lead" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.lead" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Project Lead</p>
             <p class="text-subtitle pr-3">
               {{
@@ -248,7 +259,7 @@ onMounted(async () => {
               }}
             </p>
           </VCol>
-          <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.author" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Author<span v-if="repository.authorsData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
               <span v-if="repository.authorsData?.length == 0">N/A</span>
@@ -257,48 +268,48 @@ onMounted(async () => {
               </span>
             </p>
           </VCol>
-          <VCol v-if="repository.author" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.author" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">{{entityTitle}} Status</p>
             <p class="text-subtitle pr-3">{{ repository.status}}</p>
           </VCol>
-          <VCol v-if="repository.org_data" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.org_data" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization</p>
             <p class="text-subtitle pr-3">{{ repository.org_data.name}} ({{repository.org_data.acronym}})</p>
           </VCol>
-          <VCol v-if="repository.location" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.location" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Site of Implementation</p>
             <p class="text-subtitle pr-3">{{ repository.location}}</p>
           </VCol>
           <VRow class="ma-0" v-if="repository.type === 'Project Repository'">
-            <VCol v-if="repository.start_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.start_date" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Start Date</p>
               <p class="text-subtitle">{{ formatDate(repository.start_date)}}</p>
             </VCol>
-            <VCol v-if="repository.end_date" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.end_date" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">End Date</p>
               <p class="text-subtitle">{{formatDate(repository.end_date)}}</p>
             </VCol>
-            <VCol v-if="repository.funding_agency" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.funding_agency" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Funding Agency</p>
               <p class="text-subtitle pr-3">{{arrayToString(repository.funding_agency as string[])}}</p>
             </VCol>
-            <VCol v-if="repository.affiliation" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.affiliation" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Affiliation</p>
               <p class="text-subtitle pr-3">{{arrayToString(repository.affiliation as string[])}}</p>
             </VCol>
-            <VCol v-if="repository.commodity" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commodity" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Commodity</p>
               <p class="text-subtitle pr-3">{{arrayToString(repository.commodity as string[])}}</p>
             </VCol>
-            <VCol v-if="repository.industry" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.industry" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Industry</p>
               <p class="text-subtitle pr-3">{{arrayToString(repository.industry as string[])}}</p>
             </VCol>
-            <VCol v-if="repository.rpt" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.rpt" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Research Project/s Conducted</p>
               <p class="text-subtitle pr-3">{{arrayToString(repository.rpt as string[])}}</p>
             </VCol>
-            <VCol v-if="repository.priority_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.priority_level" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Priority Level</p>
               <p class="text-subtitle">{{repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1)}}</p>
             </VCol>
@@ -309,23 +320,23 @@ onMounted(async () => {
       <div v-if="repository.type === 'Project Repository'" class="px-7 py-5" :class="{'mb-10': repository.transfer_plan != 'Commercialization' && repository.files?.length == 0}" >
         <p class="text-about-heading py-3" >Technology Details</p>
         <VRow class="ma-0">
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Patenting Status</p>
             <p class="text-subtitle pr-3">{{ repository.is_patentable ? 'Applicable for Patenting' : 'Not Applicable'}}</p>
           </VCol>
-          <VCol v-if="repository.technology_category" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.technology_category" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Category</p>
             <p class="text-subtitle pr-3">{{ repository.technology_category}}</p>
           </VCol>
-          <VCol v-if="repository.technology_status" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.technology_status" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Status</p>
             <p class="text-subtitle pr-3">{{ repository.technology_status}}</p>
           </VCol>
-          <VCol v-if="repository.technology_readiness_level" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.technology_readiness_level" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Readiness Level</p>
             <p class="text-subtitle pr-3">{{ repository.technology_readiness_level}}</p>
           </VCol>
-          <VCol v-if="repository.technology_generator" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.technology_generator" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Generator<span v-if="repository.techGeneratorData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
               <span v-if="repository.techGeneratorData?.length == 0">N/A</span>
@@ -334,7 +345,7 @@ onMounted(async () => {
               </span>
             </p>
           </VCol>
-          <VCol v-if="repository.tech_owner" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.tech_owner" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Owner<span v-if="repository.techOwnerData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
               <span v-if="repository.techOwnerData?.length == 0">N/A</span>
@@ -343,15 +354,15 @@ onMounted(async () => {
               </span>
             </p>
           </VCol>
-          <VCol v-if="repository.adaptors" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.adaptors" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Existing or Potential Adopters</p>
             <p class="text-subtitle pr-3">{{arrayToString(repository.adaptors as string[])}}</p>
           </VCol>
-          <VCol v-if="repository.transfer_plan" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.transfer_plan" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Transfer Plan</p>
             <p class="text-subtitle pr-3">{{ repository.transfer_plan}}</p>
           </VCol>
-          <VCol v-if="repository.technology_transfer_status" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.technology_transfer_status" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Transfer Status</p>
             <p class="text-subtitle pr-3">{{ repository.technology_transfer_status}}</p>
           </VCol>
@@ -363,15 +374,15 @@ onMounted(async () => {
         <div class="px-7 py-5">
           <p class="text-about-heading py-3">Commercialization</p>
           <VRow class="ma-0">
-            <VCol v-if="repository.commercialization?.ipType" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.ipType" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">IP Type</p>
               <p class="text-subtitle">{{ repository.commercialization.ipType}}</p>
             </VCol>
-            <VCol v-if="repository.commercialization?.ipStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.ipStatus" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">IP Status</p>
               <p class="text-subtitle">{{ repository.commercialization.ipStatus}}</p>
             </VCol>
-            <VCol v-if="repository.commercialization?.regNo" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.regNo" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">IP Registration Number</p>
               <p class="text-subtitle">{{ repository.commercialization.regNo}}</p>
             </VCol>
@@ -381,15 +392,15 @@ onMounted(async () => {
         <div class="px-7 py-5 mb-5" :class="{'mb-10': repository.files?.length == 0}">
           <p class="text-about-heading py-3">Commercialization Status</p>
           <VRow class="ma-0">
-            <VCol v-if="repository.commercialization?.modeStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.modeStatus" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Mode Status</p>
               <p class="text-subtitle pr-3">{{ repository.commercialization.modeStatus}}</p>
             </VCol>
-            <VCol v-if="repository.commercialization?.currentStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.currentStatus" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Current Status</p>
               <p class="text-subtitle pr-3">{{ repository.commercialization.currentStatus}}</p>
             </VCol>
-            <VCol v-if="repository.commercialization?.adopterStatus" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+            <VCol v-if="repository.commercialization?.adopterStatus" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Adopter Status</p>
               <p class="text-subtitle pr-3">{{ repository.commercialization.adopterStatus}}</p>
             </VCol>
@@ -417,12 +428,12 @@ onMounted(async () => {
             <div class="pa-4">
               <VRow justify="space-between" align="center" class="ma-0">
                 <p><span class="text-data-heading">Image Gallery</span> ({{imageFiles.length}} Images)</p>
-                <VTooltip v-if="isMember" location="bottom">
-                  <template v-slot:activator="{ props }">
-                    <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>
-                  </template>
-                  <span>Download All Images</span>
-                </VTooltip>
+<!--                <VTooltip v-if="isMember" location="bottom">-->
+<!--                  <template v-slot:activator="{ props }">-->
+<!--                    <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>-->
+<!--                  </template>-->
+<!--                  <span>Download All Images</span>-->
+<!--                </VTooltip>-->
               </VRow>
             </div>
 
@@ -431,7 +442,7 @@ onMounted(async () => {
             <div class="pa-4">
               <VRow>
                 <VCol v-for="(image, index) in imageFiles" :key="index" cols="12" sm="6" md="4" lg="3">
-                  <VCard class="image-card" @click="selectImage(index)" :class="{'selected-image': selectedImageIndex === index}">
+                  <VCard class="image-card" @click="openImagePreview(index)" :class="{'selected-image': selectedImageIndex === index}">
                     <VImg
                         :src="image.attachment as string"
                         height="200"
@@ -446,37 +457,37 @@ onMounted(async () => {
               </VRow>
             </div>
 
-            <VDivider v-if="selectedImageIndex !== -1"/>
+<!--            <VDivider v-if="selectedImageIndex !== -1"/>-->
 
-            <div v-if="selectedImageIndex !== -1" class="px-6 py-4">
-              <VRow class="ma-0" justify="space-between">
-                <div>
-                  <p class="text-data-subheading d-flex align-center">
-                    <PhInfo size="20" class="mr-2"/>
-                    About the selected image
-                  </p>
-                  <p class="text-data-description">
-                    {{ imageFiles[selectedImageIndex].description || 'No description available' }}
-                  </p>
-                </div>
-                <p v-if="isMember" class="download-icon d-flex align-center cursor-pointer"
-                   @click="downloadFile(imageFiles[selectedImageIndex].attachment as string)">
-                  <PhDownload size="20" class="mr-2"/>
-                  Download Image
-                </p>
-              </VRow>
+<!--            <div v-if="selectedImageIndex !== -1" class="px-6 py-4">-->
+<!--              <VRow class="ma-0" justify="space-between">-->
+<!--                <div>-->
+<!--                  <p class="text-data-subheading d-flex align-center">-->
+<!--                    <PhInfo size="20" class="mr-2"/>-->
+<!--                    About the selected image-->
+<!--                  </p>-->
+<!--                  <p class="text-data-description">-->
+<!--                    {{ imageFiles[selectedImageIndex].description || 'No description available' }}-->
+<!--                  </p>-->
+<!--                </div>-->
+<!--                <p v-if="isMember" class="download-icon d-flex align-center cursor-pointer"-->
+<!--                   @click="downloadFile(imageFiles[selectedImageIndex].attachment as string)">-->
+<!--                  <PhDownload size="20" class="mr-2"/>-->
+<!--                  Download Image-->
+<!--                </p>-->
+<!--              </VRow>-->
 
-              <VRow class="mt-4">
-                <VCol cols="12" md="8" class="mx-auto">
-                  <VImg
-                      :src="imageFiles[selectedImageIndex].attachment as string"
-                      max-height="500"
-                      contain
-                      class="selected-image-preview"
-                  ></VImg>
-                </VCol>
-              </VRow>
-            </div>
+<!--              <VRow class="mt-4">-->
+<!--                <VCol cols="12" md="8" class="mx-auto">-->
+<!--                  <VImg-->
+<!--                      :src="imageFiles[selectedImageIndex].attachment as string"-->
+<!--                      max-height="500"-->
+<!--                      contain-->
+<!--                      class="selected-image-preview"-->
+<!--                  ></VImg>-->
+<!--                </VCol>-->
+<!--              </VRow>-->
+<!--            </div>-->
           </VSheet>
         </div>
       </div>

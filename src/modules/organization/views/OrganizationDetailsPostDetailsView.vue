@@ -213,7 +213,7 @@ onMounted(async () => {
         </VRow>
       </div>
 
-      <!-- Image Preview Dialog -->
+
       <VDialog
           v-model="imagePreviewDialog"
           max-width="90%"

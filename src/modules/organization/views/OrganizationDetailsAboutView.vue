@@ -19,6 +19,7 @@ import {
   PhInfo
 } from "@phosphor-icons/vue";
 import {Organization, OrganizationAttachment} from "../../../interfaces/organization.interface.ts";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 const {route} = useRouting()
 const {setSnackbarMessage} = useSnackbarStore()
 const {organization} = useOrganizationStore();
@@ -30,12 +31,19 @@ const selectedFileName = ref('');
 const selectedFileDescription = ref('');
 const selectedFileAttachment= ref('');
 const selectedImageIndex = ref(-1);
+const isImagePreviewed = ref(false)
 const imageFiles = computed(() => {
   if (!organization.value?.files) return [];
   return organization.value?.files.filter(file =>
       file.mime_type?.startsWith('image/')
   ) as OrganizationAttachment[];
 });
+const previewImage = ref('')
+const openImagePreview = (index: number) => {
+  selectedImageIndex.value = index;
+  previewImage.value = imageFiles.value[selectedImageIndex.value].attachment as string
+  isImagePreviewed.value = true;
+};
 
 const selectFile = (fileDesc: string, filename: string, fileAttachment: string) => {
   if(selectedFileDescription.value === fileDesc){
@@ -49,9 +57,9 @@ const selectFile = (fileDesc: string, filename: string, fileAttachment: string) 
   }
 }
 
-const selectImage = (index: number) => {
-  selectedImageIndex.value = selectedImageIndex.value === index ? -1 : index;
-}
+// const selectImage = (index: number) => {
+//   selectedImageIndex.value = selectedImageIndex.value === index ? -1 : index;
+// }
 
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
   return orgList.some(org => org.slug === organization?.slug);
@@ -121,6 +129,11 @@ onMounted(async () => {
 </script>
 
 <template>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <OrganizationDetailsLayout
       :organization="organization"
       :activeTab="'about'">
@@ -137,11 +150,11 @@ onMounted(async () => {
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">Consortium Type</p>
         <VRow class="ma-0">
-          <VCol v-if="organization.org_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.org_type" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization Type</p>
             <p class="text-subtitle">{{ getOrganizationType(organization.org_type) }}</p>
           </VCol>
-          <VCol v-if="organization.sub_org_type" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.sub_org_type" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Organization Sub Type</p>
             <p class="text-subtitle">{{ getOrganizationSubType(organization.sub_org_type) }}</p>
           </VCol>
@@ -151,27 +164,27 @@ onMounted(async () => {
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">Contact Information</p>
         <VRow class="ma-0">
-          <VCol v-if="organization.president" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.president" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">President</p>
             <p class="text-subtitle">{{ organization.president }}</p>
           </VCol>
-          <VCol v-if="organization.address" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.address" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Address</p>
             <p class="text-subtitle">{{ organization.address }}</p>
           </VCol>
-          <VCol v-if="organization.tel_phone" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.tel_phone" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Telephone</p>
             <p class="text-subtitle">{{ organization.tel_phone }}</p>
           </VCol>
-          <VCol v-if="organization.phone" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.phone" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Cell Number</p>
             <p class="text-subtitle">{{ organization.phone }}</p>
           </VCol>
-          <VCol v-if="organization.email" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.email" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Email</p>
             <p class="text-subtitle">{{ organization.email }}</p>
           </VCol>
-          <VCol v-if="organization.website" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="organization.website" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Website</p>
             <p class="text-subtitle">{{ organization.website }}</p>
           </VCol>
@@ -181,7 +194,7 @@ onMounted(async () => {
       <div class="px-7 py-5 mb-10">
         <p class="text-about-heading py-3">Cluster Representatives</p>
         <VRow class="ma-0">
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Research & Development</p>
             <p class="text-subtitle">
               <span v-if="organization.rd_repData?.length == 0">N/A</span>
@@ -191,7 +204,7 @@ onMounted(async () => {
             </p>
           </VCol>
 
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Technology Transfer</p>
             <p class="text-subtitle">
               <span v-if="organization.tt_repData?.length == 0">N/A</span>
@@ -201,7 +214,7 @@ onMounted(async () => {
             </p>
           </VCol>
 
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Information Communication</p>
             <p class="text-subtitle">
               <span v-if="organization.ic_repData?.length == 0">N/A</span>
@@ -211,7 +224,7 @@ onMounted(async () => {
             </p>
           </VCol>
 
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Science Communication</p>
             <p class="text-subtitle">
               <span v-if="organization.sc_repData?.length == 0">N/A</span>
@@ -242,12 +255,12 @@ onMounted(async () => {
             <div class="pa-4">
               <VRow justify="space-between" align="center" class="ma-0">
                 <p><span class="text-data-heading">Image Gallery</span> ({{imageFiles.length}} Images)</p>
-                <VTooltip v-if="isMember" location="bottom">
-                  <template v-slot:activator="{ props }">
-                    <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>
-                  </template>
-                  <span>Download All Images</span>
-                </VTooltip>
+<!--                <VTooltip v-if="isMember" location="bottom">-->
+<!--                  <template v-slot:activator="{ props }">-->
+<!--                    <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>-->
+<!--                  </template>-->
+<!--                  <span>Download All Images</span>-->
+<!--                </VTooltip>-->
               </VRow>
             </div>
 
@@ -256,7 +269,7 @@ onMounted(async () => {
             <div class="pa-4">
               <VRow>
                 <VCol v-for="(image, index) in imageFiles" :key="index" cols="12" sm="6" md="4" lg="3">
-                  <VCard class="image-card" @click="selectImage(index)" :class="{'selected-image': selectedImageIndex === index}">
+                  <VCard class="image-card" @click="openImagePreview(index)" :class="{'selected-image': selectedImageIndex === index}">
                     <VImg
                         :src="image.attachment as string"
                         height="200"
@@ -271,37 +284,37 @@ onMounted(async () => {
               </VRow>
             </div>
 
-            <VDivider v-if="selectedImageIndex !== -1"/>
+<!--            <VDivider v-if="selectedImageIndex !== -1"/>-->
 
-            <div v-if="selectedImageIndex !== -1" class="px-6 py-4">
-              <VRow class="ma-0" justify="space-between">
-                <div>
-                  <p class="text-data-subheading d-flex align-center">
-                    <PhInfo size="20" class="mr-2"/>
-                    About the selected image
-                  </p>
-                  <p class="text-data-description">
-                    {{ imageFiles[selectedImageIndex].description || 'No description available' }}
-                  </p>
-                </div>
-                <p v-if="isMember" class="download-icon d-flex align-center cursor-pointer"
-                   @click="downloadFile(imageFiles[selectedImageIndex].attachment as string)">
-                  <PhDownload size="20" class="mr-2"/>
-                  Download Image
-                </p>
-              </VRow>
+<!--            <div v-if="selectedImageIndex !== -1" class="px-6 py-4">-->
+<!--              <VRow class="ma-0" justify="space-between">-->
+<!--                <div>-->
+<!--                  <p class="text-data-subheading d-flex align-center">-->
+<!--                    <PhInfo size="20" class="mr-2"/>-->
+<!--                    About the selected image-->
+<!--                  </p>-->
+<!--                  <p class="text-data-description">-->
+<!--                    {{ imageFiles[selectedImageIndex].description || 'No description available' }}-->
+<!--                  </p>-->
+<!--                </div>-->
+<!--                <p v-if="isMember" class="download-icon d-flex align-center cursor-pointer"-->
+<!--                   @click="downloadFile(imageFiles[selectedImageIndex].attachment as string)">-->
+<!--                  <PhDownload size="20" class="mr-2"/>-->
+<!--                  Download Image-->
+<!--                </p>-->
+<!--              </VRow>-->
 
-              <VRow class="mt-4">
-                <VCol cols="12" md="8" class="mx-auto">
-                  <VImg
-                      :src="imageFiles[selectedImageIndex].attachment as string"
-                      max-height="500"
-                      contain
-                      class="selected-image-preview"
-                  ></VImg>
-                </VCol>
-              </VRow>
-            </div>
+<!--              <VRow class="mt-4">-->
+<!--                <VCol cols="12" md="8" class="mx-auto">-->
+<!--                  <VImg-->
+<!--                      :src="imageFiles[selectedImageIndex].attachment as string"-->
+<!--                      max-height="500"-->
+<!--                      contain-->
+<!--                      class="selected-image-preview"-->
+<!--                  ></VImg>-->
+<!--                </VCol>-->
+<!--              </VRow>-->
+<!--            </div>-->
           </VSheet>
         </div>
       </div>

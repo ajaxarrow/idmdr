@@ -54,7 +54,7 @@ onMounted(async () => {
               <VCol
                   v-for="post in postData"
                   :key="post.uid"
-                  sm="12"
+                  cols="12" sm="12"
                   md="6"
                   xxl="4"
                   xl="4"
