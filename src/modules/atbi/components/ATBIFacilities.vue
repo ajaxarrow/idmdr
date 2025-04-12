@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { PropType } from "vue";
-import { ATBI } from "../../../interfaces/atbi.interface.ts";
+// import { PropType } from "vue";
+// import { ATBI } from "../../../interfaces/atbi.interface.ts";
 
-const props = defineProps({
-  atbi: {
-    type: Object as PropType<ATBI>
-  }
-})
+// const props = defineProps({
+//   atbi: {
+//     type: Object as PropType<ATBI>
+//   }
+// })
 </script>
 
 <template>

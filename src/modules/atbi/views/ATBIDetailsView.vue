@@ -133,7 +133,7 @@ onMounted(async() => {
           <p class="text-h4 font-weight-black">ATBI Data Not Found</p>
         </div>
       </div>
-      <div v-if="atbiData?.image_urls?.length > 0">
+      <div v-if="atbiData?.image_urls?.length! > 0">
         <VDivider/>
         <div class="px-8 pt-4 mb-10">
           <p class="text-about-heading py-3">Images</p>

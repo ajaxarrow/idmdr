@@ -2,8 +2,6 @@
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, PropType, ref} from "vue";
 import {ATBI} from "../../../interfaces/atbi.interface.ts";
-import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
-const {arrayToString} = useStringArrayHelper()
 const path = ref('/organizations')
 const props = defineProps({
   atbi: {
