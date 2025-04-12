@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import ATBIListViewContent from "../components/ATBIListViewContent.vue";
+import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import {PhPlus} from "@phosphor-icons/vue";
 
+const {isSmall, isTablet} = useScreenStore();
 </script>
 
 <template>
@@ -14,18 +17,18 @@ import ATBIListViewContent from "../components/ATBIListViewContent.vue";
               <p class="text-heading d-flex align-center">
                 ATBI
               </p>
-              <p class="text-subtitle">Discover and connect with business incubators across Northern Mindanao. </p>
+              <p class="text-subtitle">  ATBI means Agri-Aqua Technology Business Incubation (ATBI). It is a program gears to support more incubatees in the Agri-Aqua sector. </p>
             </div>
           </VCol>
           <VCol md="3" class="pa-0">
             <VRow class="ma-0 justify-end">
-<!--              <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-if="isSmall || isTablet" icon >-->
-<!--                <PhPlus size="16"/>-->
-<!--              </VBtnPrimaryFilled>-->
-<!--              <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">-->
-<!--                <PhPlus size="16" class="mr-2"/>-->
-<!--                New Expert-->
-<!--              </VBtnPrimaryFilled>-->
+              <VBtnPrimaryFilled :to="{name: 'new-atbi'}" v-if="isSmall || isTablet" icon >
+                <PhPlus size="16"/>
+              </VBtnPrimaryFilled>
+              <VBtnPrimaryFilled :to="{name: 'new-atbi'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+                <PhPlus size="16" class="mr-2"/>
+                New ATBI
+              </VBtnPrimaryFilled>
             </VRow>
           </VCol>
         </VRow>

@@ -193,9 +193,7 @@ onMounted(async () => {
           <VCol
               v-for="(image, index) in postData.images"
               :key="index"
-              cols="12"
-              sm="6"
-              md="4"
+              cols="12" sm="6" md="4" lg="3"
           >
             <VCard
                 class="image-card elevation-2"

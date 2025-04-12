@@ -23,7 +23,7 @@ const props = defineProps({
     <div>
       <p class="text-about-heading py-3">Additional Info</p>
       <div class="ql-snow">
-        <div class="ql-editor" v-html="props.atbi?.additionalInfo"></div>
+        <div class="ql-editor" v-html="props.atbi?.additional_info"></div>
       </div>
     </div>
   </div>

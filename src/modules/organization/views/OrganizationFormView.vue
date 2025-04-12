@@ -899,7 +899,7 @@ onMounted(async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('rd_rep')">
                 <VListItemTitle>
-                  Add "{{ searchQueries.rd_rep }}" as a research & development representative
+                  Add {{ searchQueries.rd_rep }} as a research & development representative
                 </VListItemTitle>
               </VListItem>
             </template>
@@ -928,7 +928,7 @@ onMounted(async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('tt_rep')">
                 <VListItemTitle>
-                  Add "{{ searchQueries.tt_rep }}" as a technology transfer representative
+                  Add {{ searchQueries.tt_rep }} as a technology transfer representative
                 </VListItemTitle>
               </VListItem>
             </template>
@@ -958,7 +958,7 @@ onMounted(async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('ic_rep')">
                 <VListItemTitle>
-                  Add "{{ searchQueries.ic_rep }}" as an information communication representative
+                  Add {{ searchQueries.ic_rep }} as an information communication representative
                 </VListItemTitle>
               </VListItem>
             </template>
@@ -988,7 +988,7 @@ onMounted(async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('sc_rep')">
                 <VListItemTitle>
-                  Add "{{ searchQueries.sc_rep }}" as a science communication representative
+                  Add {{ searchQueries.sc_rep }} as a science communication representative
                 </VListItemTitle>
               </VListItem>
             </template>

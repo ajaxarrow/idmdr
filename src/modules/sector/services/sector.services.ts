@@ -81,7 +81,7 @@ export const useSectorServices = () => {
         setTimeout(async function() {
           loading.value = false;
           window.location.href = '/map';
-        }, 3000);
+        }, 1000);
 
       }
     } catch (e: any) {

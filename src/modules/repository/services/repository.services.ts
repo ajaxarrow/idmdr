@@ -161,7 +161,7 @@ export const useRepositoryServices = () => {
         setTimeout(async function() {
           loading.value = false;
           window.location.href = '/my-repositories';
-        }, 3000);
+        }, 1000);
 
       } else if(type == 'update'){
         // @ts-ignore
@@ -184,7 +184,7 @@ export const useRepositoryServices = () => {
         setTimeout(async function() {
           loading.value = false;
           window.location.href = `/my-repositories/${id}`;
-        }, 3000);
+        }, 1000);
       }
     } catch (e: any){
       console.log(e)
@@ -581,8 +581,8 @@ export const useRepositoryServices = () => {
     try {
       // Start with the base URL based on whether user filtering is enabled
       let url = user
-          ? `/repositories/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`
-          : `/repositories/?ordering=-updated_at&page_size=${pageSize}`;
+          ? `/repositories/?page=1&page_size=${pageSize}&user=${userData.uid}`
+          : `/repositories/?page=1&page_size=${pageSize}`;
 
       // Append search parameter if provided
       if (searchQuery && searchQuery.trim()) {
@@ -608,7 +608,7 @@ export const useRepositoryServices = () => {
       if (status?.trim()) {
         url += `&status=${encodeURIComponent(status)}`;
       }
-
+      console.log(url)
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
       });
@@ -616,7 +616,9 @@ export const useRepositoryServices = () => {
       const rawData = user ? res.data.results.filter((repo: any) => !repo.is_deleted && repo.is_approved) : res.data.results.filter((repo: any) => !repo.is_deleted);
       const repositories: Repository[] = rawData.map((repo: any) => ({
         slug: repo.uid,
-        type: repo.type
+        type: repo.type,
+        title: repo.title,
+        image: repo.image
       }));
 
       myRepositories.value = [...repositories];

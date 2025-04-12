@@ -10,7 +10,20 @@ const atbiRoutes = [
         name: 'atbi-details',
         // @ts-ignore
         component: () => import('../../modules/atbi/views/ATBIDetailsView.vue')
+    },
+    {
+        path: '/atbi/new/',
+        name: 'new-atbi',
+        // @ts-ignore
+        component: () => import('../../modules/atbi/views/ATBIForm.vue')
+    },
+    {
+        path: '/atbi/edit/:slug',
+        name: 'edit-atbi',
+        // @ts-ignore
+        component: () => import('../../modules/atbi/views/ATBIForm.vue')
     }
+
 ]
 
 export default atbiRoutes;

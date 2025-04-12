@@ -859,7 +859,7 @@ onMounted( async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('author')">
                 <VListItemTitle>
-                  Add "{{ searchQueries.author }}" as an author
+                  Add {{ searchQueries.author }} as an author
                 </VListItemTitle>
               </VListItem>
             </template>
@@ -886,7 +886,7 @@ onMounted( async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('lead')">
                 <VListItemTitle>
-                  Add "{{ searchQueries.lead }}" as Project Lead
+                  Add {{ searchQueries.lead }} as Project Lead
                 </VListItemTitle>
               </VListItem>
             </template>
@@ -1076,7 +1076,7 @@ onMounted( async () => {
               <template v-slot:no-data>
                 <VListItem @click="addCustomUser('techGen')">
                   <VListItemTitle>
-                    Add "{{ searchQueries.techGen }}" as a technology generator
+                    Add {{ searchQueries.techGen }} as a technology generator
                   </VListItemTitle>
                 </VListItem>
               </template>
@@ -1124,7 +1124,7 @@ onMounted( async () => {
               <template v-slot:no-data>
                 <VListItem @click="addCustomUser('techOwner')">
                   <VListItemTitle>
-                    Add "{{ searchQueries.techOwner }}" as a new technology owner
+                    Add {{ searchQueries.techOwner }} as a new technology owner
                   </VListItemTitle>
                 </VListItem>
               </template>

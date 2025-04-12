@@ -1,16 +1,35 @@
 // interfaces/atbi.interface.ts
+import {CustomUserData} from "./member.interface.ts";
+
 interface ATBI {
-    uid?: string;
+    technology?: string,
+    uuid?: string;
     name: string;
     description?: string;
-    owner?: string[];
+    logo?: string;
+    owners?: string;
+    ownerData?: CustomUserData[];
     mobile?: string;
     email?: string;
     facebook?: string;
-    additionalInfo?: string;
-    facilities?: Facility[];
-    products?: Product[];
+    additional_info?: string;
+    is_deleted?: boolean;
+    is_active?: boolean;
+    image_urls?: AtbiImage[];
+    // facilities?: Facility[];
+    // products?: Product[];
 }
+
+interface AtbiImage {
+    uuid?: string;
+    file?: File | null;
+    image?: File | string;
+    atbi?: string;
+    type?: string;
+    previewImage?: string;
+}
+
+
 
 interface Product {
     uid?: string;
@@ -26,4 +45,4 @@ interface Facility {
     description?: string;
 }
 
-export type { ATBI, Product, Facility };
+export type { ATBI, AtbiImage, Product, Facility };

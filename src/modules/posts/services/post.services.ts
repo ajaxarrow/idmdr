@@ -34,11 +34,11 @@ export const usePostServices = () => {
       if(type === 'create'){
         setTimeout(async function() {
           window.location.href = `/my-organizations/${orgID}/posts/`;
-        }, 3000);
+        }, 1000);
       } else {
         setTimeout(async function() {
           window.location.href = `/my-organizations/${orgID}/posts/${id}/`;
-        }, 3000);
+        }, 1000);
       }
     } catch (error) {
       loading.value = false;

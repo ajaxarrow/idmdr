@@ -256,7 +256,7 @@ onMounted(async () => {
             </div>
           </div>
           <div v-else>
-            <label class="input-label mb-5">Files</label>
+            <label class="input-label mb-5">Images</label>
             <div class="attachments-container mt-2">
               <div
                   v-for="(image, index) in postImages"
@@ -303,7 +303,7 @@ onMounted(async () => {
                     rounded="lg"
                     style="font-size: 14px !important;"
                 >
-                  Add More File
+                  Add More Image
                 </VBtnPrimaryFilled>
               </div>
             </div>

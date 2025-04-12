@@ -2,14 +2,15 @@
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import {onMounted, ref, watch} from "vue";
 import {ATBI} from "../../../interfaces/atbi.interface.ts";
-import atbi from "../../../data/atbi.ts";
 import {PhHardDrives, PhInfo, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 import ATBIItem from "./ATBIItem.vue";
+import {useAtbiServices} from "../services/atbi.services.ts";
 
 const {scrollTop} = useScroll()
 
 const searchQuery = ref('');
+const {fetchAtbis} = useAtbiServices()
 const searchedATBIs = ref<ATBI[]>([]);
 const atbiData = ref<ATBI[]>([]);
 const pageLoading = ref(false)
@@ -27,10 +28,10 @@ watch(() => searchQuery.value, async () => {
   searchedATBIs.value = await filterATBIsBySearch(searchQuery.value);
 })
 
-onMounted(() => {
+onMounted(async() => {
   pageLoading.value = true
-  searchedATBIs.value = atbi
-  atbiData.value = atbi
+  searchedATBIs.value = await fetchAtbis()
+  atbiData.value = searchedATBIs.value
   pageLoading.value = false
 })
 
@@ -70,7 +71,7 @@ onMounted(() => {
       <div v-if="searchedATBIs.length > 0">
         <ATBIItem
             v-for="atbi in searchedATBIs"
-            :key="atbi.uid"
+            :key="atbi.uuid"
             :atbi="atbi"
             class="mb-6"
           />
