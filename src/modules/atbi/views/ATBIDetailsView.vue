@@ -6,14 +6,13 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import ATBIOverview from "../components/tabs/ATBIOverview.vue";
 import {useAtbiServices} from "../services/atbi.services.ts";
-import {PhArrowLeft, PhDotsThreeOutlineVertical, PhEye, PhEyeSlash, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {PhArrowLeft, PhDotsThreeOutlineVertical, PhPencil, PhTrash} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import ATBISubEntityDataTable from "../components/ATBISubEntityDataTable.vue";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
-import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 
