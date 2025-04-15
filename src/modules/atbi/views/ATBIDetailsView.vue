@@ -4,8 +4,6 @@ import { onMounted, ref, watch } from "vue";
 import { ATBI } from "../../../interfaces/atbi.interface.ts";
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import { useRouting } from "../../../core/composables/useRouting.ts";
-import ATBIFacilities from "../components/tabs/ATBIFacilities.vue";
-import ATBIProducts from "../components/tabs/ATBIProducts.vue";
 import ATBIOverview from "../components/tabs/ATBIOverview.vue";
 import {useAtbiServices} from "../services/atbi.services.ts";
 import {PhArrowLeft} from "@phosphor-icons/vue";
