@@ -17,7 +17,6 @@ const pageLoading = ref(false)
 const tab = ref("overview")
 const tabs = ['Overview', 'Products', 'Facilities', 'Linkages', 'Awards']
 
-
 // Update the tab value when it changes
 watch(tab, (newTab) => {
   // Update the URL when tab changes

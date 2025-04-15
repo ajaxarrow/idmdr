@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {computed, onMounted, PropType, ref, watch} from "vue";
-import {ATBI, AtbiSubEntity} from "../../../interfaces/atbi.interface.ts";
+import {ATBI, AtbiSubEntity, AtbiSubEntityImage} from "../../../interfaces/atbi.interface.ts";
 import {PhDotsThreeOutlineVertical, PhPencil, PhPlus, PhTrash, PhMagnifyingGlass, PhImage} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useAtbiSubEntityServices} from "../services/atbi-sub-entity.services.ts";
@@ -17,7 +17,7 @@ const {showSnackbarMessage} = useSnackbarStore()
 const loading = ref(false)
 const search = ref("")
 const imageModalOpen = ref(false)
-const selectedImages = ref([])
+const selectedImages = ref<AtbiSubEntityImage[]>([])
 const currentImageIndex = ref(0)
 
 const props = defineProps({
@@ -56,14 +56,16 @@ const isPriceQuantityVisible = computed(() => {
   return props.type === 'product' || props.type === 'facility'
 })
 
-const headers = ref([
-  { title: 'Name', key: 'name', sortable: true, visible: true },
-  { title: 'Price', key: 'price', sortable: true, visible: isPriceQuantityVisible.value },
-  { title: 'Quantity', key: 'quantity', sortable: true, visible: isPriceQuantityVisible.value },
-  { title: 'Unit', key: 'unit', sortable: true, visible: isPriceQuantityVisible.value },
-  { title: 'Images', key: 'images', sortable: false, visible: true },
-  { title: 'Actions', key: 'actions', sortable: false, visible: true },
-])
+const headers = computed(() => {
+  return[
+    { title: 'Name', key: 'name', sortable: true, visible: true },
+    { title: 'Price', key: 'price', sortable: true, visible: isPriceQuantityVisible.value },
+    { title: 'Quantity', key: 'quantity', sortable: true, visible: isPriceQuantityVisible.value },
+    { title: 'Unit', key: 'unit', sortable: true, visible: isPriceQuantityVisible.value },
+    { title: 'Images', key: 'images', sortable: false, visible: true },
+    { title: 'Actions', key: 'actions', sortable: false, visible: true },
+  ]
+})
 
 
 const loadAtbiSubEntities = async () => {
@@ -112,17 +114,6 @@ watch(() => props.type, async () => {
   })
 
 
-watch(() => route.query.tab, async () => {
-  console.log('called')
-  headers.value = [
-    { title: 'Name', key: 'name', sortable: true, visible: true },
-    { title: 'Price', key: 'price', sortable: true, visible: isPriceQuantityVisible.value },
-    { title: 'Quantity', key: 'quantity', sortable: true, visible: isPriceQuantityVisible.value },
-    { title: 'Unit', key: 'unit', sortable: true, visible: isPriceQuantityVisible.value },
-    { title: 'Images', key: 'images', sortable: false, visible: true },
-    { title: 'Actions', key: 'actions', sortable: false, visible: true },
-  ]
-}, { immediate: true })
 
 const deleteAtbiSubEntityCallback = async (id: string) => {
   await deleteAtbiSubEntity(id)
@@ -245,7 +236,7 @@ onMounted(async () => {
                       <VListItemTitle>Edit {{capitalizedType}}</VListItemTitle>
                     </VListItem>
                     <ConfirmationDialog
-                        :isWarning="item?.is_active"
+                        :isWarning="true"
                         @callback="deleteAtbiSubEntityCallback(item.uuid as string)"
                         :confirm-content="`Delete ${capitalizedType}`"
                         :content="`Are you sure you want to disable this ${props.type}?`"
