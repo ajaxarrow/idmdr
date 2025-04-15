@@ -29,16 +29,19 @@ import AttachmentsVisibilityInfoDialog from "../../repository/components/Attachm
 import {useOrganizationAttachmentServices} from "../services/organization-attachments.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const path = ref('organizations')
 const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {organization} = useOrganizationStore();
-const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
+const {userData} = useUserStore()
+const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchAttachmentsByOrganization, deleteAttachment} = useOrganizationAttachmentServices()
 const {fetchCustomUsers} = useRepositoryMemberServices();
+const pageLoading = ref(false);
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const isGeoJSONPreview = ref(false);
@@ -48,7 +51,7 @@ const hasImage = ref(false);
 const previewImage = ref('');
 const file = ref<File | null>(null);
 const customUsers = ref<CustomUserData[]>([])
-const {route} = useRouting();
+const {route, router} = useRouting();
 const visibilityInfo = [
   {
     name: 'Public',
@@ -513,12 +516,17 @@ const formatDate = (): string=> {
 }
 
 onMounted(async () => {
+  pageLoading.value = true
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   customUsers.value = await fetchCustomUsers();
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
     await fetchOrganizationData(route.params.slug as string);
+    const allUserOrg = await fetchOrganizationIDsByUser();
+    if(!allUserOrg.some(org => org.slug === route.params.slug) && !userData.is_superuser){
+      await router.push({name: 'organizations'})
+    }
     formType.value = FormType.edit
     Object.assign(organizationData, {...organization.value});
     organizationData.geojson = JSON.stringify(organizationData.geojson)
@@ -538,6 +546,7 @@ onMounted(async () => {
     previewImage.value = <string>organizationData.image
     hasImage.value = true
   }
+  pageLoading.value = false
 })
 
 
@@ -552,7 +561,13 @@ onMounted(async () => {
       @closeOverlay="isImagePreviewed = false"
   />
   <MainLayout :title="formType === FormType.edit ? 'Edit Consortium Member Institution' : 'New Consortium Member Institution'">
-    <VForm id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
          <div class="d-flex">

@@ -42,13 +42,13 @@ import {useRepositoryMemberServices} from "../services/repository-member.service
 const {arrayToString} = useStringArrayHelper()
 const {isEmptyObject} = useObjectChecker()
 const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
-const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
+const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading, fetchRepositoryIDsByUser} = useRepositoryServices();
 const {fetchAttachmentsByRepository, deleteAttachment} = useRepositoryAttachmentServices()
 const {fetchCustomUsers} = useRepositoryMemberServices();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore()
 const {tags, fetchTags} = useTags();
-const {route} = useRouting();
+const {route, router} = useRouting();
 const {userData} = useUserStore();
 
 const visibilityInfo = [
@@ -89,6 +89,7 @@ const previousRPTs = ref<string[]>([])
 const previousAdopters = ref<string[]>([])
 const customUsers = ref<CustomUserData[]>([])
 const formType = ref<FormType>(FormType.create);
+const pageLoading = ref(false);
 const file = ref<File | null>(null);
 const repositoryDataIntialState = reactive<Repository>({
   affiliation: [],
@@ -613,15 +614,26 @@ const updateRepositoryData = async () => {
 
 
 onMounted( async () => {
+  pageLoading.value = true
   fetchTags();
   organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   customUsers.value = await fetchCustomUsers();
   repositoryData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
+  if(organizations.value.length == 0){
+    await router.push({name: 'new-organization'})
+    showSnackbarMessage('You have no associated CMIs. You need to create first', Status.error)
+  }
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
     await fetchRepositoryData(route.params.slug as string, 'update');
+    const userRepo = await fetchRepositoryIDsByUser(
+        10000, true, '', '', '', true, true, 'Project Repository'
+    );
+    if(!userRepo.some(repo => repo.slug === repository.value?.slug && !userData.is_superuser)) {
+      await router.push({name: 'repositories'})
+    }
     formType.value = FormType.edit
     Object.assign(repositoryData, {...repository.value});
     console.log(repositoryData.authorsData)
@@ -645,6 +657,7 @@ onMounted( async () => {
     previewImage.value = <string>repositoryData.image
     hasImage.value = true
   }
+  pageLoading.value = false
 })
 
 
@@ -657,8 +670,15 @@ onMounted( async () => {
       :imageSrc="previewImage"
       @closeOverlay="isImagePreviewed = false"
   />
+
   <MainLayout :title="formType === FormType.edit ? 'Edit Project' : 'New Project'">
-    <VForm id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div class="d-flex">
           <RouterLink
@@ -1165,40 +1185,40 @@ onMounted( async () => {
                 :error-messages="errorMessage.funding_agency"
             />
           </div>
-<!--          <div class="mb-3" v-if="repositoryData.abh">-->
-<!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
-<!--            <QuillRichTextEditor-->
-<!--                :modelValue="repositoryData.abh"-->
-<!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
-<!--                placeholder="Enter information related to agri aqua business hub to this project"-->
-<!--            />-->
-<!--          </div>-->
-<!--          <div class="mb-5" v-else>-->
-<!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
-<!--            <QuillRichTextEditor-->
-<!--                :modelValue="repositoryData.abh"-->
-<!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
-<!--                placeholder="Enter information related to agri aqua business hub to this project"-->
-<!--            />-->
-<!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
-<!--          </div>-->
-<!--          <div class="mb-3" v-if="repositoryData.atbi">-->
-<!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
-<!--            <QuillRichTextEditor-->
-<!--                :modelValue="repositoryData.atbi"-->
-<!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
-<!--                placeholder="Enter information about technology business incubator that is related to this project"-->
-<!--            />-->
-<!--          </div>-->
-<!--          <div class="mb-5" v-else>-->
-<!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
-<!--            <QuillRichTextEditor-->
-<!--                :modelValue="repositoryData.atbi"-->
-<!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
-<!--                placeholder="Enter information about technology business incubator that is related to this project"-->
-<!--            />-->
-<!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
-<!--          </div>-->
+          <!--          <div class="mb-3" v-if="repositoryData.abh">-->
+          <!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.abh"-->
+          <!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
+          <!--                placeholder="Enter information related to agri aqua business hub to this project"-->
+          <!--            />-->
+          <!--          </div>-->
+          <!--          <div class="mb-5" v-else>-->
+          <!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.abh"-->
+          <!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
+          <!--                placeholder="Enter information related to agri aqua business hub to this project"-->
+          <!--            />-->
+          <!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
+          <!--          </div>-->
+          <!--          <div class="mb-3" v-if="repositoryData.atbi">-->
+          <!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.atbi"-->
+          <!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
+          <!--                placeholder="Enter information about technology business incubator that is related to this project"-->
+          <!--            />-->
+          <!--          </div>-->
+          <!--          <div class="mb-5" v-else>-->
+          <!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.atbi"-->
+          <!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
+          <!--                placeholder="Enter information about technology business incubator that is related to this project"-->
+          <!--            />-->
+          <!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
+          <!--          </div>-->
           <div class="mb-3">
             <label class="input-label">Technology Transfer Plan</label>
             <VAutocomplete

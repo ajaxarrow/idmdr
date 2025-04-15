@@ -11,13 +11,16 @@ import {useOrganizationExpertsServices} from "../services/organization-experts.s
 import {contactVisibility, expertise} from "../../../data/repository.inventory.fields.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
 
 
 const {userData} = useUserStore();
 const {arrayToString} = useStringArrayHelper()
 const {addExpert, updateExpert, fetchExpertById, loading} = useOrganizationExpertsServices()
 const {fetchOrganizationByUser} = useOrganizationServices();
-const {route} = useRouting();
+const {route, router} = useRouting();
+const {showSnackbarMessage} = useSnackbarStore()
 // const previousTags = ref<string[]>([])
 
 
@@ -68,7 +71,12 @@ const updateExpertData = async () => {
 
 onMounted(async () => {
   organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
-  expertData.organization = organizations.value[0].uid
+  if(organizations.value.length == 0){
+    await router.push({name: 'new-organization'})
+    showSnackbarMessage('You have no associated CMIs. You need to create first', Status.error)
+  } else {
+    expertData.organization = organizations.value[0].uid
+  }
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
 
@@ -76,6 +84,10 @@ onMounted(async () => {
     formType.value = FormType.edit
     // @ts-ignore
     const fetchedData = await fetchExpertById(route.params.slug as string)
+    // @ts-ignore
+    if(!organizations.value.some(org => org.uid === fetchedData?.organization?.uid && !userData.is_superuser)){
+      await router.push({name: 'organizations'})
+    }
     // @ts-ignore
     Object.assign(expertData, {...fetchedData})
     // @ts-ignore

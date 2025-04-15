@@ -17,12 +17,14 @@ import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vu
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {loading, errorMessage, hasErrorMessages, addAtbi, updateAtbi, fetchAtbiData} = useAtbiServices()
+const {userData} = useUserStore()
 const {fetchCustomUsers} = useRepositoryMemberServices();
 const path = ref('organizations')
 const atbiForm = ref(null)
-const {route} = useRouting();
+const {route, router} = useRouting();
 const {fetchRepositoryIDsByUser} = useRepositoryServices()
 const formType = ref<FormType>(FormType.create);
 const {deleteAtbiImage} = useAtbiImagesServices()
@@ -220,13 +222,21 @@ onMounted(async () => {
   ipTechnologies.value = await fetchRepositoryIDsByUser(
       10000, true, '', '', '', true, true, 'Project Repository'
   );
-  atbiData.technology = ipTechnologies.value[0].slug
+  if(ipTechnologies.value.length > 0) {
+    atbiData.technology = ipTechnologies.value[0].slug
+  } else {
+    await router.push({name: 'new-repository'})
+    showSnackbarMessage('You have no associated technologies. You need to create an IP Technology first', Status.error)
+  }
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
   path.value = getFirstPath(route.path);
   if(type === 'edit') {
     formType.value = FormType.edit
     const atbi = await fetchAtbiData(route.params.slug as string);
+    if(!ipTechnologies.value.some(repository => repository.slug === atbi?.technology && !userData.is_superuser)) {
+      await router.push({name: 'repositories'})
+    }
     Object.assign(atbiData, {...atbi});
     if (Array.isArray(atbiData.image_urls)) {
       for (let i = 0; i < atbiData.image_urls.length; i++) {

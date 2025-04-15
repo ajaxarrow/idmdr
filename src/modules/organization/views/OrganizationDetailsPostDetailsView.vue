@@ -122,7 +122,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <VMenu v-model="postActionMenu" :close-on-content-click="false">
+          <VMenu v-if="organization?.is_member" v-model="postActionMenu" :close-on-content-click="false">
             <template #activator="{ props }">
               <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                 Options
