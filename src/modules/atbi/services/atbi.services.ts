@@ -68,7 +68,6 @@ export const useAtbiServices = () => {
                         Authorization: `Bearer ${userData.accessToken}`,
                         "Content-Type": "multipart/form-data"
                     },
-
                 }
             );
 
@@ -113,6 +112,7 @@ export const useAtbiServices = () => {
     const manageATBIStatus = async (id: string, isActive: boolean) => {
         try {
             await server.patch(`/atbis/${id}/`, {
+                is_deleted: false,
                 is_active: isActive
             }, {
                 headers: authorizationHeader
@@ -121,6 +121,19 @@ export const useAtbiServices = () => {
             console.error(error);
         }
     }
+
+    const manageATBIStatusByAdmin = async (id: string, isDeleted: boolean) => {
+        try {
+            await server.patch(`/atbis/${id}/`, {
+                is_deleted: isDeleted
+            }, {
+                headers: authorizationHeader
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     const fetchAtbiByTechnology = async (id: string): Promise<ATBI[]> => {
         try {
@@ -149,19 +162,21 @@ export const useAtbiServices = () => {
     const mapAtbiData = async (atbi: any, isAssociatedDataIncluded: boolean = false): Promise<ATBI> => {
         const baseData = {
             uuid: atbi.uuid,
-            name: atbi.name,
-            logo: atbi.logo,
-            description: atbi.description,
+            name: atbi.name || '',
+            logo: atbi.logo || 'https://dummyimage.com/600x400/023768/fff.png&text=ATBI',
+            description: atbi.description || '',
             owner: atbi.owner,
             ownerData: atbi.ownerData,
-            mobile: atbi.mobile,
-            email: atbi.email,
-            facebook: atbi.facebook,
-            additional_info: atbi.additional_info,
+            mobile: atbi.mobile || '',
+            email: atbi.email || '',
+            facebook: atbi.facebook || '',
+            additional_info: atbi.additional_info || '',
             is_deleted: atbi.is_deleted,
             is_active: atbi.is_active,
             image_urls: atbi.image_urls,
-            technology: atbi.technology
+            technology: atbi.technology,
+            tech_name: atbi.tech_name,
+            tech_image: atbi.tech_image
         }
 
         if (!isAssociatedDataIncluded) return baseData;
@@ -194,6 +209,7 @@ export const useAtbiServices = () => {
         addAtbi,
         updateAtbi,
         manageATBIStatus,
+        manageATBIStatusByAdmin,
         fetchAtbiByTechnology,
         fetchAtbis,
         fetchAtbiData

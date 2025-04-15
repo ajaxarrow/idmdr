@@ -16,6 +16,8 @@ interface ATBI {
     is_deleted?: boolean;
     is_active?: boolean;
     image_urls?: AtbiImage[];
+    tech_name?: string;
+    tech_image?: string;
     // facilities?: Facility[];
     // products?: Product[];
 }
@@ -29,20 +31,31 @@ interface AtbiImage {
     previewImage?: string;
 }
 
-
-
-interface Product {
-    uid?: string;
+interface AtbiSubEntity{
+    atbi?: string,
+    uuid?: string;
     name: string;
     description?: string;
     price?: number;
+    logo?: string;
+    quantity?: number;
     unit?: string;
+    entity_type?: string;
+    images?: AtbiSubEntityImage[];
 }
 
-interface Facility {
-    name: string;
-    capacity?: string;
-    description?: string;
+interface AtbiSubEntityImage {
+    uuid?: string;
+    file?: File | null;
+    entity?: string;
+    image?: File | string;
+    type?: string;
+    previewImage?: string;
+    created_at?: string;
+    is_deleted?: boolean;
+    is_active?: boolean;
 }
 
-export type { ATBI, AtbiImage, Product, Facility };
+
+
+export type { ATBI, AtbiImage, AtbiSubEntityImage, AtbiSubEntity};

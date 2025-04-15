@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {PropType, ref} from "vue";
-import {ATBI} from "../../../interfaces/atbi.interface.ts";
+import {ATBI} from "../../../../interfaces/atbi.interface.ts";
 import {PhImages} from "@phosphor-icons/vue";
-import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import ImagePreviewOverlay from "../../../../core/components/ImagePreviewOverlay.vue";
 
 const props = defineProps({
   atbi: {

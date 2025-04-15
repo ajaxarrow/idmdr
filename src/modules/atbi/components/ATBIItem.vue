@@ -40,8 +40,8 @@ onMounted(() => {
 
           <p class="organization-subtitle">Owners: <span v-if="props.atbi?.ownerData?.length == 0">N/A</span>
             <span v-else v-for="(owner, index) in props.atbi?.ownerData">
-                {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != props.atbi?.ownerData?.length! - 1">, </span>B
-              </span></p>
+                {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != props.atbi?.ownerData?.length! - 1">, </span>
+              </span>| Associated Technology: {{props.atbi?.tech_name}}</p>
         </div>
       </div>
       <VBtn

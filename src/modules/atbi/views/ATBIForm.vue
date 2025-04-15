@@ -54,6 +54,7 @@ const atbiImages = ref<AtbiImage[]>([])
 const active = ref(false);
 const isImagePreviewed = ref(false);
 const previewImage = ref('');
+const pageLoading = ref(false)
 
 const toggleActive = () => {
   active.value = !active.value;
@@ -214,6 +215,7 @@ const updateAtbiData = async() => {
 }
 
 onMounted(async () => {
+  pageLoading.value = true;
   customUsers.value = await fetchCustomUsers();
   ipTechnologies.value = await fetchRepositoryIDsByUser(
       10000, true, '', '', '', true, true, 'Project Repository'
@@ -240,7 +242,7 @@ onMounted(async () => {
     previewImage.value = <string>atbiData.logo
     hasImage.value = true
   }
-
+  pageLoading.value = false
 })
 
 </script>
@@ -248,7 +250,13 @@ onMounted(async () => {
 <template>
   <LoadingOverlay :overlay="loading"/>
   <MainLayout :title="formType === FormType.edit ? 'Edit ATBI' : 'New ATBI'">
-    <VForm id="form" ref="atbiForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="atbiForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div class="d-flex">
         </div>

@@ -22,7 +22,19 @@ const atbiRoutes = [
         name: 'edit-atbi',
         // @ts-ignore
         component: () => import('../../modules/atbi/views/ATBIForm.vue')
-    }
+    },
+    {
+        path: '/atbi/:atbi/:type/add',
+        name: 'new-atbi-entity',
+        // @ts-ignore
+        component: () => import('../../modules/atbi/views/ATBISubEntityForm.vue')
+    },
+    {
+        path: '/atbi/:atbi/:type/edit/:slug',
+        name: 'edit-atbi-entity',
+        // @ts-ignore
+        component: () => import('../../modules/atbi/views/ATBISubEntityForm.vue')
+    },
 
 ]
 

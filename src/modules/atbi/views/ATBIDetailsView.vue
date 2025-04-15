@@ -4,19 +4,20 @@ import { onMounted, ref, watch } from "vue";
 import { ATBI } from "../../../interfaces/atbi.interface.ts";
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import { useRouting } from "../../../core/composables/useRouting.ts";
-import ATBIFacilities from "../components/ATBIFacilities.vue";
-import ATBIProducts from "../components/ATBIProducts.vue";
-import ATBIOverview from "../components/ATBIOverview.vue";
+import ATBIFacilities from "../components/tabs/ATBIFacilities.vue";
+import ATBIProducts from "../components/tabs/ATBIProducts.vue";
+import ATBIOverview from "../components/tabs/ATBIOverview.vue";
 import {useAtbiServices} from "../services/atbi.services.ts";
 import {PhArrowLeft} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import ATBISubEntityDataTable from "../components/ATBISubEntityDataTable.vue";
 const { route, router } = useRouting()
 const {isSmall} = useScreenStore()
 const atbiData = ref<ATBI | null | undefined>(null)
 const {fetchAtbiData} = useAtbiServices()
 const pageLoading = ref(false)
 const tab = ref("overview")
-const tabs = ['Overview', 'Products', 'Facilities']
+const tabs = ['Overview', 'Products', 'Facilities', 'Linkages', 'Awards']
 
 
 // Update the tab value when it changes
@@ -49,7 +50,6 @@ onMounted(async() => {
 
   // Get ATBI data
   atbiData.value = await fetchAtbiData(route.params.slug as string)
-  console.log(atbiData.value)
   // Set tab from query or default to "overview"
   tab.value = getTabFromQuery()
 
@@ -87,6 +87,9 @@ onMounted(async() => {
             <p class="text-subtitle">
               {{ atbiData?.mobile }} · <a class="text-decoration-none text-bs50" :href="atbiData?.email">Email</a> · <a class="text-decoration-none text-bs50" :href="atbiData?.facebook">Facebook</a>
             </p>
+            <p class="text-subtitle">
+              Associated IP Technology: {{atbiData?.tech_name}}
+            </p>
           </VCol>
             <VCol md="3" class="pa-0" v-if="!isSmall && atbiData?.logo">
               <VRow class="ma-0" justify="end">
@@ -109,9 +112,11 @@ onMounted(async() => {
         <VDivider/>
 
         <!-- Show component based on active tab -->
-        <ATBIFacilities v-if="tab === 'facilities'" :atbi="atbiData!"/>
-        <ATBIProducts v-if="tab === 'products'" :atbi="atbiData!"/>
         <ATBIOverview v-if="tab === 'overview'" :atbi="atbiData!"/>
+        <ATBISubEntityDataTable v-if="tab === 'products'" :atbi="atbiData!" type="product"/>
+        <ATBISubEntityDataTable v-if="tab === 'facilities'" :atbi="atbiData!" type="facility"/>
+        <ATBISubEntityDataTable v-if="tab === 'linkages'" :atbi="atbiData!" type="linkage"/>
+        <ATBISubEntityDataTable v-if="tab === 'awards'" :atbi="atbiData!" type="award"/>
       </div>
       <div v-else style="height: 100%">
         <div style="height:60vh" class="d-flex flex-column justify-center align-center">
@@ -136,8 +141,8 @@ onMounted(async() => {
 .circle::after {
   content: '';
   position: absolute;
-  left: -209px;
-  top: -430px;
+  left: -190px;
+  top: -380px;
   width: 700px;
   height: 591px;
   border-radius: 50%;
