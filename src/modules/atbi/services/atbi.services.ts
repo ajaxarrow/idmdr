@@ -200,6 +200,15 @@ export const useAtbiServices = () => {
             return null
         }
     }
+    const deleteAtbi = async (id: string) => {
+        try {
+            await server.delete(`/atbis/${id}/`, {
+                headers: authorizationHeader
+            })
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 
     return {
@@ -212,7 +221,8 @@ export const useAtbiServices = () => {
         manageATBIStatusByAdmin,
         fetchAtbiByTechnology,
         fetchAtbis,
-        fetchAtbiData
+        fetchAtbiData,
+        deleteAtbi
     }
 
 

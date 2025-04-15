@@ -7,9 +7,11 @@ import {useAtbiSubEntityServices} from "../services/atbi-sub-entity.services.ts"
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {isSmall, isTablet} = useScreenStore();
 const {deleteAtbiSubEntity, fetchAtbiSubEntities} = useAtbiSubEntityServices()
+const {userData} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore()
 
 const loading = ref(false)
@@ -24,6 +26,9 @@ const props = defineProps({
   },
   type: {
     type: String
+  },
+  isMember: {
+    type: Boolean
   }
 })
 
@@ -135,7 +140,7 @@ onMounted(async () => {
           </p>
           <p class="text-subtitle">Browse {{title}} for {{props.atbi?.tech_name}}</p>
         </VCol>
-        <VCol md="3" class="pa-0">
+        <VCol md="3" class="pa-0" v-if="props.isMember || userData.is_superuser">
           <VRow class="ma-0 justify-end">
             <VBtnPrimaryFilled
                 :to="{
@@ -219,6 +224,7 @@ onMounted(async () => {
                 <VCard class="action-menu rounded-lg" min-width="220" elevation="3">
                   <VList density="compact" nav>
                     <VListItem
+                        v-if="props.isMember || userData.is_superuser"
                         :to="{
                         name: 'edit-atbi-entity',
                         params: {
@@ -234,6 +240,7 @@ onMounted(async () => {
                       <VListItemTitle>Edit {{capitalizedType}}</VListItemTitle>
                     </VListItem>
                     <ConfirmationDialog
+                        v-if="props.isMember || userData.is_superuser"
                         :isWarning="true"
                         @callback="deleteAtbiSubEntityCallback(item.uuid as string)"
                         :confirm-content="`Delete ${capitalizedType}`"
