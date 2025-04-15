@@ -5,12 +5,10 @@ import {PhDotsThreeOutlineVertical, PhPencil, PhPlus, PhTrash, PhMagnifyingGlass
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useAtbiSubEntityServices} from "../services/atbi-sub-entity.services.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 
 const {isSmall, isTablet} = useScreenStore();
-const {route} = useRouting()
 const {deleteAtbiSubEntity, fetchAtbiSubEntities} = useAtbiSubEntityServices()
 const {showSnackbarMessage} = useSnackbarStore()
 
@@ -84,7 +82,7 @@ const filteredItems = computed(() => {
   )
 })
 
-const openImageModal = (images) => {
+const openImageModal = (images: AtbiSubEntityImage[]) => {
   selectedImages.value = Array.isArray(images) ? images : []
   currentImageIndex.value = 0
   imageModalOpen.value = true
@@ -282,7 +280,7 @@ onMounted(async () => {
         </VCardTitle>
         <VCardText class="pa-0">
           <div class="image-container">
-            <img v-if="currentImage" :src="currentImage" alt="Image preview" class="full-image" />
+            <img v-if="currentImage" :src="currentImage as string" alt="Image preview" class="full-image" />
             <div v-else class="no-image">No image available</div>
 
             <!-- Navigation arrows -->
@@ -319,7 +317,7 @@ onMounted(async () => {
                 :class="{ 'active': index === currentImageIndex }"
                 @click="currentImageIndex = index"
             >
-              <img :src="img.image" alt="Thumbnail" />
+              <img :src="img.image as string" alt="Thumbnail" />
             </div>
           </div>
         </VCardActions>
