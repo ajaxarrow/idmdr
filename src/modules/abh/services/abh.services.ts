@@ -15,13 +15,16 @@ export const useAbhServices = () => {
         loading.value = true;
         try {
             const res = await (type === 'create' ? server.post : server.patch)(endpoint, abh, {
-                headers: authorizationHeader
+                headers: {
+                    Authorization: `Bearer ${userData.accessToken}`,
+                    "Content-Type": "multipart/form-data"
+                },
             })
 
-            if (abh?.images?.length > 0) {
-                for (let i = 0; i < abh.image_urls.length; i++) {
-                    abh.images[i].abh = res.data.uuid;
-                    await addAbhImage(abh.images[i]);
+            if (abh?.image_data?.length > 0) {
+                for (let i = 0; i < abh.image_data.length; i++) {
+                    abh.image_data[i].abh = res.data.uuid;
+                    await addAbhImage(abh.image_data[i]);
                 }
             }
 
@@ -45,15 +48,15 @@ export const useAbhServices = () => {
         }
     }
 
-    const addAbh = async(abh: any)=> {
-        await saveAbh(abh, `/abhs/`, 'create')
+    const addAbh = async(abh: any, techID: string)=> {
+        await saveAbh(abh, `/abhs/`,  techID,'create')
     }
 
-    const updateAbh = async(abh: any, id: string)=> {
-        await saveAbh(abh, `/abhs/${id}/`, 'update')
+    const updateAbh = async(abh: any, id: string, techID: string)=> {
+        await saveAbh(abh, `/abhs/${id}/`, techID, 'update')
     }
 
-    const deleteAbhImage = async(id: string) => {
+    const deleteAbh = async(id: string) => {
         try {
             await server.delete(`/abhs/${id}/`)
         } catch (e) {
@@ -76,15 +79,16 @@ export const useAbhServices = () => {
             partnership_and_networking: data.partnership_and_networking,
             is_deleted: data.is_deleted,
             is_active: data.is_active,
-            images: data.image_urls
+            image_data: data.image_urls
         }
     }
 
     const fetchAbhsByTechnology = async (id: string): Promise<ABH[]> => {
         try {
-            const res = await server.get(`/abhs/?technology=${id}/`, {
+            const res = await server.get(`/abhs/?technology=${id}`, {
                 headers: authorizationHeader
             });
+            console.log(res)
             return res.data.map((item: any) => mapAbhData(item));
         } catch (error) {
             console.error(error);
@@ -104,6 +108,6 @@ export const useAbhServices = () => {
         }
     }
 
-    return {addAbh, updateAbh, deleteAbhImage, fetchAbhsByTechnology, fetchAbhData, loading}
+    return {addAbh, updateAbh, deleteAbh, fetchAbhsByTechnology, fetchAbhData, loading}
 
 }

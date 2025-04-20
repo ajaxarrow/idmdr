@@ -608,7 +608,6 @@ export const useRepositoryServices = () => {
       if (status?.trim()) {
         url += `&status=${encodeURIComponent(status)}`;
       }
-      console.log(url)
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
       });

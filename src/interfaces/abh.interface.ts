@@ -1,7 +1,7 @@
 interface ABH{
     technology?: string,
     uuid?: string;
-    images?: AbhImage[];
+    image_data?: AbhImage[];
     tech_name?: string;
     tech_image?: string;
     technology_assessment?: string;

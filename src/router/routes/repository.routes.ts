@@ -112,7 +112,45 @@ const repositoryRoutes = [
     name: 'my-repository-settings',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsSettingsView.vue')
+  },
+  {
+    path: '/my-repositories/:slug/abhs',
+    name: 'my-repository-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHView.vue')
+  },
+  {
+    path: '/repositories/:slug/abhs',
+    name: 'repository-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHView.vue')
+  },
+  {
+    path: '/abh/:repo/edit/:slug',
+    name: 'edit-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/ABHFormView.vue')
+  },
+  {
+    path: '/abh/:repo/add',
+    name: 'new-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/ABHFormView.vue')
+  },
+  {
+    path: '/my-repositories/:repo/abh/:slug',
+    name: 'my-abh-details',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHDetailsView.vue')
+  },
+  {
+    path: '/repositories/:repo/abh/:slug',
+    name: 'abh-details',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHDetailsView.vue')
   }
+
+
 ]
 
 export default repositoryRoutes
