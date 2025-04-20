@@ -48,7 +48,6 @@ const isImagePreviewed = ref(false);
 const previewImage = ref('');
 const active = ref(false);
 const pageLoading = ref(false)
-const file = ref<File | null>(null);
 const toggleActive = () => {
   active.value = !active.value;
 };
