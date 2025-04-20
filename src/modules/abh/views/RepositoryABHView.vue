@@ -8,7 +8,15 @@ import {useAbhServices} from "../services/abh.services.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {AtbiSubEntityImage} from "../../../interfaces/atbi.interface.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
-import {PhDotsThreeOutlineVertical, PhImage, PhMagnifyingGlass, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhDotsThreeOutlineVertical,
+  PhEye,
+  PhImage,
+  PhMagnifyingGlass,
+  PhPencil,
+  PhPlus,
+  PhTrash
+} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
@@ -191,6 +199,20 @@ onMounted(async () => {
                   </template>
                   <VCard class="action-menu rounded-lg" min-width="220" elevation="3">
                     <VList density="compact" nav>
+                      <VListItem
+                          :to="{
+                        name: 'abh-details',
+                        params: {
+                          repo: route.params.slug,
+                          slug: item.uuid
+                        }
+                      }"
+                          class="action-menu-item">
+                        <template v-slot:prepend>
+                          <PhEye class="mr-2" />
+                        </template>
+                        <VListItemTitle>View ABH</VListItemTitle>
+                      </VListItem>
                       <VListItem
                           v-if="isMember || userData.is_superuser"
                           :to="{
