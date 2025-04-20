@@ -15,7 +15,6 @@ import {
 } from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
