@@ -65,7 +65,7 @@ const getTabs = () => {
   return [
     { name: "Data"},
     { name: "Discussions"},
-    { name: "ABH"},
+    ...(props.repository?.type === 'Project Repository' ? [{ name: "ABH"}] : []),
     ...((user.value && isMember.value) || userData.is_superuser ? [{ name: "Reports"}] : []),
     ...(user.value || userData.is_superuser ? [
       { name: "Settings" }] : [])
@@ -81,7 +81,7 @@ const computedTabs = computed(() => {
       linkName = path.value === 'repositories' ? 'repository-data' : 'my-repository-data';
     } else if(tab.name === "Discussions"){
       linkName = path.value === 'repositories' ? 'repository-discussions' : 'my-repository-discussions';
-    } else if(tab.name === "ABH"){
+    } else if(tab.name === "ABH" && props.repository?.type === 'Project Repository'){
       linkName = path.value === 'repositories' ? 'repository-abh' : 'my-repository-abh';
     } else if(tab.name === "Reports" && ((user.value && isMember.value) || userData.is_superuser)){
       linkName = path.value === 'repositories' ? 'repository-reports' : 'my-repository-reports';
