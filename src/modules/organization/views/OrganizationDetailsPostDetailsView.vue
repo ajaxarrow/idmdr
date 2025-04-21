@@ -3,7 +3,7 @@ import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetails
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, ref} from "vue";
 import {
-  PhArrowLeft, PhDotsThreeOutlineVertical, PhEye, PhEyeSlash,
+  PhArrowLeft, PhDotsThreeOutlineVertical, PhEye,
   PhPencil, PhTrash, PhImages
 } from "@phosphor-icons/vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
@@ -14,13 +14,12 @@ import NotFound from "../../../assets/images/404.svg";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {usePostServices} from "../../posts/services/post.services.ts";
 import {Post} from "../../../interfaces/post.interface.ts";
-import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 
 const {route, router} = useRouting()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
-const {fetchPostbyID, deletePost, managePostStatus} = usePostServices()
+const {fetchPostbyID, deletePost} = usePostServices()
 
 const postActionMenu = ref(false);
 const path = ref('organizations')
