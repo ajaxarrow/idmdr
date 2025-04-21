@@ -18,7 +18,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 const {userData} = useUserStore();
 const {arrayToString} = useStringArrayHelper()
 const {addExpert, updateExpert, fetchExpertById, loading} = useOrganizationExpertsServices()
-const {fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
 const {route, router} = useRouting();
 const {showSnackbarMessage} = useSnackbarStore()
 // const previousTags = ref<string[]>([])
@@ -70,7 +70,7 @@ const updateExpertData = async () => {
 }
 
 onMounted(async () => {
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   if(organizations.value.length == 0){
     await router.push({name: 'new-organization'})
     showSnackbarMessage('You have no associated CMIs. You need to create first', Status.error)

@@ -17,11 +17,11 @@ import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vu
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 
-const {route} = useRouting();
+const {route, router} = useRouting();
 const {userData} = useUserStore();
 const {addPost, updatePost, fetchPostbyID, loading} = usePostServices();
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
 const {deletePostImage} = usePostImagesServices();
 const formType = ref<FormType>(FormType.create);
 const path = ref('');
@@ -140,12 +140,21 @@ onMounted(async () => {
   const type = rawSegments[1];
   path.value = getFirstPath(route.path);
 
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
-  postData.organization = organizations.value[0].uid
+  organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  if(organizations.value.length == 0){
+    await router.push({name: 'new-organization'})
+    showSnackbarMessage('You have no associated CMIs. You need to create first', Status.error)
+  } else {
+    postData.organization = organizations.value[0].uid
+  }
+
 
   if (type === 'edit') {
 
     const data = await fetchPostbyID(route.params.slug as string);
+    if(!organizations.value.some(org => org.uid === data?.organization && !userData.is_superuser)){
+      await router.push({name: 'organizations'})
+    }
     Object.assign(postData, {...data});
     formType.value = FormType.edit;
     if (data?.organization) {
