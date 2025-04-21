@@ -98,7 +98,7 @@ export const usePostServices = () => {
 
   const fetchAllPosts = async (): Promise<Post[]> => {
     try {
-      const res = await server.get('/posts/', {
+      const res = await server.get('/posts/?is_published=true', {
         headers: authorizationHeader
       });
 

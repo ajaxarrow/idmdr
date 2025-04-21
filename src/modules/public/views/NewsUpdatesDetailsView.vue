@@ -11,7 +11,7 @@ import NotFound from "../../../assets/images/404.svg";
 
 const post = ref<Post | null | undefined>(null);
 const { fetchPostbyID } = usePostServices();
-const { route } = useRouting();
+const { route, router } = useRouting();
 const imagePreviewDialog = ref(false);
 const selectedImageIndex = ref(0);
 const loading = ref(false)
@@ -34,6 +34,9 @@ const openImagePreview = (index: number) => {
 onMounted(async () => {
   loading.value = true;
   post.value = await fetchPostbyID(route.params.slug as string);
+  if(!post.value?.is_published){
+    await router.push({name: 'news-updates'})
+  }
   loading.value = false;
 });
 </script>

@@ -109,11 +109,11 @@ const getFirstPath = (url: string) => {
 
 const addPostData = async (isDraft:boolean) => {
   if(isDraft) {
-    postData.is_draft = true;
+    postData.is_draft = false;
     postData.is_published = false;
   } else{
     postData.is_draft = false;
-    postData.is_published = true;
+    postData.is_published = false;
   }
   postData.created_by = userData.uid;
   if (postImages.value.length > 0) {
@@ -315,18 +315,18 @@ onMounted(async () => {
           />
         </div>
         <VRow class="ma-0" justify="end" align="center">
-          <VBtnPrimaryAlt
-              v-if="formType == FormType.create"
-              @click="addPostData(true)"
-              rounded="lg"
-              height="44px"
-              width="166px"
-              variant="outlined"
-              class="button-outline action-button"
-          >
-            Save as Draft
-          </VBtnPrimaryAlt>
-          <span v-if="formType == FormType.create" class="mx-2" >Or</span>
+<!--          <VBtnPrimaryAlt-->
+<!--              v-if="formType == FormType.create"-->
+<!--              @click="addPostData(true)"-->
+<!--              rounded="lg"-->
+<!--              height="44px"-->
+<!--              width="166px"-->
+<!--              variant="outlined"-->
+<!--              class="button-outline action-button"-->
+<!--          >-->
+<!--            Save as Draft-->
+<!--          </VBtnPrimaryAlt>-->
+<!--          <span v-if="formType == FormType.create" class="mx-2" >Or</span>-->
           <VBtnPrimaryFilled
               @click="formType === FormType.edit ? updatePostData() : addPostData(false)"
               rounded="lg"

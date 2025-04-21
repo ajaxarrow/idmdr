@@ -16,8 +16,9 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
-
+const {userData} = useUserStore();
 const {route, router} = useRouting();
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchRepositoryIDsByUser} = useRepositoryServices()
@@ -123,7 +124,7 @@ const updateAbhData = async () => {
 onMounted(async () => {
   pageLoading.value = true;
   ipTechnologies.value = await fetchRepositoryIDsByUser(
-      10000, true, '', '', '', true, true, 'Project Repository'
+      10000, !userData.is_superuser, '', '', '', true, true, 'Project Repository'
   );
   if(ipTechnologies.value.length > 0) {
     abhData.technology = ipTechnologies.value[0].slug
@@ -139,6 +140,9 @@ onMounted(async () => {
   if(type === 'edit') {
     formType.value = FormType.edit
     const abh = await fetchAbhData(route.params.slug as string);
+    if(!ipTechnologies.value.some(repository => repository.slug === abh?.technology) && !userData.is_superuser) {
+      await router.push({name: 'repositories'})
+    }
     Object.assign(abhData, {...abh});
     if (Array.isArray(abhData.image_data)) {
       for (let i = 0; i < abhData.image_data.length; i++) {

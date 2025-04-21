@@ -46,12 +46,12 @@ const deletePostCallback = async () => {
   });
 }
 
-const managePostStatusCallback = async (isPublished: boolean) => {
-  showSnackbarMessage('Post Successfully Updated', Status.success)
-  await managePostStatus(postData.value?.uid as string, isPublished);
-  postData.value = await fetchPostbyID(route.params.post as string);
-  postActionMenu.value = false
-}
+// const managePostStatusCallback = async (isPublished: boolean) => {
+//   showSnackbarMessage('Post Successfully Updated', Status.success)
+//   await managePostStatus(postData.value?.uid as string, isPublished);
+//   postData.value = await fetchPostbyID(route.params.post as string);
+//   postActionMenu.value = false
+// }
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -132,6 +132,7 @@ onMounted(async () => {
             <VSheet width="200" class="rounded-b-lg py-2">
               <div>
                 <RouterLink
+                    v-if="postData.is_published"
                     :to="{name: 'news-updates-detail', params: {slug: postData?.uid}}"
                     class="cursor-pointer action-menu-item text-decoration-none text-black"
                 >
@@ -151,17 +152,17 @@ onMounted(async () => {
                     Delete
                   </p>
                 </DeleteDialog>
-                <ConfirmationDialog
-                    @callback="managePostStatusCallback(!postData.is_published)"
-                    :confirmContent="postData.is_published ? 'Unpublish' : 'Publish'"
-                    :content="postData.is_published ? 'Are you sure you want to unpublish this post?' : 'Are you sure you want to publish this post?'"
-                >
-                  <p class="cursor-pointer action-menu-item">
-                    <PhEyeSlash v-if="postData.is_published"/>
-                    <PhEye v-else/>
-                    {{postData.is_published ? 'Unpublish' : 'Publish'}}
-                  </p>
-                </ConfirmationDialog>
+<!--                <ConfirmationDialog-->
+<!--                    @callback="managePostStatusCallback(!postData.is_published)"-->
+<!--                    :confirmContent="postData.is_published ? 'Unpublish' : 'Publish'"-->
+<!--                    :content="postData.is_published ? 'Are you sure you want to unpublish this post?' : 'Are you sure you want to publish this post?'"-->
+<!--                >-->
+<!--                  <p class="cursor-pointer action-menu-item">-->
+<!--                    <PhEyeSlash v-if="postData.is_published"/>-->
+<!--                    <PhEye v-else/>-->
+<!--                    {{postData.is_published ? 'Unpublish' : 'Publish'}}-->
+<!--                  </p>-->
+<!--                </ConfirmationDialog>-->
               </div>
             </VSheet>
           </VMenu>

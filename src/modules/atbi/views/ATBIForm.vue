@@ -220,7 +220,7 @@ onMounted(async () => {
   pageLoading.value = true;
   customUsers.value = await fetchCustomUsers();
   ipTechnologies.value = await fetchRepositoryIDsByUser(
-      10000, true, '', '', '', true, true, 'Project Repository'
+      10000, !userData.is_superuser, '', '', '', true, true, 'Project Repository'
   );
   if(ipTechnologies.value.length > 0) {
     atbiData.technology = ipTechnologies.value[0].slug
@@ -234,7 +234,7 @@ onMounted(async () => {
   if(type === 'edit') {
     formType.value = FormType.edit
     const atbi = await fetchAtbiData(route.params.slug as string);
-    if(!ipTechnologies.value.some(repository => repository.slug === atbi?.technology && !userData.is_superuser)) {
+    if(!ipTechnologies.value.some(repository => repository.slug === atbi?.technology) && !userData.is_superuser) {
       await router.push({name: 'repositories'})
     }
     Object.assign(atbiData, {...atbi});
