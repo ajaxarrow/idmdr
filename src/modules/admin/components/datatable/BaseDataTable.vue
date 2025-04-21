@@ -51,6 +51,10 @@ const props = defineProps({
   filters: {
     type: Array as PropType<any[]>,
     default: () => []
+  },
+  expandable: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -280,11 +284,18 @@ const refresh = () => {
               :items-per-page-options="generatePageSizeIncrements(totalItems)"
               @update:page="handlePageChange"
               class="elevation-0"
+              :show-expand="props.expandable as boolean"
           >
             <!-- Dynamic slots for each column -->
             <template v-for="header in headers" :key="header.key" v-slot:[`item.${header.key}`]="slotProps">
               <slot :name="`item.${header.key}`" v-bind="slotProps"></slot>
             </template>
+
+            <template #expanded-row="{ item }">
+              <slot name="expanded-row" :item="item" />
+            </template>
+
+
 
             <!-- Empty state -->
             <template v-slot:no-data>

@@ -3,14 +3,17 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhPlus} from "@phosphor-icons/vue";
 import PostListViewContent from "../components/PostListViewContent.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import PostDataTable from "../components/PostDataTable.vue";
 const {isSmall, isTablet} = useScreenStore();
-
+const {userData} = useUserStore()
 
 </script>
 
 <template>
   <MainLayout title="Posts">
-    <div style="height: 100%" class="relative-container circle-quarter">
+    <PostDataTable v-if="userData.is_superuser" />
+    <div v-else style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
           <VCol md="9" class="pa-0">
