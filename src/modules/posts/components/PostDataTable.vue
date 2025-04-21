@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {usePostServices} from "../services/post.services.ts";
@@ -20,7 +19,6 @@ import {
 } from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 
-const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
 
