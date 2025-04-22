@@ -50,7 +50,7 @@ const clearFilters = () => {
 
 }
 
-const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
+const handleFilterUpdate = () => {
 
 }
 
