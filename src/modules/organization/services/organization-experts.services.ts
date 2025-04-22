@@ -24,11 +24,11 @@ export const useOrganizationExpertsServices = () => {
 
       if(type === 'create'){
         setTimeout(async function() {
-          window.location.href = `/my-organizations/${orgID}/experts/`;
+          window.location.href = `/organizations/${orgID}/experts/`;
         }, 3000);
       } else {
         setTimeout(async function() {
-          window.location.href = `/my-organizations/${orgID}/experts/${id}`;
+          window.location.href = `/organizations/${orgID}/experts/${id}`;
         }, 3000);
       }
 
@@ -93,7 +93,7 @@ export const useOrganizationExpertsServices = () => {
       const res = await server.get(`/experts/?organization=${slug}`, {
           headers: authorizationHeader
       })
-      return res.data.map((expert: any) => {
+      return res.data.results.map((expert: any) => {
         return mapExpertData(expert)
       })
     } catch (e: any) {
@@ -113,7 +113,7 @@ export const useOrganizationExpertsServices = () => {
       const res = await server.get(`/experts/`, {
         headers: authorizationHeader,
       });
-      return res.data
+      return res.data.results
         .map((expert: Expert) => mapExpertData(expert))
         // @ts-ignore
         .filter((expert: Expert) => userOrgUids.includes(expert.organization.uid as string));
@@ -123,5 +123,71 @@ export const useOrganizationExpertsServices = () => {
     }
   };
 
-  return { addExpert, updateExpert, deleteExpert, loading, fetchExpertById, fetchAllExperts, fetchExpertsByOrganization }
+  const fetchExpertsByAdmin = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      organization?: string,
+      expertise?: string
+  ): Promise<Expert[]> => {
+    try {
+      let url = `/experts/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (organization) {
+        url += `&organization=${organization}`;
+      }
+      if (expertise) {
+        url += `&expertise=${expertise}`;
+      }
+      const res = await server.get(url, {
+        headers: authorizationHeader
+      });
+      return res.data.results.map((expert: any) => mapExpertData(expert));
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+
+  const fetchTotalExperts = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      organization?: string,
+      expertise?: string
+  ): Promise<number> => {
+    try {
+      let url = `/experts/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (organization) {
+        url += `&organization=${organization}`;
+      }
+      if (expertise) {
+        url += `&expertise=${expertise}`;
+      }
+      const res = await server.get(url, {
+        headers: authorizationHeader
+      });
+      return res.data.results.length
+    } catch (e) {
+      console.error(e);
+      return 0;
+    }
+  }
+
+  return {
+    addExpert,
+    updateExpert,
+    deleteExpert,
+    loading,
+    fetchExpertById,
+    fetchAllExperts,
+    fetchExpertsByOrganization,
+    fetchExpertsByAdmin,
+    fetchTotalExperts
+  }
 }

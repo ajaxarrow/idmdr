@@ -58,14 +58,14 @@ export const navLinks = [
       name: 'My CMIs',
       link: '/my-organizations',
       icon: PhUsersFour
-    },
+    }
+  ] : []),
+  ...((user.value && userData.is_approved ) || userData.is_superuser? [
     {
       name: 'Experts',
       link: '/experts',
       icon: PhUsers
-    }
-  ] : []),
-  ...((user.value && userData.is_approved ) || userData.is_superuser? [
+    },
     {
       name: 'Posts',
       link: '/posts',
@@ -78,11 +78,6 @@ export const navLinks = [
     }
   ] : []),
   ...(user.value && !userData.is_superuser && userData.is_approved? [
-    {
-      name: 'Calendar',
-      link: '/events',
-      icon: PhCalendar
-    },
     {
       name: "My Profile",
       link: "/profile",

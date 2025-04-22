@@ -160,7 +160,7 @@ export const useRepositoryServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = '/my-repositories';
+          window.location.href = '/repositories';
         }, 1000);
 
       } else if(type == 'update'){
@@ -183,7 +183,7 @@ export const useRepositoryServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-repositories/${id}`;
+          window.location.href = `/repositories/${id}`;
         }, 1000);
       }
     } catch (e: any){

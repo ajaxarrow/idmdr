@@ -3,12 +3,16 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {PhPlus} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import ExpertListViewContent from "../components/ExpertListViewContent.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import ExpertDataTable from "../components/ExpertDataTable.vue";
 const {isSmall, isTablet} = useScreenStore();
+const {userData} = useUserStore()
 </script>
 
 <template>
   <MainLayout title="Experts">
-    <div style="height: 100%" class="relative-container circle-quarter">
+    <ExpertDataTable v-if="userData.is_superuser" />
+    <div v-else style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
           <VCol md="9" class="pa-0">

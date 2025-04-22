@@ -223,7 +223,7 @@ export const useOrganizationServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = '/my-organizations';
+          window.location.href = '/organizations';
         }, 1000);
 
         // await router.push({path: '/my-organizations'});
@@ -247,7 +247,7 @@ export const useOrganizationServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-organizations/${id}`
+          window.location.href = `/organizations/${id}`
         }, 1000);
 
         // await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
