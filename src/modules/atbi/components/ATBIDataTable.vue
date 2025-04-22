@@ -107,7 +107,7 @@ onMounted(async() => {
       @update:page="page = $event"
       @update:itemsPerPage="itemsPerPage = $event"
       @update:selectedColumns="updateColumnVisibility"
-      @loadData="loadAtbis;"
+      @loadData="loadAtbis"
       @clearFilters="clearFilters"
       @update:filter="handleFilterUpdate"
       @refreshData="loadData"
