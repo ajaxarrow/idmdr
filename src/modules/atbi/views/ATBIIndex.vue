@@ -3,13 +3,17 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 import ATBIListViewContent from "../components/ATBIListViewContent.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {PhPlus} from "@phosphor-icons/vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import ATBIDataTable from "../components/ATBIDataTable.vue";
 
+const {userData} = useUserStore()
 const {isSmall, isTablet} = useScreenStore();
 </script>
 
 <template>
   <MainLayout title="ATBI">
-    <div style="height: 100%" class="relative-container circle-quarter">
+    <ATBIDataTable v-if="userData.is_superuser"/>
+    <div v-else style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">
           <VCol md="9" class="pa-0">

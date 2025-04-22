@@ -140,7 +140,7 @@ export const useAtbiServices = () => {
             const res = await server.get(`/atbis/?technology=${id}`, {
                 headers: authorizationHeader
             });
-            return await Promise.all(res.data.map((atbi: any) => mapAtbiData(atbi)));
+            return await Promise.all(res.data.results.map((atbi: any) => mapAtbiData(atbi)));
         } catch (error) {
             console.error(error);
             return [];
@@ -152,7 +152,7 @@ export const useAtbiServices = () => {
             const res = await server.get('/atbis', {
                 headers: authorizationHeader
             });
-            return await Promise.all(res.data.map((atbi: any) => mapAtbiData(atbi, true)));
+            return await Promise.all(res.data.results.map((atbi: any) => mapAtbiData(atbi, true)));
         } catch (error) {
             console.error(error);
             return [];
@@ -210,6 +210,56 @@ export const useAtbiServices = () => {
         }
     }
 
+    const fetchAllAtbis = async (
+        pageNumber: number,
+        pageSize: number,
+        searchQuery?: string,
+        technology?: string
+    ): Promise<ATBI[]> => {
+        try {
+            let url = `/atbis/?page=${pageNumber}&page_size=${pageSize}`
+
+            if (searchQuery && searchQuery.trim()) {
+                url += `&search=${encodeURIComponent(searchQuery.trim())}`
+            }
+            if (technology) {
+                url += `&technology=${technology}`
+            }
+            const res = await server.get(url, {
+                headers: authorizationHeader
+            });
+            return await Promise.all(res.data.results.map((atbi: any) => mapAtbiData(atbi, true)));
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    const fetchTotalAtbisCount = async (
+        pageNumber: number,
+        pageSize: number,
+        searchQuery?: string,
+        technology?: string
+    ) : Promise<number> => {
+        try {
+            let url = `/atbis/?page=${pageNumber}&page_size=${pageSize}`
+
+            if (searchQuery && searchQuery.trim()) {
+                url += `&search=${encodeURIComponent(searchQuery.trim())}`
+            }
+            if (technology) {
+                url += `&technology=${technology}`
+            }
+            const res = await server.get(url, {
+                headers: authorizationHeader
+            });
+            return res.data.results.length;
+        } catch (error) {
+            console.error(error);
+            return 0;
+        }
+    }
+
 
     return {
         loading,
@@ -222,7 +272,9 @@ export const useAtbiServices = () => {
         fetchAtbiByTechnology,
         fetchAtbis,
         fetchAtbiData,
-        deleteAtbi
+        deleteAtbi,
+        fetchAllAtbis,
+        fetchTotalAtbisCount
     }
 
 
