@@ -120,7 +120,7 @@
               <VBtn
                   variant="text"
                   class="text-none mx-1 font-weight-medium"
-                  :to="{ path: 'auth', query: { tab: 'login' } }"
+                  :to="{ name: 'auth', query: { tab: 'login' } }"
               >
                 Login
               </VBtn>
@@ -128,7 +128,7 @@
                   variant="elevated"
                   color="bs50"
                   class="text-none mx-1 font-weight-medium"
-                  :to="{ path: 'auth', query: { tab: 'register' } }"
+                  :to="{ name: 'auth', query: { tab: 'register' } }"
               >
                 Register
               </VBtn>
@@ -155,7 +155,7 @@
                color="bs50"
                width="98%"
                class="submit-button my-1 mt-5"
-               :to="{ path: 'dashboard' }"
+               :to="{ name: 'dashboard' }"
            >
              Dashboard
            </VBtnPrimaryAlt>
@@ -174,7 +174,7 @@
                 color="bs50"
                 width="98%"
                 class="submit-button my-1 mt-5"
-                :to="{ path: 'auth', query: { tab: 'register' } }"
+                :to="{ name: 'auth', query: { tab: 'register' } }"
             >
               Register
             </VBtnPrimaryAlt>
@@ -183,7 +183,7 @@
                 width="98%"
                 variant="outlined"
                 class="button-outline my-1"
-                :to="{ path: 'auth', query: { tab: 'login' } }"
+                :to="{ name: 'auth', query: { tab: 'login' } }"
             >
               Login
             </VBtnPrimaryAlt>

@@ -8,6 +8,7 @@ import EventFormDialog from "./EventFormDialog.vue";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useEventsServices} from "../services/events.services.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {showSnackbarMessage} = useSnackbarStore();
 const emits = defineEmits(['callback', 'fetchCallback']);
@@ -30,6 +31,7 @@ const eventActionMenu = ref(false);
 const eventDetailsDialog = ref(props.useOutsideDialogModel ? props.value : false);
 const loading = ref(false);
 const forViewing = ref(true);
+const {user} = useUserStore()
 
 
 const event = ref<OrganizationEvent>(props.event!)
@@ -145,7 +147,7 @@ onMounted(() => {
                 </div>
               </div>
 
-              <VMenu v-model="eventActionMenu" :close-on-content-click="false" :persistent="true">
+              <VMenu v-model="eventActionMenu" :close-on-content-click="false" :persistent="true" v-if="user">
                 <template #activator="{ props }">
                   <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                     Options
