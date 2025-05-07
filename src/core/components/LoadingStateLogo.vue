@@ -7,7 +7,7 @@ const dots = ref(['', '.', '..', '...']);
 const currentDot = ref(0);
 const rotation = ref(0);
 const scale = ref(0.8);
-const pulse = ref(1);
+// const pulse = ref(1);
 
 onMounted(() => {
   // Simulate loading time

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Container from "../../../core/components/Container.vue";
-import AuthCardContent from "./AuthCardContent.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import AuthEmailCardContent from "./AuthEmailCardContent.vue";
 
