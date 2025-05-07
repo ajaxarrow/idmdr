@@ -38,6 +38,7 @@ export const useUserManagementServices = () => {
                     last_name: user.last_name,
                     email: user.email,
                     is_active: user.is_active,
+                    is_superuser: user.is_superuser,
                     is_approved: user.is_approved,
                     profile_picture: user.profile_picture ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
                 }));
@@ -68,7 +69,6 @@ export const useUserManagementServices = () => {
             const res = await server.get(url, {
                 headers: authorizationHeader
             });
-            console.log(res.data.results.length)
             return res.data.results.length
         } catch {
             return 0;
@@ -95,6 +95,18 @@ export const useUserManagementServices = () => {
         }
     }
 
-    return {fetchAllUsers, fetchTotalUsers, manageUserStatus};
+    const manageAdminPrivileges = async (uid: string, value: boolean) => {
+        try {
+            await server.patch(`/users/${uid}`, {
+                is_superuser: value,
+            }, {
+                headers: authorizationHeader,
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    return {fetchAllUsers, fetchTotalUsers, manageUserStatus, manageAdminPrivileges};
 
 };

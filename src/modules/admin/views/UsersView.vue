@@ -11,7 +11,7 @@ import { Status } from "../../../interfaces/enums/status.enum.ts";
 import BaseDataTable from "../components/datatable/BaseDataTable.vue";
 
 const { showSnackbarMessage } = useSnackbarStore();
-const { fetchAllUsers, fetchTotalUsers, manageUserStatus } = useUserManagementServices();
+const { fetchAllUsers, fetchTotalUsers, manageUserStatus, manageAdminPrivileges } = useUserManagementServices();
 
 const selectedUserAccountStatus = ref<string | boolean>('');
 const selectedUserAvailabilityStatus = ref<string | boolean>('');
@@ -31,6 +31,12 @@ const manageUserStatusCallback = async (id: string, value: boolean, isForAccount
   } else {
     showSnackbarMessage(`User Account ${value ? 'Approved' : 'Deactivated'} Successfully`, Status.success);
   }
+  await loadUsers();
+};
+
+const manageAdminPrivilegesCallback = async (id: string, value: boolean) => {
+  await manageAdminPrivileges(id, value);
+  showSnackbarMessage(`User Account ${value ? 'Granted Admin Privileges' : 'Revoked Admin Privileges'} Successfully`, Status.success);
   await loadUsers();
 };
 
@@ -202,7 +208,7 @@ onMounted(async () => {
             <VImg :src="item.profile_picture as string ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'" alt="Project" />
           </VAvatar>
           <div>
-            <p class="font-weight-medium mb-0">{{ item.first_name ? item.first_name : item.username }} {{item.last_name}}</p>
+            <p class="font-weight-medium mb-0">{{ item.first_name ? item.first_name : item.username }} {{item.last_name}} <span v-if="item.is_superuser">(Super Admin)</span></p>
             <p class="text-caption text-medium-emphasis mb-0">{{item.email}}</p>
           </div>
         </div>
@@ -266,6 +272,19 @@ onMounted(async () => {
                     <PhCheck v-else class="mr-2" />
                   </template>
                   <VListItemTitle>{{item.is_approved ? 'Deactivate User Account' : 'Activate User Account'}}</VListItemTitle>
+                </VListItem>
+              </ConfirmationDialog>
+              <ConfirmationDialog
+                  :isWarning="item?.is_superuser"
+                  @callback="manageAdminPrivilegesCallback(item.uid as string, !item.is_superuser)"
+                  :confirm-content="item.is_superuser ? 'Revoke Admin Privileges' : 'Grant Admin Privileges'"
+                  :content="item.is_superuser ? 'Are you sure you want to revoke admin privileges?' : 'Are you sure you want to grant admin privileges?'">
+                <VListItem class="action-menu-item">
+                  <template v-slot:prepend>
+                    <PhCheck v-if="item.is_superuser" class="mr-2" />
+                    <PhX v-else class="mr-2" />
+                  </template>
+                  <VListItemTitle>{{item.is_superuser ? 'Revoke Admin Privileges' : 'Grant Admin Privileges'}}</VListItemTitle>
                 </VListItem>
               </ConfirmationDialog>
             </VList>

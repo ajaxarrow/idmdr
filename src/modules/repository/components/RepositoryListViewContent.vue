@@ -49,7 +49,7 @@ const observerReady = ref(false)
 const pageLoading = ref(false)
 
 const computedTitle = computed(() => {
-  return path.value == 'ip-technologies' ?  'IP technologies' : 'Projects'
+  return path.value == 'ip-technologies' ?  'IP technologies' : route.path === '/e-library' ? 'E-Library' : 'Projects'
 });
 
 
@@ -76,7 +76,11 @@ watch(() => selectedTags.value, async (newVal) => {
 })
 
 const fetchMoreRepositories = async () => {
-  const data = props.forUser ? await fetchRepositoriesByUserWithPagination(lastItemValue.value) : await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
+  let data = props.forUser ? await fetchRepositoriesByUserWithPagination(lastItemValue.value) : await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
+  if(route.path === '/e-library'){
+    data = (await fetchRepositoriesWithPagination(lastItemValue.value, false)).filter(repo => repo.type == 'Document Repository');
+  }
+
   repositoryData.value = [...repositoryData.value, ...data];
   repositoryItems.value = repositoryData.value
   searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
@@ -97,7 +101,10 @@ const init = async () => {
   pageLoading.value = true
   fetchTags();
   currentTags.value = tagsData.splice(0, 6)
-  const fetchedData = props.forUser ? await fetchRepositoriesByUserWithPagination(lastItemValue.value) : await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
+  let fetchedData = props.forUser ? await fetchRepositoriesByUserWithPagination(lastItemValue.value) : await fetchRepositoriesWithPagination(lastItemValue.value, path.value !== 'repositories');
+  if(route.path === '/e-library'){
+    fetchedData = (await fetchRepositoriesWithPagination(lastItemValue.value, false)).filter(repo => repo.type == 'Document Repository');
+  }
   repositoryData.value = [...fetchedData];
   repositoryItems.value = repositoryData.value;
   lastItemValue.value = lastItemValue.value + 1
@@ -136,7 +143,7 @@ onUnmounted(() => {
             </p>
             <p class="text-subtitle">
               Create and manage
-              {{path == 'ip-technologies' ?  'IP technologies' : 'projects'}}
+              {{path == 'ip-technologies' ?  'IP technologies' : route.path === '/e-library' ? 'documents' : 'projects'}}
               within your organization!
             </p>
           </div>
@@ -146,7 +153,7 @@ onUnmounted(() => {
             </VBtnPrimaryFilled>
             <VBtnPrimaryFilled :to="{ name: forUser ? 'new-repository-my' : 'new-repository'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
               <PhPlus size="16" class="mr-2"/>
-              New {{path == 'ip-technologies' ?  'IP Technology' : 'Project'}}
+              New {{path == 'ip-technologies' ?  'IP Technology' : route.path === '/e-library' ? 'Document' : 'Project'}}
             </VBtnPrimaryFilled>
           </div>
         </VRow>
@@ -166,7 +173,7 @@ onUnmounted(() => {
             <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
           </template>
           <template v-slot:label>
-            <p class="text-gs20">Search {{path == 'ip-technologies' ?  'IP technologies' : 'projects'}} by title, keyword, tags.</p>
+            <p class="text-gs20">Search {{path == 'ip-technologies' ?  'IP technologies' : route.path === '/e-library' ? 'documents' : 'projects'}} by title, keyword, tags.</p>
           </template>
         </VTextField>
         <VRow class="ma-0 mt-2" align="center">
@@ -235,7 +242,7 @@ onUnmounted(() => {
             <RepositoryItem v-for="repository in searchedRepositories" :repository="repository"/>
             <div class="pa-3" v-if="reachEnd">
               <p class="text-center">
-                All {{path == 'ip-technologies' ?  'IP technologies' : 'projects'}} are loaded!
+                All {{path == 'ip-technologies' ?  'IP technologies' : route.path === '/e-library' ? 'documents' : 'projects'}} are loaded!
                 <span
                     @click="scrollTop"
                     class="text-bs50 cursor-pointer scroll-top-link"

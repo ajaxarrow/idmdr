@@ -10,7 +10,7 @@
   const path = ref('repositories')
   const {route} = useRouting();
   const computedTitle = computed(() => {
-    return path.value === 'repositories' ? 'Projects' : 'IP Technologies';
+    return path.value === 'repositories' ? 'Projects' : route.path === '/e-library' ? 'E-Library' : 'IP Technologies';
   });
 
 

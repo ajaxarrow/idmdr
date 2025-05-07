@@ -26,7 +26,7 @@ const {showSnackbarMessage} = useSnackbarStore()
 const { fetchAllRepositories, fetchRepositoryIDsByUser, manageRepositoryStatus, manageRepositoryAdminStatus } = useRepositoryServices();
 const {fetchAllOrganizationsBasicData} = useOrganizationServices();
 const selectedOrganization = ref<string>('');
-const pageEntity = computed(() => route.path === '/repositories' ? 'Project' : 'IP Technology');
+const pageEntity = computed(() => route.path === '/repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
 
 const repositories = ref<Repository[]>([]);
 const loading = ref(false);
@@ -239,7 +239,7 @@ const loadRepositories = async () => {
         selectedOrganization.value,
         selectedProjectState.value,
         selectedProjectPublicState.value,
-        path.value == '/ip-technologies' ? 'Project Repository' : selectedType.value ,
+        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value ,
         selectedProjectStatus.value
     );
     repositories.value = data;
@@ -301,7 +301,7 @@ const updateTotalCount = async () => {
         selectedOrganization.value,
         selectedProjectState.value,
         selectedProjectPublicState.value,
-        path.value == '/ip-technologies' ? 'Project Repository' : selectedType.value ,
+        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value ,
         selectedProjectStatus.value
     );
 
@@ -329,15 +329,15 @@ onMounted(async () => {
 
 <template>
   <BaseDataTable
-    :title="`All ${path == '/repositories' ? 'Projects' : 'IP Technologies'}`"
-    :subtitle="`Create and manage all ${path == '/repositories' ? 'projects' : 'IP technologies'} across NOMCAARRD`"
+    :title="`All ${path == '/repositories' ? 'Projects' : route.path === '/e-library' ? 'E-Library' : 'IP Technologies'}`"
+    :subtitle="`Create and manage all ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'materials' : 'IP technologies'} across NOMCAARRD`"
     :items="repositories"
     :headers="headers"
     :loading="loading"
     :totalItems="totalItems"
-    :searchPlaceholder="`Search ${path == '/repositories' ? 'projects' : 'IP Technologies'}...`"
-    :emptyStateHeader="`No ${path == '/repositories' ? 'projects' : 'IP technologies'} found`"
-    :emptyStateDescription="`There are no ${path == '/repositories' ? 'projects' : 'IP technologies'} found matching your criteria`"
+    :searchPlaceholder="`Search ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP Technologies'}...`"
+    :emptyStateHeader="`No ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found`"
+    :emptyStateDescription="`There are no ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found matching your criteria`"
     :filters="tableFilters"
     :itemsPerPageOptions="itemsPerPage"
     @update:search="search = $event"
@@ -362,7 +362,7 @@ onMounted(async () => {
           style="font-size: 14px !important"
       >
         <PhPlus size="16" class="mr-2" />
-        New {{path == '/repositories' ? 'Project' : 'IP Technology'}}
+        New {{path == '/repositories' ? 'Project' : route.path === '/e-library' ? 'Document Repository' : 'IP Technology'}}
       </VBtnPrimaryFilled>
     </template>
 
@@ -487,15 +487,15 @@ onMounted(async () => {
                 :isWarning="item?.is_active"
                 v-if="item.is_approved"
                 @callback="manageRepoStatusCallback(item.uid as string, !item.is_active)"
-                :confirm-content="item.is_active ? 'Deactivate Project' : 'Activate Project'"
-                :content="item.is_active ? 'Are you sure you want to deactivate this project? All project data will be deleted.' : 'Are you sure you want to activate this project?'"
+                :confirm-content="item.is_active ?  `Deactivate ${pageEntity}` : `Activate ${pageEntity}`"
+                :content="item.is_active ? `Are you sure you want to deactivate this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}? All data will be deleted.` : `Are you sure you want to activate this ${pageEntity.charAt(0).toLowerCase() + pageEntity.slice(1)}?`"
             >
               <VListItem class="action-menu-item">
                 <template v-slot:prepend>
                   <PhX v-if="item.is_active" class="mr-2" />
                   <PhCheck v-else class="mr-2" />
                 </template>
-                <VListItemTitle>{{item.is_active ? 'Deactivate Project' : 'Activate Project'}}</VListItemTitle>
+                <VListItemTitle>{{item.is_active ? `Deactivate ${pageEntity}` : `Activate ${pageEntity}`}}</VListItemTitle>
               </VListItem>
             </ConfirmationDialog>
           </VList>

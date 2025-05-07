@@ -629,14 +629,13 @@ onMounted( async () => {
   if(type === 'edit') {
     await fetchRepositoryData(route.params.slug as string, 'update');
     const userRepo = await fetchRepositoryIDsByUser(
-        10000, true, '', '', '', true, true, 'Project Repository'
+        10000, true, '', '', ''
     );
-    if(!userRepo.some(repo => repo.slug === repository.value?.slug && !userData.is_superuser)) {
+    if(!userRepo.some(repo => repo.slug === repository.value?.slug) && !userData.is_superuser) {
       await router.push({name: 'repositories'})
     }
     formType.value = FormType.edit
     Object.assign(repositoryData, {...repository.value});
-    console.log(repositoryData.authorsData)
     // console.log(repositoryData.tags)
     // repositoryData.tags = stringToArray(<string>repositoryData.tags)
     repositoryData.geojson = JSON.stringify(repositoryData.geojson)

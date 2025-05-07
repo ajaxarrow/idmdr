@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Welcome from '../../../assets/images/onboarding.svg';
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouting } from "../../../core/composables/useRouting.ts";
 import { LocationQueryValue } from "vue-router";
@@ -17,6 +16,7 @@ import {
   PhArrowLeft
 } from "@phosphor-icons/vue";
 import {useEmailAuthStore} from "../stores/email-auth.store.ts";
+import logo from "../../../assets/images/nomcaarrd.png";
 
 const { router, route } = useRouting()
 const register = 'register';
@@ -88,9 +88,26 @@ onMounted(() => {
 <template>
   <Vue3Lottie v-if="loading" :animation-data="emailLoad" :height="layoutValue" :width="layoutValue"></Vue3Lottie>
   <div v-else>
-    <div class="pt-6 px-6 mx-auto">
+    <div class="pt-10 px-6 mx-auto">
       <RouterLink to="/" class="text-decoration-none ">
-        <VImg :src="Welcome" class="mt-5" alt="Hero Image" width="100%" height="80px" />
+        <VRow class="ma-0 pb-3" justify="center">
+          <div class="d-flex justify-center">
+            <div class="d-flex align-center text-wrapper text-logo" >
+              <img style="height: 32px;" :src="logo" alt="logo" class="ph-icon"/>
+              <div>
+                <span style="--i:1">N</span>
+                <span style="--i:2">O</span>
+                <span style="--i:3">M</span>
+                <span style="--i:4">C</span>
+                <span style="--i:5">A</span>
+                <span style="--i:6">A</span>
+                <span style="--i:7">R</span>
+                <span style="--i:8">R</span>
+                <span style="--i:9">D</span>
+              </div>
+            </div>
+          </div>
+        </VRow>
       </RouterLink>
       <VTabs class="mt-4" color="primary" align-tabs="center" v-model="tab">
         <VTab :value="login" class="tab-title">Login</VTab>
@@ -268,5 +285,11 @@ onMounted(() => {
 .back-button:hover{
   border-radius: 8px;
   background-color: #F0F5F9;
+}
+
+.text-logo {
+  color: black;
+  font-weight: 900 !important;
+  font-size: 24px !important;
 }
 </style>

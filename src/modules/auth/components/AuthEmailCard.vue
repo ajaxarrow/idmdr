@@ -9,7 +9,7 @@ const {isMobile} = useScreenStore();
 
 <template>
   <VContainer v-if="isMobile">
-    <AuthCardContent/>
+    <AuthEmailCardContent/>
   </VContainer>
   <Container class="center" v-else>
     <VSheet

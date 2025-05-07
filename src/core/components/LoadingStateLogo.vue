@@ -44,10 +44,6 @@ onMounted(() => {
             :src="logo"
             alt="NOMCAARRD Logo"
             class="logo"
-            :style="{
-            transform: `rotate(${rotation}deg) scale(${scale})`,
-            filter: `drop-shadow(0 0 ${pulse * 8}px rgba(0, 120, 200, 0.7))`
-          }"
         />
         <div class="orbit"></div>
       </div>
