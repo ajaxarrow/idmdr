@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, onMounted, PropType, ref, watch} from "vue";
 import {ATBI, AtbiSubEntity, AtbiSubEntityImage} from "../../../interfaces/atbi.interface.ts";
-import {PhDotsThreeOutlineVertical, PhPencil, PhPlus, PhTrash, PhMagnifyingGlass, PhImage} from "@phosphor-icons/vue";
+import {PhDotsThreeOutlineVertical, PhPencil, PhPlus, PhTrash, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useAtbiSubEntityServices} from "../services/atbi-sub-entity.services.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";

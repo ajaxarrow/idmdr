@@ -253,7 +253,7 @@ onMounted(() => {
               <VRow class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
                 <VCol cols="12">
                   <p class="text-body-1 text-center">
-                    The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is an organization composed of 20 government and non-government organizations in Region 10. The consortium coordinates the regional research, development, and extension priorities in the region along with agriculture, fisheries, and natural resources sector. The consortium office is located at its base agency, Central Mindanao University.
+                    The Northern Mindanao Consortium for Agriculture, Aquatic and Natural Resources Research and Development (NOMCAARRD) is an organization composed of 23 government and non-government organizations in Region 10. The consortium coordinates the regional research, development, and extension priorities in the region along with agriculture, fisheries, and natural resources sector. The consortium office is located at its base agency, Central Mindanao University.
                   </p>
                 </VCol>
               </VRow>
@@ -360,7 +360,7 @@ onMounted(() => {
               <blockquote class="blockquote-question text-center pt-5 text-h4 font-weight-bold primary--text">
                 Consortium-Member Institutions
               </blockquote>
-              <p class="text-center mb-8 text-subtitle-1">NOMCAARRD brings together 20 leading institutions across Northern Mindanao</p>
+              <p class="text-center mb-8 text-subtitle-1">NOMCAARRD brings together 23 leading institutions across Northern Mindanao</p>
 
               <VRow class="elevation-3 rounded-lg overflow-hidden">
                 <VCol cols="12" md="6" class="pa-0 position-relative">
@@ -394,7 +394,7 @@ onMounted(() => {
                         height="47px"
                         class="text-none hvr-icon-spin explore-button browse-map-button mx-1 mt-5"
                         to="/cmis">
-                      <PhArrowRight size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">View All 20 Member Institutions</span></span>
+                      <PhArrowRight size="20" class="mr-2 hvr-icon"/> <span class="animate-underline"><span class="text-white">View All 23 Member Institutions</span></span>
                     </VBtn>
                   </div>
 
