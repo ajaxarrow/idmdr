@@ -172,7 +172,6 @@ onMounted(async () => {
           <div class="px-4 pt-4 d-flex align-center">
             <VTextField
                 v-model="search"
-                prepend-inner-icon="mdi-magnify"
                 placeholder="Search..."
                 density="compact"
                 hide-details
@@ -196,18 +195,27 @@ onMounted(async () => {
           >
             <!-- Image column template -->
             <template #item.images="{ item }">
-              <VBtn
-                  v-if="item.images && item.images.length > 0"
-                  icon
-                  variant="text"
-                  @click="openImageModal(item.images)"
-                  class="image-preview-btn"
-              >
-                <PhImage size="22" />
-                <span class="image-count" v-if="item.images.length > 1">{{ item.images.length }}</span>
-              </VBtn>
+              <div class="image-preview-wrapper py-2" v-if="item.images && item.images.length">
+                <img
+                    style="width: 60px; height: 60px; object-fit: cover;"
+                    v-if="item.images[0].image"
+                    :src="item.images[0].image as string"
+                    alt="Image preview"
+                    class="main-image"
+                    @click="openImageModal(item.images)"/>
+
+                <!-- Stacked overlay for extra images -->
+                <div
+                    v-if="item.images.length > 1"
+                    class="stacked-images"
+                    @click="openImageModal(item.images)"
+                >
+                  <div class="overlay">+{{ item.images.length - 1 }}</div>
+                </div>
+              </div>
               <span v-else>No images</span>
             </template>
+
 
             <!-- Actions column template -->
             <template #item.actions="{ item }">
@@ -472,4 +480,36 @@ onMounted(async () => {
 :deep(.description-content p) {
   margin-bottom: 0.5rem;
 }
+
+.image-preview-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.main-image {
+  border-radius: 8px;
+}
+
+.stacked-images {
+  position: absolute;
+  top: 8px;
+  left: 40px; /* Adjust depending on how much you want to show the stack */
+  width: 40px;
+  height: 60px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 1;
+}
+
+.overlay {
+  padding: 0 6px;
+}
+
 </style>

@@ -2,7 +2,6 @@
 import Navbar from "../components/Landing/Navbar.vue";
 import {defineComponent, onMounted, ref, shallowRef} from "vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import Container from "../../../core/components/Container.vue";
 import {
   PhCloud,
   PhOption,
@@ -11,7 +10,6 @@ import {
 } from "@phosphor-icons/vue";
 
 import Footer from "../components/Footer.vue";
-import LoadingStateLogo from "../../../core/components/LoadingStateLogo.vue";
 
 
 type CustomComponent = ReturnType<typeof defineComponent>;
@@ -179,185 +177,180 @@ onMounted(() => {
 <template>
 
   <VLayout>
-    <Container class="center" v-show="loading">
-      <LoadingStateLogo/>
-    </Container>
-    <transition name="fade" v-show="!loading">
-      <div style="width: 100%" >
-        <Navbar>
-          <div class="hero-wrapper">
-            <div class="hero-overlay"></div>
-            <VContainer class="hero-container">
-              <VRow class="hero-section" align="center" justify="center">
-                <VCol cols="12" md="7" class="hero-content-col">
-                  <div class="hero-content">
-                    <h1 class="text-h2 font-weight-bold hero-title">RAISE Program, Advancing Agri-Aqua Innovation In Northern Mindanao</h1>
-                    <div class="hero-divider"></div>
-                    <p class="text-subtitle-1 hero-subtitle">
-                      The program drives regional development by promoting technology adoption, commercialization, and public-private partnerships that benefit farmers, researchers, and investors alike.
-                    </p>
-                  </div>
-                </VCol>
-                <VCol cols="12" md="5" class="hero-image-col d-none d-md-flex">
-                  <div class="hero-accent-card">
-                    <div class="accent-card-content">
-                      <h3 class="text-h5 mb-4">Advancing Agri-Aqua Innovation</h3>
-                      <p class="mb-2">• Empowering Northern Mindanao (Region 10)</p>
-                      <p class="mb-2">• 20 Consortium Member Institutions</p>
-                      <p class="mb-2">• Focused on IP Management & Tech Transfer</p>
-                      <p class="mb-2">• Supporting Farmers, Researchers, and Investors</p>
-                      <p class="mb-2">• Key Initiatives: IPTBM, ABH, ATBI, KM Hub</p>
-                      <p>• Driving Regional Development through Innovation</p>
-                    </div>
-                  </div>
-                </VCol>
-
-              </VRow>
-            </VContainer>
-          </div>
-          <div id="about" class="bg-sb10 py-10">
-            <VContainer>
-              <p class="blockquote-question text-center pt-5">
-                Why Participate?
-              </p>
-              <VRow class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
-                <VCol cols="12">
-                  <p class="text-body-1 text-center">
-                    The RAISE Program, led by DOST-PCAARRD, focuses on advancing agri-aqua innovation in Northern Mindanao by supporting intellectual property management and technology transfer among the region's universities and research institutions (CMIs).
+    <div style="width: 100%" >
+      <Navbar>
+        <div class="hero-wrapper">
+          <div class="hero-overlay"></div>
+          <VContainer class="hero-container">
+            <VRow class="hero-section" align="center" justify="center">
+              <VCol cols="12" md="7" class="hero-content-col">
+                <div class="hero-content">
+                  <h1 class="text-h2 font-weight-bold hero-title">RAISE Program, Advancing Agri-Aqua Innovation In Northern Mindanao</h1>
+                  <div class="hero-divider"></div>
+                  <p class="text-subtitle-1 hero-subtitle">
+                    The program drives regional development by promoting technology adoption, commercialization, and public-private partnerships that benefit farmers, researchers, and investors alike.
                   </p>
-                </VCol>
-              </VRow>
-
-              <VRow justify="center" class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
-                <VCol v-for="text in highlights" cols="12" lg="6" xl="6" xxl="6">
-                  <div>
-                    <p class="text-highlight-title">{{text.adjective}}</p>
-                    <p>{{text.description}}</p>
+                </div>
+              </VCol>
+              <VCol cols="12" md="5" class="hero-image-col d-none d-md-flex">
+                <div class="hero-accent-card">
+                  <div class="accent-card-content">
+                    <h3 class="text-h5 mb-4">Advancing Agri-Aqua Innovation</h3>
+                    <p class="mb-2">• Empowering Northern Mindanao (Region 10)</p>
+                    <p class="mb-2">• 20 Consortium Member Institutions</p>
+                    <p class="mb-2">• Focused on IP Management & Tech Transfer</p>
+                    <p class="mb-2">• Supporting Farmers, Researchers, and Investors</p>
+                    <p class="mb-2">• Key Initiatives: IPTBM, ABH, ATBI, KM Hub</p>
+                    <p>• Driving Regional Development through Innovation</p>
                   </div>
-                </VCol>
-              </VRow>
-            </VContainer>
-          </div>
-          <div class="banner-programs py-10 animated-background">
-            <VContainer>
-              <p class="blockquote-question text-center pt-5 animated-title">
-                Key Projects and Components
-              </p>
-              <p class="text-center mb-8 subtitle-animation">
-                Explore the various key projects and components that drive innovation and development in the agri-aqua sector, fostering collaboration and sustainable growth in Northern Mindanao.
-              </p>
+                </div>
+              </VCol>
 
-              <VRow justify="center" class="ma-0 mt-5" align="center" v-if="isSmall">
-                <component :is="selectedProgram.icon" size="26" :color="selectedProgram.color" class="pulse-icon" />
-                <p :style="{color: selectedProgram.color}" class="ml-1 font-weight-bold text-h6 bounce-text">
-                  {{selectedProgram.title}}
+            </VRow>
+          </VContainer>
+        </div>
+        <div id="about" class="bg-sb10 py-10">
+          <VContainer>
+            <p class="blockquote-question text-center pt-5">
+              Why Participate?
+            </p>
+            <VRow class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
+              <VCol cols="12">
+                <p class="text-body-1 text-center">
+                  The RAISE Program, led by DOST-PCAARRD, focuses on advancing agri-aqua innovation in Northern Mindanao by supporting intellectual property management and technology transfer among the region's universities and research institutions (CMIs).
                 </p>
-              </VRow>
+              </VCol>
+            </VRow>
 
-              <VRow justify="center" class="ma-0 my-6 programs-container" v-else>
-                <VRow class="ma-0 mx-15 px-15 float-in" justify="space-around">
-                  <div v-for="(program) in bannerPrograms"
-                       class="d-flex flex-column align-center cursor-pointer program-item"
-                       @click="selectProgram(program)"
-                       :class="program.title == selectedProgram.title ? 'active-program' : ''"
-                  >
-                    <component
-                        weight="bold"
-                        :is="program.icon"
-                        size="30"
-                        :color="program.title == selectedProgram.title ? program.color : '#8C8C8C'"
-                        class="icon-hover"
-                    />
-                    <p :style="{color: program.title == selectedProgram.title ? program.color : '#8C8C8C'}"
-                       class="font-weight-bold text-h6 program-title">
-                      {{program.title}}
-                    </p>
-                  </div>
-                </VRow>
-              </VRow>
+            <VRow justify="center" class="ma-0 py-5 px-5 px-sm-10 px-md-10 px-xl-15 px-xxl-15 px-lg-15">
+              <VCol v-for="text in highlights" cols="12" lg="6" xl="6" xxl="6">
+                <div>
+                  <p class="text-highlight-title">{{text.adjective}}</p>
+                  <p>{{text.description}}</p>
+                </div>
+              </VCol>
+            </VRow>
+          </VContainer>
+        </div>
+        <div class="banner-programs py-10 animated-background">
+          <VContainer>
+            <p class="blockquote-question text-center pt-5 animated-title">
+              Key Projects and Components
+            </p>
+            <p class="text-center mb-8 subtitle-animation">
+              Explore the various key projects and components that drive innovation and development in the agri-aqua sector, fostering collaboration and sustainable growth in Northern Mindanao.
+            </p>
 
-              <VCard class="mx-auto my-8 program-card pa-4 card-animation" max-width="900" elevation="8">
-                <VCardTitle class="text-h5" :style="{color: selectedProgram.color}">
-                  {{selectedProgram.title}}
-                </VCardTitle>
-                <VCardText>
-                  <p class="text-body-1 fade-in">{{selectedProgram.description}}</p>
-                  <!--                  <VDivider class="my-4 growing-divider" :style="{backgroundColor: selectedProgram.color}"></VDivider>-->
-                  <VList>
-                    <VListItem density="compact" v-for="(item, i) in selectedProgram.items" :key="i" class="list-item-animation"
-                               :style="{'animation-delay': i * 0.25 + 's'}">
-                      <template v-slot:prepend>
-                        <VIcon :color="selectedProgram.color" icon="mdi-circle-small" class="blinking-icon"></VIcon>
-                      </template>
-                      <VListItemTitle class="slide-in-text">{{ item }}</VListItemTitle>
-                    </VListItem>
-                  </VList>
-                </VCardText>
-              </VCard>
-            </VContainer>
-          </div>
-
-          <div class="cmi-section py-8">
-            <VContainer>
-              <blockquote class="blockquote-question text-center pt-5 text-h4 font-weight-bold primary--text">
-                Raise Program Overview
-              </blockquote>
-              <p class="text-center mb-8 text-subtitle-1">
-                The RAISE Program supports innovation by enhancing regional capabilities in agriculture and aquaculture through collaboration, IP management, and technology transfer.
+            <VRow justify="center" class="ma-0 mt-5" align="center" v-if="isSmall">
+              <component :is="selectedProgram.icon" size="26" :color="selectedProgram.color" class="pulse-icon" />
+              <p :style="{color: selectedProgram.color}" class="ml-1 font-weight-bold text-h6 bounce-text">
+                {{selectedProgram.title}}
               </p>
+            </VRow>
 
-              <VRow class="elevation-3 rounded-lg overflow-hidden">
-                <VCol cols="12" class="py-6 px-8 bg-surface">
-                  <div class="cmi-content">
-                    <h3 class="text-h5 font-weight-bold primary--text mb-4 d-flex align-center">
-                      <VIcon icon="mdi-information-outline" color="bs50" class="mr-2"></VIcon>
-                      Program Objectives
-                    </h3>
-                    <p class="text-body-1">
-                      The Regional Agri-Aqua Innovation System Enhancement (RAISE) Program is designed to:
-                      <ul class="ml-4 mt-2">
-                        <li>Mirror the DOST-PCAARRD Innovation and Technology Center functions in the region.</li>
-                        <li>Assist CMIs with intellectual property (IP) management and technology transfer.</li>
-                        <li>Provide capability-building programs for technology transfer and IP management.</li>
-                        <li>Facilitate collaboration between public, private, academic, and international partners.</li>
-                        <li>Strengthen collaboration between inventors, innovators, and investors.</li>
-                      </ul>
-                    </p>
-
-                    <VDivider class="my-5"></VDivider>
-
-                    <h4 class="text-h6 font-weight-bold primary--text d-flex align-center mb-3">
-                      <VIcon icon="mdi-flask-outline" color="bs50" size="small" class="mr-2"></VIcon>
-                      Target Sectors
-                    </h4>
-                    <p class="text-body-2 ml-8">
-                      <strong>Academia:</strong> Universities and research institutions developing AANR technologies.<br>
-                      <strong>Public Sector:</strong> Government agencies involved in technology transfer and commercialization.<br>
-                      <strong>Private Sector:</strong> Businesses and industry partners seeking innovative solutions in agriculture and aquaculture.<br>
-                      <strong>International Partners:</strong> NGOs and organizations supporting innovation ecosystems in the region.
-                    </p>
-
-                    <h4 class="text-h6 font-weight-bold primary--text d-flex align-center mt-5 mb-3">
-                      <VIcon icon="mdi-handshake-outline" color="bs50" size="small" class="mr-2"></VIcon>
-                      Collaboration Goals
-                    </h4>
-                    <p class="text-body-2 ml-8">
-                      The program fosters dynamic partnerships between knowledge generators and users to bridge the gap between innovation and practical application, driving inclusive economic growth and sustainable agri-aqua development.
-                    </p>
-
-                  </div>
-                </VCol>
+            <VRow justify="center" class="ma-0 my-6 programs-container" v-else>
+              <VRow class="ma-0 mx-15 px-15 float-in" justify="space-around">
+                <div v-for="(program) in bannerPrograms"
+                     class="d-flex flex-column align-center cursor-pointer program-item"
+                     @click="selectProgram(program)"
+                     :class="program.title == selectedProgram.title ? 'active-program' : ''"
+                >
+                  <component
+                      weight="bold"
+                      :is="program.icon"
+                      size="30"
+                      :color="program.title == selectedProgram.title ? program.color : '#8C8C8C'"
+                      class="icon-hover"
+                  />
+                  <p :style="{color: program.title == selectedProgram.title ? program.color : '#8C8C8C'}"
+                     class="font-weight-bold text-h6 program-title">
+                    {{program.title}}
+                  </p>
+                </div>
               </VRow>
-            </VContainer>
-          </div>
+            </VRow>
+
+            <VCard class="mx-auto my-8 program-card pa-4 card-animation" max-width="900" elevation="8">
+              <VCardTitle class="text-h5" :style="{color: selectedProgram.color}">
+                {{selectedProgram.title}}
+              </VCardTitle>
+              <VCardText>
+                <p class="text-body-1 fade-in">{{selectedProgram.description}}</p>
+                <!--                  <VDivider class="my-4 growing-divider" :style="{backgroundColor: selectedProgram.color}"></VDivider>-->
+                <VList>
+                  <VListItem density="compact" v-for="(item, i) in selectedProgram.items" :key="i" class="list-item-animation"
+                             :style="{'animation-delay': i * 0.25 + 's'}">
+                    <template v-slot:prepend>
+                      <VIcon :color="selectedProgram.color" icon="mdi-circle-small" class="blinking-icon"></VIcon>
+                    </template>
+                    <VListItemTitle class="slide-in-text">{{ item }}</VListItemTitle>
+                  </VListItem>
+                </VList>
+              </VCardText>
+            </VCard>
+          </VContainer>
+        </div>
+
+        <div class="cmi-section py-8">
+          <VContainer>
+            <blockquote class="blockquote-question text-center pt-5 text-h4 font-weight-bold primary--text">
+              Raise Program Overview
+            </blockquote>
+            <p class="text-center mb-8 text-subtitle-1">
+              The RAISE Program supports innovation by enhancing regional capabilities in agriculture and aquaculture through collaboration, IP management, and technology transfer.
+            </p>
+
+            <VRow class="elevation-3 rounded-lg overflow-hidden">
+              <VCol cols="12" class="py-6 px-8 bg-surface">
+                <div class="cmi-content">
+                  <h3 class="text-h5 font-weight-bold primary--text mb-4 d-flex align-center">
+                    <VIcon icon="mdi-information-outline" color="bs50" class="mr-2"></VIcon>
+                    Program Objectives
+                  </h3>
+                  <p class="text-body-1">
+                    The Regional Agri-Aqua Innovation System Enhancement (RAISE) Program is designed to:
+                    <ul class="ml-4 mt-2">
+                      <li>Mirror the DOST-PCAARRD Innovation and Technology Center functions in the region.</li>
+                      <li>Assist CMIs with intellectual property (IP) management and technology transfer.</li>
+                      <li>Provide capability-building programs for technology transfer and IP management.</li>
+                      <li>Facilitate collaboration between public, private, academic, and international partners.</li>
+                      <li>Strengthen collaboration between inventors, innovators, and investors.</li>
+                    </ul>
+                  </p>
+
+                  <VDivider class="my-5"></VDivider>
+
+                  <h4 class="text-h6 font-weight-bold primary--text d-flex align-center mb-3">
+                    <VIcon icon="mdi-flask-outline" color="bs50" size="small" class="mr-2"></VIcon>
+                    Target Sectors
+                  </h4>
+                  <p class="text-body-2 ml-8">
+                    <strong>Academia:</strong> Universities and research institutions developing AANR technologies.<br>
+                    <strong>Public Sector:</strong> Government agencies involved in technology transfer and commercialization.<br>
+                    <strong>Private Sector:</strong> Businesses and industry partners seeking innovative solutions in agriculture and aquaculture.<br>
+                    <strong>International Partners:</strong> NGOs and organizations supporting innovation ecosystems in the region.
+                  </p>
+
+                  <h4 class="text-h6 font-weight-bold primary--text d-flex align-center mt-5 mb-3">
+                    <VIcon icon="mdi-handshake-outline" color="bs50" size="small" class="mr-2"></VIcon>
+                    Collaboration Goals
+                  </h4>
+                  <p class="text-body-2 ml-8">
+                    The program fosters dynamic partnerships between knowledge generators and users to bridge the gap between innovation and practical application, driving inclusive economic growth and sustainable agri-aqua development.
+                  </p>
+
+                </div>
+              </VCol>
+            </VRow>
+          </VContainer>
+        </div>
 
 
 
-          <VDivider/>
-          <Footer/>
-        </Navbar>
-      </div>
-    </transition>
+        <VDivider/>
+        <Footer/>
+      </Navbar>
+    </div>
   </VLayout>
 </template>
 

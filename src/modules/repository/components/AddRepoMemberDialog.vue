@@ -7,6 +7,7 @@ import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
 import RepoAccessLevelInfoDialog from "./RepoAccessLevelInfoDialog.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const emits = defineEmits(['callback', 'accessRequestCallback'])
 const props = defineProps({
@@ -28,6 +29,7 @@ const props = defineProps({
     default: false
   }
 })
+const {userData} = useUserStore()
 const {fetchUsers} = useOrganizationMembersServices();
 const {addRepoMember, updateRepoMember, fetchRepoMembers} = useRepositoryMemberServices();
 const {route} = useRouting();
@@ -37,9 +39,11 @@ const addMembersDialog = ref(false);
 const selectedMember = ref<User | null>(null);
 const selectedAccessLevel = ref<string | null>(null);
 const accessLevels = computed(() => {
-  if (props.userAccessLevel === 'manager') {
+  if (userData.is_superuser) {
+    return ['owner','admin', 'manager', 'member', 'viewer'];
+  } else if (props.userAccessLevel === 'manager') {
     return ['manager', 'member', 'viewer'];
-  } else {
+  }  else {
     return ['admin', 'manager', 'member', 'viewer'];
   }
 });

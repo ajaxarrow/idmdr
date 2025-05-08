@@ -291,6 +291,7 @@ const getStatusColor = (status: string): string => {
 }
 
 const updateTotalCount = async () => {
+  console.log(path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value)
   try {
     // Pass search and priority level to get accurate count
     const repositoriesData = await fetchRepositoryIDsByUser(
@@ -301,11 +302,11 @@ const updateTotalCount = async () => {
         selectedOrganization.value,
         selectedProjectState.value,
         selectedProjectPublicState.value,
-        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value ,
+        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value,
         selectedProjectStatus.value
     );
 
-    totalItems.value = path.value === '/repositories'
+    totalItems.value = path.value === '/repositories' || route.path === '/e-library'
         ? repositoriesData.length
         : repositoriesData.filter((repo: any) => repo.type === 'Project Repository').length;
 

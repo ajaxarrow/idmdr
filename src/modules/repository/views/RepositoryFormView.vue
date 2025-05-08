@@ -800,7 +800,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-5" v-else>
-          <label class="input-label">Abstract<span class="text-pink">*</span></label>
+          <label class="input-label">Description<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="repositoryData.description"
               @update:modelValue="$event => (repositoryData.description = $event)"

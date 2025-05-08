@@ -5,6 +5,7 @@ import {OrgMember, User} from "../../../interfaces/member.interface.ts";
 import {useOrganizationMembersServices} from "../services/organization-members.services.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const emits = defineEmits(['callback'])
 const props = defineProps({
@@ -19,6 +20,7 @@ const props = defineProps({
     default: ''
   }
 })
+const {userData} = useUserStore()
 const {fetchUsers, fetchOrgMembers, addOrgMember, updateOrgMember} = useOrganizationMembersServices();
 const {route} = useRouting();
 const users = ref<User[]>([]);
@@ -27,9 +29,11 @@ const addMembersDialog = ref(false);
 const selectedMember = ref<User | null>(null);
 const selectedAccessLevel = ref<string | null>(null);
 const accessLevels = computed(() => {
-  if (props.userAccessLevel === 'manager') {
+  if (userData.is_superuser) {
+    return ['owner','admin', 'manager', 'member', 'viewer'];
+  } else if (props.userAccessLevel === 'manager') {
     return ['manager', 'member', 'viewer'];
-  } else {
+  }  else {
     return ['admin', 'manager', 'member', 'viewer'];
   }
 });

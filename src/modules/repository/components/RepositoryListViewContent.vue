@@ -80,7 +80,6 @@ const fetchMoreRepositories = async () => {
   if(route.path === '/e-library'){
     data = (await fetchRepositoriesWithPagination(lastItemValue.value, false)).filter(repo => repo.type == 'Document Repository');
   }
-
   repositoryData.value = [...repositoryData.value, ...data];
   repositoryItems.value = repositoryData.value
   searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
@@ -95,6 +94,7 @@ const getFirstPath = (url: string) => {
 }
 
 const init = async () => {
+  reachEnd.value = false
   const tagsData = tags.value
   lastItemValue.value = 1
   path.value = getFirstPath(<string>route.path)
@@ -117,7 +117,10 @@ const init = async () => {
   pageLoading.value = false
 }
 
+
 watch(() => route.path, async () => {
+  searchQuery.value = '';
+  selectedTags.value = [];
   await init();
 })
 
@@ -129,6 +132,8 @@ onUnmounted(() => {
   searchQuery.value = '';
   selectedTags.value = [];
   observerReady.value = false
+  lastItemValue.value = 1
+
 })
 
 </script>

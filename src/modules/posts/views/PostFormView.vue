@@ -150,9 +150,8 @@ onMounted(async () => {
 
 
   if (type === 'edit') {
-
     const data = await fetchPostbyID(route.params.slug as string);
-    if(!organizations.value.some(org => org.uid === data?.organization && !userData.is_superuser)){
+    if(!organizations.value.some(org => org.uid === data?.organization) && !userData.is_superuser){
       await router.push({name: 'organizations'})
     }
     Object.assign(postData, {...data});

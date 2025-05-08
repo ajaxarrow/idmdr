@@ -90,6 +90,11 @@ const removeImage = (index: number) => {
   atbiImages.value.splice(index, 1);
 };
 
+const removeLogo = () => {
+  file.value = null;
+  hasImage.value = false;
+}
+
 
 const previewImageFile = (index: number) => {
   previewImage.value = <string>atbiImages.value[index].previewImage;
@@ -430,7 +435,7 @@ onMounted(async () => {
                 </VTooltip>
                 <VTooltip location="bottom">
                   <template v-slot:activator="{ props }">
-                    <PhX v-bind="props" class="cursor-pointer" @click="removeImage"/>
+                    <PhX v-bind="props" class="cursor-pointer" @click="removeLogo"/>
                   </template>
                   <span>Remove Saved Image</span>
                 </VTooltip>

@@ -85,7 +85,7 @@ onMounted(async () => {
     // @ts-ignore
     const fetchedData = await fetchExpertById(route.params.slug as string)
     // @ts-ignore
-    if(!organizations.value.some(org => org.uid === fetchedData?.organization?.uid && !userData.is_superuser)){
+    if(!organizations.value.some(org => org.uid === fetchedData?.organization?.uid) && !userData.is_superuser){
       await router.push({name: 'organizations'})
     }
     // @ts-ignore
