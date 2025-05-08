@@ -45,6 +45,15 @@ const loadAbhs = async () => {
   loading.value = false
 }
 
+const stripHtmlTags = (html: string | null | undefined): string => {
+  if (!html) return '';
+
+  // Create a temporary DOM element
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  // Extract just the text content
+  return doc.body.textContent || '';
+};
+
 const headers = computed(() => {
   return[
     { title: 'Technology Assessment', key: 'technology_assessment', sortable: true, visible: true },
@@ -171,6 +180,9 @@ onMounted(async () => {
                 item-value="uuid"
             >
               <!-- Image column template -->
+              <template #item.technology_assessment="{ item }">
+                {{ stripHtmlTags(item.technology_assessment) }}
+              </template>
               <template #item.image_data="{ item }">
                 <VBtn
                     v-if="item.image_data && item.image_data.length > 0"
