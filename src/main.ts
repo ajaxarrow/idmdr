@@ -14,3 +14,6 @@ app.use(vuetify);
 app.use(PhosphorIcons);
 app.use(VueApexCharts);
 app.mount('#app')
+document.title = `NOMCAARRD - ${import.meta.env.VITE_BASE_API_URL_DJANGO}`;
+console.log(import.meta.env.VITE_BASE_API_URL_DJANGO);
+
