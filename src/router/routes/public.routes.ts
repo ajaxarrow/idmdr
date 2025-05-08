@@ -12,6 +12,12 @@ const publicRoutes = [
         component: () => import('../../modules/public/views/AboutView.vue')
     },
     {
+        path: '/raise',
+        name: 'raise',
+        // @ts-ignore
+        component: () => import('../../modules/public/views/RAISEView.vue')
+    },
+    {
         path: '/stakeholders',
         name: 'stakeholders',
         // @ts-ignore

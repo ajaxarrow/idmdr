@@ -40,6 +40,10 @@
       link: '/directors'
     },
     {
+      title: 'About RAISE Program',
+      link: '/raise'
+    },
+    {
       title: "Visit NOMCAARD'S KMHub",
       link: '/kmhub'
     },
