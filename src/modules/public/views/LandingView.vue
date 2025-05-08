@@ -235,7 +235,7 @@ onMounted(() => {
                   <div class="hero-accent-card">
                     <div class="accent-card-content">
                       <h3 class="text-h5 mb-4">Empowering Region 10</h3>
-                      <p class="mb-2">• 20 Member Institutions</p>
+                      <p class="mb-2">• 23 Member Institutions</p>
                       <p class="mb-2">• Regional Research Excellence</p>
                       <p class="mb-2">• Sustainable Development</p>
                       <p>• Innovation for Agriculture</p>
