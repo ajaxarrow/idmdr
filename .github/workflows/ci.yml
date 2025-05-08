@@ -21,6 +21,13 @@ jobs:
         run: |
           git fetch --all
           git reset --hard origin/production
+          
+      - name: Restore .env file
+        run: |
+          if [ -f .env.backup ]; then
+            cp .env.backup .env
+            rm .env.backup
+          fi
       
       - name: Build Container
         run: docker compose build --no-cache
