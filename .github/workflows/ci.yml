@@ -35,3 +35,5 @@ jobs:
         with:
           name: build-output
           path: build/  
+      - name: Check workspace directory
+        run: echo $GITHUB_WORKSPACE
