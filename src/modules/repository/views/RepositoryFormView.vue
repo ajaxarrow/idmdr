@@ -36,16 +36,19 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
 
 const {arrayToString} = useStringArrayHelper()
 const {isEmptyObject} = useObjectChecker()
-const {fetchOrganizationByUser} = useOrganizationServices();
-const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading} = useRepositoryServices();
+const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
+const {addRepository, updateRepository, errorMessage, hasErrorMessages, fetchRepositoryData, loading, fetchRepositoryIDsByUser} = useRepositoryServices();
 const {fetchAttachmentsByRepository, deleteAttachment} = useRepositoryAttachmentServices()
+const {fetchCustomUsers} = useRepositoryMemberServices();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore()
 const {tags, fetchTags} = useTags();
-const {route} = useRouting();
+const {route, router} = useRouting();
 const {userData} = useUserStore();
 
 const visibilityInfo = [
@@ -82,7 +85,11 @@ const previousFundingAgencies = ref<string[]>([])
 const previousCommodities = ref<string[]>([])
 const previousIndustries = ref<string[]>([])
 const previousAffiliations = ref<string[]>([])
+const previousRPTs = ref<string[]>([])
+const previousAdopters = ref<string[]>([])
+const customUsers = ref<CustomUserData[]>([])
 const formType = ref<FormType>(FormType.create);
+const pageLoading = ref(false);
 const file = ref<File | null>(null);
 const repositoryDataIntialState = reactive<Repository>({
   affiliation: [],
@@ -92,14 +99,14 @@ const repositoryDataIntialState = reactive<Repository>({
   funding_agency: [],
   geojson: {},
   industry: [],
-  is_active: false,
-  is_approved: false,
+  is_active: true,
+  is_approved: true,
   is_deleted: false,
   location: "",
   organization: "",
   priority_level: "high",
   project_component: "",
-  rpt: "",
+  rpt: [],
   slug: "",
   start_date: '',
   type: 'Project Repository',
@@ -114,7 +121,8 @@ const repositoryDataIntialState = reactive<Repository>({
   transfer_plan: "Extension",
   uid: "",
   visibility: 1,
-  adaptors: 'Farmers',
+  authorsData: [],
+  adaptors: [],
   com_extra: {},
   image: '',
   author: '',
@@ -125,6 +133,9 @@ const repositoryDataIntialState = reactive<Repository>({
   abh: '',
   atbi: '',
   is_patentable: false,
+  leadData: {},
+  techGeneratorData: [],
+  techOwnerData: []
 })
 
 const repositoryData = reactive<Repository>({
@@ -165,6 +176,90 @@ const attachmentData = reactive<Attachment>({
   isNameUpdated: false
 })
 const active = ref(false)
+const authorRef = ref(null);
+const techOwnerRef = ref(null);
+const leadRef = ref(null);
+const techGenRef = ref(null);
+
+// Reusable search query handling
+const searchQueries = {
+  author: ref(''),
+  techOwner: ref(''),
+  lead: ref(''),
+  techGen: ref('')
+};
+
+// Reusable function to handle search for any field
+const handleSearch = (field: string, query: any) => {
+  // @ts-ignore
+  searchQueries[field].value = query;
+};
+
+// Reusable function to add custom user for any field
+const addCustomUser = (field: string) => {
+  if (field === 'author' && authorRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.author.value as string,
+        first_name: searchQueries.author.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    repositoryData.authorsData?.push(newUser);
+    searchQueries.author.value = '';
+    //@ts-ignore
+    authorRef.value.search = '';
+  } else if (field === 'techOwner' && techOwnerRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.techOwner.value as string,
+        first_name: searchQueries.techOwner.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    repositoryData.techOwnerData?.push(newUser);
+    searchQueries.techOwner.value = '';
+    //@ts-ignore
+    techOwnerRef.value.search = '';
+  } else if (field === 'lead' && leadRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.lead.value as string,
+        first_name: searchQueries.lead.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    repositoryData.leadData = newUser;
+    searchQueries.lead.value = '';
+    //@ts-ignore
+    // leadRef.value.search = '';
+  } else if (field === 'techGen' && techGenRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.techGen.value as string,
+        first_name: searchQueries.techGen.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    repositoryData.techGeneratorData?.push(newUser);
+    searchQueries.techGen.value = '';
+    //@ts-ignore
+    techGenRef.value.search = '';
+  }
+};
+
 
 const toggleActive = () => {
   active.value = !active.value
@@ -405,11 +500,29 @@ const addRepositoryData = async () => {
     previousAffiliations.value = <string[]>repositoryData.affiliation
     previousIndustries.value = <string[]>repositoryData.industry
     previousFundingAgencies.value = <string[]>repositoryData.funding_agency
+    previousRPTs.value = <string[]>repositoryData.rpt
+    previousAdopters.value = <string[]>repositoryData.adaptors
+    repositoryData.adaptors = arrayToString(<string[]>repositoryData.adaptors)
+    repositoryData.rpt = arrayToString(<string[]>repositoryData.rpt)
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
     repositoryData.commodity = arrayToString(<string[]>repositoryData.commodity)
     repositoryData.industry = arrayToString(<string[]>repositoryData.industry)
     repositoryData.affiliation = arrayToString(<string[]>repositoryData.affiliation)
     repositoryData.funding_agency = arrayToString(<string[]>repositoryData.funding_agency)
+    repositoryData.author = JSON.stringify({
+      data: repositoryData.authorsData
+    })
+
+    repositoryData.tech_owner = JSON.stringify({
+      data: repositoryData.techOwnerData
+    })
+
+    repositoryData.technology_generator = JSON.stringify({
+      data: repositoryData.techGeneratorData
+    })
+    repositoryData.lead = JSON.stringify(repositoryData.leadData)
+
+
     if(file.value){
       //@ts-ignore
       repositoryData.image = file.value as File
@@ -434,6 +547,7 @@ const addRepositoryData = async () => {
   }
 }
 
+
 const updateRepositoryData = async () => {
   if(validateAttachments()){
     for (let i = 0; i < attachments.value.length; i++) {
@@ -455,17 +569,32 @@ const updateRepositoryData = async () => {
       delete repositoryData.image;
     }
 
-
     previousTags.value = <string[]>repositoryData.tags
     previousCommodities.value = <string[]>repositoryData.commodity
     previousAffiliations.value = <string[]>repositoryData.affiliation
     previousIndustries.value = <string[]>repositoryData.industry
     previousFundingAgencies.value = <string[]>repositoryData.funding_agency
+    previousRPTs.value = <string[]>repositoryData.rpt
+    previousAdopters.value = <string[]>repositoryData.adaptors
+    repositoryData.adaptors = arrayToString(<string[]>repositoryData.adaptors)
+    repositoryData.rpt = arrayToString(<string[]>repositoryData.rpt)
     repositoryData.tags = arrayToString(<string[]>repositoryData.tags)
     repositoryData.commodity = arrayToString(<string[]>repositoryData.commodity)
     repositoryData.industry = arrayToString(<string[]>repositoryData.industry)
     repositoryData.affiliation = arrayToString(<string[]>repositoryData.affiliation)
     repositoryData.funding_agency = arrayToString(<string[]>repositoryData.funding_agency)
+    repositoryData.author = JSON.stringify({
+      data: repositoryData.authorsData
+    })
+    repositoryData.tech_owner = JSON.stringify({
+      data: repositoryData.techOwnerData
+    })
+
+    repositoryData.technology_generator = JSON.stringify({
+      data: repositoryData.techGeneratorData
+    })
+    repositoryData.lead = JSON.stringify(repositoryData.leadData)
+
     if(repositoryData.transfer_plan === 'Commercialization'){
       repositoryData.com_extra = JSON.stringify(commercialization)
     }
@@ -485,14 +614,26 @@ const updateRepositoryData = async () => {
 
 
 onMounted( async () => {
+  pageLoading.value = true
   fetchTags();
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  customUsers.value = await fetchCustomUsers();
   repositoryData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
+  if(organizations.value.length == 0){
+    await router.push({name: 'new-organization'})
+    showSnackbarMessage('You have no associated CMIs. You need to create first', Status.error)
+  }
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
     await fetchRepositoryData(route.params.slug as string, 'update');
+    const userRepo = await fetchRepositoryIDsByUser(
+        10000, true, '', '', ''
+    );
+    if(!userRepo.some(repo => repo.slug === repository.value?.slug) && !userData.is_superuser) {
+      await router.push({name: 'repositories'})
+    }
     formType.value = FormType.edit
     Object.assign(repositoryData, {...repository.value});
     // console.log(repositoryData.tags)
@@ -512,10 +653,10 @@ onMounted( async () => {
       })
     }
 
-
     previewImage.value = <string>repositoryData.image
     hasImage.value = true
   }
+  pageLoading.value = false
 })
 
 
@@ -528,29 +669,37 @@ onMounted( async () => {
       :imageSrc="previewImage"
       @closeOverlay="isImagePreviewed = false"
   />
+
   <MainLayout :title="formType === FormType.edit ? 'Edit Project' : 'New Project'">
-    <VForm id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="repositoryForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
-       <div class="d-flex">
-         <RouterLink
-             :to="{
-          name: path == 'repositories' ?  'repositories' : 'my-repositories'
-        }"
-             class="text-decoration-none text-none">
-           <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
-             <PhArrowLeft size="14" class="mr-1"/>
-             Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
-           </p>
-         </RouterLink>
-       </div>
-          <div>
-            <p class="text-heading d-flex align-center">
-              {{formType === FormType.edit ? 'Edit Project' : 'Create New Project'}}
+        <div class="d-flex">
+          <RouterLink
+              :to="{
+                name: formType === FormType.edit ? 'my-repository-settings' : 'my-repositories',
+                ...(formType === FormType.edit ? { params: { slug: route.params.slug } } : {})
+              }"
+              class="text-decoration-none text-none">
+            <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
+              <PhArrowLeft size="14" class="mr-1"/>
+              Back To {{formType === FormType.edit ?  'Settings' : 'My Projects'}}
             </p>
-            <p class="text-subtitle">
-              A project contain all related project of a certain project of the organization
-            </p>
-          </div>
+          </RouterLink>
+        </div>
+        <div>
+          <p class="text-heading d-flex align-center">
+            {{formType === FormType.edit ? 'Edit Project' : 'Create New Project'}}
+          </p>
+          <p class="text-subtitle">
+            A project contain all related project of a certain project of the organization
+          </p>
+        </div>
       </div>
       <VDivider/>
       <p class="mx-6 my-3 text-note">Required fields are marked with an asterisk (<span class="text-red">*</span>).</p>
@@ -603,15 +752,15 @@ onMounted( async () => {
         <div class="mb-3">
           <label class="input-label">Project Title<span class="text-pink">*</span></label>
           <VTextField
-            v-model="repositoryData.title"
-            placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
-            class="my-2"
-            rounded="lg"
-            density="comfortable"
-            variant="outlined"
-            color="primary"
-            base-color="gs60"
-            :error-messages="errorMessage.title"
+              v-model="repositoryData.title"
+              placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.title"
           />
         </div>
         <div class="mb-5">
@@ -685,9 +834,11 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :items="repoType"
-              hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"
+              :item-title="item => `${item.title}`"
+              :item-value="item => `${item.value}`"
               :error-messages="errorMessage.commodity"
           />
+          <!--          hint="Project Repository focuses on IP Technology projects file Document Repository type served as file repository"-->
         </div>
         <div class="mb-3">
           <label class="input-label">Project Category</label>
@@ -704,9 +855,12 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Author</label>
-          <VTextField
-              v-model="repositoryData.author"
+          <label class="input-label">Author(s)</label>
+          <VCombobox
+              ref="authorRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="repositoryData.authorsData"
               placeholder="Enter Author"
               class="my-2"
               rounded="lg"
@@ -715,12 +869,28 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :error-messages="errorMessage.commodity"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('author', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('author')">
+                <VListItemTitle>
+                  Add {{ searchQueries.author }} as an author
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3">
           <label class="input-label">Project Lead</label>
-          <VTextField
-              v-model="repositoryData.lead"
+          <VCombobox
+              ref="leadRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="repositoryData.leadData"
               placeholder="Enter Project Lead"
               class="my-2"
               rounded="lg"
@@ -729,7 +899,17 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :error-messages="errorMessage.commodity"
-          />
+              @update:search="handleSearch('lead', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('lead')">
+                <VListItemTitle>
+                  Add {{ searchQueries.lead }} as Project Lead
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div v-if="repositoryData.type === 'Project Repository'">
           <div class="mb-3">
@@ -749,7 +929,7 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Commodity</label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.commodity as string[]"
                 placeholder="Select Commodity"
                 class="my-2"
@@ -767,7 +947,7 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Industry</label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.industry as string[]"
                 placeholder="Select Industry"
                 class="my-2"
@@ -858,8 +1038,8 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Research Project/s Conducted</label>
-            <VTextField
-                v-model="repositoryData.rpt"
+            <VCombobox
+                v-model="repositoryData.rpt as string[]"
                 placeholder="Enter Research Project/s Conducted"
                 class="my-2"
                 rounded="lg"
@@ -868,6 +1048,9 @@ onMounted( async () => {
                 color="primary"
                 base-color="gs60"
                 :error-messages="errorMessage.rpt"
+                multiple
+                chips
+                closable-chips
             />
           </div>
           <div class="mb-3">
@@ -889,22 +1072,38 @@ onMounted( async () => {
             />
           </div>
           <div class="mb-3">
-            <label class="input-label">Technology Generator</label>
-            <VTextField
-                v-model="repositoryData.technology_generator"
-                placeholder="Enter Technology Generator"
+            <label class="input-label">Technology Generator(s)</label>
+            <VCombobox
+                ref="techGenRef"
+                :items="customUsers"
+                :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+                v-model="repositoryData.techGeneratorData"
+                placeholder="Select Technology Generator"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
+                multiple
+                chips
+                closable-chips
                 :error-messages="errorMessage.technology_generator"
-            />
+                @update:search="handleSearch('techGen', $event)"
+                :hide-no-data="false"
+            >
+              <template v-slot:no-data>
+                <VListItem @click="addCustomUser('techGen')">
+                  <VListItemTitle>
+                    Add {{ searchQueries.techGen }} as a technology generator
+                  </VListItemTitle>
+                </VListItem>
+              </template>
+            </VCombobox>
           </div>
           <div class="mb-3">
             <label class="input-label">Affiliation<span class="text-pink">*</span></label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.affiliation as string[]"
                 placeholder="Enter Affiliation"
                 class="my-2"
@@ -921,9 +1120,12 @@ onMounted( async () => {
             />
           </div>
           <div class="mb-3">
-            <label class="input-label">Technology Owners</label>
-            <VTextField
-                v-model="repositoryData.tech_owner"
+            <label class="input-label">Technology Owner(s)</label>
+            <VCombobox
+                ref="techOwnerRef"
+                :items="customUsers"
+                :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+                v-model="repositoryData.techOwnerData"
                 placeholder="Select Technology Owners"
                 class="my-2"
                 rounded="lg"
@@ -931,13 +1133,26 @@ onMounted( async () => {
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
+                multiple
+                chips
+                closable-chips
                 :error-messages="errorMessage.tech_owner"
-            />
+                :hide-no-data="false"
+                @update:search="handleSearch('techOwner', $event)"
+            >
+              <template v-slot:no-data>
+                <VListItem @click="addCustomUser('techOwner')">
+                  <VListItemTitle>
+                    Add {{ searchQueries.techOwner }} as a new technology owner
+                  </VListItemTitle>
+                </VListItem>
+              </template>
+            </VCombobox>
           </div>
           <div class="mb-3">
             <label class="input-label">Existing or Potential Adopters</label>
-            <VAutocomplete
-                v-model="repositoryData.adaptors"
+            <VCombobox
+                v-model="repositoryData.adaptors as string[]"
                 placeholder="Select Adopter"
                 class="my-2"
                 rounded="lg"
@@ -947,6 +1162,9 @@ onMounted( async () => {
                 base-color="gs60"
                 :items="adopters"
                 :error-messages="errorMessage.adaptors"
+                multiple
+                chips
+                closable-chips
             />
           </div>
           <div class="mb-3">
@@ -966,40 +1184,40 @@ onMounted( async () => {
                 :error-messages="errorMessage.funding_agency"
             />
           </div>
-          <div class="mb-3" v-if="repositoryData.abh">
-            <label class="input-label">Agri-Aqua Business Hub</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.abh"
-                @update:modelValue="$event => (repositoryData.abh = $event)"
-                placeholder="Enter information related to agri aqua business hub to this project"
-            />
-          </div>
-          <div class="mb-5" v-else>
-            <label class="input-label">Agri-Aqua Business Hub</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.abh"
-                @update:modelValue="$event => (repositoryData.abh = $event)"
-                placeholder="Enter information related to agri aqua business hub to this project"
-            />
-            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
-          </div>
-          <div class="mb-3" v-if="repositoryData.atbi">
-            <label class="input-label">Agri-Aqua Technology Business Incubator</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.atbi"
-                @update:modelValue="$event => (repositoryData.atbi = $event)"
-                placeholder="Enter information about technology business incubator that is related to this project"
-            />
-          </div>
-          <div class="mb-5" v-else>
-            <label class="input-label">Agri-Aqua Technology Business Incubator</label>
-            <QuillRichTextEditor
-                :modelValue="repositoryData.atbi"
-                @update:modelValue="$event => (repositoryData.atbi = $event)"
-                placeholder="Enter information about technology business incubator that is related to this project"
-            />
-            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
-          </div>
+          <!--          <div class="mb-3" v-if="repositoryData.abh">-->
+          <!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.abh"-->
+          <!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
+          <!--                placeholder="Enter information related to agri aqua business hub to this project"-->
+          <!--            />-->
+          <!--          </div>-->
+          <!--          <div class="mb-5" v-else>-->
+          <!--            <label class="input-label">Agri-Aqua Business Hub</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.abh"-->
+          <!--                @update:modelValue="$event => (repositoryData.abh = $event)"-->
+          <!--                placeholder="Enter information related to agri aqua business hub to this project"-->
+          <!--            />-->
+          <!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
+          <!--          </div>-->
+          <!--          <div class="mb-3" v-if="repositoryData.atbi">-->
+          <!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.atbi"-->
+          <!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
+          <!--                placeholder="Enter information about technology business incubator that is related to this project"-->
+          <!--            />-->
+          <!--          </div>-->
+          <!--          <div class="mb-5" v-else>-->
+          <!--            <label class="input-label">Agri-Aqua Technology Business Incubator</label>-->
+          <!--            <QuillRichTextEditor-->
+          <!--                :modelValue="repositoryData.atbi"-->
+          <!--                @update:modelValue="$event => (repositoryData.atbi = $event)"-->
+          <!--                placeholder="Enter information about technology business incubator that is related to this project"-->
+          <!--            />-->
+          <!--            <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
+          <!--          </div>-->
           <div class="mb-3">
             <label class="input-label">Technology Transfer Plan</label>
             <VAutocomplete
@@ -1149,7 +1367,7 @@ onMounted( async () => {
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
-          <VAutocomplete
+          <VCombobox
               placeholder="E.g. Soil Health, Agriculture Data, Global Farming, Agricultural Lands,"
               class="my-2"
               rounded="lg"
@@ -1221,12 +1439,12 @@ onMounted( async () => {
           <div v-if="attachments.length == 0">
             <label class="input-label">File</label>
             <div
-              class="my-2 file-upload-container"
-              :class="{'dropzone-active': active}"
-              @dragover.prevent
-              @dragenter.prevent="toggleActive"
-              @dragleave.prevent="toggleActive"
-              @drop.prevent="handleBulkAttachmentsUpload">
+                class="my-2 file-upload-container"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
               <PhFileDashed size="50"/>
               <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
               <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
@@ -1234,7 +1452,13 @@ onMounted( async () => {
           </div>
           <div v-else>
             <label class="input-label mb-5">Files</label>
-            <div class="attachments-container mt-2">
+            <div
+                class="attachments-container mt-2"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
               <div
                   v-for="(attachment, index) in attachments"
                   :key="index"
@@ -1258,16 +1482,16 @@ onMounted( async () => {
                       <span>Remove Attachment</span>
                     </VTooltip>
                     <VTooltip location="bottom">
-                    <template v-slot:activator="{ props }">
-                      <component
-                          :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
-                          v-bind="props"
-                          class="cursor-pointer"
-                          @click="attachment.showFiles = !attachment.showFiles"
-                      />
-                    </template>
-                    <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
-                  </VTooltip>
+                      <template v-slot:activator="{ props }">
+                        <component
+                            :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
+                            v-bind="props"
+                            class="cursor-pointer"
+                            @click="attachment.showFiles = !attachment.showFiles"
+                        />
+                      </template>
+                      <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
+                    </VTooltip>
                   </div>
                 </div>
                 <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
@@ -1430,10 +1654,10 @@ onMounted( async () => {
         </div>
         <VRow class="ma-0" justify="end">
           <VBtnPrimaryFilled
-            @click="formType === FormType.edit ? updateRepositoryData() : addRepositoryData()"
-            rounded="lg"
-            height="44px"
-            width="166px"
+              @click="formType === FormType.edit ? updateRepositoryData() : addRepositoryData()"
+              rounded="lg"
+              height="44px"
+              width="166px"
           >
             Submit
           </VBtnPrimaryFilled>

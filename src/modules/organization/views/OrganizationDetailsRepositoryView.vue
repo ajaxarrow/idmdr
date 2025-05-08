@@ -2,7 +2,7 @@
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, onUnmounted, ref, watch} from "vue";
-import {PhFaders, PhHardDrives, PhInfo, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
+import {PhFaders, PhHardDrives, PhMagnifyingGlass, PhPlus, PhX} from "@phosphor-icons/vue";
 import RepositoryItem from "../../../core/components/Dashboard/RepositoryItem.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
@@ -12,11 +12,13 @@ import FilterRepositoryDialog from "../../repository/components/FilterRepository
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import Observer from "../../../core/components/Observer.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {scrollTop} = useScroll()
 const {route} = useRouting()
-const {fetchOrganizationData} = useOrganizationServices();
-
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
+const {user} = useUserStore()
 const {tags, selectedTags} = useTags();
 const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
 
@@ -59,11 +61,12 @@ const fetchMoreRepositories = async () => {
   const data = await fetchRepositoriesByOrganization(
       route.params.slug as string,
       path.value !== 'organizations',
-      5,
+      10,
       lastItemValue.value
   );
   repositoryData.value = [...repositoryData.value, ...data];
-  searchedRepositories.value = repositoryData.value
+  repositoryItems.value = repositoryData.value
+  searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
   lastItemValue.value = lastItemValue.value + 1
   if(data.length === 0){
     reachEnd.value = true
@@ -74,12 +77,25 @@ const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
 
+const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
+  return orgList.some(org => org.slug === organization?.slug);
+};
+
 
 onMounted(async () => {
   pageLoading.value = true
   currentTags.value = tags.value.splice(0, 6)
   path.value = getFirstPath(<string>route.path)
   organization.value = await fetchOrganizationData(route.params.slug as string);
+
+  const allUserOrg = await fetchOrganizationIDsByUser();
+  if(organization.value){
+    if( isSlugInOrgList(organization.value, allUserOrg)){
+      if ("is_member" in organization.value) {
+        organization.value.is_member = true;
+      }
+    }
+  }
   await fetchMoreRepositories();
   repositoryItems.value = repositoryData.value;
   searchedRepositories.value = repositoryData.value;
@@ -171,7 +187,7 @@ onUnmounted(() => {
           Browse Projects by {{organization.name}} ({{organization.acronym}})
         </p>
         <p class="d-flex align-center">
-          <VBtnPrimaryFilled :to="{ name: 'new-repository-my'}" height="40px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+          <VBtnPrimaryFilled v-if="organization.is_member && user" :to="{ name: 'new-repository-my'}" height="40px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
             <PhPlus size="16" class="mr-2"/>
             New Project
           </VBtnPrimaryFilled>
@@ -205,7 +221,13 @@ onUnmounted(() => {
             <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
           </div>
         </div>
-        <p v-else class="d-flex align-center justify-center"><PhInfo class="mr-1"/>No Projects Found</p>
+        <EmptyStateInfo
+            v-else
+            header="No Projects Found"
+            description="We couldn't find any projects at the moment."
+            :isCallbackNeeded="searchQuery !== ''"
+            @callback="searchQuery = ''"
+        />
       </div>
     </div>
   </OrganizationDetailsLayout>

@@ -21,7 +21,6 @@ import {useFilterStore} from "../stores/filters.store.ts";
   const {fetchSectors} = useSectorServices()
   const mapContainer = shallowRef<HTMLDivElement | null>(null);
 
-
   const bounds: [number, number, number, number] = [
     120.5, 4.0,
     128.5, 10.0
@@ -66,10 +65,6 @@ import {useFilterStore} from "../stores/filters.store.ts";
       setupBoundaries(allSectors.value, 'Sector');
       loadRandomCoordinates(boundaries);
     })
-
-
-
-
   });
 
   onBeforeMount(() => {
@@ -81,12 +76,10 @@ import {useFilterStore} from "../stores/filters.store.ts";
     clickedBoundary.value = '';
   })
 
-
-
-
 </script>
 
 <template>
+
   <transition name="fade">
     <SectorDetailsSidebar/>
   </transition>

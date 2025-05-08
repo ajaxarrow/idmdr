@@ -10,6 +10,9 @@ import {useOrganizationMembersServices} from "../../organization/services/organi
 import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
 import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
+import {useCustomUsersServices} from "./custom-users.services.ts";
+
 
 
 const { userData, user } = useUserStore();
@@ -18,10 +21,11 @@ const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker();
 const { repository, myRepositories, allRepositories, orgRepositories} = useRepositoryStore();
 const {fetchOrgMembers} = useOrganizationMembersServices()
+const {mapCustomUsers} = useCustomUsersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
 const {addSector} = useSectorServices()
-
 const {stringToArray} = useStringArrayHelper()
+const {compareDateStrings} = useDateHelper()
 
 export const useRepositoryServices = () => {
   const errorMessageInitialState = reactive({
@@ -156,8 +160,8 @@ export const useRepositoryServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = '/my-repositories';
-        }, 3000);
+          window.location.href = '/repositories';
+        }, 1000);
 
       } else if(type == 'update'){
         // @ts-ignore
@@ -179,8 +183,8 @@ export const useRepositoryServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-repositories/${id}`;
-        }, 3000);
+          window.location.href = `/repositories/${id}`;
+        }, 1000);
       }
     } catch (e: any){
       console.log(e)
@@ -238,19 +242,15 @@ export const useRepositoryServices = () => {
     await saveRepository(repository, `/repositories/${id}`, 'update', id)
   }
 
-  const deleteRepository = async (id: string) => {
+  const changeRepositoryVisibility = async (id: string, visibility: number) => {
     try {
       await server.patch(`/repositories/${id}`, {
-        is_deleted: true
-      },{
+        visibility: visibility
+      }, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
-      await localStorage.setItem('snackbarmessage', JSON.stringify({
-        message: 'Repository deleted successfully',
-        status: 'success'
-      }))
       // console.log(res.data);
     } catch (e: any) {
       console.log(e.response?.data);
@@ -258,63 +258,126 @@ export const useRepositoryServices = () => {
     }
   }
 
-  const mapRepoData = async (rawData: any, type: string = 'create'): Promise<Repository[]> => {
-    return Promise.all(
-      rawData.map(async (repo: any) => {
-        const attachments = await fetchAttachmentsByRepository(repo.uid, type)
-        return {
-          is_member: false,
-          visibility: repo.visibility,
-          affiliation: repo.affiliation ? stringToArray(repo.affiliation) : "",
-          commodity: repo.commodity ? stringToArray(repo.commodity) : "",
-          description: repo.description || "",
-          end_date: repo.end_date || "",
-          funding_agency: repo.funding_agency ? stringToArray(repo.funding_agency) : "",
-          industry: repo.industry ? stringToArray(repo.industry) : "",
-          is_active: repo.is_active,
-          is_approved: repo.is_approved,
-          type: repo.type || "",
-          is_deleted: repo.is_deleted,
-          location: repo.location || "",
-          organization: repo.organization || "",
-          priority_level: repo.priority_level || "",
-          project_component: repo.project_component || "",
-          rpt: repo.rpt || "",
-          slug: repo.uid || "",
-          start_date: repo.start_date || "",
-          tags: repo.tags ? stringToArray(repo.tags) : "",
-          tech_owner: repo.tech_owner || "",
-          technology_category: repo.technology_category || '',
-          technology_generator: repo.technology_generator || "",
-          technology_readiness_level: repo.technology_readiness_level || '',
-          technology_status: repo.technology_status || "",
-          technology_transfer_status: repo.technology_transfer_status || "",
-          title: repo.title || "",
-          transfer_plan: repo.transfer_plan || "",
-          uid: repo.uid || "",
-          adaptors: repo.adaptors || "",
-          geojson: isEmptyObject(repo.geojson) ? {} : repo.geojson,
-          com_extra: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
-          commercialization: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
-          image: repo.image ? repo.image : 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
-          created_at: repo.created_at || "",
-          updated_at: repo.updated_at || "",
-          owner_id: repo.owner_id || "",
-          owner_data: repo.owner_data || {},
-          org_data: repo.org_data || {},
-          files: attachments,
-          author: repo.author || "",
-          lead: repo.lead || "",
-          proj_type: repo.proj_type || "",
-          additional_info: repo.additional_info || "",
-          status: repo.status || "",
-          abh: repo.abh || "",
-          atbi: repo.atbi || "",
-          is_patentable: repo.is_patentable || false,
-        };
-      })
-    );
+  const manageRepositoryStatus = async (id: string, isActive: boolean) => {
+    try {
+      if (userData.is_superuser) {
+        await server.patch(`/repositories/${id}`, {
+          is_approved: true,
+          is_active: isActive
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken}`
+          }
+        });
+      } else {
+        await server.patch(`/repositories/${id}`, {
+          is_active: isActive
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userData.accessToken}`
+          }
+        });
+      }
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
+  const manageRepositoryAdminStatus = async (id: string, isEnabled: boolean) => {
+    try {
+      await server.patch(`/repositories/${id}`, {
+        is_approved: isEnabled
+      }, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
+
+  const mapRepoFields = async (repo: any, type: string, isAssociatedDataIncluded: boolean): Promise<Repository> => {
+    const baseData = {
+      is_member: false,
+      visibility: repo.visibility,
+      affiliation: repo.affiliation ? stringToArray(repo.affiliation) : "",
+      commodity: repo.commodity ? stringToArray(repo.commodity) : "",
+      description: repo.description || "",
+      end_date: repo.end_date || "N/A",
+      funding_agency: repo.funding_agency ? stringToArray(repo.funding_agency) : "",
+      industry: repo.industry ? stringToArray(repo.industry) : "",
+      is_active: repo.is_active,
+      is_approved: repo.is_approved,
+      type: repo.type || "",
+      is_deleted: repo.is_deleted,
+      location: repo.location || "",
+      organization: repo.organization || "",
+      priority_level: repo.priority_level || "",
+      project_component: repo.project_component || "",
+      rpt: repo.rpt ? stringToArray(repo.rpt) : "",
+      slug: repo.uid || "",
+      start_date: repo.start_date || "N/A",
+      tags: repo.tags ? stringToArray(repo.tags) : "",
+      tech_owner: repo.tech_owner || "",
+      technology_category: repo.technology_category || '',
+      technology_generator: repo.technology_generator || "",
+      technology_readiness_level: repo.technology_readiness_level || '',
+      technology_status: repo.technology_status || "",
+      technology_transfer_status: repo.technology_transfer_status || "",
+      title: repo.title || "",
+      transfer_plan: repo.transfer_plan || "",
+      uid: repo.uid || "",
+      adaptors: repo.adaptors ? stringToArray(repo.adaptors) : "",
+      geojson: isEmptyObject(repo.geojson) ? {} : repo.geojson,
+      com_extra: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
+      commercialization: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
+      image: repo.image || 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
+      created_at: repo.created_at || "",
+      updated_at: repo.updated_at || "",
+      owner_id: repo.owner_id || "",
+      owner_data: repo.owner_data || {},
+      org_data: repo.org_data || {},
+      author: repo.author || "",
+      lead: repo.lead,
+      proj_type: repo.proj_type || "",
+      additional_info: repo.additional_info || "",
+      status: repo.status || "",
+      abh: repo.abh || "",
+      atbi: repo.atbi || "",
+      is_patentable: repo.is_patentable || false,
+    };
+
+    if (!isAssociatedDataIncluded) return baseData;
+
+    const [authors, techOwners, techGenerators, lead, attachments] = await Promise.all([
+      mapCustomUsers(JSON.parse(repo.author).data),
+      mapCustomUsers(JSON.parse(repo.tech_owner).data),
+      mapCustomUsers(JSON.parse(repo.technology_generator).data),
+      mapCustomUsers(isEmptyObject(repo.lead) ? [] : [JSON.parse(repo.lead)]),
+      fetchAttachmentsByRepository(repo.uid, type)
+    ]);
+
+    return {
+      ...baseData,
+      techOwnerData: techOwners,
+      techGeneratorData: techGenerators,
+      authorsData: authors,
+      leadData: lead[0] || {},
+      files: attachments
+    };
   };
+
+  const mapRepoData = async (
+      rawData: any[],
+      type: string = 'create',
+      isAssociatedDataIncluded: boolean = false
+  ): Promise<Repository[]> => {
+    return Promise.all(rawData.map(repo => mapRepoFields(repo, type, isAssociatedDataIncluded)));
+  };
+
 
 
   const filterRepositoriesBySearchQuery = async (searchQuery: string, repositoryData: Repository[]) : Promise<Repository[]> => {
@@ -324,6 +387,20 @@ export const useRepositoryServices = () => {
       return repositoryData
     }
   };
+
+  const fetchRepositoryVisibility = async (id: string) : Promise<number> => {
+    try {
+      const res = await server.get(`/repositories/${id}`, {
+        headers: authorizationHeader
+      });
+
+      return res.data.visibility
+    } catch (e: any) {
+      console.log(e)
+      return 1;
+
+    }
+  }
 
   const filterRepositoriesbyTags = (repositoryList: Repository[], repositoryData: Repository[], selectedTags: string[]) : Repository[] => {
     if (selectedTags.length > 0) {
@@ -355,30 +432,8 @@ export const useRepositoryServices = () => {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
-
-      const rawData = res.data.results;
-
-      // const filteredData = rawData.filter(async (data: any) => {
-      //   if (isForUser) {
-      //     // For user-specific filtering
-      //     if (data.repo.visibility === 2) {
-      //       return data.repo.user === userData.uid;
-      //     }
-      //     return true;
-      //   } else {
-      //     if (user.value) {
-      //       const userRepo = await fetchRepositoriesByUser(userData.uid);
-      //       const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
-      //       //this part
-      //       return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong;
-      //     } else {
-      //       return data.repo.visibility === 1;
-      //     }
-      //   }
-      // }).map((data: any) => data.repo);
-      //
-      // const repositories: Repository[] = await mapRepoData(filteredData);
-
+      const rawData = res.data.results.filter((data: any) => !data.repo.is_deleted && data.repo.is_approved);
+      const userRepo = (await fetchRepositoriesByUser()).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const filteredData = await Promise.all(
         rawData.map(async (data: any) => {
           if (isForUser) {
@@ -388,10 +443,12 @@ export const useRepositoryServices = () => {
             return data;
           } else {
             if (user.value) {
-              const userRepo = await fetchRepositoriesByUser();
+              if (data.repo.visibility === 2) {
+
+              }
               const isBelong = userRepo.some((repo: Repository) => repo.uid === data.repo.uid);
-              //this part
-              return (data.repo.visibility === 1 || data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong ? data : null;
+              return ( (data.repo.visibility === 3 || data.repo.visibility === 4) && isBelong )|| (data.repo.visibility === 1 && data.repo.is_active) ? data : null;
+
             } else {
               return data.repo.visibility === 1 ? data : null;
             }
@@ -399,14 +456,13 @@ export const useRepositoryServices = () => {
         })
       );
 
-// Filter out the null values
+      // Filter out the null values
       const validData = filteredData.filter((data) => data !== null);
 
-// Map the valid data
+    // Map the valid data
       const repositories: Repository[] = await mapRepoData(validData.map((data: any) => data.repo));
 
-
-      const data = [...repositories].filter(repo => !repo.is_deleted);
+      let data = [...repositories].filter(repo => !repo.is_deleted).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       orgRepositories.value = data;
       return data;
 
@@ -415,6 +471,62 @@ export const useRepositoryServices = () => {
       return [];
     }
   };
+
+  const fetchAllRepositories = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      priorityLevel?: string,
+      organization?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+      type?: string,
+      status?: string,
+  ): Promise<Repository[]> => {
+    try {
+      let url = `/repositories/?page=${pageNumber}&page_size=${pageSize}`;
+
+      if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+      }
+      if (priorityLevel) {
+        url += `&priority_level=${encodeURIComponent(priorityLevel.toLowerCase())}`;
+      }
+      if (organization?.trim()) {
+        url += `&organization=${encodeURIComponent(organization)}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      if (type?.trim()) {
+        url += `&type=${encodeURIComponent(type)}`;
+      }
+      if (status?.trim()) {
+        url += `&status=${encodeURIComponent(status)}`;
+      }
+
+      const res = await server.get(url, {
+        headers: { 'Authorization': `Bearer ${userData.accessToken}` }
+      });
+
+      const rawData = res.data.results;
+
+      let repositories: Repository[] = await mapRepoData(
+          rawData.filter((repo: any) => !repo.is_deleted)
+      );
+
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      const data = [...repositories];
+      myRepositories.value = data;
+      return data;
+    } catch (e) {
+      return [];
+    }
+  };
+
 
 
 
@@ -426,8 +538,8 @@ export const useRepositoryServices = () => {
         }
       });
       const rawData = res.data.results;
-      const repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
-
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data
       return data;
@@ -445,8 +557,8 @@ export const useRepositoryServices = () => {
         }
       });
       const rawData = res.data.results;
-      const repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted));
-
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data
       return data;
@@ -454,6 +566,68 @@ export const useRepositoryServices = () => {
       return []
     }
   }
+
+  const fetchRepositoryIDsByUser = async (
+      pageSize: number = 100,
+      user: boolean = true,
+      searchQuery?: string,
+      priorityLevel?: string,
+      organization?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+      type?: string,
+      status?: string,
+  ): Promise<Repository[]> => {
+    try {
+      // Start with the base URL based on whether user filtering is enabled
+      let url = user
+          ? `/repositories/?page=1&page_size=${pageSize}&user=${userData.uid}`
+          : `/repositories/?page=1&page_size=${pageSize}`;
+
+      // Append search parameter if provided
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+
+      // Append priority_level parameter if provided
+      if (priorityLevel && priorityLevel.trim()) {
+        url += `&priority_level=${encodeURIComponent(priorityLevel.trim().toLowerCase())}`;
+      }
+      if (organization?.trim()) {
+        url += `&organization=${encodeURIComponent(organization)}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      if (type?.trim()) {
+        url += `&type=${encodeURIComponent(type)}`;
+      }
+      if (status?.trim()) {
+        url += `&status=${encodeURIComponent(status)}`;
+      }
+      const res = await server.get(url, {
+        headers: { 'Authorization': `Bearer ${userData.accessToken}` }
+      });
+
+      const rawData = user ? res.data.results.filter((repo: any) => !repo.is_deleted && repo.is_approved) : res.data.results.filter((repo: any) => !repo.is_deleted);
+      const repositories: Repository[] = rawData.map((repo: any) => ({
+        slug: repo.uid,
+        type: repo.type,
+        title: repo.title,
+        image: repo.image
+      }));
+
+      myRepositories.value = [...repositories];
+      return repositories;
+    } catch (e) {
+      return [];
+    }
+  };
+
+
 
   const fetchRepositoriesWithPagination = async (pageNumber: number, isForIPT: boolean = false): Promise<Repository[]> => {
     try{
@@ -469,6 +643,7 @@ export const useRepositoryServices = () => {
       } else {
         data = await fetchPaginatedRepositories(pageNumber, [1])
       }
+      data.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       return isForIPT ? data.filter(repo => repo.type == 'Project Repository') : data;
     } catch (e) {
       return []
@@ -485,8 +660,9 @@ export const useRepositoryServices = () => {
         return await mapRepoData(res.data.results);
       });
 
-      const results = await Promise.all(promises);
-      return results.flat().filter(repo => !repo.is_deleted);
+      let results = await Promise.all(promises);
+
+      return results.flat().filter(repo => !repo.is_deleted && repo.is_active && repo.is_approved).sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
     } catch (e) {
       return []
     }
@@ -498,17 +674,20 @@ export const useRepositoryServices = () => {
       if(user.value){
         const visibilityData = await fetchRepositoriesByVisibility([1, 4], pageSize);
         const userRepo = await fetchRepositoriesByUser(pageSize);
-        let combinedData = [...visibilityData.flat(), ...userRepo];
+
+        const filteredVisibilityData = visibilityData.flat().filter((repo: any) => repo.is_active && repo.is_approved);
+        let combinedData = [...filteredVisibilityData, ...userRepo];
         const uniqueData = Array.from(new Set(combinedData.map(repo => repo.slug)))
           .map(slug => combinedData.find(repo => repo.slug === slug));
         // @ts-ignore
         data = uniqueData ;
       } else {
         const visibilityData = await fetchRepositoriesByVisibility([1]);
-        data = visibilityData[0];
+        data = visibilityData[0].filter((repo: any) => repo.is_active && repo.is_approved);
       }
-      allRepositories.value = data.filter(repo => !repo.is_deleted);
-      return data.filter(repo => !repo.is_deleted);
+      data.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      allRepositories.value = data.filter(repo => !repo.is_deleted && repo.is_approved);
+      return data.filter(repo => !repo.is_deleted && repo.is_approved);
     } catch (e) {
       return []
     }
@@ -553,7 +732,7 @@ export const useRepositoryServices = () => {
         headers: authorizationHeader
       });
       const rawData = [res.data];
-      const repositoryList = await mapRepoData(rawData, type);
+      const repositoryList = await mapRepoData(rawData, type, true);
       if (repositoryList) {
         repository.value = repositoryList[0];
         return repositoryList[0];
@@ -568,15 +747,14 @@ export const useRepositoryServices = () => {
   };
 
 
-
-
   return {
     filterRepositoriesBySearchQuery,
     filterRepositoriesbyTags,
     fetchRepositoriesByOrganization,
     addRepository,
     updateRepository,
-    deleteRepository,
+    manageRepositoryStatus,
+    manageRepositoryAdminStatus,
     errorMessage,
     clearErrorMessage,
     hasErrorMessages,
@@ -586,6 +764,10 @@ export const useRepositoryServices = () => {
     fetchRepositoriesWithPagination,
     fetchRepositoriesByUser,
     fetchRepositoriesByUserWithPagination,
+    fetchRepositoryIDsByUser,
+    changeRepositoryVisibility,
+    fetchRepositoryVisibility,
+    fetchAllRepositories,
   }
 
 }

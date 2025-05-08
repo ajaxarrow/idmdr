@@ -42,10 +42,16 @@ const publicRoutes = [
         component: () => import('../../modules/public/views/ContactsView.vue')
     },
     {
-        path: '/linnks',
-        name: 'linnks',
+        path: '/kmhub',
+        name: 'kmhub',
         // @ts-ignore
         component: () => import('../../modules/public/views/LINNKSView.vue')
+    },
+    {
+        path: '/directors',
+        name: 'directors',
+        // @ts-ignore
+        component: () => import('../../modules/public/views/Directors.vue')
     },
     {
         path: '/cmis',
@@ -55,13 +61,43 @@ const publicRoutes = [
     },
     {
         path: '/cmis/:slug',
-        name: 'cmi-details',
+        name: 'cmi-data',
         // @ts-ignore
-        component: () => import('../../modules/public/views/CMIDetailsView.vue')
+        component: () => import('../../modules/organization/views/OrganizationDetailsAboutView.vue')
     },
     {
-        path: '/about-linnks',
-        name: 'about-linnks',
+        path: '/cmis/:slug/events',
+        name: 'cmi-events',
+        // @ts-ignore
+        component: () => import('../../modules/organization/views/OrganizationDetailsEventsView.vue'),
+    },
+    {
+        path: '/cmis/:slug/repositories',
+        name: 'cmi-repositories',
+        // @ts-ignore
+        component: () => import('../../modules/organization/views/OrganizationDetailsRepositoryView.vue'),
+    },
+    {
+        path: '/cmis/:slug/experts',
+        name: 'cmi-experts',
+        // @ts-ignore
+        component: () => import('../../modules/organization/views/OrganizationDetailsExpertsView.vue'),
+    },
+    {
+        path: '/cmis/:slug/posts',
+        name: 'cmi-posts',
+        // @ts-ignore
+        component: () => import('../../modules/organization/views/OrganizationDetailsPostView.vue'),
+    },
+    {
+        path: '/cmis/:slug/reports',
+        name: 'cmi-reports',
+        // @ts-ignore
+        component: () => import('../../modules/organization/views/OrganizationDetailsReportsView.vue'),
+    },
+    {
+        path: '/about-kmhub',
+        name: 'about-kmhub',
         // @ts-ignore
         component: () => import('../../modules/public/views/AboutLINNKSView.vue')
     },

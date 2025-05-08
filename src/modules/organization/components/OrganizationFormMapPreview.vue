@@ -5,6 +5,11 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf'
 import {v4 as uuidv4} from "uuid";
+import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
+import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
+import * as maplibregl from 'maplibre-gl';
+import {geocoderApi} from "../../sector/utils/geocoder.utils.ts";
+
 
 const emit = defineEmits(['setGeoJSONData', 'closeMapPreview'])
 const props = defineProps({
@@ -160,7 +165,12 @@ onMounted(() => {
         })
     );
   }
-
+  map.value?.addControl(
+      // @ts-ignore
+      new MaplibreGeocoder(geocoderApi, {
+        // @ts-ignore
+        maplibregl: maplibregl
+      }));
   //@ts-ignore
   map.value.addControl(new NavigationControl(), 'bottom-right');
 
@@ -281,7 +291,5 @@ button{
 .convert-button:hover {
   background-color: #006973; /* Darker teal */
 }
-
-
 
 </style>

@@ -5,14 +5,15 @@ import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
 import {Organization} from "../../interfaces/organization.interface.ts";
 import {onMounted} from "vue";
-import NotFound from "../../assets/images/404.svg";
 import {useScreenStore} from "../stores/screen-size.store.ts";
-import {PhArrowLeft} from "@phosphor-icons/vue";
 import {useUserStore} from "../stores/user.store.ts";
 import {useOrganizationServices} from "../../modules/organization/services/organization.services.ts";
+import Navbar from "../../modules/public/components/Landing/Navbar.vue";
+import Footer from "../../modules/public/components/Footer.vue";
+import OrganizationLayoutHeaderContent from "../../modules/organization/components/OrganizationLayoutHeaderContent.vue";
 
-const {user} = useUserStore();
-const {fetchOrganizationByUser} = useOrganizationServices()
+const {user, userData} = useUserStore();
+const {fetchOrganizationIDsByUser} = useOrganizationServices()
 const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
 
@@ -21,6 +22,7 @@ const pageLoading = ref(false);
 const isOrgAvailable = ref(false);
 const path = ref('organizations')
 const tab = ref("about");
+const isInPublic = ref(false);
 
 const props = defineProps({
   organization: {
@@ -35,11 +37,11 @@ const getTabs = () => {
   return [
     { name: "About" },
     { name: "Projects" },
-    ...(user.value && isMember.value ? [{ name: "Experts" }] : []),
-    ...(user.value && isMember.value ? [{ name: "Posts" }] : []),
-    ...(user.value && isMember.value ? [{ name: "Scheduled Events" }] : []),
-    ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
-    ...(user.value ? [{ name: "Settings" }] : [])
+    { name: "Experts" },
+    { name: "Posts" },
+    { name: "Scheduled Events" },
+    { name: "Reports" },
+    ...((user.value && isMember.value && !isInPublic.value) || userData.is_superuser ? [{ name: "Settings" }] : [])
   ]
 }
 
@@ -49,22 +51,35 @@ const tabs = ref(getTabs())
 // Create a computed property that maps over the tabs array
 const computedTabs = computed(() => {
   return tabs.value.map(tab => {
-    let linkName;
+    let baseName;
 
     if (tab.name === "About") {
-      linkName = path.value === 'organizations' ? 'organization-data' : 'my-organization-data';
+      baseName = 'data';
     } else if (tab.name === "Projects") {
-      linkName = path.value === 'organizations' ? 'organization-repositories' : 'my-organization-repositories';
-    } else if (tab.name === "Experts" && user.value && isMember.value) {
-      linkName = path.value === 'organizations' ? 'organization-experts' : 'my-organization-experts';
-    } else if (tab.name === "Posts" && user.value && isMember.value) {
-      linkName = path.value === 'organizations' ? 'organization-posts' : 'my-organization-posts';
-    } else if (tab.name === "Scheduled Events" && user.value && isMember.value) {
-      linkName = path.value === 'organizations' ? 'organization-events' : 'my-organization-events';
-    } else if (tab.name === "Reports" && user.value && isMember.value) {
-      linkName = path.value === 'organizations' ? 'organization-reports' : 'my-organization-reports';
+      baseName = 'repositories';
+    } else if (tab.name === "Experts") {
+      baseName = 'experts';
+    } else if (tab.name === "Posts") {
+      baseName = 'posts';
+    } else if (tab.name === "Scheduled Events") {
+      baseName = 'events';
+    } else if (tab.name === "Reports") {
+      baseName = 'reports';
     } else if (tab.name === "Settings" && user.value) {
-      linkName = path.value === 'organizations' ? 'organization-settings' : 'my-organization-settings';
+      baseName = 'settings';
+    } else {
+      baseName = '';
+    }
+
+    let linkName;
+    if (baseName) {
+      if (path.value === 'cmis') {
+        linkName = `cmi-${baseName}`;
+      } else {
+        linkName = path.value === 'organizations' ? `organization-${baseName}` : `my-organization-${baseName}`;
+      }
+    } else {
+      linkName = '';
     }
 
     return {
@@ -73,6 +88,8 @@ const computedTabs = computed(() => {
     };
   });
 });
+
+
 
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
   return orgList.some(org => org.uid === organization?.uid);
@@ -89,16 +106,22 @@ const navigateTo = (linkName: string) => {
 }
 
 const initialize = async () => {
-  pageLoading.value = true;
-  const allUserOrg = await fetchOrganizationByUser();
+  pageLoading.value = true; // Set first, before any other operations
+
+  path.value = getFirstPath(<string>route.path);
+  if (path.value === 'cmis') {
+    isInPublic.value = true;
+  }
+
+  const allUserOrg = await fetchOrganizationIDsByUser();
 
   if (props.organization?.visibility === 1 || props.organization?.visibility === 4) {
     isOrgAvailable.value = true;
   } else {
-    isOrgAvailable.value = isSlugInOrgList(props.organization, allUserOrg);
+    isOrgAvailable.value = userData.is_superuser ? true : isSlugInOrgList(props.organization, allUserOrg);
   }
 
-  if(isSlugInOrgList(props.organization, allUserOrg)){
+  if(isSlugInOrgList(props.organization, allUserOrg) || userData.is_superuser){
     isMember.value = true
     tabs.value = getTabs()
   }
@@ -107,11 +130,15 @@ const initialize = async () => {
     tab.value = props.activeTab;
   }
 
-  path.value = getFirstPath(<string>route.path);
-  pageLoading.value = false;
+  pageLoading.value = false; // Set to false only at the very end
 };
 
 onMounted(() => {
+  path.value = getFirstPath(<string>route.path);
+  if (path.value === 'cmis') {
+    isInPublic.value = true;
+  }
+  pageLoading.value = true;
   if (props.organization) {
     initialize();
   } else {
@@ -127,120 +154,53 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout title="Consortium Member Institution Details">
-    <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
-      <VProgressCircular
-          indeterminate
-          color="#23668b"
-      ></VProgressCircular>
-    </div>
-    <div v-else>
-      <div v-if="organization && isOrgAvailable" style="height: 100%" class="relative-container circle">
-        <div class="pa-6 relative-container" style="z-index: 20;">
-          <div class="d-flex">
-            <RouterLink
-                :to="{
-          name: path == 'organizations' ?  'organizations' : 'my-organizations'
-        }"
-                class="text-decoration-none text-none">
-              <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
-                <PhArrowLeft size="14" class="mr-1"/>
-                Back To {{path == 'organizations' ?  'Consortium Member Institutions' : 'My Consortium Member Institutions'}}
-              </p>
-            </RouterLink>
+    <VLayout v-if="isInPublic" title="Consortium Member Institution Details">
+      <div style="width: 100%">
+        <Navbar />
+        <VContainer fluid>
+          <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
+            <VProgressCircular
+                indeterminate
+                color="#23668b"
+            ></VProgressCircular>
           </div>
-          <VRow justify="space-between" align="center" class="ma-0">
-            <VCol md="9" class="pa-0">
-              <div>
-                <p class="text-repository-heading d-flex align-center">
-                  {{organization.name}} ({{organization.acronym}})
-                </p>
-                <p class="text-subtitle">{{ organization.president }}</p>
-                <p class="text-subtitle text-gs20">{{organization.tel_phone}} <span v-if="organization?.tel_phone">|</span> {{organization.phone}} <span v-if="organization?.email">|</span> {{organization.email}}</p>
-              </div>
-            </VCol>
-            <VCol md="3" class="pa-0" v-if="!isSmall">
-              <VRow class="ma-0" justify="end">
-                <VImg
-                    style="border-radius: 15px"
-                    cover
-                    height="125px"
-                    width="250px"
-                    :src="organization?.image ? organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
-                />
-              </VRow>
-            </VCol>
-          </VRow>
-        </div>
-        <VTabs
-            class="mx-6"
-            color="primary"
-            v-model="tab"
-        >
-          <VTab
-              v-for="tab in computedTabs"
-              class="tab-title text-none mx-2"
-              :value="tab.name.toLowerCase()"
-              @click="navigateTo(<string>tab.linkName)"
+          <OrganizationLayoutHeaderContent
+            v-else
+            :organization="organization"
+            :pageLoading="pageLoading"
+          :isOrgAvailable="isOrgAvailable"
+          :path="path"
+          :tab="tab"
+          :isSmall="isSmall"
+          :computedTabs="computedTabs"
+          :navigateTo="navigateTo"
           >
-            {{tab.name}}
-          </VTab>
-        </VTabs>
+          <slot/>
+          </OrganizationLayoutHeaderContent>
+        </VContainer>
         <VDivider/>
-        <slot/>
+        <Footer/>
       </div>
-      <div v-else style="height: 100%">
-        <div style="height:60vh" class="d-flex flex-column justify-center align-center">
-          <VImg
-              :src="NotFound"
-              width="400px"
-          />
-          <p class="text-h4 font-weight-black">Organization Not Found</p>
-        </div>
+    </VLayout>
+    <MainLayout v-else>
+      <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
+        <VProgressCircular
+            indeterminate
+            color="#23668b"
+        ></VProgressCircular>
       </div>
-    </div>
-  </MainLayout>
+      <OrganizationLayoutHeaderContent
+        v-else
+        :organization="organization"
+        :pageLoading="pageLoading"
+        :isOrgAvailable="isOrgAvailable"
+        :path="path"
+        :tab="tab"
+        :isSmall="isSmall"
+        :computedTabs="computedTabs"
+        :navigateTo="navigateTo"
+      >
+      <slot/>
+      </OrganizationLayoutHeaderContent>
+    </MainLayout>
 </template>
-
-<style scoped>
-.text-repository-heading{
-  font-weight: 900;
-  font-size: 22px;
-}
-
-.circle::after {
-  content: '';
-  position: absolute;
-  left: -212px;
-  top: -453px;
-  width: 810px;
-  height: 660px;
-  border-radius: 50%;
-  background: #DEF1FB;
-  z-index: 1;
-  opacity: 75%;
-}
-
-.v-tab.v-tab.v-btn{
-  min-width: 40px;
-}
-
-.v-tab{
-  font-size: 16px;
-  letter-spacing: .7px;
-}
-
-@media (max-width: 960px) {
-  .circle::after {
-    top: -490px;
-  }
-}
-
-.back-button{
-  font-size: 14px;
-}
-.back-button:hover{
-  border-radius: 8px;
-  background-color: #d3e6ef;
-}
-</style>

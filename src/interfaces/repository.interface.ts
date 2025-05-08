@@ -1,5 +1,5 @@
 import {Organization} from "./organization.interface.ts";
-import {User} from "./member.interface.ts";
+import {CustomUserData, User} from "./member.interface.ts";
 
 interface Repository {
   type?: string,
@@ -15,21 +15,23 @@ interface Repository {
   technology_category: string,
   technology_status: string,
   technology_readiness_level: string,
-  rpt: string,
+  rpt: string | string[],
   funding_agency: string | string[],
   transfer_plan: string,
   technology_transfer_status: string,
   technology_generator: string,
+  techGeneratorData?: CustomUserData[],
   project_component: string,
   com_extra: Object |string,
   commercialization?: Commercialization,
-  adaptors: string,
+  adaptors: string | string[],
   location: string,
   affiliation: string | string[],
   tags: string | string[],
   start_date: string,
   end_date: string,
   tech_owner: string,
+  techOwnerData?: CustomUserData[],
   organization: string | null,
   priority_level: string,
   is_deleted: boolean,
@@ -41,7 +43,9 @@ interface Repository {
   updated_at?: string,
   owner_id?: string,
   author?: string,
+  authorsData?: CustomUserData[],
   lead?: string,
+  leadData?: CustomUserData,
   proj_type?: string,
   additional_info?: string,
   status?: string,

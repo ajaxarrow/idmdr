@@ -57,12 +57,7 @@ onUpdated(async()=>{
             <IconMenuDeep @click="toggleProfileSidebar" class="cursor-pointer" />
           </transition>
           <VRow align="center" v-else>
-<!--            <p class="text-org d-flex align-center mx-2">-->
-<!--              My Organization-->
-<!--              <PhCaretDown size="18" class="ml-2"/>-->
-<!--            </p>-->
-<!--            <PhMagnifyingGlass size="24" class="mx-4"/>-->
-            <RouterLink v-if="user" :to="{name: 'notifications'}" class="text-decoration-none">
+            <RouterLink v-if="user && userData.is_approved" :to="{name: 'notifications'}" class="text-decoration-none">
               <VBadge v-if="isUnread" color="#b00020" dot>
                 <PhBell size="24" class="icon-bell" color="#000000"/>
               </VBadge>
@@ -70,20 +65,10 @@ onUpdated(async()=>{
             </RouterLink>
             <VDivider class="mx-4 my-1" vertical/>
             <div class="mr-2">
-              <p class="text-name text-container mb-1">{{userData.username}}</p>
-              <p class="text-right text-name-subtitle">{{ userData.email }}</p>
+              <p class="text-name text-container mb-1">{{userData.firstName}} {{userData.lastName}}</p>
+              <p class="text-right text-name-subtitle">{{ userData.is_superuser ? 'Super Admin' : userData.email }}</p>
             </div>
             <UserAvatarMenu/>
-<!--            <VAvatar-->
-<!--                size="45"-->
-<!--                class="ml-1 cursor-pointer"-->
-<!--            >-->
-<!--              <VImg :src="userData.profilePicture"></VImg>-->
-<!--              <VTooltip-->
-<!--                  activator="parent"-->
-<!--                  location="bottom"-->
-<!--              >Account</VTooltip>-->
-<!--            </VAvatar>-->
           </VRow>
         </VCol>
       </VRow>

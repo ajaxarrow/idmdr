@@ -14,5 +14,6 @@ services:
         VITE_GOOGLE_OAUTH_CLIENT_ID: ${VITE_GOOGLE_OAUTH_CLIENT_ID}
         VITE_GOOGLE_OAUTH_CLIENT_SECRET: ${VITE_GOOGLE_OAUTH_CLIENT_SECRET}
     ports:
-      - "8006:8006"
+      - "80:80"
+
     restart: unless-stopped

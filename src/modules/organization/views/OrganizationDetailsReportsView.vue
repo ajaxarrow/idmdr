@@ -8,9 +8,9 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import OrgRepoCharts from "../components/Reports/OrgRepoCharts.vue";
 
 
-const {route, router} = useRouting()
+const {route} = useRouting()
 const {organization} = useOrganizationStore();
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const loading = ref(false)
 const path = ref('organizations')
 
@@ -27,7 +27,7 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
 
 onMounted(async () => {
   loading.value = true
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   path.value = getFirstPath(<string>route.path)
   await fetchOrganizationData(route.params.slug as string);
 
@@ -36,13 +36,6 @@ onMounted(async () => {
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
   loading.value = false

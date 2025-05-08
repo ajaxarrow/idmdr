@@ -5,7 +5,6 @@
   import Logo from "../../../core/components/Logo.vue";
 
   const {isMobile} = useScreenStore();
-
 </script>
 
 <template>
@@ -13,14 +12,13 @@
     <AuthCardContent/>
   </VContainer>
   <Container class="center" v-else>
-
     <VSheet
         border="md"
         class="mx-auto rounded-xl circle-quarter relative-container"
         color="white"
-        max-width="400"
+        :max-width="400"
         width="400"
-        height="520"
+        height="600"
     >
       <AuthCardContent/>
       <Logo class="logo"/>

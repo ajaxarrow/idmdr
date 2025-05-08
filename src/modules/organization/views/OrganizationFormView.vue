@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {onMounted, reactive, ref} from "vue";
-import {PhArrowLeft, PhEye, PhFileDashed, PhFileImage, PhPolygon, PhX} from "@phosphor-icons/vue";
+import {onMounted, reactive, ref, watch} from "vue";
+import {
+  PhArrowLeft,
+  PhEye,
+  PhFile,
+  PhFileDashed,
+  PhFileImage,
+  PhImage,
+  PhPolygon,
+  PhTrash,
+  PhX
+} from "@phosphor-icons/vue";
 import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vue";
-import {Organization} from "../../../interfaces/organization.interface.ts";
+import {Organization, OrganizationAttachment} from "../../../interfaces/organization.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
@@ -12,13 +22,26 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
+import DeleteDialog from "../../../core/components/DeleteDialog.vue";
+import AttachmentsVisibilityInfoDialog from "../../repository/components/AttachmentsVisibilityInfoDialog.vue";
+import {useOrganizationAttachmentServices} from "../services/organization-attachments.services.ts";
+import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const path = ref('organizations')
 const organizationForm = ref(null);
 const formType = ref<FormType>(FormType.create);
 const {organization} = useOrganizationStore();
-const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading} = useOrganizationServices();
+const {userData} = useUserStore()
+const {addOrganization, updateOrganization, errorMessage, hasErrorMessages, fetchOrganizationData, loading, fetchOrganizationIDsByUser} = useOrganizationServices();
+const {showSnackbarMessage} = useSnackbarStore();
+const {fetchAttachmentsByOrganization, deleteAttachment} = useOrganizationAttachmentServices()
+const {fetchCustomUsers} = useRepositoryMemberServices();
+const pageLoading = ref(false);
 const isMapPreview= ref(false);
 const isGeoJSONDrawn = ref(true);
 const isGeoJSONPreview = ref(false);
@@ -27,10 +50,30 @@ const isImagePreviewed = ref(false);
 const hasImage = ref(false);
 const previewImage = ref('');
 const file = ref<File | null>(null);
-
-const {route} = useRouting();
+const customUsers = ref<CustomUserData[]>([])
+const {route, router} = useRouting();
+const visibilityInfo = [
+  {
+    name: 'Public',
+    value: 1
+  },
+  {
+    name: 'Private',
+    value: 2
+  },
+  {
+    name: 'Within Organization',
+    value: 3
+  },
+  {
+    name: 'Within All Organizations',
+    value: 4
+  }
+]
 
 const organizationDataInitialState = reactive<Organization>({
+  is_active: true,
+  is_approved: true,
   name: '',
   acronym: '',
   description: ``,
@@ -47,31 +90,128 @@ const organizationDataInitialState = reactive<Organization>({
   email: '',
   additional_info: '',
   president: '',
-  rd_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
-  tt_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
-  ic_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
-  sc_rep: {
-    email: '',
-    full_name: '',
-    phone: '',
-  },
+  rd_rep: '',
+  tt_rep: '',
+  ic_rep: '',
+  sc_rep: '',
+  rd_repData: [],
+  tt_repData: [],
+  ic_repData: [],
+  sc_repData: [],
+  files: []
 });
 
 const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
+
+const attachments = ref<OrganizationAttachment[]>([])
+const attachmentData = reactive<OrganizationAttachment>({
+  organization: '',
+  attachment: '',
+  file: null,
+  file_type: '',
+  mime_type: '',
+  name: '',
+  description: '',
+  created_at: '',
+  updated_at: '',
+  is_deleted: false,
+  deleted_at: '',
+  visibility: organizationData.visibility,
+  type: 'create',
+  errorMessage: '',
+  showFiles: false,
+  isDescriptionUpdated: false,
+  isFileUpdated: false,
+  isNameUpdated: false
+})
+
+const rd_repRef = ref(null);
+const tt_repRef = ref(null);
+const ic_repRef = ref(null);
+const sc_repRef = ref(null);
+
+// Reusable search query handling
+const searchQueries = {
+  rd_rep: ref(''),
+  tt_rep: ref(''),
+  ic_rep: ref(''),
+  sc_rep: ref('')
+};
+
+// Reusable function to handle search for any field
+const handleSearch = (field: string, query: any) => {
+  // @ts-ignore
+  searchQueries[field].value = query;
+};
+const active = ref(false)
+
+// Reusable function to add custom user for any field
+const addCustomUser = (field: string) => {
+  if (field === 'rd_rep' && rd_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.rd_rep.value as string,
+        first_name: searchQueries.rd_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.rd_repData?.push(newUser);
+    searchQueries.rd_rep.value = '';
+    //@ts-ignore
+    rd_repRef.value.search = '';
+  } else if (field === 'tt_rep' && tt_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.tt_rep.value as string,
+        first_name: searchQueries.tt_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.tt_repData?.push(newUser);
+    searchQueries.tt_rep.value = '';
+    //@ts-ignore
+    tt_repRef.value.search = '';
+  } else if (field === 'ic_rep' && ic_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.ic_rep.value as string,
+        first_name: searchQueries.ic_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.ic_repData?.push(newUser);
+    searchQueries.ic_rep.value = '';
+    //@ts-ignore
+    ic_repRef.value.search = '';
+    // leadRef.value.search = '';
+  } else if (field === 'sc_rep' && sc_repRef.value) {
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: searchQueries.sc_rep.value as string,
+        first_name: searchQueries.sc_rep.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    organizationData.sc_repData?.push(newUser);
+    searchQueries.sc_rep.value = '';
+    //@ts-ignore
+    sc_repRef.value.search = '';
+  }
+};
 
 const removeImage = () => {
   file.value = null;
@@ -92,6 +232,103 @@ const handleUploadChange = (e: any) => {
     hasImage.value = true;
   }
 };
+
+const toggleActive = () => {
+  active.value = !active.value
+}
+
+const removeAttachment = (index: number) => {
+  attachments.value.splice(index, 1);
+  active.value = false
+}
+
+const addAttachment = () => {
+  attachments.value.push({
+    ...attachmentData
+  })
+}
+
+const handleBulkAttachmentsUpload = (e: any) => {
+  const files = e.target?.files || e.dataTransfer?.files;
+
+  if (files && files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      attachments.value.push({
+        ...attachmentData,
+        file: files[i],
+        attachment: files[i],
+      });
+    }
+  }
+}
+
+const handleIndividualAttachmentsUpload = (e: any, index: number) => {
+  const target = e.target;
+  if (target.files && target.files[0]) {
+    if(attachments.value[index].type === 'update'){
+      attachments.value[index].isFileUpdated = true
+    }
+    attachments.value[index].file = target.files[0];
+    attachments.value[index].attachment = target.files[0];
+  }
+}
+
+watch(
+    () => attachments.value.map(attachment => attachment.description),
+    (newDescriptions, oldDescriptions) => {
+      newDescriptions.forEach((description, index) => {
+        if (oldDescriptions[index] !== undefined && description !== oldDescriptions[index] && attachments.value[index].type === 'update') {
+          attachments.value[index].isDescriptionUpdated = true
+        }
+      });
+    }
+);
+
+watch(
+    () => attachments.value.map(attachment => attachment.name),
+    (newName, oldName) => {
+      newName.forEach((name, index) => {
+        if (oldName[index] !== undefined && name !== oldName[index] && attachments.value[index].type === 'update') {
+          attachments.value[index].isNameUpdated = true
+        }
+      });
+    }
+);
+
+const validateAttachments = () => {
+  let isValid = true;
+  for (let i = 0; i < attachments.value.length; i++) {
+    if(attachments.value[i].type == 'update' && !attachments.value[i].file && attachments.value[i].attachment == ''){
+      attachments.value[i].errorMessage = 'File is required';
+      return false;
+    }
+    if(attachments.value[i].type == 'update'){
+      isValid = true;
+    } else {
+      if (!attachments.value[i].file) {
+        attachments.value[i].errorMessage = 'File is required';
+        isValid = false;
+      } else {
+        attachments.value[i].errorMessage = '';
+      }
+    }
+
+  }
+
+  return isValid;
+}
+
+const deleteAttachmentCallback = async (id: string, index: number) => {
+  await deleteAttachment(id);
+  attachments.value.splice(index, 1);
+  showSnackbarMessage('Attachment Deleted Successfully', Status.success)
+}
+
+const clearAttachment = (index: number) => {
+  attachments.value[index].file = null
+  attachments.value[index].attachment = ''
+}
+
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -117,32 +354,83 @@ const scrollToFirstErrorMessage = () => {
 }
 
 const addOrganizationData = async () => {
-  if(file.value){
-    //@ts-ignore
-    organizationData.image = file.value as File
-  } else {
-    delete organizationData.image;
-  }
-  await addOrganization(organizationData)
-  if(hasErrorMessages(errorMessage)){
-    scrollToFirstErrorMessage()
-  } else {
-    clearFields();
+  if(validateAttachments()){
+    for (let i = 0; i < attachments.value.length; i++) {
+      if (attachments.value[i].description == ''){
+        attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
+      }
+      if(attachments.value[i].type == 'create'){
+        attachments.value[i].name = attachments.value[i].file?.name!
+      }
+    }
+    if(attachments.value.length > 0){
+      organizationData.files = attachments.value
+    }
+    if(file.value){
+      //@ts-ignore
+      organizationData.image = file.value as File
+    } else {
+      delete organizationData.image;
+    }
+    organizationData.rd_rep = JSON.stringify({
+      data: organizationData.rd_repData,
+    })
+    organizationData.tt_rep = JSON.stringify({
+      data: organizationData.tt_repData,
+    })
+    organizationData.ic_rep = JSON.stringify({
+      data: organizationData.ic_repData,
+    })
+    organizationData.sc_rep = JSON.stringify({
+      data: organizationData.sc_repData,
+    })
+    await addOrganization(organizationData)
+    if(hasErrorMessages(errorMessage)){
+      scrollToFirstErrorMessage()
+    } else {
+      clearFields();
+    }
   }
 }
 
 const updateOrganizationData = async () => {
-  if(file.value){
-    //@ts-ignore
-    organizationData.image = file.value as File
-  } else {
-    delete organizationData.image;
-  }
-  await updateOrganization(organizationData, organizationData.slug)
-  if(hasErrorMessages(errorMessage)){
-    scrollToFirstErrorMessage()
-  } else {
-    clearFields();
+  if(validateAttachments()){
+    for (let i = 0; i < attachments.value.length; i++) {
+      if (attachments.value[i].description == ''){
+        attachments.value[i].description = `This is ${attachments.value[i].file?.name!}`;
+      }
+      if((!attachments.value[i].isFileUpdated && (!attachments.value[i].isDescriptionUpdated || !attachments.value[i].isNameUpdated) && attachments.value[i].type == 'updated') || (!attachments.value[i].isFileUpdated && (attachments.value[i].isDescriptionUpdated || attachments.value[i].isNameUpdated))){
+        delete attachments.value[i].attachment
+      }
+
+    }
+    if(attachments.value.length > 0){
+      organizationData.files = attachments.value
+    }
+    if(file.value){
+      //@ts-ignore
+      organizationData.image = file.value as File
+    } else {
+      delete organizationData.image;
+    }
+    organizationData.rd_rep = JSON.stringify({
+      data: organizationData.rd_repData,
+    })
+    organizationData.tt_rep = JSON.stringify({
+      data: organizationData.tt_repData,
+    })
+    organizationData.ic_rep = JSON.stringify({
+      data: organizationData.ic_repData,
+    })
+    organizationData.sc_rep = JSON.stringify({
+      data: organizationData.sc_repData,
+    })
+    await updateOrganization(organizationData, organizationData.slug)
+    if(hasErrorMessages(errorMessage)){
+      scrollToFirstErrorMessage()
+    } else {
+      clearFields();
+    }
   }
 }
 
@@ -228,20 +516,37 @@ const formatDate = (): string=> {
 }
 
 onMounted(async () => {
+  pageLoading.value = true
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
+  customUsers.value = await fetchCustomUsers();
   const type = rawSegments[1];
   path.value = getFirstPath(<string>route.path)
   if(type === 'edit') {
     await fetchOrganizationData(route.params.slug as string);
+    const allUserOrg = await fetchOrganizationIDsByUser();
+    if(!allUserOrg.some(org => org.slug === route.params.slug) && !userData.is_superuser){
+      await router.push({name: 'organizations'})
+    }
     formType.value = FormType.edit
     Object.assign(organizationData, {...organization.value});
     organizationData.geojson = JSON.stringify(organizationData.geojson)
     if(!isEmptyObject(organizationData.geojson)){
       isGeoJSONPreview.value = true
     }
+    const fetchedFiles = await fetchAttachmentsByOrganization(<string>route.params.slug, 'update')
+    for(let i = 0; i < fetchedFiles.length; i++){
+      attachments.value.push({
+        ...fetchedFiles[i],
+        file: null,
+        attachment: fetchedFiles[i].attachment,
+        isDescriptionUpdated: false,
+        isFileUpdated: false
+      })
+    }
     previewImage.value = <string>organizationData.image
     hasImage.value = true
   }
+  pageLoading.value = false
 })
 
 
@@ -256,18 +561,25 @@ onMounted(async () => {
       @closeOverlay="isImagePreviewed = false"
   />
   <MainLayout :title="formType === FormType.edit ? 'Edit Consortium Member Institution' : 'New Consortium Member Institution'">
-    <VForm id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="organizationForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div>
          <div class="d-flex">
            <RouterLink
                :to="{
-            name: path == 'organizations' ?  'organizations' : 'my-organizations'
-            }"
+                  name: formType === FormType.edit ? 'my-organization-settings' : 'my-organizations',
+                  ...(formType === FormType.edit ? { params: { slug: route.params.slug } } : {})
+                }"
                class="text-decoration-none text-none">
              <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                <PhArrowLeft size="14" class="mr-1"/>
-               Back To {{path == 'organizations' ?  'Consortium Member Institutions' : 'My Consortium Member Institutions'}}
+               Back To {{formType === FormType.edit  ?  'Settings' : 'My Consortium Member Institutions'}}
              </p>
            </RouterLink>
          </div>
@@ -496,7 +808,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Telephone Number<span class="text-pink">*</span></label>
+          <label class="input-label">Telephone Number</label>
           <VTextField
               v-model="organizationData.tel_phone"
               placeholder="E.g. 000-888-000"
@@ -580,172 +892,122 @@ onMounted(async () => {
 <!--          </div>-->
 <!--        </div>-->
         <div class="mb-3">
-          <label class="input-label">Research & Development Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.rd_rep.full_name"
-              placeholder="E.g. John Doe"
+          <label class="input-label">Research & Development Representatives</label>
+          <VCombobox
+              ref="rd_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.rd_repData"
+              placeholder="Select Representatives"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.full_name"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('rd_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('rd_rep')">
+                <VListItemTitle>
+                  Add {{ searchQueries.rd_rep }} as a research & development representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3">
-        <label class="input-label">Research & Development Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.rd_rep.email"
-              placeholder="E.g. johndoe@example.com"
+          <label class="input-label">Technology Transfer Representatives</label>
+          <VCombobox
+              ref="tt_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.tt_repData"
+              placeholder="Select Representatives"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.email"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('tt_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('tt_rep')">
+                <VListItemTitle>
+                  Add {{ searchQueries.tt_rep }} as a technology transfer representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
+        </div>
+
+        <div class="mb-3">
+          <label class="input-label">Information Communication Representatives</label>
+          <VCombobox
+              ref="ic_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.ic_repData"
+              placeholder="Select Representatives"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('ic_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('ic_rep')">
+                <VListItemTitle>
+                  Add {{ searchQueries.ic_rep }} as an information communication representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
+
         </div>
         <div class="mb-3">
-          <label class="input-label">Research & Development Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.rd_rep.phone"
-              placeholder="E.g. 09123456789"
+          <label class="input-label">Science Communication Representatives</label>
+          <VCombobox
+              ref="sc_repRef"
+              :items="customUsers"
+              :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
+              v-model="organizationData.sc_repData"
+              placeholder="Select Representatives"
               class="my-2"
-              :error-messages="errorMessage.rd_rep.phone"
               rounded="lg"
               density="comfortable"
               variant="outlined"
               color="primary"
               base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.tt_rep.full_name"
-              placeholder="E.g. John Doe"
-              class="my-2"
-              :error-messages="errorMessage.tt_rep.full_name"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.tt_rep.email"
-              placeholder="E.g. johndoe@example.com"
-              class="my-2"
-              :error-messages="errorMessage.tt_rep.email"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Technology Transfer Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.tt_rep.phone"
-              placeholder="E.g. 09123456789"
-              class="my-2"
-              :error-messages="errorMessage.tt_rep.phone"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Information Communication Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.ic_rep.full_name"
-              placeholder="E.g. John Doe"
-              class="my-2"
-              :error-messages="errorMessage.ic_rep.full_name"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Information Communication Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.ic_rep.email"
-              placeholder="E.g. johndoe@example.com"
-              class="my-2"
-              :error-messages="errorMessage.ic_rep.email"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Information Communication Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.ic_rep.phone"
-              placeholder="E.g. 09123456789"
-              class="my-2"
-              :error-messages="errorMessage.ic_rep.phone"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Science Communication Representative Name<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.sc_rep.full_name"
-              placeholder="E.g. John Doe"
-              class="my-2"
-              :error-messages="errorMessage.sc_rep.full_name"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Science Communication Representative Email<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.sc_rep.email"
-              placeholder="E.g. johndoe@example.com"
-              class="my-2"
-              :error-messages="errorMessage.sc_rep.email"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
-        </div>
-        <div class="mb-3">
-          <label class="input-label">Science Communication Representative Phone<span class="text-pink">*</span></label>
-          <VTextField
-              v-model="organizationData.sc_rep.phone"
-              placeholder="E.g. 09123456789"
-              class="my-2"
-              :error-messages="errorMessage.sc_rep.phone"
-              rounded="lg"
-              density="comfortable"
-              variant="outlined"
-              color="primary"
-              base-color="gs60"
-          />
+              multiple
+              chips
+              closable-chips
+              @update:search="handleSearch('sc_rep', $event)"
+              :hide-no-data="false"
+          >
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('sc_rep')">
+                <VListItemTitle>
+                  Add {{ searchQueries.sc_rep }} as a science communication representative
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3" v-if="organizationData.additional_info">
           <label class="input-label">Additional Info</label>
@@ -815,6 +1077,169 @@ onMounted(async () => {
               <PhFileImage/>
             </template>
           </VFileInput>
+        </div>
+        <div class="mb-10">
+          <div v-if="attachments.length == 0">
+            <label class="input-label">File</label>
+            <div
+                class="my-2 file-upload-container"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
+              <PhFileDashed size="50"/>
+              <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
+            </div>
+          </div>
+          <div v-else>
+            <label class="input-label mb-5">Files</label>
+            <div
+                class="attachments-container mt-2"
+                :class="{'dropzone-active': active}"
+                @dragover.prevent
+                @dragenter.prevent="toggleActive"
+                @dragleave.prevent="toggleActive"
+                @drop.prevent="handleBulkAttachmentsUpload">
+              <div
+                  v-for="(attachment, index) in attachments"
+                  :key="index"
+              >
+                <VDivider  v-if="index != 0"/>
+                <div :class="{'mb-5': !attachment.showFiles}"  class="d-flex align-center justify-space-between mt-5">
+                  <p style="font-size: 16px; font-weight: 700;">{{attachment.file ? attachment?.file?.name : (attachment.attachment != '' ? attachment.name as string : 'New File')}}</p>
+                  <div class="d-flex align-center justify-space-between ga-2">
+                    <DeleteDialog v-if="attachment.type == 'update'" @callback="deleteAttachmentCallback(<string>attachment.uid, index)">
+                      <VTooltip location="bottom" >
+                        <template v-slot:activator="{ props }">
+                          <PhTrash v-bind="props" class="cursor-pointer" />
+                        </template>
+                        <span>Delete Attachment</span>
+                      </VTooltip>
+                    </DeleteDialog>
+                    <VTooltip location="bottom" v-else>
+                      <template v-slot:activator="{ props }">
+                        <PhX v-bind="props" class="cursor-pointer" @click="removeAttachment(index)"/>
+                      </template>
+                      <span>Remove Attachment</span>
+                    </VTooltip>
+                    <VTooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <component
+                            :is="attachment.showFiles ? 'PhCaretUp' : 'PhCaretDown'"
+                            v-bind="props"
+                            class="cursor-pointer"
+                            @click="attachment.showFiles = !attachment.showFiles"
+                        />
+                      </template>
+                      <span>{{attachment.showFiles ? 'Hide Files' : 'Show Files'}}</span>
+                    </VTooltip>
+                  </div>
+                </div>
+                <p class="pl-2 pb-2" style="color: #b00020; font-size: 14px;" v-if="attachment.errorMessage && !attachment.showFiles">{{attachment.errorMessage}}</p>
+                <div v-if="attachment.showFiles">
+                  <div class="mt-5 mb-3">
+                    <label class="input-label">Attachment</label>
+                    <div v-if="attachment.file || attachment.attachment != ''" class="my-3">
+                      <VDivider/>
+                      <div class="d-flex align-center justify-space-between pa-2" >
+                        <p class="dialog-boundary-title d-flex align-center">
+                          <PhImage class="mr-1"/>
+                          {{attachment.file ? attachment.file.name : attachment.name }}
+                        </p>
+                        <div class="d-flex align-center ga-2">
+                          <VTooltip location="bottom">
+                            <template v-slot:activator="{ props }">
+                              <PhX v-bind="props" class="cursor-pointer" @click="clearAttachment(index)"/>
+                            </template>
+                            <span>Remove File</span>
+                          </VTooltip>
+                        </div>
+                      </div>
+                      <VDivider/>
+                      <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="attachment.errorMessage">{{attachment.errorMessage}}</p>
+                    </div>
+                    <VFileInput
+                        v-else
+                        @change="handleIndividualAttachmentsUpload($event, index)"
+                        label="Choose File by Clicking Here"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                        chips
+                        prepend-icon=""
+                        :error-messages="attachments[index].errorMessage as string"
+                    >
+                      <template v-slot:prepend-inner>
+                        <PhFile/>
+                      </template>
+                    </VFileInput>
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Name</label>
+                    <VTextField
+                        v-model="attachments[index].name"
+                        label="Enter File Name"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label">Attachment Description</label>
+                    <VTextField
+                        v-model="attachments[index].description"
+                        label="Enter File Description"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="input-label d-flex justify-space-between">
+                      Attachment Visibility
+                      <span style="font-size: 14px; font-weight: 400;">
+                    <AttachmentsVisibilityInfoDialog/>
+                  </span>
+                    </label>
+                    <VAutocomplete
+                        v-model="attachments[index].visibility"
+                        :items="visibilityInfo"
+                        :item-title="item => item.name"
+                        :item-value="item => item.value"
+                        label="Enter File Visibility"
+                        class="my-2"
+                        rounded="lg"
+                        density="comfortable"
+                        variant="outlined"
+                        color="primary"
+                        base-color="gs60"
+                    />
+                  </div>
+                </div>
+                <VDivider v-if="index != attachments.length - 1 "/>
+              </div>
+              <div class="d-flex justify-end">
+                <VBtnPrimaryFilled
+                    @click="addAttachment"
+                    rounded="lg"
+                    style="font-size: 14px !important;"
+                >
+                  Add More File
+                </VBtnPrimaryFilled>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="mb-10">
           <label class="input-label">Location/Area</label>
@@ -887,6 +1312,44 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.attachments-container{
+  max-height: 400px;
+  overflow-y: scroll;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 20px 25px;
+  transition: height 1s ease;
+}
+.file-upload-container{
+  width: 100%;
+  height: 144px;
+  display: flex;
+  border-radius: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 16px;
+  border: 2px dashed #E6E6E6;
+  background-color: #fff;
+  transition: .3s ease all;
+}
+
+.dropzone-active{
+  border: 4px dashed #00838F !important;
+  background-color: #f2f2f2;
+}
+
+
+.text-dropzone{
+  font-size: 14px;
+}
+
+.file-label{
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 :deep(.ql-toolbar){
   margin-top: 8px;
   border: 1.75px solid rgba(140, 140, 140, 0.2) !important;

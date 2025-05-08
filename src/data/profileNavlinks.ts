@@ -6,10 +6,10 @@ import {
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 
 export const profileNavlinks = [
-  ...(user.value ? [
+  ...(user.value && userData.is_approved ? [
     {
       name: "My Repositories",
       link: "/my-repositories",

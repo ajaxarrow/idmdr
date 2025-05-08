@@ -1,35 +1,24 @@
 <script setup lang="ts">
+import AuthLayout from "../../../core/layouts/AuthLayout.vue";
 import AuthCard from "../components/AuthCard.vue";
+import {onMounted, ref} from "vue";
+import AccountWarningDialog from "../../../core/components/AccountWarningDialog.vue";
+
+const warningDialog = ref(false)
+
+onMounted(async() => {
+  //@ts-ignore
+  const warningMessage = JSON.parse(localStorage.getItem('inactivityWarning'))
+  if(warningMessage) {
+    warningDialog.value = true
+    localStorage.removeItem('inactivityWarning')
+  }
+})
 </script>
 
 <template>
-  <VLayout class="circle-top-left circle-bottom-right">
-   <AuthCard/>
-  </VLayout>
+  <AccountWarningDialog :warningDialog="warningDialog" @callback="warningDialog = false" />
+  <AuthLayout>
+    <AuthCard/>
+  </AuthLayout>
 </template>
-
-<style scoped>
-.circle-top-left::before {
-  content: '';
-  position: fixed;
-  top: -294px;
-  left: -185px;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: #DEF1FB;
-  z-index: -2;
-}
-
-.circle-bottom-right::after {
-  content: '';
-  position: fixed;
-  bottom: -294px;
-  right: -185px;
-  width: 590px;
-  height: 561px;
-  border-radius: 50%;
-  background: #DEF1FB;
-  z-index: -1;
-}
-</style>

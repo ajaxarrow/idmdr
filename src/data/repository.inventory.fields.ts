@@ -19,7 +19,9 @@ const forPatent = [
   }
 ]
 
-const repoType = ['Project Repository', 'Document Repository']
+const repoType = [
+  {title: 'With Associated Technology', value: 'Project Repository'},
+  {title: 'No Associated Technology', value: 'Document Repository'}]
 
 
 const industries = [

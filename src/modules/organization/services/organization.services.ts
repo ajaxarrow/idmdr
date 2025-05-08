@@ -6,6 +6,8 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
+import {useCustomUsersServices} from "../../repository/services/custom-users.services.ts";
+import {useOrganizationAttachmentServices} from "./organization-attachments.services.ts";
 
 // const transformRepData = (rep: any) => ({
 //   full_name: rep?.full_name,
@@ -18,12 +20,16 @@ import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 //   email: rep?.email,
 //   phone: rep?.phone,
 // });
+const {mapCustomUsers} = useCustomUsersServices()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
 const {isEmptyObject} = useObjectChecker()
+const {fetchAttachmentsByOrganization, addAttachment, updateAttachment} = useOrganizationAttachmentServices()
 // const {router} = useRouting()
 const {myOrganizations, allOrganizations, mapOrganizations, organization, searchedMapOrganizations} = useOrganizationStore();
+
+
 
 export const useOrganizationServices = () => {
   const errorMessageIntialState = reactive({
@@ -39,26 +45,10 @@ export const useOrganizationServices = () => {
     phone: '',
     email: '',
     president: '',
-    rd_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
-    tt_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
-    ic_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
-    sc_rep: {
-      email: '',
-      full_name: '',
-      phone: '',
-    },
+    rd_rep: '',
+    tt_rep: '',
+    ic_rep: '',
+    sc_rep:'',
   });
 
   const loading = ref(false);
@@ -156,6 +146,8 @@ export const useOrganizationServices = () => {
   const saveOrganization = async (organization: Organization, endpoint: string, type: string, id: string = '') => {
     clearErrorMessage();
     loading.value = true;
+    console.log('rep')
+    console.log(organization.rd_rep)
     try {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,
@@ -178,6 +170,7 @@ export const useOrganizationServices = () => {
           scc_rep: organization.sc_rep,
           additional_info: organization.additional_info,
           is_active: true,
+          is_approved: true
         },
         {
           headers: {
@@ -204,7 +197,8 @@ export const useOrganizationServices = () => {
           website: organization.website,
           geojson: organization.geojson,
           additional_info: organization.additional_info,
-          is_active: true,
+          is_active: organization.is_active,
+          is_approved: organization.is_approved
         },
         {
           headers: {
@@ -215,6 +209,13 @@ export const useOrganizationServices = () => {
       );
 
       if(type == 'create'){
+        // @ts-ignore
+        if(organization.files?.length > 0  && organization.files) {
+          for (let i = 0; i < organization.files.length; i++) {
+            organization.files[i].organization! = res.data.uid
+            await addAttachment(organization.files[i]);
+          }
+        }
         await addMemberToOrganization(res.data.uid);
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Organization created successfully',
@@ -222,19 +223,32 @@ export const useOrganizationServices = () => {
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = '/my-organizations';
-        }, 3000);
+          window.location.href = '/organizations';
+        }, 1000);
 
         // await router.push({path: '/my-organizations'});
       } else if(type == 'update'){
+        // @ts-ignore
+        if(organization.files?.length > 0  && organization.files) {
+          for (let i = 0; i < organization.files.length; i++) {
+            organization.files[i].organization! = res.data.uid
+            if(organization.files[i].type == 'create') {
+              await addAttachment(organization.files[i]);
+            } else {
+              if(organization.files[i].isDescriptionUpdated || organization.files[i].isFileUpdated) {
+                await updateAttachment(organization.files[i]);
+              }
+            }
+          }
+        }
         await localStorage.setItem('snackbarmessage', JSON.stringify({
           message: 'Organization updated successfully',
           status: 'success'
         }))
         setTimeout(async function() {
           loading.value = false;
-          window.location.href = `/my-organizations/${id}`
-        }, 3000);
+          window.location.href = `/organizations/${id}`
+        }, 1000);
 
         // await router.push({name: 'my-organization-data', params: {slug: organization.slug}});
       }
@@ -296,55 +310,73 @@ export const useOrganizationServices = () => {
     }
   }
 
-  const mapOrgData = async (rawData: any): Promise<Organization[]> => {
-    return rawData.map((org: any) => {
-      const organization = org.organization || org;
-      return {
-        additional_info: organization?.additional_info ?? '',
-        is_member: false,
-        is_deleted: organization?.is_deleted,
-        access_level: org?.access_level ?? '',
-        visibility: organization?.visibility ?? '',
-        sub_org_type: organization?.sub_org_type ?? '',
-        org_type: organization?.org_type ?? '',
-        uid: organization?.uid ?? '',
-        acronym: organization?.acronym ?? '',
-        name: organization?.name ?? '',
-        address: organization?.address ?? '',
-        phone: organization?.phone ?? '',
-        email: organization?.email ?? '',
-        website: organization?.website ?? '',
-        tt_rep: {
-          email: organization?.ttc_rep?.email ?? '',
-          full_name: organization?.ttc_rep?.full_name ?? '',
-          phone: organization?.ttc_rep?.phone ?? '',
-        },
-        ic_rep: {
-          email: organization?.icc_rep?.email ?? '',
-          full_name: organization?.icc_rep?.full_name ?? '',
-          phone: organization?.icc_rep?.phone ?? '',
-        },
-        sc_rep: {
-          email: organization?.scc_rep?.email ?? '',
-          full_name: organization?.scc_rep?.full_name ?? '',
-          phone: organization?.scc_rep?.phone ?? '',
-        },
-        rd_rep: {
-          email: organization?.rdc_rep?.email ?? '',
-          full_name: organization?.rdc_rep?.full_name ?? '',
-          phone: organization?.rdc_rep?.phone ?? '',
-        },
-        geojson: isEmptyObject(organization?.geojson) ? {} : organization.geojson,
-        is_public: organization?.is_public ?? false,
-        image: organization?.image ?? 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
-        type: organization?.org_type ?? '',
-        tel_phone: organization?.tel_phone ?? '',
-        president: organization?.president ?? '',
-        slug: organization?.uid ?? '',
-        description: organization?.description ?? ''
-      };
-    });
+  const mapOrgFields = async (org: any, type: string, isAssociatedDataIncluded: boolean): Promise<Organization> => {
+    const organization = org.organization || org;
+    const baseData = {
+      is_active: organization?.is_active,
+      is_approved: organization?.is_approved,
+      additional_info: organization?.additional_info ?? '',
+      is_member: false,
+      is_deleted: organization?.is_deleted,
+      access_level: org?.access_level ?? '',
+      visibility: organization?.visibility ?? '',
+      sub_org_type: organization?.sub_org_type ?? '',
+      org_type: organization?.org_type ?? '',
+      uid: organization?.uid ?? '',
+      acronym: organization?.acronym ?? '',
+      name: organization?.name ?? '',
+      address: organization?.address ?? '',
+      phone: organization?.phone ?? '',
+      email: organization?.email ?? '',
+      website: organization?.website ?? '',
+      geojson: isEmptyObject(organization?.geojson) ? {} : organization.geojson,
+      is_public: organization?.is_public ?? false,
+      image: organization?.image ?? 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+      type: organization?.org_type ?? '',
+      tel_phone: organization?.tel_phone ?? '',
+      president: organization?.president ?? '',
+      slug: organization?.uid ?? '',
+      description: organization?.description ?? ''
+    }
+
+    if (!isAssociatedDataIncluded) return baseData;
+
+    const [rd_rep, tt_rep, ic_rep, sc_rep, attachments] = await Promise.all([
+      mapCustomUsers(JSON.parse(organization?.rdc_rep).data),
+      mapCustomUsers(JSON.parse(organization?.ttc_rep).data),mapCustomUsers(JSON.parse(organization?.icc_rep).data),
+      mapCustomUsers(JSON.parse(organization?.scc_rep).data),
+      fetchAttachmentsByOrganization(organization.uid, type)
+    ])
+
+    return {
+      ...baseData,
+      rd_repData: rd_rep,
+      tt_repData: tt_rep,
+      ic_repData: ic_rep,
+      sc_repData: sc_rep,
+      files: attachments
+    }
   };
+
+  const mapOrgData = async (rawData: any, type: string = 'create', isAssociatedDataIncluded: boolean = false): Promise<Organization[]> => {
+    return Promise.all(rawData.map((org: any) => mapOrgFields(org, type, isAssociatedDataIncluded)));
+  };
+
+  const changeOrganizationVisibility = async (id: string, visibility: number) => {
+    try {
+      await server.patch(`/v1/organization/${id}/update`, {
+        visibility: visibility
+      },{
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      // console.log(res.data);
+    } catch (e: any) {
+      console.log(e.response?.data);
+      return;
+    }
+  }
 
 
   // @ts-ignore
@@ -356,10 +388,11 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results
-      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
-      myOrganizations.value = [...organizations];
+      const organizations: Organization[] = (await mapOrgData(rawData)).filter((org: any) => !org.is_deleted && org.is_approved)
+      myOrganizations.value = [...myOrganizations.value,...organizations];
       return organizations;
     } catch (e) {
+      console.log(e)
       return []
     }
   }
@@ -372,12 +405,53 @@ export const useOrganizationServices = () => {
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted))
+      const organizations: Organization[] = (await mapOrgData(rawData)).filter((org: any) => !org.is_deleted && org.is_approved)
       const data = [ ...organizations];
       // myOrganizations.value = [...myOrganizations.value, ...data];
       myOrganizations.value = data
       return data;
     } catch (e) {
+      return []
+    }
+  }
+
+  const fetchOrganizationByAdmin = async () : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/organization`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = await mapOrgData(rawData.filter((org: any) => !org.is_deleted && org.is_approved))
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
+  const fetchOrganizationIDsByUser = async () : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/user/${userData.uid}/organizations`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+
+      const rawData = res.data.results;
+      const organizations: Organization[] = rawData.map((org: any) => {
+        return {
+          uid: org.organization.uid,
+          slug: org.organization.uid
+        }
+      })
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      console.log(e)
       return []
     }
   }
@@ -412,7 +486,7 @@ export const useOrganizationServices = () => {
     });
 
     const results = await Promise.all(promises);
-    return results.flat();
+    return results.flat().filter((org: any) => !org.is_deleted && org.is_active && org.is_approved);
   };
 
 
@@ -422,18 +496,19 @@ export const useOrganizationServices = () => {
       if (user.value) {
         const visibilityData = await fetchOrganizationsByVisibility([1, 4]);
         const userOrg = await fetchOrganizationByUser();
-        let combinedData = [...visibilityData.flat(), ...userOrg];
+        const filteredVisibilityData = visibilityData.flat().filter((org: any) => org.is_active && org.is_approved);
+        let combinedData = [...filteredVisibilityData, ...userOrg];
         const uniqueData = Array.from(new Set(combinedData.map(org => org.slug)))
           .map(slug => combinedData.find(org => org.slug === slug));
         // @ts-ignore
         data = uniqueData ;
       } else {
         const visibilityData = await fetchOrganizationsByVisibility([1]);
-        data = visibilityData[0];
+        data = visibilityData[0].filter((org: any) => org.is_active && org.is_approved);
       }
-      mapOrganizations.value = data.filter(org =>  !org.is_deleted);
-      allOrganizations.value = data;
-      searchedMapOrganizations.value = data.filter(org =>  !org.is_deleted);
+      mapOrganizations.value = data.filter(org =>  !org.is_deleted && org.is_approved);
+      allOrganizations.value = data.filter(org =>  !org.is_deleted && org.is_approved);
+      searchedMapOrganizations.value = data.filter(org =>  !org.is_deleted && org.is_approved);
       return data;
     } catch (e) {
       return [];
@@ -451,16 +526,16 @@ export const useOrganizationServices = () => {
   };
 
 
-  const fetchOrganizationData = async (slug: string): Promise<Organization | null> => {
+  const fetchOrganizationData = async (slug: string, type: string = 'create'): Promise<Organization | null> => {
     try{
       const res = await server.get(`/v1/organization/${slug}/`, {
         headers: authorizationHeader
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
-      if (organizations) {
-        organization.value = organizations[0];
-        return organizations[0];
+      const organizationData: Organization = await mapOrgFields(rawData[0], type,true)
+      if (organizationData) {
+        organization.value = organizationData
+        return organizationData
       } else {
         console.error('no org')
         return null;
@@ -471,7 +546,143 @@ export const useOrganizationServices = () => {
 
   }
 
+  const fetchAllOrganizationsBasicData = async (
+      pageNumber: number,
+      pageSize: number,
+  ) : Promise<Organization[]> => {
+    try{
+      const res = await server.get(`/v1/organization/?page=${pageNumber}&page_size=${pageSize}`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = rawData.map((org: any) => {
+        return {
+          uid: org.uid,
+          slug: org.uid,
+          name: org.name,
+          acronym: org.acronym
+        }
+      })
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
 
+  const manageOrgStatus = async (id: string, isActive: boolean) => {
+    try {
+      if(userData.is_superuser) {
+        await server.patch(`/v1/organization/${id}/update`, {
+          is_approved: true,
+          is_active: isActive
+        }, {
+          headers: authorizationHeader
+        });
+      } else {
+         await server.patch(`/v1/organization/${id}/update`, {
+          is_active: isActive
+        }, {
+          headers: authorizationHeader
+        });
+      }
+    } catch (e) {
+      console.log(e)
+      return;
+    }
+  }
+
+  const manageOrgAdminStatus = async (id: string, isEnabled: boolean) => {
+    try {
+      await server.patch(`/v1/organization/${id}/update`, {
+        is_approved: isEnabled
+      }, {
+        headers: authorizationHeader
+      });
+    } catch (e) {
+      console.log(e)
+      return;
+    }
+  }
+
+  const fetchAllOrganizations = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+  ) : Promise<Organization[]> => {
+    try{
+      let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      const res = await server.get(url, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      const organizations: Organization[] = await mapOrgData(rawData)
+      const data = [ ...organizations];
+      myOrganizations.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
+  const fetchOrganizationCount= async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      isApproved?: string | boolean,
+      isActive?: string | boolean,
+  ) : Promise<number> => {
+    try{
+      let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (typeof isApproved === 'boolean') {
+        url += `&is_approved=${isApproved}`;
+      }
+      if (typeof isActive === 'boolean') {
+        url += `&is_active=${isActive}`;
+      }
+      const res = await server.get(url, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      return res.data.results.length;
+    } catch (e) {
+      return 0
+    }
+  }
+
+  const fetchOrganizationVisibility = async (id: string) : Promise<number> => {
+    try {
+      const res = await server.get(`/v1/organizations/${id}`, {
+        headers: authorizationHeader
+      });
+
+      return res.data.results[0].visibility
+    } catch (e: any) {
+      console.log(e)
+      return 1;
+
+    }
+  }
 
   return {
     loading,
@@ -482,9 +693,18 @@ export const useOrganizationServices = () => {
     clearErrorMessage,
     hasErrorMessages,
     fetchOrganizationByUser,
+    fetchOrganizationByAdmin,
     fetchOrganizationByUserWithPagination,
     fetchOrganizations,
     fetchOrganizationsWithPagination,
     fetchOrganizationData,
+    fetchOrganizationIDsByUser,
+    changeOrganizationVisibility,
+    fetchAllOrganizationsBasicData,
+    manageOrgStatus,
+    manageOrgAdminStatus,
+    fetchAllOrganizations,
+    fetchOrganizationCount,
+    fetchOrganizationVisibility
   };
 };

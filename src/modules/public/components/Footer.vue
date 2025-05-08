@@ -33,7 +33,7 @@ import logo from '../../../assets/images/nomcaarrd.png';
           <a href="https://www.youtube.com/channel/UCWc3VFaHFLj9LDMjfyWdjEA" target="_blank" class="footer-text">Youtube</a>
         </div>
 
-        <p class="footer-text">@2025 NOMCAARRD</p>
+        <p class="footer-text">@2025 NOMCAARRD <small>R10KM</small></p>
       </VRow>
     </VContainer>
   </div>

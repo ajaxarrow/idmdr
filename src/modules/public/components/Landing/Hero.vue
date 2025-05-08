@@ -19,7 +19,7 @@ const {user} = useUserStore();
     Interact, Map, Visualize, <br/> <em class="heading-font">Collaborate</em>
   </p>
   <p class="text-center text-subtitle px-sm-10 px-xs-5">
-    Experience enhanced data interaction and collaboration by unlocking the potential of your data through<br v-if=" !isSmall && !isMobile "/>  <span class="fancy-text">LINNKS: Learning and Information Network for NOMCAARRD Knowledge-Based System.</span></p>
+    Experience enhanced data interaction and collaboration by unlocking the potential of your data through<br v-if=" !isSmall && !isMobile "/>  <span class="fancy-text">KMHUB: NOMCAARRD Knowledge-Based Management Hub.</span></p>
   <VRow class="mt-4" justify="center">
     <div style="position: relative;">
       <VBtn

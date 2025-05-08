@@ -18,7 +18,7 @@ const handleHover = (isHovered: boolean) => {
 </script>
 
 <template>
-  <RouterLink to="/linnks" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
+  <RouterLink to="/kmhub" class="text-decoration-none" :class="props.useAltDesign ? 'text-logo-alt-design' : 'text-logo'">
     <div class="d-flex align-center text-wrapper" :class="{ 'flex-column': props.useAltDesign }" @mouseover="() => handleHover(true)" @mouseout="() => handleHover(false)">
 <!--    <PhHardDrives :size="props.useAltDesign ? 32 : 24" weight="duotone" color="#3291C7" class="ph-icon" />-->
     <img :style="{height: props.useAltDesign ? '32px' : '24px'}" :src="logo" alt="logo" class="ph-icon"/>
@@ -29,12 +29,11 @@ const handleHover = (isHovered: boolean) => {
 <!--          <span style="&#45;&#45;i:3">M</span>-->
 <!--          <span style="&#45;&#45;i:4">D</span>-->
 <!--          <span style="&#45;&#45;i:5">R</span>-->
-          <span style="--i:1">L</span>
-          <span style="--i:2">I</span>
-          <span style="--i:3">N</span>
-          <span style="--i:4">N</span>
-          <span style="--i:5">K</span>
-          <span style="--i:6">S</span>
+          <span style="--i:1">K</span>
+          <span style="--i:2">M</span>
+          <span style="--i:3">H</span>
+          <span style="--i:4">U</span>
+          <span style="--i:5">B</span>
         </div>
       </template>
       <template v-else>
@@ -43,12 +42,11 @@ const handleHover = (isHovered: boolean) => {
 <!--        <span style="&#45;&#45;i:3">M</span>-->
 <!--        <span style="&#45;&#45;i:4">D</span>-->
 <!--        <span style="&#45;&#45;i:5">R</span>-->
-        <span style="--i:1">L</span>
-        <span style="--i:2">I</span>
-        <span style="--i:3">N</span>
-        <span style="--i:4">N</span>
-        <span style="--i:5">K</span>
-        <span style="--i:6">S</span>
+        <span style="--i:1">K</span>
+        <span style="--i:2">M</span>
+        <span style="--i:3">H</span>
+        <span style="--i:4">U</span>
+        <span style="--i:5">B</span>
       </template>
     </div>
   </RouterLink>

@@ -30,6 +30,12 @@ const repositoryRoutes = [
     component: () => import('../../modules/repository/views/RepositoryFormView.vue')
   },
   {
+    path: '/repositories/upload-files/:slug',
+    name: 'upload-files-repository',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryFilesUpload.vue')
+  },
+  {
     path: '/my-repositories/new',
     name: 'new-repository-my',
     // @ts-ignore
@@ -40,6 +46,12 @@ const repositoryRoutes = [
     name: 'edit-repository-my',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryFormView.vue')
+  },
+  {
+    path: '/my-repositories/upload-files/:slug',
+    name: 'upload-files-repository-my',
+    // @ts-ignore
+    component: () => import('../../modules/repository/views/RepositoryFilesUpload.vue')
   },
   {
     path: '/repositories/:slug',
@@ -100,7 +112,46 @@ const repositoryRoutes = [
     name: 'my-repository-settings',
     // @ts-ignore
     component: () => import('../../modules/repository/views/RepositoryDetailsSettingsView.vue')
+  },
+  {
+    path: '/my-repositories/:slug/abhs',
+    name: 'my-repository-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHView.vue')
+  },
+  {
+    path: '/repositories/:slug/abhs',
+    name: 'repository-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHView.vue')
+  },
+  {
+    path: '/abh/:repo/edit/:slug',
+    name: 'edit-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/ABHFormView.vue')
+  },
+  {
+    path: '/abh/:repo/add',
+    name: 'new-abh',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/ABHFormView.vue')
+  },
+  {
+    path: '/my-repositories/:repo/abh/:slug',
+    name: 'my-abh-details',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHDetailsView.vue')
+  },
+  {
+    path: '/repositories/:repo/abh/:slug',
+    name: 'abh-details',
+    // @ts-ignore
+    component: () => import('../../modules/abh/views/RepositoryABHDetailsView.vue')
   }
+
+
+
 ]
 
 export default repositoryRoutes

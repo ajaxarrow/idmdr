@@ -1,5 +1,6 @@
 import {ClusterType} from "./enums/organization.enum";
 import {Repository} from "./repository.interface.ts";
+import {CustomUserData} from "./member.interface.ts";
 
 interface Organization {
   is_deleted?: boolean,
@@ -21,11 +22,18 @@ interface Organization {
   phone?: string,
   email?: string,
   president?: string,
-  rd_rep: Representative,
-  tt_rep: Representative,
-  ic_rep: Representative,
-  sc_rep: Representative,
+  rd_repData?: CustomUserData[],
+  tt_repData?: CustomUserData[],
+  ic_repData?: CustomUserData[],
+  sc_repData?: CustomUserData[],
+  rd_rep?: string,
+  tt_rep?: string,
+  ic_rep?: string,
+  sc_rep?: string,
   additional_info?: string,
+  is_active?: boolean,
+  is_approved?: boolean,
+  files?: OrganizationAttachment[],
   // clusterRepresentatives: ClusterRepresentative[]
 }
 
@@ -90,4 +98,26 @@ interface OrganizationEvent{
 
 }
 
-export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent}
+interface OrganizationAttachment{
+  uid?: string,
+  file: File | null,
+  organization: string,
+  attachment?: File | string,
+  file_type?: string,
+  mime_type?: string,
+  name?: string,
+  description?: string,
+  created_at?: string,
+  updated_at?: string,
+  is_deleted?: boolean,
+  deleted_at?: string,
+  visibility?: number,
+  type: string,
+  errorMessage?: string
+  showFiles?: boolean,
+  isDescriptionUpdated?: boolean
+  isFileUpdated?: boolean
+  isNameUpdated?: boolean
+}
+
+export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent, OrganizationAttachment}

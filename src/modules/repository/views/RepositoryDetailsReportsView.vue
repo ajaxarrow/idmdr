@@ -6,10 +6,11 @@ import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayo
 import {useRepositoryServices} from "../services/repository.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import RepoAccessRequestCharts from "../components/Reports/RepoAccessRequestCharts.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
-
+const {userData} = useUserStore();
 const {repository} = useRepositoryStore();
-const {fetchRepositoryData, fetchRepositoriesByUser} = useRepositoryServices()
+const {fetchRepositoryData, fetchRepositoryIDsByUser} = useRepositoryServices()
 
 const {route, router} = useRouting()
 const loading = ref(false)
@@ -28,10 +29,10 @@ onMounted(async () => {
   await fetchRepositoryData(route.params.slug as string);
   path.value = getFirstPath(<string>route.path)
 
-  const allUserRepo = await fetchRepositoriesByUser();
+  const allUserRepo = await fetchRepositoryIDsByUser();
 
   if(repository.value){
-    if(isSlugInRepoList(repository.value, allUserRepo)) {
+    if(isSlugInRepoList(repository.value, allUserRepo) || userData.is_superuser) {
       if("is_member" in repository.value){
         repository.value.is_member = true;
       }

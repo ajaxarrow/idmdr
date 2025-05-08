@@ -8,6 +8,7 @@ import EventFormDialog from "./EventFormDialog.vue";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useEventsServices} from "../services/events.services.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {showSnackbarMessage} = useSnackbarStore();
 const emits = defineEmits(['callback', 'fetchCallback']);
@@ -30,6 +31,7 @@ const eventActionMenu = ref(false);
 const eventDetailsDialog = ref(props.useOutsideDialogModel ? props.value : false);
 const loading = ref(false);
 const forViewing = ref(true);
+const {user} = useUserStore()
 
 
 const event = ref<OrganizationEvent>(props.event!)
@@ -145,7 +147,7 @@ onMounted(() => {
                 </div>
               </div>
 
-              <VMenu v-model="eventActionMenu" :close-on-content-click="false" :persistent="true">
+              <VMenu v-model="eventActionMenu" :close-on-content-click="false" :persistent="true" v-if="user">
                 <template #activator="{ props }">
                   <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                     Options
@@ -180,23 +182,23 @@ onMounted(() => {
 
             <p class="text-about-heading py-3">Event Information</p>
             <VRow class="ma-0">
-              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
                 <p class="text-subtitle text-gs20">Start Date</p>
                 <p class="text-subtitle">{{ formatDate(event.start_date_object) }}</p>
               </VCol>
-              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
                 <p class="text-subtitle text-gs20">End Date</p>
                 <p class="text-subtitle">{{ formatDate(event.end_date_object) }}</p>
               </VCol>
-              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
                 <p class="text-subtitle text-gs20">Duration</p>
                 <p class="text-subtitle">{{ calculateDuration(event.start_date_object, event.end_date_object) }}</p>
               </VCol>
-              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
                 <p class="text-subtitle text-gs20">Associated CMI</p>
                 <p class="text-subtitle">{{ event.organizationData?.name || 'Not specified' }} ({{ event.organizationData?.acronym || 'Not specified' }})</p>
               </VCol>
-              <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+              <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
                 <p class="text-subtitle text-gs20">Associated Project</p>
                 <p class="text-subtitle">{{ event.repositoryData?.title || 'Not specified' }}</p>
               </VCol>

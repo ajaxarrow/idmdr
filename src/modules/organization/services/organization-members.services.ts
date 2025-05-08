@@ -25,6 +25,8 @@ export const useOrganizationMembersServices = () => {
       user: {
         uid: member.user.uid,
         username: member.user.username,
+        first_name: member.user.first_name,
+        last_name: member.user.last_name,
         email: member.user.email,
         profile_picture: member.user.profile_picture,
       },
@@ -40,17 +42,23 @@ export const useOrganizationMembersServices = () => {
       });
 
       return res.data.results
-        .filter((user: any) => user.username)
+        .filter((user: any) => user.is_approved && user.is_active)
         .map((user: any) => ({
           uid: user.uid,
-          username: user.username,
+          username: user.username ?? `${user.first_name} ${user.last_name}`,
+          first_name: user.first_name ?? user.username,
+          last_name: user.last_name,
           email: user.email,
-          profile_picture: user.profile_picture,
+          is_active: user.is_active,
+          is_approved: user.is_approved,
+          profile_picture: user.profile_picture ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
         }));
     } catch {
       return [];
     }
   }
+
+
 
   const fetchUser = async (uid: string): Promise<User | null> => {
     try {
@@ -63,6 +71,8 @@ export const useOrganizationMembersServices = () => {
         .map((user: any) => ({
           uid: user.uid,
           username: user.username,
+          first_name: user.first_name,
+          last_name: user.last_name,
           email: user.email,
           profile_picture: user.profile_picture,
         }))[0];

@@ -2,11 +2,12 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {ref} from "vue";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
-import {OrgMember} from "../../../interfaces/member.interface.ts";
+import {CustomUserData, OrgMember} from "../../../interfaces/member.interface.ts";
 import {server} from "../../../plugins/axios.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryServices} from "./repository.services.ts";
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
+import {useOrganizationExpertsServices} from "../../organization/services/organization-experts.services.ts";
 
 export const useRepositoryMemberServices = () => {
   const { userData, user } = useUserStore();
@@ -19,6 +20,42 @@ export const useRepositoryMemberServices = () => {
 
   const {mapOrgMembers} = useOrganizationMembersServices();
   const {fetchRepositoryData} = useRepositoryServices()
+  const {fetchUsers} = useOrganizationMembersServices();
+  const {fetchAllExperts} = useOrganizationExpertsServices();
+
+  const fetchCustomUsers = async (): Promise<CustomUserData[]> => {
+    try {
+      const users = await fetchUsers();
+      const experts = await fetchAllExperts();
+
+      const userList = users.map((user) => ({
+        type: 'user',
+        data: user
+      }));
+
+      const expertList = experts.map((expert) => ({
+        type: 'expert',
+        data: {
+          uid: expert.uid,
+          // @ts-ignore
+          username: `${expert.name.first_name ?? ''} ${expert.name.middle_name ?? ''} ${expert.name.last_name ?? ''} ${expert.name.extension ?? ''}`.trim(),
+          // @ts-ignore
+          first_name: expert.name.first_name ?? '',
+          // @ts-ignore
+          last_name: expert.name.last_name ?? '',
+          email: ''
+        }
+      }));
+
+      return [...userList, ...expertList]; // Merging both lists
+    } catch (e: any) {
+      console.error(e);
+      return [];
+    }
+  };
+
+
+
 
   const fetchRepoMembers = async (repoID: string, includeDeletedMembers: boolean = false): Promise<OrgMember[]> => {
     try {
@@ -181,7 +218,8 @@ export const useRepositoryMemberServices = () => {
     fetchRepoMembers,
     addRepoMember,
     updateRepoMember,
-    removeRepoMember
+    removeRepoMember,
+    fetchCustomUsers,
   }
 
 }

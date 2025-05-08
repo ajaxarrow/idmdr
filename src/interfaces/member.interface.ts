@@ -16,9 +16,22 @@ interface OrgMember {
 
 interface User{
   uid?: string,
+  first_name?: string,
+  last_name?: string,
   username: string,
   email: string,
   profile_picture?: string
+  is_active?: boolean
+  is_approved?: boolean
 }
 
-export type {Member, OrgMember, User}
+interface CustomUserData{
+  type?: string
+  data?: User
+}
+interface CustomUser{
+  type?: string,
+  id?: string
+}
+
+export type {Member, OrgMember, User, CustomUser, CustomUserData}

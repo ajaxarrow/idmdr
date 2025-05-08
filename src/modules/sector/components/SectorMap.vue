@@ -19,9 +19,15 @@ import {useSectorServices} from "../services/sector.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useFilterStore} from "../../map/stores/filters.store.ts";
 import {ChoroplethLegendControl} from "../../map/helpers/legendControl.ts"
+import mapload from "../../../assets/lottiefiles/map-load.json";
+import {Vue3Lottie} from "vue3-lottie";
+import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
+import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
+import * as maplibregl from 'maplibre-gl';
+import {geocoderApi} from "../utils/geocoder.utils.ts";
 
 const {fetchOrganizations} = useOrganizationServices()
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
@@ -31,7 +37,7 @@ const {fetchSectors} = useSectorServices()
 const {router} = useRouting();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const coords = ref([])
-
+const loading = ref(false);
 
 const bounds: [number, number, number, number] = [
   120.5, 4.0,
@@ -157,15 +163,24 @@ watch(provinceRepositoriesLayer, async (newValue) => {
   }
 })
 
+
+
 onMounted(async () => {
+  loading.value = true;
   await fetchOrganizations();
   await fetchSectors();
   initMap();
-  if(user.value){
+  if(user.value && userData.is_approved){
     (MapboxDraw as any).constants = MapboxDraw.constants || {};
     (MapboxDraw.constants.classes.CONTROL_BASE as any) = "maplibregl-ctrl";
     (MapboxDraw.constants.classes.CONTROL_PREFIX as any) = "maplibregl-ctrl-";
     (MapboxDraw.constants.classes.CONTROL_GROUP as any) = "maplibregl-ctrl-group";
+    map.value?.addControl(
+        // @ts-ignore
+        new MaplibreGeocoder(geocoderApi, {
+          // @ts-ignore
+          maplibregl: maplibregl
+        }));
     map.value?.addControl(new NavigationControl(), 'top-right');
     // @ts-ignore
     map.value.addControl(draw);
@@ -176,7 +191,6 @@ onMounted(async () => {
   } else {
     map.value?.addControl(new NavigationControl(), 'top-right');
   }
-
 
   // @ts-ignore
   map.value?.on('style.load', async () => {
@@ -189,14 +203,20 @@ onMounted(async () => {
   })
 
   // @ts-ignore
-  map.value?.on('draw.modechange', (event) => {
+  map.value?.on('draw.modechange', async(event) => {
     const { mode } = event;
     if (mode === 'draw_polygon' || mode === 'draw_line_string') {
       removeBoundaries(boundaries);
+      removeBoundaries(allSectors.value);
+      removeBoundaries(mapOrganizations.value);
     } else {
       setupBoundaries(boundaries, 'Province');
+      setupBoundaries(allSectors.value, 'Sector');
+      await setupBoundariesforOrganization(mapOrganizations.value);
     }
   });
+
+  loading.value = false;
 
 })
 
@@ -226,9 +246,17 @@ onUnmounted(()=> {
   </transition>
   <MapSidebar/>
   <div class="map-wrap">
+    <div v-if="loading" class="h-96 overflow-hidden d-flex justify-center align-center">
+      <Vue3Lottie
+          :animation-data="mapload"
+          :height="750"
+          :width="750"
+      ></Vue3Lottie>
+    </div>
     <a href="https://www.maptiler.com" class="watermark"><img
         src="https://api.maptiler.com/resources/logo.svg" alt="MapTiler logo"/></a>
     <div class="map" ref="mapContainer">
+
     </div>
   </div>
   <div v-if="coords.length > 0" class="calculation-box">

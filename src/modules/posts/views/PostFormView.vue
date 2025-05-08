@@ -17,11 +17,11 @@ import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vu
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 
-const {route} = useRouting();
+const {route, router} = useRouting();
 const {userData} = useUserStore();
 const {addPost, updatePost, fetchPostbyID, loading} = usePostServices();
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
 const {deletePostImage} = usePostImagesServices();
 const formType = ref<FormType>(FormType.create);
 const path = ref('');
@@ -109,11 +109,11 @@ const getFirstPath = (url: string) => {
 
 const addPostData = async (isDraft:boolean) => {
   if(isDraft) {
-    postData.is_draft = true;
+    postData.is_draft = false;
     postData.is_published = false;
   } else{
     postData.is_draft = false;
-    postData.is_published = true;
+    postData.is_published = false;
   }
   postData.created_by = userData.uid;
   if (postImages.value.length > 0) {
@@ -140,12 +140,21 @@ onMounted(async () => {
   const type = rawSegments[1];
   path.value = getFirstPath(route.path);
 
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
-  postData.organization = organizations.value[0].uid
+  organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  if(organizations.value.length == 0){
+    await router.push({name: 'new-organization'})
+    showSnackbarMessage('You have no associated CMIs. You need to create first', Status.error)
+  } else {
+    postData.organization = organizations.value[0].uid
+  }
+
 
   if (type === 'edit') {
 
     const data = await fetchPostbyID(route.params.slug as string);
+    if(!organizations.value.some(org => org.uid === data?.organization && !userData.is_superuser)){
+      await router.push({name: 'organizations'})
+    }
     Object.assign(postData, {...data});
     formType.value = FormType.edit;
     if (data?.organization) {
@@ -256,7 +265,7 @@ onMounted(async () => {
             </div>
           </div>
           <div v-else>
-            <label class="input-label mb-5">Files</label>
+            <label class="input-label mb-5">Images</label>
             <div class="attachments-container mt-2">
               <div
                   v-for="(image, index) in postImages"
@@ -303,7 +312,7 @@ onMounted(async () => {
                     rounded="lg"
                     style="font-size: 14px !important;"
                 >
-                  Add More File
+                  Add More Image
                 </VBtnPrimaryFilled>
               </div>
             </div>
@@ -315,18 +324,18 @@ onMounted(async () => {
           />
         </div>
         <VRow class="ma-0" justify="end" align="center">
-          <VBtnPrimaryAlt
-              v-if="formType == FormType.create"
-              @click="addPostData(true)"
-              rounded="lg"
-              height="44px"
-              width="166px"
-              variant="outlined"
-              class="button-outline action-button"
-          >
-            Save as Draft
-          </VBtnPrimaryAlt>
-          <span v-if="formType == FormType.create" class="mx-2" >Or</span>
+<!--          <VBtnPrimaryAlt-->
+<!--              v-if="formType == FormType.create"-->
+<!--              @click="addPostData(true)"-->
+<!--              rounded="lg"-->
+<!--              height="44px"-->
+<!--              width="166px"-->
+<!--              variant="outlined"-->
+<!--              class="button-outline action-button"-->
+<!--          >-->
+<!--            Save as Draft-->
+<!--          </VBtnPrimaryAlt>-->
+<!--          <span v-if="formType == FormType.create" class="mx-2" >Or</span>-->
           <VBtnPrimaryFilled
               @click="formType === FormType.edit ? updatePostData() : addPostData(false)"
               rounded="lg"

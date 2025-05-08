@@ -1,8 +1,7 @@
 <script setup lang="ts">
-  import Welcome from '../../../assets/images/welcome.svg';
   import {computed, onMounted, ref, watch} from "vue";
   import {useRouting} from "../../../core/composables/useRouting.ts";
-  import {PhGithubLogo, PhGoogleLogo} from "@phosphor-icons/vue";
+  import {PhEnvelope, PhGithubLogo, PhGoogleLogo} from "@phosphor-icons/vue";
   import {LocationQueryValue} from "vue-router";
   import googleLoad from "../../../assets/lottiefiles/google-load.json"
   import githubLoad from "../../../assets/lottiefiles/github-load.json"
@@ -10,6 +9,7 @@
   import {Vue3Lottie} from "vue3-lottie";
   import {useAuthUrls} from "../composables/useAuthUrls.ts";
   import {useAuthStore} from "../stores/auth.store.ts";
+  import logo from "../../../assets/images/nomcaarrd.png";
   const {router, route} = useRouting()
   const {getGoogleUrl, getGithubUrl} = useAuthUrls()
   const {handleGoogle, handleGithub} = useAuthStore();
@@ -32,6 +32,18 @@
       title: 'Github',
       icon: PhGithubLogo,
       method: getGithubUrl
+    },
+    {
+      title: 'Email',
+      icon: PhEnvelope,
+      method: () => {
+        router.push({
+          name: 'auth-email',
+          query: {
+            tab: tab.value
+          }
+        })
+      }
     }
   ]
 
@@ -75,15 +87,26 @@
         :width="layoutValue"
     ></Vue3Lottie>
     <div v-else>
-      <div class="pt-6 px-6 mx-auto">
-        <RouterLink to="/" class="text-decoration-none ">
-          <VImg
-              :src="Welcome"
-              class="mt-5"
-              alt="Hero Image"
-              width="100%"
-              height=80px
-          />
+      <div class="pt-10 px-6 mx-auto">
+        <RouterLink to="/" class="text-decoration-none" >
+          <VRow class="ma-0 pb-3" justify="center">
+            <div class="d-flex justify-center">
+              <div class="d-flex align-center text-wrapper text-logo" >
+                <img style="height: 32px;" :src="logo" alt="logo" class="ph-icon"/>
+                <div>
+                  <span style="--i:1">N</span>
+                  <span style="--i:2">O</span>
+                  <span style="--i:3">M</span>
+                  <span style="--i:4">C</span>
+                  <span style="--i:5">A</span>
+                  <span style="--i:6">A</span>
+                  <span style="--i:7">R</span>
+                  <span style="--i:8">R</span>
+                  <span style="--i:9">D</span>
+                </div>
+              </div>
+            </div>
+          </VRow>
         </RouterLink>
         <VTabs
             class="mt-4"
@@ -133,5 +156,15 @@
   .text-auth{
     font-weight: 900 !important;
     letter-spacing: 0px;
+  }
+
+  a.footer-text:hover {
+    text-decoration: underline;
+  }
+
+  .text-logo {
+    color: black;
+    font-weight: 900 !important;
+    font-size: 24px !important;
   }
 </style>

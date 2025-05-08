@@ -20,7 +20,7 @@ import {useRepositoryMemberServices} from "../../modules/repository/services/rep
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
 const {addNotification} = useNotificationsServices()
 const {fetchRepoMembers} = useRepositoryMemberServices()
-const {fetchRepositoriesByUser} = useRepositoryServices();
+const {fetchRepositoryIDsByUser} = useRepositoryServices();
 const {user, userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {router, route} = useRouting()
@@ -40,7 +40,13 @@ const props = defineProps({
     type: String
   }
 });
-
+const entityTitle = computed(() => {
+  return props.repository
+      ? props.repository.type! === 'Project Repository'
+          ? 'IP Technology'
+          : 'Project'
+      : 'Project';
+});
 const isSlugInRepoList = (repository: Repository | null | undefined, repoList: Repository[]) => {
   return repoList.some(org => org.slug === repository?.slug);
 };
@@ -59,8 +65,9 @@ const getTabs = () => {
   return [
     { name: "Data"},
     { name: "Discussions"},
-    ...(user.value && isMember.value ? [{ name: "Reports"}] : []),
-    ...(user.value ? [
+    ...(props.repository?.type === 'Project Repository' ? [{ name: "ABH"}] : []),
+    ...((user.value && isMember.value) || userData.is_superuser ? [{ name: "Reports"}] : []),
+    ...(user.value || userData.is_superuser ? [
       { name: "Settings" }] : [])
   ]
 }
@@ -74,7 +81,9 @@ const computedTabs = computed(() => {
       linkName = path.value === 'repositories' ? 'repository-data' : 'my-repository-data';
     } else if(tab.name === "Discussions"){
       linkName = path.value === 'repositories' ? 'repository-discussions' : 'my-repository-discussions';
-    } else if(tab.name === "Reports" && user.value && isMember.value){
+    } else if(tab.name === "ABH" && props.repository?.type === 'Project Repository'){
+      linkName = path.value === 'repositories' ? 'repository-abh' : 'my-repository-abh';
+    } else if(tab.name === "Reports" && ((user.value && isMember.value) || userData.is_superuser)){
       linkName = path.value === 'repositories' ? 'repository-reports' : 'my-repository-reports';
     } else if(tab.name === "Settings" && user.value){
       linkName = path.value === 'repositories' ? 'repository-settings' : 'my-repository-settings';
@@ -135,9 +144,6 @@ const addAccessRequestCallback = async () => {
     });
   })
 
-
-
-
   await fetchRequest()
   buttonLoading.value = false
   showSnackbarMessage('Access Request Sent Successfully', Status.success)
@@ -150,13 +156,13 @@ const initialize = async () => {
     tab.value = props.activeTab
   }
   path.value = getFirstPath(<string>route.path)
-  const allUserRepo = await fetchRepositoriesByUser();
+  const allUserRepo = await fetchRepositoryIDsByUser();
   if (props.repository?.visibility === 1 || props.repository?.visibility === 4) {
     isRepoAvailable.value = true;
   } else {
-    isRepoAvailable.value = isSlugInRepoList(props.repository, allUserRepo)
+    isRepoAvailable.value =  userData.is_superuser ? true : isSlugInRepoList(props.repository, allUserRepo)
   }
-  if(isSlugInRepoList(props.repository, allUserRepo)) {
+  if(isSlugInRepoList(props.repository, allUserRepo) || userData.is_superuser) {
     isMember.value = true;
     tabs.value = getTabs()
   }
@@ -183,7 +189,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout title="Project Details">
+  <MainLayout :title="`${entityTitle} Details`">
     <div v-if="pageLoading" class="loading-state-container" style="height: 85vh;">
       <VProgressCircular
           indeterminate
@@ -196,12 +202,12 @@ onMounted(() => {
           <div class="d-flex">
             <RouterLink
                 :to="{
-          name: path == 'repositories' ?  'repositories' : 'my-repositories'
+          name: entityTitle == 'IP Technology' ? 'ip-technologies' : path == 'repositories' ?  'repositories' :  'my-repositories'
         }"
                 class="text-decoration-none text-none">
               <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                 <PhArrowLeft size="14" class="mr-1"/>
-                Back To {{path == 'repositories' ?  'Projects' : 'My Projects'}}
+                Back To {{path == 'repositories' ?  `${entityTitle} List` : `My ${entityTitle} List`}}
               </p>
             </RouterLink>
           </div>
@@ -214,7 +220,7 @@ onMounted(() => {
               <p class="text-subtitle">{{ repository?.owner_data?.username }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
             </div>
             <div v-if="user">
-              <VBtnPrimaryFilled v-if="isMember" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">
+              <VBtnPrimaryFilled v-if="isMember || userData.is_superuser" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">
                 <PhDownload size="16" class="mr-2"/>
                 Download
               </VBtnPrimaryFilled>

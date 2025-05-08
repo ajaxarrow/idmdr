@@ -9,7 +9,7 @@
   const props = defineProps({
     title: {
       type: String,
-      default: 'LINNKS',
+      default: 'NOMCAARRD-KMHUB',
     },
   });
 

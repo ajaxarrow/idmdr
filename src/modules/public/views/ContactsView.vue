@@ -90,10 +90,10 @@ import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@
             <em class="heading-font">Get in touch with us</em>
           </p>
           <VRow justify="center" class="ma-0 pa-5">
-            <VCol sm="12" md="7" xxl="8" xl="8" lg="8" class="my-2">
+            <VCol cols="12" sm="12" md="7" xxl="8" xl="8" lg="8" class="my-2">
               <MapSnippet class=""/>
             </VCol>
-            <VCol sm="12" md="5" xxl="4" xl="4" lg="4" class="my-2">
+            <VCol cols="12" sm="12" md="5" xxl="4" xl="4" lg="4" class="my-2">
               <div class="bg-sb20 contact-details-card pa-5">
                 <div>
                   <div class="my-2">

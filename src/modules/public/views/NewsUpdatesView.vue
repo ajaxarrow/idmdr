@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import { PhCalendar, PhInfo } from "@phosphor-icons/vue";
+import { PhCalendar } from "@phosphor-icons/vue";
 import { useRouting } from "../../../core/composables/useRouting.ts";
 import Placeholder from "../../../assets/landing-page/placeholder.png";
 import { usePostServices } from "../../posts/services/post.services.ts";
 import { onMounted, ref } from "vue";
 import { Post } from "../../../interfaces/post.interface.ts";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
 const { router } = useRouting();
 const { fetchAllPosts } = usePostServices();
@@ -44,18 +45,16 @@ onMounted(async () => {
             <VProgressCircular indeterminate color="#23668b"></VProgressCircular>
           </div>
           <div v-else style="min-height: 65vh;">
-            <p
-                v-if="postData.length == 0"
-                class="d-flex align-center justify-center"
-                style="min-height: 65vh;"
-            >
-              <PhInfo class="mr-1"/> No Posts Found
-            </p>
+            <EmptyStateInfo
+              v-if="postData.length == 0"
+              header="No Posts Found"
+              description="No posts available at the moment. Please check back later."
+            />
             <VRow class="ma-0" v-else>
               <VCol
                   v-for="post in postData"
                   :key="post.uid"
-                  sm="12"
+                  cols="12" sm="12"
                   md="6"
                   xxl="4"
                   xl="4"

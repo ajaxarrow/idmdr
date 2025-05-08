@@ -1,49 +1,56 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import cmis from "../../../data/cmis.ts";
-import { CMI } from "../../../interfaces/cmi.interface.ts";
+import { ref, watch, onMounted } from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
-import {PhArrowClockwise} from "@phosphor-icons/vue";
+import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import {useOrgType} from "../../organization/composables/useOrgType.ts";
+import {useScroll} from "../../../core/composables/useScroll.ts";
+import Observer from "../../../core/components/Observer.vue";
 
-const router = useRouter();
+const {getOrganizationType} = useOrgType()
+const {fetchOrganizationsWithPagination} = useOrganizationServices();
+const organizationData = ref<Organization[]>([]);
+const organizationItems = ref<Organization[]>([]);
+const reachEnd = ref(false)
+const lastItemValue = ref(1);
+const observerReady = ref(false)
+const pageLoading = ref(false)
 const searchQuery = ref('');
-const loading = ref(true);
+const {scrollTop} = useScroll()
 
-// Separate CMIs into research and non-research categories
-const researchInstitutions = computed(() => {
-  return filteredCmis.value.filter(cmi => cmi.research);
-});
 
-const otherInstitutions = computed(() => {
-  return filteredCmis.value.filter(cmi => !cmi.research);
-});
-
-// Filter CMIs based on search query
-const filteredCmis = computed(() => {
-  if (!searchQuery.value) return cmis;
-
-  const query = searchQuery.value.toLowerCase();
-  return cmis.filter(cmi =>
-      cmi.name.toLowerCase().includes(query) ||
-      cmi.acronym.toLowerCase().includes(query)
-  );
-});
-
-// Handle CMI click based on withData and link properties
-const handleCmiClick = (cmi: CMI) => {
-  if (cmi.withData) {
-    router.push({ name: 'cmi-details', params: { slug: cmi.slug } });
-  } else if (cmi.link) {
-    window.open(cmi.link, '_blank');
+const filterOrganizationsBySearchQuery = () => {
+  if(searchQuery.value) {
+    organizationData.value = organizationItems.value.filter(organization => organization.name.toLowerCase().includes(searchQuery.value.toLowerCase().trim()) || organization.acronym?.toLowerCase().includes(searchQuery.value.toLowerCase().trim()));
+  } else {
+    organizationData.value = organizationItems.value
   }
-};
+}
 
-onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 500);
+const fetchMoreOrganizations = async () => {
+  const data = await fetchOrganizationsWithPagination(lastItemValue.value);
+  organizationData.value = [...organizationData.value, ...data];
+  lastItemValue.value = lastItemValue.value + 1
+  if (data.length === 0) {
+    reachEnd.value = true
+  }
+}
+
+watch(() => searchQuery.value, () => {
+  filterOrganizationsBySearchQuery()
+});
+
+
+onMounted(async() => {
+  pageLoading.value = true
+  const fetchedData = await fetchOrganizationsWithPagination(lastItemValue.value);
+  organizationData.value = [...fetchedData];
+  organizationItems.value = organizationData.value;
+  lastItemValue.value = lastItemValue.value + 1
+  observerReady.value = true
+  pageLoading.value = false
 });
 </script>
 
@@ -79,7 +86,7 @@ onMounted(() => {
           </VRow>
 
           <!-- Loading State -->
-          <VRow v-if="loading" justify="center" class="my-12" style="min-height: 50vh;">
+          <VRow v-if="pageLoading" justify="center" class="my-12" style="min-height: 50vh;">
             <VCol cols="12" class="text-center">
               <VProgressCircular indeterminate color="bs50" size="64"></VProgressCircular>
               <p class="mt-4 text-body-1">Loading institutions...</p>
@@ -88,7 +95,7 @@ onMounted(() => {
 
           <template v-else>
             <!-- Research Institutions Section -->
-            <section v-if="researchInstitutions.length > 0" class="mb-10">
+            <section v-if="organizationData.length > 0" class="mb-10">
               <VRow>
                 <VCol cols="12">
                   <div class="d-flex align-center mb-4">
@@ -98,10 +105,9 @@ onMounted(() => {
                   <VDivider class="mb-4"></VDivider>
                 </VCol>
               </VRow>
-
               <VRow>
                 <VCol
-                    v-for="cmi in researchInstitutions"
+                    v-for="cmi in organizationData"
                     :key="cmi.acronym"
                     cols="12"
                     sm="6"
@@ -109,123 +115,68 @@ onMounted(() => {
                     lg="3"
                     class="mb-4"
                 >
-                  <VCard
-                      class="h-100 institution-card"
-                      :class="{ 'with-data': cmi.withData, 'external-link': !cmi.withData }"
-                      @click="handleCmiClick(cmi)"
-                      :ripple="true"
-                      elevation="2"
-                      hover
-                  >
-                    <div class="card-img-container">
-                      <VImg
-                          :src="cmi.logo"
-                          aspect-ratio="1"
-                          cover
-                          class="institution-logo bg-grey-lighten-3"
-                          height="180"
-                      >
-                        <template v-slot:placeholder>
-                          <VRow class="fill-height ma-0" align="center" justify="center">
-                            <VProgressCircular indeterminate color="primary"></VProgressCircular>
-                          </VRow>
-                        </template>
-                      </VImg>
-                      <div class="badge research-badge" v-if="cmi.research">Research</div>
-                      <div class="badge link-badge" v-else>Non-Research</div>
-                    </div>
+                <RouterLink class="mb-2 cursor-pointer text-decoration-none" :to="{ name:  'cmi-data', params: { slug: cmi.slug } }">
+                    <VCard
+                        class="h-100 institution-card"
+                        :ripple="true"
+                        elevation="2"
+                        hover
+                    >
+                      <div class="card-img-container">
+                        <VImg
+                            :src="cmi.image ? cmi.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+                            aspect-ratio="1"
+                            cover
+                            class="institution-logo bg-grey-lighten-3"
+                            height="180"
+                        >
+                          <template v-slot:placeholder>
+                            <VRow class="fill-height ma-0" align="center" justify="center">
+                              <VProgressCircular indeterminate color="primary"></VProgressCircular>
+                            </VRow>
+                          </template>
+                        </VImg>
+                        <div class="badge research-badge">{{getOrganizationType(cmi.org_type!)}}</div>
+                      </div>
 
-                    <VCardTitle class="text-center pt-4 pb-2">
-                      <div class="text-subtitle-1 font-weight-bold">{{ cmi.acronym }}</div>
-                    </VCardTitle>
+                      <VCardTitle class="text-center pt-4 pb-2">
+                        <div class="text-subtitle-1 font-weight-bold">{{ cmi.acronym }}</div>
+                      </VCardTitle>
 
-                    <VCardText class="text-center pb-4">
-                      <div class="text-body-2">{{ cmi.name }}</div>
-                    </VCardText>
+                      <VCardText class="text-center pb-4">
+                        <div class="text-body-2">{{ cmi.name }}</div>
+                      </VCardText>
 
-                  </VCard>
+                    </VCard>
+                </RouterLink>
                 </VCol>
+              </VRow>
+              <div class="pa-3" v-if="reachEnd">
+                <p class="text-center">
+                  All CMIs are loaded!
+                  <span
+                      @click="scrollTop"
+                      class="text-bs50 cursor-pointer scroll-top-link"
+                  >
+                  Jump back to the top?
+                </span>
+                </p>
+              </div>
+              <VRow v-else>
+<!--                <VCol cols="12" class="text-center">-->
+<!--                  <VProgressCircular indeterminate color="bs50" size="64"></VProgressCircular>-->
+<!--                  <p class="mt-4 text-body-1">Loading institutions...</p>-->
+<!--                </VCol>-->
+                <Observer @intersect="fetchMoreOrganizations" v-if="observerReady"/>
               </VRow>
             </section>
-
-            <!-- Other Institutions Section -->
-            <section v-if="otherInstitutions.length > 0">
-              <VRow>
-                <VCol cols="12">
-                  <div class="d-flex align-center mb-4">
-                    <VIcon icon="mdi-school" color="primary" class="mr-2" size="x-large"></VIcon>
-                    <h2 class="text-h4 font-weight-bold">Non-Research Delivering Institutions</h2>
-                  </div>
-                  <VDivider class="mb-4"></VDivider>
-                </VCol>
-              </VRow>
-
-              <VRow>
-                <VCol
-                    v-for="cmi in otherInstitutions"
-                    :key="cmi.acronym"
-                    cols="12"
-                    sm="6"
-                    md="4"
-                    lg="3"
-                    class="mb-4"
-                >
-                  <VCard
-                      class="h-100 institution-card"
-                      :class="{ 'with-data': cmi.withData, 'external-link': !cmi.withData }"
-                      @click="handleCmiClick(cmi)"
-                      :ripple="true"
-                      elevation="2"
-                      hover
-                  >
-                    <div class="card-img-container">
-                      <VImg
-                          :src="cmi.logo"
-                          aspect-ratio="1"
-                          cover
-                          class="institution-logo bg-grey-lighten-3"
-                          height="180"
-                      >
-                        <template v-slot:placeholder>
-                          <VRow class="fill-height ma-0" align="center" justify="center">
-                            <VProgressCircular indeterminate color="primary"></VProgressCircular>
-                          </VRow>
-                        </template>
-                      </VImg>
-                      <div class="badge link-badge" v-if="cmi.research">Research</div>
-                      <div class="badge link-badge" v-else>Non-Research</div>
-                    </div>
-
-                    <VCardTitle class="text-center pt-4 pb-2">
-                      <div class="text-subtitle-1 font-weight-bold">{{ cmi.acronym }}</div>
-                    </VCardTitle>
-
-                    <VCardText class="text-center pb-4">
-                      <div class="text-body-2">{{ cmi.name }}</div>
-                    </VCardText>
-
-                  </VCard>
-                </VCol>
-              </VRow>
-            </section>
-
-            <!-- No Results -->
-            <VRow v-if="filteredCmis.length === 0" justify="center" class="my-12">
-              <VCol cols="12" sm="8" md="6" class="text-center">
-                <VIcon icon="mdi-alert-circle-outline" size="64" color="grey" class="mb-4"></VIcon>
-                <h3 class="text-h5 mb-2">No Institutions Found</h3>
-                <p class="text-body-1 mb-4">We couldn't find any institutions matching your search criteria.</p>
-                <VBtn color="bs50"
-                      variant="elevated"
-                      height="47px"
-                      class="text-none mx-1" @click="searchQuery = ''">
-                  <PhArrowClockwise size="20" class="mr-2"/>
-                  <span>
-                    Clear Search
-                    </span>
-                </VBtn>
-              </VCol>
-            </VRow>
+            <EmptyStateInfo
+              v-else
+              description="We couldn't find any institutions matching your search criteria."
+              header="No Institutions Found"
+              :isCallbackNeeded="true"
+              @callback="searchQuery = ''"
+            />
           </template>
         </VContainer>
         <VDivider/>

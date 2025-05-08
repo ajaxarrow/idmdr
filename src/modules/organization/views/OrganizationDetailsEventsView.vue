@@ -6,8 +6,8 @@ import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import CalendarContent from "../../events/components/CalendarContent.vue";
 
-const {route, router} = useRouting()
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {route} = useRouting()
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const organization = ref<Organization | null>();
 
 const path = ref('organizations')
@@ -23,7 +23,7 @@ const getFirstPath = (url: string) => {
 
 onMounted(async () => {
   path.value = getFirstPath(<string>route.path)
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   organization.value = await fetchOrganizationData(route.params.slug as string);
 
   if(organization.value){
@@ -31,13 +31,6 @@ onMounted(async () => {
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
 })
@@ -47,7 +40,7 @@ onMounted(async () => {
 <template>
   <OrganizationDetailsLayout
       :organization="organization"
-      activeTab="posts">
+      activeTab="scheduled events">
     <div v-if="organization" class="pa-6">
       <CalendarContent :for-organization="true"/>
     </div>

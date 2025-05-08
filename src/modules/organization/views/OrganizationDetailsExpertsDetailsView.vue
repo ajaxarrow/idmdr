@@ -18,7 +18,7 @@ import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelp
 
 const {route, router} = useRouting()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {fetchExpertById, deleteExpert} = useOrganizationExpertsServices()
 const {arrayToString} = useStringArrayHelper()
 
@@ -49,20 +49,13 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
 onMounted(async () => {
   pageLoading.value = true
   path.value = getFirstPath(<string>route.path)
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   organization.value = await fetchOrganizationData(route.params.slug as string);
   if(organization.value){
     if( isSlugInOrgList(organization.value, allUserOrg)){
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
   // @ts-ignore
@@ -117,7 +110,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <VMenu v-model="expertActionMenu" :close-on-content-click="false">
+          <VMenu v-if="organization?.is_member" v-model="expertActionMenu" :close-on-content-click="false">
             <template #activator="{ props }">
               <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                 Options
@@ -144,7 +137,7 @@ onUnmounted(() => {
         </VRow>
         <p class="text-about-heading py-3">Expert Information</p>
         <VRow class="ma-0">
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Expert Name</p>
             <p class="text-subtitle">{{
                 typeof expertData?.name === 'object'
@@ -152,15 +145,15 @@ onUnmounted(() => {
                     : expertData?.name || ''
               }}</p>
           </VCol>
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Assigned CMI</p>
             <p class="text-subtitle">{{organization?.name}} ({{organization?.acronym}})</p>
           </VCol>
-          <VCol sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Expertise</p>
             <p class="text-subtitle">{{ arrayToString(expertData.expertise as string[])}}</p>
           </VCol>
-          <VCol v-if="expertData.contact.is_displayed" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="expertData.contact.is_displayed" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Contact Number</p>
             <p class="text-subtitle">{{ expertData.contact.value }}</p>
           </VCol>

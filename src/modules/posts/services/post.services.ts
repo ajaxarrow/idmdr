@@ -33,12 +33,12 @@ export const usePostServices = () => {
 
       if(type === 'create'){
         setTimeout(async function() {
-          window.location.href = `/my-organizations/${orgID}/posts/`;
-        }, 3000);
+          window.location.href = `/organizations/${orgID}/posts/`;
+        }, 1000);
       } else {
         setTimeout(async function() {
-          window.location.href = `/my-organizations/${orgID}/posts/${id}/`;
-        }, 3000);
+          window.location.href = `/organizations/${orgID}/posts/${id}/`;
+        }, 1000);
       }
     } catch (error) {
       loading.value = false;
@@ -98,11 +98,11 @@ export const usePostServices = () => {
 
   const fetchAllPosts = async (): Promise<Post[]> => {
     try {
-      const res = await server.get('/posts/', {
+      const res = await server.get('/posts/?is_published=true&page_size=100000000', {
         headers: authorizationHeader
       });
 
-      return await Promise.all(res.data.map((post: any) => mapPostData(post)));
+      return await Promise.all(res.data.results.map((post: any) => mapPostData(post)));
     } catch (error) {
       console.error(error);
       return [];
@@ -115,7 +115,7 @@ export const usePostServices = () => {
         headers: authorizationHeader
       });
 
-      return await Promise.all(res.data.map((post: any) => mapPostData(post)));
+      return await Promise.all(res.data.results.map((post: any) => mapPostData(post)));
     } catch (error) {
       console.error(error);
       return [];
@@ -134,6 +134,65 @@ export const usePostServices = () => {
     }
   }
 
+  const fetchPostsByAdmin = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      organization?: string,
+      isPublished?: string | boolean
+  ): Promise<Post[]> => {
+    try {
+      let url = `/posts/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (organization) {
+        url += `&organization=${organization}`;
+      }
+      if (typeof isPublished === 'boolean') {
+        url += `&is_published=${isPublished}`;
+      }
+      const res = await server.get(url, {
+        headers: authorizationHeader
+      });
+      const rawData = res.data.results;
+      const posts: Post[] = await Promise.all(rawData.map((post: any) => mapPostData(post)));
+      return posts;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  const fetchTotalPosts = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      organization?: string,
+      isPublished?: string | boolean
+  ): Promise<number> => {
+    try {
+      let url = `/posts/?page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery && searchQuery.trim()) {
+        url += `&search=${encodeURIComponent(searchQuery.trim())}`;
+      }
+      if (organization) {
+        url += `&organization=${organization}`;
+      }
+      if (typeof isPublished === 'boolean') {
+        url += `&is_published=${isPublished}`;
+      }
+      const res = await server.get(url, {
+        headers: authorizationHeader
+      });
+      const rawData = res.data.results;
+      return rawData.length;
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
+  }
+
 
   return {
     loading,
@@ -143,7 +202,9 @@ export const usePostServices = () => {
     fetchAllPosts,
     fetchPostbyID,
     fetchPostByOrganization,
-    managePostStatus
+    managePostStatus,
+    fetchPostsByAdmin,
+    fetchTotalPosts
   }
 
 }

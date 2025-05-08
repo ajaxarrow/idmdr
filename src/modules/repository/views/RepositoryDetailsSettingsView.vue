@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, computed} from "vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
@@ -12,7 +12,15 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import AccessLeveLInfoDialog from "../../organization/components/AccessLeveLInfoDialog.vue";
-import {PhDotsThreeOutlineVertical, PhInfo, PhMagnifyingGlass, PhPencil, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhArrowDown,
+  PhDotsThreeOutlineVertical,
+  PhInfo,
+  PhMagnifyingGlass,
+  PhPencil,
+  PhTrash,
+  PhWarning
+} from "@phosphor-icons/vue";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import AddRepoMemberDialog from "../components/AddRepoMemberDialog.vue";
 import jsPDF from 'jspdf';
@@ -22,19 +30,30 @@ import {AccessRequest} from "../../../interfaces/access-request.interface.ts";
 import AccessRequestConfirmationDialog from "../components/AccessRequestConfirmationDialog.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
+import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
+import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
+
 const {addNotification} = useNotificationsServices()
 const {userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {repository} = useRepositoryStore();
-const {fetchRepositoryData, fetchRepositoriesByUser, deleteRepository} = useRepositoryServices()
+const {fetchRepositoryData, fetchRepositoryIDsByUser, manageRepositoryStatus} = useRepositoryServices()
 const {fetchRepoMembers, removeRepoMember} = useRepositoryMemberServices()
 const {fetchAccessRequestsByRepository, updateAccessRequest} = useAccessRequestServices()
-
+const {getVisibilityLabel} = useVisibilityHelper()
 const {arrayToString} = useStringArrayHelper()
-const {route, router} = useRouting()
+const {route} = useRouting()
 const loading = ref(false)
 const searchQuery = ref('')
 const currentRepo = ref<Repository | null>(null)
+const entityTitle = computed(() => {
+  return currentRepo.value
+      ? currentRepo.value?.type! === 'Project Repository'
+          ? 'IP Technology'
+          : 'Project'
+      : 'Project';
+});
 const accessRequestSearchQuery = ref('')
 const memberActionMenu = ref(false)
 const overlayLoading = ref(false)
@@ -45,6 +64,13 @@ const accessRequests = ref<AccessRequest[]>([])
 const accessRequestData = ref<AccessRequest[]>([])
 const userRepoInfo = ref<OrgMember | null | undefined>(null)
 
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: 'long',
+    day: '2-digit',
+    year: 'numeric'
+  });
+};
 const stripHtml = (html: string): string => {
   const temp = document.createElement('div');
   temp.innerHTML = DOMPurify.sanitize(html);
@@ -92,202 +118,479 @@ const wrapText = (doc: jsPDF, text: string, x: number, y: number, maxWidth: numb
   return currentY + lineHeight;
 };
 
-const formatLabelAndContent = (doc: jsPDF, label: string, content: string | undefined, x: number, y: number, maxWidth: number): number => {
-  if (!content) return y;
-
-  doc.setFont('helvetica', 'bold');
-  doc.text(label, x, y);
-
-  const labelWidth = doc.getTextWidth(label);
-  doc.setFont('helvetica', 'normal');
-
-  if (doc.getTextWidth(content) > maxWidth - labelWidth) {
-    return wrapText(doc, content, x + labelWidth, y, maxWidth - labelWidth);
-  } else {
-    doc.text(content, x + labelWidth, y);
-    return y + 7;
-  }
-};
-
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'long',
-    day: '2-digit',
-    year: 'numeric'
-  });
-};
 
 const downloadRepositoryDataPDF = async (repository: Repository) => {
+  // Initialize PDF
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4'
   });
 
+  // Define minimal color palette
+  const colors = {
+    primary: "#2c3e50",    // Dark blue-gray
+    accent: "#3498db",     // Blue accent
+    text: "#333333",       // Text color
+    light: "#f8f9fa",      // Light background
+    white: "#FFFFFF"
+  };
+
+  // Set up document variables
   const margin = 20;
   const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
   const contentWidth = pageWidth - (margin * 2);
-  let currentY = margin;
+  let currentY = 40;
 
-// Header Section with blue background
-  doc.setFillColor(0, 123, 255);
-  doc.rect(0, 0, doc.internal.pageSize.width, 50, 'F'); // Draws a filled rectangle for the header
+  // Helper function to add page numbers
+  const addPageNumber = (doc: any) => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(colors.text);
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin - 15, pageHeight - 10);
+    }
+  };
 
-// Repository title in white
-  doc.setTextColor(255, 255, 255); // Set text color to white
+  // Helper function to add simple header and footer
+  const addHeaderAndFooter = (doc: any) => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+
+      // Minimal header - just a thin line
+      doc.setDrawColor(colors.accent);
+      doc.setLineWidth(0.5);
+      doc.line(margin, 20, pageWidth - margin, 20);
+
+      // Footer with thin line
+      doc.setDrawColor(colors.accent);
+      doc.setLineWidth(0.5);
+      doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
+
+      // Add date in footer
+      doc.setFontSize(9);
+      doc.setTextColor(colors.text);
+      const today = new Date().toLocaleDateString();
+      doc.text(`Generated on: ${today}`, margin, pageHeight - 10);
+    }
+  };
+
+  // Cover page - clean and minimal
+  doc.setFillColor(colors.white);
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+  // Simple accent bar
+  doc.setFillColor(colors.accent);
+  doc.rect(0, 0, 10, pageHeight, 'F');
+
+  // Title on cover page
+  doc.setTextColor(colors.primary);
+  doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
 
-// Split text to fit within the page width for wrapping
-  const titleLines = doc.splitTextToSize(repository.title, doc.internal.pageSize.width - 2 * margin);
-  doc.text(titleLines, margin, 25);
+  const titleLines = doc.splitTextToSize(repository?.title || 'Repository', pageWidth - (margin * 4));
+  doc.text(titleLines, margin + 10, pageHeight/3);
 
-// Reset text color for body
-  doc.setTextColor(0, 0, 0);
-  currentY = 60;
-
-
-
-  // Basic Info Section
-  doc.setFontSize(12);
+  // Repository type and date
+  doc.setFontSize(14);
   doc.setFont('helvetica', 'normal');
+  doc.text(repository?.type || 'Repository', margin + 10, pageHeight/3 + 30);
+  doc.text(`Last Updated: ${formatDate(repository?.updated_at || '')}`, margin + 10, pageHeight/3 + 40);
 
-  const basicInfo = [
-    `Owner: ${repository.owner_data?.username || 'N/A'}`,
-    `Organization: ${repository.org_data?.name || 'N/A'} (${repository.org_data?.acronym || 'N/A'})`,
-    `Last Updated: ${formatDate(<string>repository.updated_at)}`,
-  ];
+  // Org details on cover
+  if (repository?.org_data?.name) {
+    doc.setFontSize(16);
+    doc.text(repository.org_data.name, margin + 10, pageHeight - 60);
+    if (repository.org_data?.acronym) {
+      doc.text(`(${repository.org_data.acronym})`, margin + 10, pageHeight - 50);
+    }
+  }
 
-  basicInfo.forEach(info => {
-    doc.text(info, margin, currentY);
+  // Add new page for content
+  doc.addPage();
+  currentY = 40;
+
+  // Table of contents
+  doc.setTextColor(colors.primary);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Table of Contents', margin, currentY);
+  currentY += 10;
+
+  const sections = ['Basic Information', 'About Repository'];
+  if (repository?.type === 'Project Repository') {
+    sections.push('Project Components', 'Technology Details');
+    if (repository?.transfer_plan === 'Commercialization' && repository?.commercialization) {
+      sections.push('Commercialization');
+    }
+    // if (repository?.atbi && repository.atbi.trim().length !== 0) {
+    //   sections.push('Agri-Aqua Technology Business Incubator');
+    // }
+    // if (repository?.abh && repository.abh.trim().length !== 0) {
+    //   sections.push('Agri-Aqua Business Hub');
+    // }
+  }
+  if (repository?.additional_info && repository.additional_info.trim().length > 0) {
+    sections.push('Additional Information');
+  }
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(colors.text);
+  sections.forEach((section, index) => {
+    doc.text(`${index + 1}. ${section}`, margin + 5, currentY);
     currentY += 7;
   });
 
-  // Tags Section
-  if (repository.tags && repository.tags.length > 0) {
-    currentY += 5;
+  currentY += 15;
+
+  // Basic Information Section - clean design
+  doc.addPage();
+  currentY = 40;
+
+  // Simple section heading with underline
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.primary);
+  doc.text('Basic Information', margin, currentY);
+  doc.setDrawColor(colors.accent);
+  doc.setLineWidth(0.5);
+  doc.line(margin, currentY + 2, margin + 50, currentY + 2);
+  currentY += 12;
+
+  doc.setTextColor(colors.text);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+
+  // Single column layout for clarity
+  doc.setFont('helvetica', 'bold');
+  doc.text('Owner:', margin, currentY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(repository?.owner_data?.username || 'N/A', margin + 70, currentY);
+  currentY += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Organization:', margin, currentY);
+  doc.setFont('helvetica', 'normal');
+  const orgText = `${repository?.org_data?.name || 'N/A'} (${repository?.org_data?.acronym || 'N/A'})`;
+  doc.text(orgText, margin + 70, currentY);
+  currentY += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Last Updated:', margin, currentY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(formatDate(repository?.updated_at || ''), margin + 70, currentY);
+  currentY += 8;
+
+  // Ensure Basic Information is always present
+  doc.setFont('helvetica', 'bold');
+  doc.text('Lead:', margin, currentY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(repository?.leadData?.data?.first_name ? `${repository?.leadData?.data?.first_name} ${repository?.leadData?.data?.last_name}`: 'N/A', margin + 70, currentY);
+  currentY += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Author:', margin, currentY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(
+      !repository?.authorsData || repository.authorsData.length === 0
+          ? 'N/A'
+          : repository.authorsData.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', '),
+      margin + 70, currentY
+  );
+  currentY += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Location:', margin, currentY);
+  doc.setFont('helvetica', 'normal');
+  doc.text(repository?.location || 'N/A', margin + 70, currentY);
+  currentY += 8;
+
+  // Tags with minimal styling
+  if (repository?.tags && Array.isArray(repository.tags) && repository.tags.length > 0) {
     doc.setFont('helvetica', 'bold');
     doc.text('Tags:', margin, currentY);
-    currentY += 7;
-    doc.setFont('helvetica', 'normal');
+    currentY += 8;
+
     if (typeof repository.tags !== "string") {
-      const tags = repository.tags.join(', ');
-      currentY = wrapText(doc, tags, margin, currentY, contentWidth);
+      const tags = repository.tags;
+      let tagText = tags.filter(Boolean).join(', ');
+
+      doc.setFont('helvetica', 'normal');
+      if (doc.getTextWidth(tagText) > contentWidth) {
+        currentY = wrapText(doc, tagText, margin + 10, currentY, contentWidth - 10);
+      } else {
+        doc.text(tagText, margin + 10, currentY);
+        currentY += 8;
+      }
     }
   }
 
-  // About Section
+  // About section
   currentY += 10;
-  doc.setFont('helvetica', 'bold');
+
+  // Section heading with underline
   doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(colors.primary);
   doc.text('About Repository', margin, currentY);
-  currentY += 10;
+  doc.setDrawColor(colors.accent);
+  doc.setLineWidth(0.5);
+  doc.line(margin, currentY + 2, margin + 50, currentY + 2);
+  currentY += 12;
 
+  doc.setTextColor(colors.text);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(12);
-  const cleanDescription = stripHtml(repository.description);
-  currentY = wrapText(doc, cleanDescription, margin, currentY, contentWidth, 'justify');
+  const cleanDescription = stripHtml(repository?.description || '');
+  currentY = wrapText(doc, cleanDescription, margin, currentY, contentWidth);
 
-  // Project Components Section
-  currentY += 15;
-  if (currentY > doc.internal.pageSize.height - 60) {
-    doc.addPage();
-    currentY = margin;
-  }
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('Project Components', margin, currentY);
-  currentY += 10;
-
-  doc.setFontSize(12);
-  const projectComponents = [
-    { label: 'Location: ', content: repository.location },
-    { label: 'Start Date: ', content: repository.start_date ? formatDate(repository.start_date) : undefined },
-    { label: 'End Date: ', content: repository.end_date ? formatDate(repository.end_date) : undefined },
-    { label: 'Funding Agency: ', content: arrayToString(repository.funding_agency as string[]) },
-    { label: 'Affiliation: ', content: arrayToString(repository.affiliation as string[]) },
-    { label: 'Commodity: ', content: arrayToString(repository.commodity as string[]) },
-    { label: 'Industry: ', content: arrayToString(repository.industry as string[]) },
-    { label: 'Research Project/s: ', content: repository.rpt },
-    { label: 'Priority Level: ', content: repository.priority_level ?
-          repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1) : undefined }
-  ];
-
-  projectComponents.forEach(({ label, content }) => {
-    if (currentY > doc.internal.pageSize.height - 20) {
-      doc.addPage();
-      currentY = margin;
-    }
-    currentY = formatLabelAndContent(doc, label, content, margin, currentY, contentWidth);
-  });
-
-  // Technology Details Section
-  currentY += 15;
-  if (currentY > doc.internal.pageSize.height - 60) {
-    doc.addPage();
-    currentY = margin;
-  }
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('Technology Details', margin, currentY);
-  currentY += 10;
-
-  doc.setFontSize(12);
-  const techDetails = [
-    { label: 'Technology Category: ', content: repository.technology_category },
-    { label: 'Technology Status: ', content: repository.technology_status },
-    { label: 'Technology Readiness Level: ', content: repository.technology_readiness_level },
-    { label: 'Technology Generator: ', content: repository.technology_generator },
-    { label: 'Technology Owner: ', content: repository.tech_owner },
-    { label: 'Existing/Potential Adopters: ', content: repository.adaptors },
-    { label: 'Transfer Plan: ', content: repository.transfer_plan },
-    { label: 'Transfer Status: ', content: repository.technology_transfer_status }
-  ];
-
-  techDetails.forEach(({ label, content }) => {
-    if (currentY > doc.internal.pageSize.height - 20) {
-      doc.addPage();
-      currentY = margin;
-    }
-    currentY = formatLabelAndContent(doc, label, content, margin, currentY, contentWidth);
-  });
-
-  // Commercialization Section (conditional)
-  if (repository.transfer_plan === 'Commercialization' && repository.commercialization) {
+  // Project Components Section (conditional)
+  if (repository?.type === 'Project Repository') {
     currentY += 15;
-    if (currentY > doc.internal.pageSize.height - 60) {
+    if (currentY > pageHeight - 40) {
       doc.addPage();
-      currentY = margin;
+      currentY = 40;
     }
 
+    // Section heading with underline
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.text('Commercialization', margin, currentY);
-    currentY += 10;
+    doc.setTextColor(colors.primary);
+    doc.text('Project Components', margin, currentY);
+    doc.setDrawColor(colors.accent);
+    doc.setLineWidth(0.5);
+    doc.line(margin, currentY + 2, margin + 50, currentY + 2);
+    currentY += 12;
 
-    doc.setFontSize(12);
-    const commercializationDetails = [
-      { label: 'IP Type: ', content: repository.commercialization.ipType },
-      { label: 'IP Status: ', content: repository.commercialization.ipStatus },
-      { label: 'IP Registration Number: ', content: repository.commercialization.regNo },
-      { label: 'Mode Status: ', content: repository.commercialization.modeStatus },
-      { label: 'Current Status: ', content: repository.commercialization.currentStatus },
-      { label: 'Adopter Status: ', content: repository.commercialization.adopterStatus }
+    doc.setTextColor(colors.text);
+    doc.setFontSize(11);
+
+    // Single column layout for project components
+    const projectItems = [
+      { label: 'Start Date:', content: repository?.start_date ? formatDate(repository.start_date) : 'N/A' },
+      { label: 'End Date:', content: repository?.end_date ? formatDate(repository.end_date) : 'N/A' },
+      { label: 'Funding Agency:', content: arrayToString(repository?.funding_agency as string[] || []) || 'N/A' },
+      { label: 'Affiliation:', content: arrayToString(repository?.affiliation as string[] || []) || 'N/A' },
+      { label: 'Commodity:', content: arrayToString(repository?.commodity as string[] || []) || 'N/A' },
+      { label: 'Industry:', content: arrayToString(repository?.industry as string[] || []) || 'N/A' },
+      { label: 'Research Project/s:', content: arrayToString(repository?.rpt as string[] || []) || 'N/A' },
+      { label: 'Priority Level:', content: repository?.priority_level ?
+            repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1) : 'N/A' }
     ];
 
-    commercializationDetails.forEach(({ label, content }) => {
-      if (currentY > doc.internal.pageSize.height - 20) {
+    // Render items in single column
+    projectItems.forEach(({ label, content }) => {
+      if (currentY > pageHeight - 30) {
         doc.addPage();
-        currentY = margin;
+        currentY = 40;
       }
-      currentY = formatLabelAndContent(doc, label, content, margin, currentY, contentWidth);
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(label, margin, currentY);
+
+      doc.setFont('helvetica', 'normal');
+      if (content && doc.getTextWidth(content) > contentWidth - 70) {
+        currentY = wrapText(doc, content, margin + 70, currentY, contentWidth - 70);
+      } else {
+        doc.text(content || 'N/A', margin + 70, currentY);
+        currentY += 8;
+      }
     });
+
+    // Technology Details Section
+    currentY += 10;
+    if (currentY > pageHeight - 40) {
+      doc.addPage();
+      currentY = 40;
+    }
+
+    // Section heading with underline
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(colors.primary);
+    doc.text('Technology Details', margin, currentY);
+    doc.setDrawColor(colors.accent);
+    doc.setLineWidth(0.5);
+    doc.line(margin, currentY + 2, margin + 50, currentY + 2);
+    currentY += 12;
+
+    doc.setTextColor(colors.text);
+    doc.setFontSize(11);
+
+    // Technology items in a single column
+    const techItems = [
+      { label: 'Patenting Status:', content: repository?.is_patentable ? 'Applicable for Patenting' : 'Not Applicable' },
+      { label: 'Technology Category:', content: repository?.technology_category || 'N/A' },
+      { label: 'Technology Status:', content: repository?.technology_status || 'N/A' },
+      { label: 'Technology Readiness Level:', content: repository?.technology_readiness_level || 'N/A' },
+      { label: 'Technology Generator:', content: !repository?.techGeneratorData || repository.techGeneratorData.length === 0 ?
+            'N/A' : repository.techGeneratorData.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', ') },
+      { label: 'Technology Owner:', content: !repository?.techOwnerData || repository.techOwnerData?.length === 0 ?
+            'N/A' : repository.techOwnerData?.map((owner) => `${owner?.data?.first_name} ${owner?.data?.last_name}`).filter(Boolean).join(', ') },
+
+      { label: 'Existing/Potential Adopters:', content: arrayToString(repository?.adaptors as string[] || []) || 'N/A' },
+      { label: 'Transfer Plan:', content: repository?.transfer_plan || 'N/A' },
+      { label: 'Transfer Status:', content: repository?.technology_transfer_status || 'N/A' }
+    ];
+
+    // Render tech items in single column
+    techItems.forEach(({ label, content }) => {
+      if (currentY > pageHeight - 30) {
+        doc.addPage();
+        currentY = 40;
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(label, margin, currentY);
+
+      doc.setFont('helvetica', 'normal');
+      if (content && doc.getTextWidth(content) > contentWidth - 70) {
+        currentY = wrapText(doc, content, margin + 70, currentY, contentWidth - 70);
+      } else {
+        doc.text(content || 'N/A', margin + 70, currentY);
+        currentY += 8;
+      }
+    });
+
+    // Commercialization Section (conditional)
+    if (repository?.transfer_plan === 'Commercialization' && repository?.commercialization) {
+      currentY += 10;
+      if (currentY > pageHeight - 40) {
+        doc.addPage();
+        currentY = 40;
+      }
+
+      // Section heading with underline
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(colors.primary);
+      doc.text('Commercialization', margin, currentY);
+      doc.setDrawColor(colors.accent);
+      doc.setLineWidth(0.5);
+      doc.line(margin, currentY + 2, margin + 50, currentY + 2);
+      currentY += 12;
+
+      doc.setTextColor(colors.text);
+      doc.setFontSize(11);
+
+      // Commercialization items in a single column
+      const commItems = [
+        { label: 'IP Type:', content: repository.commercialization?.ipType || 'N/A' },
+        { label: 'IP Status:', content: repository.commercialization?.ipStatus || 'N/A' },
+        { label: 'IP Registration Number:', content: repository.commercialization?.regNo || 'N/A' },
+        { label: 'Mode Status:', content: repository.commercialization?.modeStatus || 'N/A' },
+        { label: 'Current Status:', content: repository.commercialization?.currentStatus || 'N/A' },
+        { label: 'Adopter Status:', content: repository.commercialization?.adopterStatus || 'N/A' }
+      ];
+
+      // Render commercialization items
+      commItems.forEach(({ label, content }) => {
+        if (currentY > pageHeight - 30) {
+          doc.addPage();
+          currentY = 40;
+        }
+
+        doc.setFont('helvetica', 'bold');
+        doc.text(label, margin, currentY);
+
+        doc.setFont('helvetica', 'normal');
+        doc.text(content, margin + 70, currentY);
+        currentY += 8;
+      });
+    }
+
+    // ATBI Section (conditional)
+    // if (repository?.atbi && repository.atbi.trim().length !== 0) {
+    //   currentY += 10;
+    //   if (currentY > pageHeight - 40) {
+    //     doc.addPage();
+    //     currentY = 40;
+    //   }
+    //
+    //   // Section heading with underline
+    //   doc.setFont('helvetica', 'bold');
+    //   doc.setFontSize(16);
+    //   doc.setTextColor(colors.primary);
+    //   doc.text('Agri-Aqua Technology Business Incubator', margin, currentY);
+    //   doc.setDrawColor(colors.accent);
+    //   doc.setLineWidth(0.5);
+    //   doc.line(margin, currentY + 2, margin + 100, currentY + 2);
+    //   currentY += 12;
+    //
+    //   doc.setTextColor(colors.text);
+    //   doc.setFontSize(11);
+    //   doc.setFont('helvetica', 'normal');
+    //
+    //   // Clean HTML and wrap text
+    //   const cleanATBI = stripHtml(repository.atbi);
+    //   currentY = wrapText(doc, cleanATBI, margin, currentY, contentWidth);
+    // }
+
+    // ABH Section (conditional)
+    // if (repository?.abh && repository.abh.trim().length !== 0) {
+    //   currentY += 10;
+    //   if (currentY > pageHeight - 40) {
+    //     doc.addPage();
+    //     currentY = 40;
+    //   }
+    //
+    //   // Section heading with underline
+    //   doc.setFont('helvetica', 'bold');
+    //   doc.setFontSize(16);
+    //   doc.setTextColor(colors.primary);
+    //   doc.text('Agri-Aqua Business Hub', margin, currentY);
+    //   doc.setDrawColor(colors.accent);
+    //   doc.setLineWidth(0.5);
+    //   doc.line(margin, currentY + 2, margin + 70, currentY + 2);
+    //   currentY += 12;
+    //
+    //   doc.setTextColor(colors.text);
+    //   doc.setFontSize(11);
+    //   doc.setFont('helvetica', 'normal');
+    //
+    //   // Clean HTML and wrap text
+    //   const cleanABH = stripHtml(repository.abh);
+    //   currentY = wrapText(doc, cleanABH, margin, currentY, contentWidth);
+    // }
   }
 
+  // Additional Information Section (conditional)
+  if (repository?.additional_info && repository.additional_info.trim().length > 0) {
+    currentY += 10;
+    if (currentY > pageHeight - 40) {
+      doc.addPage();
+      currentY = 40;
+    }
+
+    // Section heading with underline
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(colors.primary);
+    doc.text('Additional Information', margin, currentY);
+    doc.setDrawColor(colors.accent);
+    doc.setLineWidth(0.5);
+    doc.line(margin, currentY + 2, margin + 70, currentY + 2);
+    currentY += 12;
+
+    doc.setTextColor(colors.text);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+
+    // Clean HTML and wrap text
+    const cleanAdditionalInfo = stripHtml(repository.additional_info);
+    currentY = wrapText(doc, cleanAdditionalInfo, margin, currentY, contentWidth);
+  }
+
+  // Add minimal header, footer and page numbers
+  addHeaderAndFooter(doc);
+  addPageNumber(doc);
+
   // Save the PDF
-  doc.save(`${repository.title}-Info.pdf`);
+  doc.save(`${repository?.title || 'Repository'}-Info.pdf`);
 };
 
 const filterRepoMembersBySearchQuery = () => {
@@ -341,11 +644,12 @@ const fetchMembers = async () => {
   repoMemberData.value = data
 }
 
-const deleteRepoCallback = async () => {
+const manageRepoStatusCallback = async (isActive: boolean) => {
   overlayLoading.value = true
-  await deleteRepository(route.params.slug as string)
+  await manageRepositoryStatus(route.params.slug as string, isActive)
   overlayLoading.value = false
-  await router.push({ name: 'my-repositories' })
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  repository!.value!.is_active = isActive!
 }
 
 const manageRequestCallback = async (id: string, isApproved: boolean, accessRequest: AccessRequest) => {
@@ -373,6 +677,11 @@ const manageRequestCallback = async (id: string, isApproved: boolean, accessRequ
   memberActionMenu.value = false
 }
 
+const changeVisibilityCallback = async (newVisibility: number) => {
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  repository!.value!.visibility = newVisibility
+}
+
 watch(() => searchQuery.value, () => {
   filterRepoMembersBySearchQuery()
 });
@@ -388,10 +697,10 @@ onMounted(async () => {
   accessRequestData.value = accessRequests.value
   path.value = getFirstPath(<string>route.path)
 
-  const allUserRepo = await fetchRepositoriesByUser();
+  const allUserRepo = await fetchRepositoryIDsByUser();
 
   if(currentRepo.value){
-    if(isSlugInRepoList(currentRepo.value, allUserRepo)) {
+    if(isSlugInRepoList(currentRepo.value, allUserRepo) || userData.is_superuser) {
       if("is_member" in currentRepo.value){
         currentRepo.value.is_member = true;
       }
@@ -413,11 +722,35 @@ onMounted(async () => {
       ></VProgressCircular>
     </div>
    <div v-else>
+     <VAlert
+         v-if="repository && !repository.is_active"
+         color="#ff9800"
+         variant="tonal"
+         border="start"
+         class="inactive-repo-banner mb-4"
+     >
+       <div class="d-flex align-center">
+         <div class="warning-icon-container me-3">
+           <PhWarning size="24" weight="fill" class="warning-icon" />
+         </div>
+         <div class="warning-content">
+           <VAlert-title class="warning-title">
+             {{entityTitle}} Is Currently Inactive
+           </VAlert-title>
+           <div class="warning-message">
+             This {{entityTitle}} is not visible to the public. Only members can view it.
+             <a v-if="userRepoInfo?.access_level == 'owner'" href="#repository-status" class="status-link" >
+               Change status now <PhArrowDown class="ms-1" />
+             </a>
+           </div>
+         </div>
+       </div>
+     </VAlert>
      <div v-if="currentRepo" class="px-6 py-7">
        <VRow  class="ma-0" justify="space-between" align="center">
          <div>
-           <p class="section-title">Download Project Information</p>
-           <p class="text-gs20 mb-2" style="font-size: 14px;">Download the Project Information in PDF</p>
+           <p class="section-title">Download {{entityTitle}} Information</p>
+           <p class="text-gs20 mb-2" style="font-size: 14px;">Download the {{entityTitle}} Information in PDF</p>
          </div>
          <VBtnPrimaryFilled
              @click="downloadRepositoryDataPDF(currentRepo)"
@@ -425,15 +758,38 @@ onMounted(async () => {
              rounded="lg"
              class="satoshi-md"
              style="font-size: 14px !important;">
-           Download Repository Info
+           Download {{entityTitle}} Info
          </VBtnPrimaryFilled>
        </VRow>
-       <div v-if="currentRepo.is_member">
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
-         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'">
+       <div v-if="currentRepo.is_member|| userData.is_superuser">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser">
            <VRow  class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Update Project Information</p>
+               <p class="section-title">Update {{entityTitle}} Visibility (Current Visibility: {{getVisibilityLabel(repository?.visibility as number)}})</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project visibility </p>
+             </div>
+             <ChangeVisibilityDialog
+               :id="<string>repository?.uid!"
+               :visibility="repository?.visibility"
+               type="project"
+              @callback="changeVisibilityCallback"
+             >
+               <VBtnPrimaryFilled
+                   height="41px"
+                   rounded="lg"
+                   class="satoshi-md"
+                   style="font-size: 14px !important;">
+                 Change {{entityTitle}} Visibility
+               </VBtnPrimaryFilled>
+             </ChangeVisibilityDialog>
+           </VRow>
+         </div>
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser">
+           <VRow  class="ma-0" justify="space-between" align="center">
+             <div>
+               <p class="section-title">Update {{entityTitle}} Information</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Modify your project details and information</p>
              </div>
              <VBtnPrimaryFilled
@@ -442,18 +798,36 @@ onMounted(async () => {
                  rounded="lg"
                  class="satoshi-md"
                  style="font-size: 14px !important;">
-               Update Project Info
+               Update {{entityTitle}} Info
              </VBtnPrimaryFilled>
            </VRow>
          </div>
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div class="mt-2" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser">
+           <VRow  class="ma-0" justify="space-between" align="center">
+             <div>
+               <p class="section-title">Upload {{entityTitle}} Files</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">Upload files to your project</p>
+             </div>
+             <VBtnPrimaryFilled
+                 :to="{ name: path == 'repositories' ? 'upload-files-repository' : 'upload-files-repository-my', params: {slug: repository?.slug}}"
+                 height="41px"
+                 rounded="lg"
+                 class="satoshi-md"
+                 style="font-size: 14px !important;">
+               Upload {{entityTitle}} Files
+             </VBtnPrimaryFilled>
+           </VRow>
+         </div>
+
          <VDivider v-if="currentRepo?.is_member" class="my-5"/>
          <div class="mt-2">
            <VRow v-if="currentRepo?.is_member" class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Project Members</p>
+               <p class="section-title">{{entityTitle}} Members</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage project members and their roles. <AccessLeveLInfoDialog/></p>
              </div>
-             <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" @callback="fetchMembersCallback">
+             <AddRepoMemberDialog :form-type="FormType.create" v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" @callback="fetchMembersCallback">
                <VBtnPrimaryFilled  height="41px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
                  Add Member
                </VBtnPrimaryFilled>
@@ -490,12 +864,12 @@ onMounted(async () => {
                      <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
                    </VAvatar>
                    <div class="mr-2">
-                     <p class="text-name text-container">{{member.user.username}}</p>
+                     <p class="text-name text-container">{{member.user.first_name}} {{member.user.last_name}}</p>
                      <p class="text-name-subtitle">{{member.user.email}} · {{member.access_level}}</p>
                    </div>
                  </div>
                  <VMenu
-                     v-if="member.user.uid != userData.uid && (userRepoInfo?.access_level == 'owner' || userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userRepoInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin'))"
+                     v-if="member.user.uid != userData.uid && (userRepoInfo?.access_level == 'owner' || userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager') && member.access_level != 'owner' && !(userRepoInfo?.access_level === 'manager' && (member.access_level === 'owner' || member.access_level === 'admin')) || userData.is_superuser"
                      location="bottom"
                      :close-on-content-click="false"
                  >
@@ -529,13 +903,13 @@ onMounted(async () => {
            </div>
            <div class="my-5 mx-1" v-else>
              <p class="d-flex align-center justify-center">
-               <PhInfo class="mr-1"/>No Project Members Found
+               <PhInfo class="mr-1"/>No {{entityTitle}} Members Found
              </p>
            </div>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="my-5"/>
-         <div v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'"  class="mt-2">
-           <VRow v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager'" class="ma-0" justify="space-between" align="center">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="my-5"/>
+         <div v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser"  class="mt-2">
+           <VRow v-if="userRepoInfo?.access_level == 'owner' ||userRepoInfo?.access_level == 'admin' || userRepoInfo?.access_level == 'manager' || userData.is_superuser" class="ma-0" justify="space-between" align="center">
              <div>
                <p class="section-title">Access Requests</p>
                <p class="text-gs20 mb-2" style="font-size: 14px;">Browse and manage access requests in the project </p>
@@ -572,7 +946,7 @@ onMounted(async () => {
                      <VImg :src="accessRequest.requestor_user_obj?.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
                    </VAvatar>
                    <div class="mr-2">
-                     <p class="text-name text-container">{{accessRequest.requestor_user_obj?.username}}</p>
+                     <p class="text-name text-container">{{accessRequest.requestor_user_obj?.first_name}} {{accessRequest.requestor_user_obj?.last_name}}</p>
                      <p class="text-name-subtitle">{{accessRequest.requestor_user_obj?.email}} · {{accessRequest.is_reviewed ? 'Denied' : 'Pending'}}</p>
                    </div>
                  </div>
@@ -622,24 +996,28 @@ onMounted(async () => {
              </p>
            </div>
          </div>
-         <VDivider v-if="userRepoInfo?.access_level == 'owner'" class="my-5"/>
-         <div v-if="userRepoInfo?.access_level == 'owner'" class="mt-2">
+         <VDivider v-if="userRepoInfo?.access_level == 'owner' || userData.is_superuser" class="my-5"/>
+         <div v-if="userRepoInfo?.access_level == 'owner' || userData.is_superuser" class="mt-2" id="repository-status">
            <VRow class="ma-0" justify="space-between" align="center">
              <div>
-               <p class="section-title">Delete Project Information</p>
-               <p class="text-gs20 mb-2" style="font-size: 14px;">This will delete the entire project</p>
+               <p class="section-title">Manage {{entityTitle}} Status Information (Current Status: {{repository?.is_active ? 'Active' : 'Inactive'}})</p>
+               <p class="text-gs20 mb-2" style="font-size: 14px;">This will change the status of the project</p>
              </div>
-             <DeleteDialog
-                 @callback="deleteRepoCallback"
+             <ConfirmationDialog
+                 :isWarning="repository?.is_active"
+                 @callback="manageRepoStatusCallback(!repository?.is_active)"
+                 :confirm-content="repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`"
+                 :content="repository?.is_active ? 'Are you sure you want to deactivate this project? All project data will not be available to the public.' : 'Are you sure you want to activate this project?'"
              >
                <VBtnPrimaryFilled
                    height="41px"
                    rounded="lg"
                    class="satoshi-md"
-                   style="font-size: 14px !important; background-color: #b00020 !important">
-                 Delete Project
+                   :color="repository?.is_active ? '#C83246' : '#01579B'"
+                   style="font-size: 14px !important; color: white !important;">
+                 {{repository?.is_active ? `Deactivate ${entityTitle}` : `Activate ${entityTitle}`}}
                </VBtnPrimaryFilled>
-             </DeleteDialog>
+             </ConfirmationDialog>
            </VRow>
          </div>
        </div>
@@ -649,6 +1027,18 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+
+
+
+
+.status-activate-btn {
+  background-color: #4caf50 !important;
+}
+
+.status-deactivate-btn {
+  background-color: #b00020 !important;
+}
+
 .action-button{
   font-size: 14px;
   border-radius: 8px;

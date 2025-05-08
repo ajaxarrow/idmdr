@@ -4,6 +4,8 @@ import organizationRoutes from "./routes/organization.routes.ts";
 import sectorRoutes from "./routes/sector.routes.ts";
 import postRoutes from "./routes/post.routes.ts";
 import publicRoutes from "./routes/public.routes.ts";
+import atbiRoutes from "./routes/atbi.routes.ts";
+import adminRoutes from "./routes/admin.routes.ts";
 
 export const routes = [
   {
@@ -71,5 +73,7 @@ export const routes = [
   ...repositoryRoutes,
   ...organizationRoutes,
   ...sectorRoutes,
-  ...postRoutes
+  ...postRoutes,
+  ...atbiRoutes,
+  ...adminRoutes
 ]

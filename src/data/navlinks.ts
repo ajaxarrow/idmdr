@@ -5,11 +5,11 @@ import {
   PhSignOut,
   PhUsersFour,
   PhUsersThree,
-  PhAirplaneLanding, PhUserCircle, PhLightbulbFilament, PhUsers, PhPen, PhCalendar
+  PhAirplaneLanding, PhUserCircle, PhLightbulbFilament, PhUsers, PhPen, PhCalendar, PhLeaf, PhFolderUser, PhBooks
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 export const navLinks = [
   {
     name: 'Dashboard',
@@ -27,6 +27,16 @@ export const navLinks = [
     icon: PhLightbulbFilament
   },
   {
+    name: 'E-Library',
+    link: '/e-library',
+    icon: PhBooks
+  },
+  {
+    name: 'ATBI',
+    link: '/atbi',
+    icon: PhLeaf
+  },
+  {
     name: 'CMIs',
     link: '/organizations',
     icon: PhUsersThree
@@ -36,8 +46,14 @@ export const navLinks = [
     link: '/map',
     icon: PhMapPinLine
   },
-  // Conditionally include "My Organizations" and "Settings" links
-  ...(user.value ? [
+  ...(userData.is_superuser ? [
+    {
+      name: 'User Management',
+      link: '/users',
+      icon: PhFolderUser
+    }
+  ] : []),
+  ...(user.value && !userData.is_superuser && userData.is_approved? [
     {
       name: 'My Projects',
       link: '/my-repositories',
@@ -47,7 +63,9 @@ export const navLinks = [
       name: 'My CMIs',
       link: '/my-organizations',
       icon: PhUsersFour
-    },
+    }
+  ] : []),
+  ...((user.value && userData.is_approved ) || userData.is_superuser? [
     {
       name: 'Experts',
       link: '/experts',
@@ -62,17 +80,14 @@ export const navLinks = [
       name: 'Calendar',
       link: '/events',
       icon: PhCalendar
-    },
+    }
+  ] : []),
+  ...(user.value && !userData.is_superuser && userData.is_approved? [
     {
       name: "My Profile",
       link: "/profile",
       icon: PhUserCircle,
-    },
-    // {
-    //   name: 'Settings',
-    //   link: '/settings',
-    //   icon: PhGearSix
-    // }
+    }
   ] : []),
   {
     name: user.value ? 'Signout' : 'Back to Landing',

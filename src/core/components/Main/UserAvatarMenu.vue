@@ -16,13 +16,13 @@ const menu = ref(false)
 
 const navs = [
   {
-    title: "My Repositories",
-    link: "/my-repositories",
+    title: userData.is_superuser ? 'Projects' : 'My Projects',
+    link: userData.is_superuser ? '/repositories' : '/my-repositories',
     icon: PhCloud,
   },
   {
-    title: "My Organizations",
-    link: "/my-organizations",
+    title: userData.is_superuser ? 'CMIs' : 'My CMIs',
+    link: userData.is_superuser ? '/organizations' : '/my-organizations',
     icon: PhUsersFour,
   },
   {
@@ -30,11 +30,11 @@ const navs = [
     link: "/notifications",
     icon: PhBell,
   },
-  {
-    title: "My Profile",
-    link: "/profile",
-    icon: PhUserCircle,
-  },
+    ...(userData.is_superuser ? [] : [{
+      title: "My Profile",
+      link: "/profile",
+      icon: PhUserCircle,
+    }]),
   // {
   //   title: "Account Settings",
   //   link: "/settings/account",
@@ -59,7 +59,7 @@ const navs = [
           class="ml-1 cursor-pointer"
           v-bind="props"
       >
-        <VImg :src="userData.profilePicture"></VImg>
+        <VImg  :src="userData.profilePicture.trim() != '' ? userData.profilePicture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'"></VImg>
 
         <VTooltip
             activator="parent"
@@ -75,13 +75,13 @@ const navs = [
           <template v-slot:prepend>
             <VAvatar class="mt-2">
               <VImg
-                  :src="userData.profilePicture"
+                  :src="userData.profilePicture.trim() != '' ? userData.profilePicture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'"
               ></VImg>
             </VAvatar>
           </template>
 
           <VListItemTitle class="font-weight-bold text-primary">
-            {{ userData.username }}
+            {{ userData.firstName }} {{userData.lastName}}
           </VListItemTitle>
           <VListItemSubtitle>
             {{ userData.email }}
@@ -90,7 +90,7 @@ const navs = [
       </VList>
       <VDivider />
 
-      <div v-if="user">
+      <div v-if="user && userData.is_approved">
         <VList variant="flat" elevation="0" :lines="false" density="compact">
           <VListItem
               color="primary"
@@ -115,7 +115,7 @@ const navs = [
         <VDivider />
       </div>
       <div v-else>
-        <VList variant="flat" elevation="0" :lines="false" density="compact">
+        <VList variant="flat" elevation="0" :lines="false" density="compact" v-if="!user">
           <VListItem
               color="primary"
               to="/auth?tab=login"

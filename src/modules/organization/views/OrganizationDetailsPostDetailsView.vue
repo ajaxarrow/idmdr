@@ -3,7 +3,7 @@ import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetails
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, ref} from "vue";
 import {
-  PhArrowLeft, PhDotsThreeOutlineVertical, PhEye, PhEyeSlash,
+  PhArrowLeft, PhDotsThreeOutlineVertical, PhEye,
   PhPencil, PhTrash, PhImages
 } from "@phosphor-icons/vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
@@ -14,20 +14,27 @@ import NotFound from "../../../assets/images/404.svg";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {usePostServices} from "../../posts/services/post.services.ts";
 import {Post} from "../../../interfaces/post.interface.ts";
-import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 
 const {route, router} = useRouting()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
-const {fetchOrganizationData, fetchOrganizationByUser} = useOrganizationServices();
-const {fetchPostbyID, deletePost, managePostStatus} = usePostServices()
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
+const {fetchPostbyID, deletePost} = usePostServices()
 
 const postActionMenu = ref(false);
 const path = ref('organizations')
 const postData = ref<Post | null | undefined>(null);
 const organization = ref<Organization | null>();
 const pageLoading = ref(false)
-const imagePreviewDialog = ref(false);
+// const imagePreviewDialog = ref(false);
 const selectedImageIndex = ref(0);
+const previewImage = ref('')
+const isImagePreviewed = ref(false)
+const openImagePreview = (index: number) => {
+  selectedImageIndex.value = index;
+  previewImage.value = postData.value?.images?.[selectedImageIndex.value].image as string
+  isImagePreviewed.value = true;
+};
 
 const deletePostCallback = async () => {
   showSnackbarMessage('Post Deleted Successfully', Status.success)
@@ -38,12 +45,12 @@ const deletePostCallback = async () => {
   });
 }
 
-const managePostStatusCallback = async (isPublished: boolean) => {
-  showSnackbarMessage('Post Successfully Updated', Status.success)
-  await managePostStatus(postData.value?.uid as string, isPublished);
-  postData.value = await fetchPostbyID(route.params.post as string);
-  postActionMenu.value = false
-}
+// const managePostStatusCallback = async (isPublished: boolean) => {
+//   showSnackbarMessage('Post Successfully Updated', Status.success)
+//   await managePostStatus(postData.value?.uid as string, isPublished);
+//   postData.value = await fetchPostbyID(route.params.post as string);
+//   postActionMenu.value = false
+// }
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -53,28 +60,17 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
   return orgList.some(org => org.slug === organization?.slug);
 };
 
-const openImagePreview = (index: number) => {
-  selectedImageIndex.value = index;
-  imagePreviewDialog.value = true;
-};
 
 onMounted(async () => {
   pageLoading.value = true
   path.value = getFirstPath(<string>route.path)
-  const allUserOrg = await fetchOrganizationByUser();
+  const allUserOrg = await fetchOrganizationIDsByUser();
   organization.value = await fetchOrganizationData(route.params.slug as string);
   if(organization.value){
     if( isSlugInOrgList(organization.value, allUserOrg)){
       if ("is_member" in organization.value) {
         organization.value.is_member = true;
       }
-    } else {
-      await router.push({
-        name: "organization-data",
-        params: {
-          slug: <string> route.params.slug
-        }
-      })
     }
   }
   postData.value = await fetchPostbyID(route.params.post as string);
@@ -85,6 +81,11 @@ onMounted(async () => {
 </script>
 
 <template>
+  <ImagePreviewOverlay
+      :overlay="isImagePreviewed"
+      :imageSrc="previewImage"
+      @closeOverlay="isImagePreviewed = false"
+  />
   <OrganizationDetailsLayout
       :organization="organization"
       activeTab="posts"
@@ -120,7 +121,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <VMenu v-model="postActionMenu" :close-on-content-click="false">
+          <VMenu v-if="organization?.is_member" v-model="postActionMenu" :close-on-content-click="false">
             <template #activator="{ props }">
               <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                 Options
@@ -130,6 +131,7 @@ onMounted(async () => {
             <VSheet width="200" class="rounded-b-lg py-2">
               <div>
                 <RouterLink
+                    v-if="postData.is_published"
                     :to="{name: 'news-updates-detail', params: {slug: postData?.uid}}"
                     class="cursor-pointer action-menu-item text-decoration-none text-black"
                 >
@@ -149,17 +151,17 @@ onMounted(async () => {
                     Delete
                   </p>
                 </DeleteDialog>
-                <ConfirmationDialog
-                    @callback="managePostStatusCallback(!postData.is_published)"
-                    :confirmContent="postData.is_published ? 'Unpublish' : 'Publish'"
-                    :content="postData.is_published ? 'Are you sure you want to unpublish this post?' : 'Are you sure you want to publish this post?'"
-                >
-                  <p class="cursor-pointer action-menu-item">
-                    <PhEyeSlash v-if="postData.is_published"/>
-                    <PhEye v-else/>
-                    {{postData.is_published ? 'Unpublish' : 'Publish'}}
-                  </p>
-                </ConfirmationDialog>
+<!--                <ConfirmationDialog-->
+<!--                    @callback="managePostStatusCallback(!postData.is_published)"-->
+<!--                    :confirmContent="postData.is_published ? 'Unpublish' : 'Publish'"-->
+<!--                    :content="postData.is_published ? 'Are you sure you want to unpublish this post?' : 'Are you sure you want to publish this post?'"-->
+<!--                >-->
+<!--                  <p class="cursor-pointer action-menu-item">-->
+<!--                    <PhEyeSlash v-if="postData.is_published"/>-->
+<!--                    <PhEye v-else/>-->
+<!--                    {{postData.is_published ? 'Unpublish' : 'Publish'}}-->
+<!--                  </p>-->
+<!--                </ConfirmationDialog>-->
               </div>
             </VSheet>
           </VMenu>
@@ -191,9 +193,7 @@ onMounted(async () => {
           <VCol
               v-for="(image, index) in postData.images"
               :key="index"
-              cols="12"
-              sm="6"
-              md="4"
+              cols="12" sm="6" md="4" lg="3"
           >
             <VCard
                 class="image-card elevation-2"
@@ -220,29 +220,29 @@ onMounted(async () => {
         </VRow>
       </div>
 
-      <!-- Image Preview Dialog -->
-      <VDialog
-          v-model="imagePreviewDialog"
-          max-width="90%"
-          class="image-preview-dialog"
-      >
-        <VCard>
-          <VCardText class="pa-0 position-relative">
-            <VBtn
-                icon
-                variant="text"
-                class="close-btn"
-                @click="imagePreviewDialog = false"
-            >
-              ✕
-            </VBtn>
-            <VImg
-                :src="postData.images?.[selectedImageIndex]?.image! as string"
-                max-height="80vh"
-            />
-          </VCardText>
-        </VCard>
-      </VDialog>
+
+<!--      <VDialog-->
+<!--          v-model="imagePreviewDialog"-->
+<!--          max-width="90%"-->
+<!--          class="image-preview-dialog"-->
+<!--      >-->
+<!--        <VCard>-->
+<!--          <VCardText class="pa-0 position-relative">-->
+<!--            <VBtn-->
+<!--                icon-->
+<!--                variant="text"-->
+<!--                class="close-btn"-->
+<!--                @click="imagePreviewDialog = false"-->
+<!--            >-->
+<!--              ✕-->
+<!--            </VBtn>-->
+<!--            <VImg-->
+<!--                :src="postData.images?.[selectedImageIndex]?.image! as string"-->
+<!--                max-height="80vh"-->
+<!--            />-->
+<!--          </VCardText>-->
+<!--        </VCard>-->
+<!--      </VDialog>-->
     </div>
 
     <div v-else style="height: 100%">

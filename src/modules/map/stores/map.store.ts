@@ -24,7 +24,7 @@ const popup = ref<Popup | null>(new Popup({
   closeOnClick: false,
 }));
 const clickedBoundary = ref('');
-const color = ref('#00ACC1');
+const color = ref('#00c16a');
 const lnglat: LngLatLike = [124.6, 7.858930800481815];
 // const getCenter = (bbox: [number, number, number, number]) => {
 //   return [
@@ -33,6 +33,7 @@ const lnglat: LngLatLike = [124.6, 7.858930800481815];
 // }
 
 const clickProvince = (boundary: Sector, type: string) => {
+  const colorValue = type == 'Province' ? '#00ACC1' : '#0027c1';
   if (boundary.name !== clickedBoundary.value) {
     if(type === 'Sector') {
       removeBoundaries(boundaries);
@@ -54,7 +55,7 @@ const clickProvince = (boundary: Sector, type: string) => {
     )
 
     map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-opacity', .5);
-    map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', color.value);
+    map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', colorValue);
 
     clickedBoundary.value = boundary.name;
 
@@ -121,6 +122,7 @@ const resetToDefault = (type: string) => {
 
 
 const setupBoundaries = (boundaries: Sector[], type: string) => {
+  const colorValue = type == 'Province' ? '#00ACC1' : '#0027c1';
   boundaries.forEach((boundary: Sector) => {
     // @ts-ignore
     map.value?.addSource(boundary.name, {
@@ -143,7 +145,7 @@ const setupBoundaries = (boundaries: Sector[], type: string) => {
     map.value?.on('mouseover', `id-${boundary.name}`, (e) => {
       if (boundary.name !== clickedBoundary.value) {
         map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-opacity', .5);
-        map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', color.value);
+        map.value?.setPaintProperty(`id-${boundary.name}`, 'fill-color', colorValue);
       }
 
       const popupContent = `<h4>${boundary.name}</h4>
@@ -297,9 +299,6 @@ const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
 //     return 0
 //   }
 // }
-
-
-
 
 
 export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, removeBoundaries, resetToDefault, setupBoundariesforOrganization, clickOrganization, popup}))

@@ -2,9 +2,9 @@ import router from "../router";
 import {useUserStore} from "../core/stores/user.store.ts";
 
 export const useMiddleware = () => {
-  const {user} = useUserStore();
+  const {user, userData} = useUserStore();
   const checkIfAuthenticated = () => {
-    if(!user.value){
+    if(!user.value || !userData.is_approved){
       router.push({path: '/'});
     }
   }
