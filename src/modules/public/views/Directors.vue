@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, watch} from 'vue';
+import {ref, onMounted, watch, computed} from 'vue';
 import Navbar from "../components/Landing/Navbar.vue";
 import Footer from "../components/Footer.vue";
 import {PhCheckCircle, PhX} from "@phosphor-icons/vue";
@@ -199,12 +199,12 @@ const directors = ref<Director[]>([
 // Filter directors based on search query
 const filterDirectors = () => {
   if (!searchQuery.value) {
-    filteredDirectors.value = directors.value;
+    filteredDirectors.value = sortedDirectors.value;
     return;
   }
 
   const query = searchQuery.value.toLowerCase();
-  filteredDirectors.value = directors.value.filter(director =>
+  filteredDirectors.value = sortedDirectors.value.filter(director =>
       director.name.toLowerCase().includes(query) ||
       director.period.toLowerCase().includes(query)
   );
@@ -212,6 +212,11 @@ const filterDirectors = () => {
     observeTimelineItems();
   }, 100);
 };
+
+// Sort directors in descending order (newest to oldest)
+const sortedDirectors = computed(() => {
+  return [...directors.value].sort((a, b) => b.startYear - a.startYear);
+});
 
 // Watch for changes in searchQuery and update filteredDirectors
 watch(() => searchQuery.value, () => {
@@ -247,7 +252,7 @@ const observeTimelineItems = () => {
 onMounted(() => {
   setTimeout(() => {
     loading.value = false;
-    filteredDirectors.value = directors.value;
+    filteredDirectors.value = sortedDirectors.value;
     // Set up timeline animations after loading
     setTimeout(() => {
       observeTimelineItems();
@@ -535,7 +540,7 @@ onMounted(() => {
   position: relative;
   margin-bottom: 60px;
   width: 45%;
-  opacity: 0;
+
   transform: translateX(-50px);
   transition: all 0.8s ease;
 }
@@ -546,7 +551,7 @@ onMounted(() => {
 }
 
 .timeline-item.animate-timeline-item {
-  opacity: 1;
+
   transform: translateX(0);
 }
 
