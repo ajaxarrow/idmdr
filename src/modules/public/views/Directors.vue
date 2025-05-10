@@ -198,7 +198,7 @@ const directors = ref<Director[]>([
 
 // Filter directors based on search query
 const filterDirectors = () => {
-  if (!searchQuery.value) {
+  if (!searchQuery.value || searchQuery.value.trim() === '') {
     filteredDirectors.value = sortedDirectors.value;
     return;
   }
@@ -540,7 +540,7 @@ onMounted(() => {
   position: relative;
   margin-bottom: 60px;
   width: 45%;
-
+  opacity: 0;
   transform: translateX(-50px);
   transition: all 0.8s ease;
 }
@@ -551,7 +551,7 @@ onMounted(() => {
 }
 
 .timeline-item.animate-timeline-item {
-
+  opacity: 1;
   transform: translateX(0);
 }
 
