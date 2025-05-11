@@ -35,7 +35,7 @@ const openImagePreview = (index: number) => {
     </div>
   </div>
   <VDivider/>
-  <div class="px-7 py-5">
+  <div class="px-7 pt-5 pb-7">
     <div>
       <p class="text-about-heading py-3">Additional Info</p>
       <div class="ql-snow">

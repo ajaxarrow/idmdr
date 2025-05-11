@@ -108,7 +108,7 @@ const isSlugInTechList = (atbi: ATBI | null | undefined, repoList: Repository[])
               </span>
               </p>
               <p class="text-subtitle">
-                {{ atbiData?.mobile }} · <a class="text-decoration-none text-bs50" :href="atbiData?.email">Email</a> · <a class="text-decoration-none text-bs50" :href="atbiData?.facebook">Facebook</a>
+                 <a class="text-decoration-none text-bs50 sub-link" :href="`tel:${atbiData?.mobile}`">{{ atbiData?.mobile }}</a> · <a class="text-decoration-none text-bs50 sub-link" :href="atbiData?.email">Email</a> · <a class="text-decoration-none text-bs50 sub-link" :href="atbiData?.facebook">Facebook</a>
               </p>
               <p class="text-subtitle">
                 Associated IP Technology: {{atbiData?.tech_name}}
@@ -180,6 +180,9 @@ const isSlugInTechList = (atbi: ATBI | null | undefined, repoList: Repository[])
 </template>
 
 <style scoped>
+.sub-link:hover{
+  text-decoration: underline !important;
+}
 .file-container{
   border: 1.5px solid #E5ECF6;
   border-radius: 20px;
