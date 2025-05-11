@@ -32,6 +32,7 @@ const {fetchRepositoriesByUser} = useRepositoryServices();
 const {isEmptyObject} = useObjectChecker()
 const {tags, fetchTags} = useTags();
 const {route} = useRouting();
+const pageLoading = ref(false);
 // const previousTags = ref<string[]>([])
 
 
@@ -247,6 +248,7 @@ const updateSectorData = async () => {
 }
 
 onMounted(async () => {
+  pageLoading.value = true
   fetchTags();
   organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   repositories.value = await fetchRepositoriesByUser();
@@ -282,6 +284,7 @@ onMounted(async () => {
     isGeoJSONDrawn.value = false
     geoJSONFileName.value = fileName.value
   }
+  pageLoading.value = false
 })
 
 onUnmounted(() => {
@@ -300,7 +303,13 @@ onUnmounted(() => {
       @closeOverlay="isImagePreviewed = false"
   />
   <MainLayout :title="formType === FormType.edit ? 'Edit Sector' : 'New Sector'">
-    <VForm id="form" ref="sectorForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="sectorForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div class="d-flex">
 <!--          <RouterLink-->

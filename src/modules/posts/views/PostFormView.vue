@@ -42,6 +42,7 @@ const postImages = ref<PostImage[]>([]);
 const active = ref(false);
 const isImagePreviewed = ref(false);
 const previewImage = ref('');
+const pageLoading = ref(false);
 
 const toggleActive = () => {
   active.value = !active.value;
@@ -136,6 +137,7 @@ const updatePostData = async () => {
 };
 
 onMounted(async () => {
+  pageLoading.value = true;
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
   const type = rawSegments[1];
   path.value = getFirstPath(route.path);
@@ -171,13 +173,20 @@ onMounted(async () => {
       }
     }
   }
+  pageLoading.value = false;
 });
 </script>
 
 <template>
   <LoadingOverlay :overlay="loading"/>
   <MainLayout :title="formType === FormType.edit ? 'Edit Post' : 'New Post'">
-    <VForm id="form" ref="postForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="postForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div class="d-flex">
         </div>

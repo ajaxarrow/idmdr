@@ -21,6 +21,7 @@ const {addExpert, updateExpert, fetchExpertById, loading} = useOrganizationExper
 const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
 const {route, router} = useRouting();
 const {showSnackbarMessage} = useSnackbarStore()
+const pageLoading = ref(false);
 // const previousTags = ref<string[]>([])
 
 
@@ -70,6 +71,7 @@ const updateExpertData = async () => {
 }
 
 onMounted(async () => {
+  pageLoading.value = true
   organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   if(organizations.value.length == 0){
     await router.push({name: 'new-organization'})
@@ -96,6 +98,7 @@ onMounted(async () => {
       expertData.organization = fetchedData.organization.uid
     }
   }
+  pageLoading.value = false
 })
 
 
@@ -104,7 +107,13 @@ onMounted(async () => {
 <template>
   <LoadingOverlay :overlay="loading"/>
   <MainLayout :title="formType === FormType.edit ? 'Edit Expert' : 'New Expert'">
-    <VForm id="form" ref="sectorForm" style="height: 100%" class="relative-container circle">
+    <div v-if="pageLoading" class="loading-state-container h-screen">
+      <VProgressCircular
+          indeterminate
+          color="#23668b"
+      ></VProgressCircular>
+    </div>
+    <VForm v-else id="form" ref="sectorForm" style="height: 100%" class="relative-container circle">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <div class="d-flex">
           <!--          <RouterLink-->
