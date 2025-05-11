@@ -7,7 +7,7 @@ import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@
 
 <template>
   <VLayout>
-    <div style="width: 100%">
+    <div style="width: 100%;">
     <Navbar>
 <!--        <div class="landing-container">-->
 <!--          <VContainer>-->
@@ -84,7 +84,7 @@ import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@
 <!--            </VRow>-->
 <!--          </VContainer>-->
 <!--        </div>-->
-      <div class="">
+      <div class="" style="min-height: 82vh !important;">
         <VContainer>
           <p class="text-heading text-center gradient-text">
             <em class="heading-font">Get in touch with us</em>
@@ -108,17 +108,13 @@ import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@
                     <p class="text-contact-title">
                       Phone
                     </p>
-                    <p class="text-desc">
-                      0917-1027-065
-                    </p>
+                    <a class="text-desc text-decoration-none email-link" href="tel:09171027065">0917-1027-065</a>
                   </div>
                   <div class="my-2">
                     <p class="text-contact-title">
                       Email
                     </p>
-                    <p class="text-desc">
-                      nomcaarrd@cmu.edu.ph
-                    </p>
+                    <a class="text-desc text-decoration-none email-link" href="mailto:nomcaarrd@cmu.edu.ph">nomcaarrd@cmu.edu.ph</a>
                   </div>
                 </div>
                 <div class="d-flex ga-2">
@@ -132,12 +128,12 @@ import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@
                       <IconBrandYoutubeFilled :size="30" color="#050E14"/>
                     </div>
                   </a>
-                  <a href="https://mail.google.com/mail/u/0/?fs=1&to=nomcaarrd@cmu.edu.ph&tf=cm" target="_blank">
+                  <a href="mailto:nomcaarrd@cmu.edu.ph">
                     <div class="logo-icon" >
                       <IconMailFilled :size="30" color="black"/>
-
                     </div>
                   </a>
+
                 </div>
               </div>
             </VCol>
@@ -244,6 +240,9 @@ import {IconBrandFacebookFilled, IconBrandYoutubeFilled, IconMailFilled} from "@
   font-family: 'Gambetta', serif !important;
 }
 
+.email-link:hover{
+  text-decoration: underline !important;
+}
 
 :deep(.v-label){
   opacity: 100% !important;

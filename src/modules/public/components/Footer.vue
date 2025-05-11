@@ -28,7 +28,7 @@ import logo from '../../../assets/images/nomcaarrd.png';
         <div>
           <a href="https://web.facebook.com/NOMCAARRD/" target="_blank" class="footer-text">Facebook</a>
           •
-          <a href="https://mail.google.com/mail/u/0/?fs=1&to=nomcaarrd@cmu.edu.ph&tf=cm" target="_blank" class="footer-text">Gmail</a>
+          <a href="mailto:nomcaarrd@cmu.edu.ph" target="_blank" class="footer-text">Gmail</a>
           •
           <a href="https://www.youtube.com/channel/UCWc3VFaHFLj9LDMjfyWdjEA" target="_blank" class="footer-text">Youtube</a>
         </div>
