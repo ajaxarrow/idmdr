@@ -146,8 +146,6 @@ export const useOrganizationServices = () => {
   const saveOrganization = async (organization: Organization, endpoint: string, type: string, id: string = '') => {
     clearErrorMessage();
     loading.value = true;
-    console.log('rep')
-    console.log(organization.rd_rep)
     try {
       const res = await (type === 'create' ? server.post : server.put)(
         endpoint,

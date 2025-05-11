@@ -92,11 +92,11 @@ watch(()=> props.computedTabs, () => {
                 </p>
                 <p class="text-subtitle">{{ props.organization?.president }}</p>
                 <p class="text-subtitle text-gs20">
-                  {{ props.organization?.tel_phone }}
-                  <span v-if="props.organization?.tel_phone">|</span>
-                  {{ props.organization?.phone }}
-                  <span v-if="props.organization?.email">|</span>
-                  {{ props.organization?.email }}
+                 <a :href="`tel:${props.organization?.tel_phone}`" class="sub-link" v-if="props.organization.tel_phone != 'N/A'">{{ props.organization?.tel_phone }}</a>
+                  <span v-if="props.organization?.tel_phone != 'N/A' && props.organization?.tel_phone?.trim() != ''"> | </span>
+                 <a :href="`tel:${props.organization?.phone}`" class="sub-link" v-if="props.organization?.phone != 'N/A'">{{ props.organization?.phone }}</a>
+                  <span v-if="props.organization?.phone != 'N/A' && props.organization?.phone?.trim() != ''"> | </span>
+                  <a class="sub-link" :href="`mailto:${props.organization?.email}`" v-if="props.organization?.email != 'N/A'">{{ props.organization?.email }}</a>
                 </p>
               </div>
             </VCol>
@@ -145,6 +145,15 @@ watch(()=> props.computedTabs, () => {
 </template>
 
 <style scoped>
+.sub-link{
+  text-decoration: none !important;
+  color: #5F6061 !important;
+}
+
+.sub-link:hover{
+  text-decoration: underline !important;
+  color: #3291C7 !important;
+}
 .text-repository-heading{
   font-weight: 900;
   font-size: 22px;

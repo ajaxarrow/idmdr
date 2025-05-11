@@ -151,11 +151,11 @@ onMounted(async () => {
         <p class="text-about-heading py-3">Consortium Type</p>
         <VRow class="ma-0">
           <VCol v-if="organization.org_type" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Organization Type</p>
+            <p class="text-subtitle text-gs20">CMI Type</p>
             <p class="text-subtitle">{{ getOrganizationType(organization.org_type) }}</p>
           </VCol>
           <VCol v-if="organization.sub_org_type" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Organization Sub Type</p>
+            <p class="text-subtitle text-gs20">CMI Sub Type</p>
             <p class="text-subtitle">{{ getOrganizationSubType(organization.sub_org_type) }}</p>
           </VCol>
         </VRow>
@@ -174,19 +174,19 @@ onMounted(async () => {
           </VCol>
           <VCol v-if="organization.tel_phone" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Telephone</p>
-            <p class="text-subtitle">{{ organization.tel_phone }}</p>
+            <a :href="`tel:${organization.tel_phone}`" class="sub-link">{{ organization.tel_phone }}</a>
           </VCol>
           <VCol v-if="organization.phone" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Cell Number</p>
-            <p class="text-subtitle">{{ organization.phone }}</p>
+            <a :href="`tel:${organization.phone}`" class="text-subtitle sub-link">{{ organization.phone }}</a>
           </VCol>
           <VCol v-if="organization.email" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Email</p>
-            <p class="text-subtitle">{{ organization.email }}</p>
+            <a :href="`mailto:${organization.email}`" class="text-subtitle sub-link">{{ organization.email }}</a>
           </VCol>
           <VCol v-if="organization.website" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">Website</p>
-            <p class="text-subtitle">{{ organization.website }}</p>
+            <a :href="organization.website" class="text-subtitle sub-link">Visit {{organization.acronym}}'s website here</a>
           </VCol>
         </VRow>
       </div>
@@ -384,6 +384,16 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.sub-link{
+  text-decoration: none !important;
+  color: #23668b !important;
+}
+
+.sub-link:hover{
+  text-decoration: underline !important;
+  color: #3291C7 !important;
+}
+
 .text-about-heading{
   font-weight: 800;
   font-size: 20px;
