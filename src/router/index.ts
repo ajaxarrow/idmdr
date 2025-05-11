@@ -27,9 +27,9 @@ router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNe
     isLoading.value = true;
     window.scrollTo({top: 0, behavior: 'smooth'});
 
-    if (protectedUserPages.includes(to.name as string) && userData.is_superuser) {
-        return next({ path: '/' });
-    }
+    // if (protectedUserPages.includes(to.name as string) && userData.is_superuser) {
+    //     return next({ path: '/' });
+    // }
 
     if (to.name === 'signout') {
         await handleLogout();

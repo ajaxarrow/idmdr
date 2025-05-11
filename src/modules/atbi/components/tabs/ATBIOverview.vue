@@ -26,7 +26,7 @@ const openImagePreview = (index: number) => {
       :imageSrc="previewImage"
       @closeOverlay="isImagePreviewed = false"
   />
-  <div class="px-7 py-5">
+  <div class="px-7 py-5" v-if="props.atbi?.description && props.atbi?.description.length > 0 && props.atbi?.description != '<p><br></p>'">
     <div>
       <p class="text-about-heading py-3">About ATBI</p>
       <div class="ql-snow">
@@ -35,7 +35,7 @@ const openImagePreview = (index: number) => {
     </div>
   </div>
   <VDivider/>
-  <div class="px-7 pt-5 pb-7">
+  <div class="px-7 pt-5 pb-7" v-if="props.atbi?.additional_info && props.atbi?.additional_info.length > 0 && props.atbi?.additional_info != '<p><br></p>'">
     <div>
       <p class="text-about-heading py-3">Additional Info</p>
       <div class="ql-snow">

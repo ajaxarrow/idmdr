@@ -241,7 +241,7 @@ onUnmounted(() => {
 
         </VRow>
       </div>
-      <div v-if="organization.additional_info && organization.additional_info?.trim().length != 0">
+      <div v-if="organization.additional_info && organization.additional_info?.trim().length != 0 && organization.additional_info !== '<p><br></p>'">
         <VDivider/>
         <div class="px-7 py-5">
           <p class="text-about-heading py-3">Additional Information</p>
