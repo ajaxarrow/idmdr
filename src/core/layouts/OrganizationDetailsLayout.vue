@@ -130,26 +130,27 @@ const initialize = async () => {
     tab.value = props.activeTab;
   }
 
-  pageLoading.value = false; // Set to false only at the very end
+  pageLoading.value = false;
 };
 
-onMounted(() => {
+onMounted(async() => {
   path.value = getFirstPath(<string>route.path);
   if (path.value === 'cmis') {
     isInPublic.value = true;
   }
   pageLoading.value = true;
   if (props.organization) {
-    initialize();
+   await initialize();
   } else {
     watch(
         () => props.organization,
-        (newOrg) => {
-          if (newOrg) initialize();
+        async (newOrg) => {
+          if (newOrg) await initialize();
         },
         { immediate: true }
     );
   }
+  pageLoading.value = false;
 });
 </script>
 
