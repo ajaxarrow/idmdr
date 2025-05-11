@@ -12,9 +12,10 @@ import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
 import {useCustomUsersServices} from "./custom-users.services.ts";
+import {usePageLoadingStore} from "../../../core/stores/loading.store.ts";
 
 
-
+const {isPageLoading} = usePageLoadingStore()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {showSnackbarMessage} = useSnackbarStore();
@@ -484,7 +485,7 @@ export const useRepositoryServices = () => {
       status?: string,
   ): Promise<Repository[]> => {
     try {
-      let url = `/repositories/?page=${pageNumber}&page_size=${pageSize}`;
+      let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
 
       if (searchQuery) {
         url += `&search=${encodeURIComponent(searchQuery)}`;
@@ -728,6 +729,7 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoryData = async (slug: string,  type: string = 'create'): Promise<Repository | null> => {
     try{
+      isPageLoading.value = true;
       const res = await server.get(`/repositories/${slug}`, {
         headers: authorizationHeader
       });
@@ -741,6 +743,7 @@ export const useRepositoryServices = () => {
         return null;
       }
     } catch(e: any){
+      isPageLoading.value = false;
       console.log(e)
       return null;
     }

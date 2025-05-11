@@ -153,7 +153,7 @@ onMounted(async () => {
           <p class="font-weight-medium mb-0">{{ typeof item?.name === 'object'
               ? `${item?.name?.first_name || ''} ${item?.name?.middle_name || ''} ${item?.name?.last_name || ''} ${item?.name?.extension || ''}`.trim()
               : item?.name || '' }}</p>
-          <p class="text-caption text-medium-emphasis mb-0">{{item.organization?.name}}({{item.organization?.acronym}})</p>
+          <p class="text-caption text-medium-emphasis mb-0">{{item.organization?.name}} ({{item.organization?.acronym}})</p>
         </div>
     </template>
 
@@ -238,7 +238,6 @@ onMounted(async () => {
         />
       </VCol>
     </template>
-
   </BaseDataTable>
 </template>
 

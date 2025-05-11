@@ -11,7 +11,7 @@ const props = defineProps({
   },
   pageLoading: {
     type: Boolean,
-    default: false
+    default: true
   },
   isOrgAvailable: {
     type: Boolean,

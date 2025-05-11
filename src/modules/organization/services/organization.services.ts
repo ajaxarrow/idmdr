@@ -8,6 +8,7 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import {useCustomUsersServices} from "../../repository/services/custom-users.services.ts";
 import {useOrganizationAttachmentServices} from "./organization-attachments.services.ts";
+import {usePageLoadingStore} from "../../../core/stores/loading.store.ts";
 
 // const transformRepData = (rep: any) => ({
 //   full_name: rep?.full_name,
@@ -20,6 +21,7 @@ import {useOrganizationAttachmentServices} from "./organization-attachments.serv
 //   email: rep?.email,
 //   phone: rep?.phone,
 // });
+const {isPageLoading} = usePageLoadingStore()
 const {mapCustomUsers} = useCustomUsersServices()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
@@ -526,6 +528,7 @@ export const useOrganizationServices = () => {
 
   const fetchOrganizationData = async (slug: string, type: string = 'create'): Promise<Organization | null> => {
     try{
+      isPageLoading.value = true;
       const res = await server.get(`/v1/organization/${slug}/`, {
         headers: authorizationHeader
       });
@@ -535,10 +538,10 @@ export const useOrganizationServices = () => {
         organization.value = organizationData
         return organizationData
       } else {
-        console.error('no org')
         return null;
       }
     } catch (e) {
+      isPageLoading.value = false;
       return null;
     }
 

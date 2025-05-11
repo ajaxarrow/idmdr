@@ -17,7 +17,7 @@ import {Attachment, Commercialization, Repository} from "../../../interfaces/rep
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
 import {
   commodities, readinessLevel, technologyStatus, technologyCategories, agencies, industries,
-  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus, repoType, status, forPatent
+  ipStatus, modeStatus, priorityLevels, adopters, ipType, transferPlans, currentStatus, repoType, status, forPatent, categories
 } from "../../../data/repository.inventory.fields.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
@@ -127,7 +127,7 @@ const repositoryDataIntialState = reactive<Repository>({
   image: '',
   author: '',
   lead: '',
-  proj_type: '',
+  proj_type: 'Project',
   additional_info: '',
   status: 'Ongoing',
   abh: '',
@@ -618,6 +618,7 @@ onMounted( async () => {
   fetchTags();
   organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
   customUsers.value = await fetchCustomUsers();
+  repositoryData.leadData = customUsers.value[0]
   repositoryData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null
   if(organizations.value.length == 0){
     await router.push({name: 'new-organization'})
@@ -750,7 +751,7 @@ onMounted( async () => {
       <VDivider/>
       <div class="pa-6">
         <div class="mb-3">
-          <label class="input-label">Project Title<span class="text-pink">*</span></label>
+          <label class="input-label">Title<span class="text-pink">*</span></label>
           <VTextField
               v-model="repositoryData.title"
               placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
@@ -764,7 +765,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-5">
-          <label class="input-label">Organization<span class="text-pink">*</span></label>
+          <label class="input-label">Associated CMI<span class="text-pink">*</span></label>
           <VAutocomplete
               :disabled="formType === FormType.edit"
               v-model="repositoryData.organization"
@@ -842,7 +843,8 @@ onMounted( async () => {
         </div>
         <div class="mb-3">
           <label class="input-label">Project Category</label>
-          <VTextField
+          <VAutocomplete
+              :items="categories"
               v-model="repositoryData.proj_type"
               placeholder="Enter Project Category"
               class="my-2"

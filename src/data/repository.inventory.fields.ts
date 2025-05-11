@@ -8,6 +8,8 @@ const commodities = [
 
 const status = ['Ongoing', 'Completed', 'Suspended', 'Terminated', 'Unliquidated']
 
+const categories = ['Program', 'Project', 'Activity']
+
 const forPatent = [
   {
     title: 'Applicable',
@@ -316,4 +318,4 @@ const contactVisibility = [
 ]
 
 
-export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent, expertise, contactVisibility}
+export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent, expertise, contactVisibility, categories}

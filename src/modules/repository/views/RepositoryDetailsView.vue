@@ -268,7 +268,7 @@ onMounted(async () => {
               </span>
             </p>
           </VCol>
-          <VCol v-if="repository.author" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
+          <VCol v-if="repository.status" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
             <p class="text-subtitle text-gs20">{{entityTitle}} Status</p>
             <p class="text-subtitle pr-3">{{ repository.status}}</p>
           </VCol>
@@ -280,7 +280,7 @@ onMounted(async () => {
             <p class="text-subtitle text-gs20">Site of Implementation</p>
             <p class="text-subtitle pr-3">{{ repository.location}}</p>
           </VCol>
-          <VRow class="ma-0" v-if="repository.type === 'Project Repository'">
+          <template v-if="repository.type === 'Project Repository'">
             <VCol v-if="repository.start_date" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Start Date</p>
               <p class="text-subtitle">{{ formatDate(repository.start_date)}}</p>
@@ -313,7 +313,7 @@ onMounted(async () => {
               <p class="text-subtitle text-gs20">Priority Level</p>
               <p class="text-subtitle">{{repository.priority_level.charAt(0).toUpperCase() + repository.priority_level.slice(1)}}</p>
             </VCol>
-          </VRow>
+          </template>
         </VRow>
       </div>
       <VDivider  v-if="repository.type === 'Project Repository'" />

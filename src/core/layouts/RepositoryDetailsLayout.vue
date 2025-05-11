@@ -15,12 +15,14 @@ import AccessRequestConfirmationDialog from "../../modules/repository/components
 import {AccessRequest} from "../../interfaces/access-request.interface.ts";
 import {useNotificationsServices} from "../../modules/user/services/notifications.services.ts";
 import {useRepositoryMemberServices} from "../../modules/repository/services/repository-member.services.ts";
+import {usePageLoadingStore} from "../stores/loading.store.ts";
 
 
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
 const {addNotification} = useNotificationsServices()
 const {fetchRepoMembers} = useRepositoryMemberServices()
 const {fetchRepositoryIDsByUser} = useRepositoryServices();
+const {isPageLoading} = usePageLoadingStore()
 const {user, userData} = useUserStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {router, route} = useRouting()
@@ -171,17 +173,27 @@ const initialize = async () => {
   pageLoading.value = false;
 }
 
-onMounted(() => {
+watch(() => isPageLoading.value, () => {
+  if(!isPageLoading.value){
+    pageLoading.value = false
+  }
+})
+
+onMounted(async () => {
+  pageLoading.value = true;
   if (props.repository) {
-    initialize();
+    await initialize();
   } else {
-    watch(
-        () => props.repository,
-        (newOrg) => {
-          if (newOrg) initialize();
-        },
-        { immediate: true }
+    await watch(
+      () => props.repository,
+      async (newOrg) => {
+        if (newOrg) await initialize();
+      },
+      { immediate: true }
     );
+  }
+  if(!isPageLoading.value){
+    pageLoading.value = isPageLoading.value
   }
 });
 
@@ -217,7 +229,7 @@ onMounted(() => {
                 {{repository.title}}
               </p>
               <!--            <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>-->
-              <p class="text-subtitle">{{ repository?.owner_data?.username }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
+              <p class="text-subtitle">{{ repository?.owner_data?.username ? repository?.owner_data?.username : `${repository?.owner_data?.first_name} ${repository?.owner_data?.last_name}` }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
             </div>
             <div v-if="user">
               <VBtnPrimaryFilled v-if="isMember || userData.is_superuser" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">

@@ -155,11 +155,11 @@ onUnmounted(() => {
           </VCol>
           <VCol v-if="expertData.contact.is_displayed" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
               <p class="text-subtitle text-gs20">Contact Number</p>
-            <p class="text-subtitle">{{ expertData.contact.value }}</p>
+            <a class="text-subtitle sub-link" :href="`tel:${expertData.contact.value}`">{{ expertData.contact.value }}</a>
           </VCol>
         </VRow>
       </div>
-      <div v-if="expertData.additional_info && expertData.additional_info?.trim().length != 0">
+      <div v-if="expertData.additional_info && expertData.additional_info?.trim().length != 0 && expertData.additional_info != '<p><br></p>'">
         <VDivider/>
         <div class="px-6 mb-10">
           <p class="text-about-heading py-3">Additional Information</p>
@@ -184,6 +184,15 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.sub-link{
+  text-decoration: none !important;
+  color: #23668b !important;
+}
+
+.sub-link:hover{
+  text-decoration: underline !important;
+  color: #3291C7 !important;
+}
 .back-button{
   width: 225px;
   font-size: 14px;

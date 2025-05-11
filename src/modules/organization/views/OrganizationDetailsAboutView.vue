@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useOrganizationStore} from "../stores/organization.store.ts";
-import {onMounted, computed, ref} from "vue";
+import {onMounted, computed, ref, onUnmounted} from "vue";
 import OrganizationDetailsLayout from "../../../core/layouts/OrganizationDetailsLayout.vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrgType} from "../composables/useOrgType.ts";
@@ -20,12 +20,13 @@ import {
 } from "@phosphor-icons/vue";
 import {Organization, OrganizationAttachment} from "../../../interfaces/organization.interface.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 const {route} = useRouting()
 const {setSnackbarMessage} = useSnackbarStore()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {getOrganizationType, getOrganizationSubType} = useOrgType()
-
+const {userData} = useUserStore()
 const isMember = ref(false)
 const selectedFileName = ref('');
 const selectedFileDescription = ref('');
@@ -126,6 +127,10 @@ onMounted(async () => {
   }
   await setSnackbarMessage()
 })
+
+onUnmounted(() => {
+  organization.value = null
+})
 </script>
 
 <template>
@@ -138,7 +143,7 @@ onMounted(async () => {
       :organization="organization"
       :activeTab="'about'">
     <div v-if="organization">
-      <div class="px-7 py-5">
+      <div class="px-7 py-5" v-if="organization.description && organization.description?.trim().length != 0 && organization.description !== '<p><br></p>'">
         <div>
           <p class="text-about-heading py-3">About Organization</p>
           <div class="ql-snow">
@@ -146,7 +151,7 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <VDivider/>
+      <VDivider v-if="organization.description && organization.description?.trim().length != 0 && organization.description !== '<p><br></p>'"/>
       <div class="px-7 py-5">
         <p class="text-about-heading py-3">Consortium Type</p>
         <VRow class="ma-0">
@@ -327,7 +332,7 @@ onMounted(async () => {
           <div class="pa-4">
             <VRow justify="space-between" align="center" class="ma-0">
               <p><span class="text-data-heading">Data Explorer</span> ({{nonImageFiles.length}} Files)</p>
-              <VTooltip v-if="isMember" location="bottom">
+              <VTooltip v-if="isMember || userData.is_superuser" location="bottom">
                 <template v-slot:activator="{ props }">
                   <PhDownload v-bind="props" size="24" class="cursor-pointer download-icon" @click="downloadRepoFiles"/>
                 </template>
@@ -347,7 +352,7 @@ onMounted(async () => {
                 </p>
                 <p class="text-data-description">{{selectedFileDescription}}</p>
               </div>
-              <p v-if="isMember" class="download-icon d-flex align-center cursor-pointer" @click="downloadFile(selectedFileAttachment)">
+              <p v-if="isMember || userData.is_superuser" class="download-icon d-flex align-center cursor-pointer" @click="downloadFile(selectedFileAttachment)">
                 <PhDownload size="20" class="mr-2"/>
                 Download File
               </p>
@@ -379,7 +384,6 @@ onMounted(async () => {
         </VSheet>
       </div>
     </div>
-
   </OrganizationDetailsLayout>
 </template>
 

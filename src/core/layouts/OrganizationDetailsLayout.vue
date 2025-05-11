@@ -11,12 +11,13 @@ import {useOrganizationServices} from "../../modules/organization/services/organ
 import Navbar from "../../modules/public/components/Landing/Navbar.vue";
 import Footer from "../../modules/public/components/Footer.vue";
 import OrganizationLayoutHeaderContent from "../../modules/organization/components/OrganizationLayoutHeaderContent.vue";
+import {usePageLoadingStore} from "../stores/loading.store.ts";
 
 const {user, userData} = useUserStore();
 const {fetchOrganizationIDsByUser} = useOrganizationServices()
 const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
-
+const {isPageLoading} = usePageLoadingStore()
 const isMember = ref(false)
 const pageLoading = ref(false);
 const isOrgAvailable = ref(false);
@@ -133,6 +134,12 @@ const initialize = async () => {
   pageLoading.value = false;
 };
 
+watch(() => isPageLoading.value, () => {
+  if(!isPageLoading.value){
+    pageLoading.value = false
+  }
+})
+
 onMounted(async() => {
   path.value = getFirstPath(<string>route.path);
   if (path.value === 'cmis') {
@@ -140,7 +147,7 @@ onMounted(async() => {
   }
   pageLoading.value = true;
   if (props.organization) {
-   await initialize();
+    await initialize();
   } else {
     watch(
         () => props.organization,
@@ -150,7 +157,10 @@ onMounted(async() => {
         { immediate: true }
     );
   }
-  pageLoading.value = false;
+
+  if(!isPageLoading.value){
+    pageLoading.value = false
+  }
 });
 </script>
 

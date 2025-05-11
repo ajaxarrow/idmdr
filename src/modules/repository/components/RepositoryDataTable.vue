@@ -159,8 +159,8 @@ const tableFilters = computed(() => [
     label: 'Priority Level',
     value: selectedPriorityLevel.value,
     items: priorityLevelOptions,
-    itemTitle: (type: any) => type,
-    itemValue: (type: any) => type,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
     visibleKey: 'priority_level'
   },
   {
@@ -387,7 +387,7 @@ onMounted(async () => {
         </VAvatar>
         <div>
           <p class="font-weight-medium mb-0">{{ item.title }}</p>
-          <p class="text-caption text-medium-emphasis mb-0">{{item.org_data?.name}}({{item.org_data?.acronym}}) | {{ formatDate(item.updated_at) }}</p>
+          <p class="text-caption text-medium-emphasis mb-0">{{item.org_data?.name}} ({{item.org_data?.acronym}}) | {{ formatDate(item.updated_at) }}</p>
         </div>
       </div>
     </template>
