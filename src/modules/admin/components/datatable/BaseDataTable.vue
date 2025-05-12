@@ -6,6 +6,10 @@ import EmptyStateInfo from "../../../../core/components/EmptyStateInfo.vue";
 
 
 const props = defineProps({
+  id: {
+    type: String,
+    default: 'uid'
+  },
   title: {
     type: String,
     required: true
@@ -275,11 +279,12 @@ const refresh = () => {
 
           <!-- Data Table -->
           <VDataTableServer
+              :item-value="props.id as string"
               v-model:page="page"
               v-model:items-per-page="itemsPerPage as number"
               :headers="visibleHeaders"
               :items="items as any[]"
-              :loading="loading"
+              :loading="loading ?? true"
               :items-length="totalItems"
               :items-per-page-options="generatePageSizeIncrements(totalItems)"
               @update:page="handlePageChange"
@@ -294,8 +299,6 @@ const refresh = () => {
             <template #expanded-row="{ item }">
               <slot name="expanded-row" :item="item" />
             </template>
-
-
 
             <!-- Empty state -->
             <template v-slot:no-data>

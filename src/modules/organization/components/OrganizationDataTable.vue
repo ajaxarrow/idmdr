@@ -221,6 +221,7 @@ onMounted(async () => {
       @clearFilters="clearFilters"
       @update:filter="handleFilterUpdate"
       @refreshData="loadData"
+      :expandable="true"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{ name: 'new-organization' }" v-if="isSmall || isTablet" icon>
@@ -339,6 +340,19 @@ onMounted(async () => {
           </VList>
         </VCard>
       </VMenu>
+    </template>
+
+    <template #expanded-row="{ item }">
+      <tr>
+        <td :colspan="headers.filter(h => h.visible).length + 1">
+          <div class="pa-4">
+            <h3 class="text-subtitle-1 font-weight-bold mb-2">About {{item.acronym}}</h3>
+            <div class="ql-snow">
+              <div class="ql-editor description-content" v-html="item.description"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
     </template>
 
 

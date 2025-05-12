@@ -533,7 +533,7 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
     try{
-      const res = await server.get(`/repositories/?ordering=-updated_at&user=${userData.uid}&page=${pageNumber}`, {
+      const res = await server.get(`/repositories/?ordering=-updated_at&user=${userData.uid}&page=${pageNumber}&page_size=10`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
@@ -655,7 +655,7 @@ export const useRepositoryServices = () => {
   const fetchPaginatedRepositories = async (pageNumber: number, visibilities: number[]): Promise<Repository[]> => {
     try{
       const promises = visibilities.map(async (visibility) => {
-        const res = await server.get(`/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=5&visibility=${visibility}`, {
+        const res = await server.get(`/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=10&visibility=${visibility}`, {
           headers: authorizationHeader
         });
         return await mapRepoData(res.data.results);

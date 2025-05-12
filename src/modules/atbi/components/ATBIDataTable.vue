@@ -6,7 +6,16 @@ import {useAtbiServices} from "../services/atbi.services.ts";
 import {ATBI} from "../../../interfaces/atbi.interface.ts";
 import {onMounted, ref, watch, computed} from "vue";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
-import {PhDotsThreeOutlineVertical, PhEye, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhDotsThreeOutlineVertical,
+  PhEnvelope,
+  PhEye,
+  PhFacebookLogo,
+  PhPencil,
+  PhPhone,
+  PhPlus,
+  PhTrash
+} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 
@@ -80,6 +89,7 @@ watch([selectedTechnology], async () => {
 })
 
 onMounted(async() => {
+  loading.value = true;
   technologies.value = [{ uid: '', title: 'All', slug: '' }, ...(await fetchRepositoryIDsByUser(
       10000, false, '', '', '', true, true, 'Project Repository'
   ))];
@@ -92,6 +102,7 @@ onMounted(async() => {
 
 <template>
   <BaseDataTable
+      id="uuid"
       title="All ATBIs"
       subtitle=" ATBI means Agri-Aqua Technology Business Incubation (ATBI). It is a program gears to support more incubatees in the Agri-Aqua sector."
       :items="atbis"
@@ -276,11 +287,16 @@ onMounted(async() => {
 }
 
 .contact-item a {
-  color: #2563eb;
+  color: #3291C7;
   text-decoration: none;
 }
 
-.contact-item a:hover {
+.contact-item svg {
+  color: #23668b;
+  text-decoration: none;
+}
+
+.contact-item a:hover, .contact-item:hover, .contact-item svg:hover {
   text-decoration: underline;
 }
 </style>

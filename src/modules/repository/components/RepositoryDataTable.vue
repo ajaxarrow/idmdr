@@ -141,16 +141,6 @@ const loadData = async ()=> {
   await updateTotalCount();
 }
 
-watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus],
-    async() => {
-      await loadData()
-    });
-
-watch([selectedProjectPublicState],
-    async () => {
-      selectedProjectState.value = true;
-      await loadData()
-    });
 
 
 const tableFilters = computed(() => [
@@ -291,7 +281,6 @@ const getStatusColor = (status: string): string => {
 }
 
 const updateTotalCount = async () => {
-  console.log(path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value)
   try {
     // Pass search and priority level to get accurate count
     const repositoriesData = await fetchRepositoryIDsByUser(
@@ -317,9 +306,21 @@ const updateTotalCount = async () => {
 };
 
 watch(()=> route.path, async () => {
+  loading.value = true;
   await updateTotalCount();
   await loadRepositories()
 })
+
+watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus],
+    async() => {
+      await loadData()
+    });
+
+watch([selectedProjectPublicState],
+    async () => {
+      selectedProjectState.value = true;
+      await loadData()
+    });
 
 onMounted(async () => {
   organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
@@ -349,6 +350,7 @@ onMounted(async () => {
     @clearFilters="clearFilters"
     @update:filter="handleFilterUpdate"
     @refreshData="loadData"
+    :expandable="true"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{ name: 'new-repository' }" v-if="isSmall || isTablet" icon>
@@ -502,6 +504,19 @@ onMounted(async () => {
           </VList>
         </VCard>
       </VMenu>
+    </template>
+
+    <template #expanded-row="{ item }">
+      <tr>
+        <td :colspan="headers.filter(h => h.visible).length + 1">
+          <div class="pa-4">
+            <h3 class="text-subtitle-1 font-weight-bold mb-2">About {{item.title}}</h3>
+            <div class="ql-snow">
+              <div class="ql-editor description-content" v-html="item.description"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
     </template>
 
     <template #additional-filters>
