@@ -165,7 +165,7 @@ onMounted(async () => {
         </VCol>
       </VRow>
     </div>
-    <div class="pa-6">
+    <div class="px-4 pb-4">
       <VContainer fluid>
         <VSheet class="datatable-container rounded-lg elevation-1">
           <!-- Search bar -->

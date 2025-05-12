@@ -483,6 +483,7 @@ export const useRepositoryServices = () => {
       isActive?: string | boolean,
       type?: string,
       status?: string,
+      tags?: string
   ): Promise<Repository[]> => {
     try {
       let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
@@ -507,6 +508,9 @@ export const useRepositoryServices = () => {
       }
       if (status?.trim()) {
         url += `&status=${encodeURIComponent(status)}`;
+      }
+      if (tags?.trim()) {
+        url += `&tags=${encodeURIComponent(tags)}`;
       }
 
       const res = await server.get(url, {
@@ -578,6 +582,7 @@ export const useRepositoryServices = () => {
       isActive?: string | boolean,
       type?: string,
       status?: string,
+      tags?: string
   ): Promise<Repository[]> => {
     try {
       // Start with the base URL based on whether user filtering is enabled
@@ -608,6 +613,9 @@ export const useRepositoryServices = () => {
       }
       if (status?.trim()) {
         url += `&status=${encodeURIComponent(status)}`;
+      }
+      if (tags?.trim()) {
+        url += `&tags=${encodeURIComponent(tags)}`;
       }
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }

@@ -19,15 +19,18 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {useTags} from "../composables/useTags.ts";
 
 const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
+const {arrayToString} = useStringArrayHelper()
 const { fetchAllRepositories, fetchRepositoryIDsByUser, manageRepositoryStatus, manageRepositoryAdminStatus } = useRepositoryServices();
 const {fetchAllOrganizationsBasicData} = useOrganizationServices();
+const {tags, fetchTags} = useTags();
 const selectedOrganization = ref<string>('');
 const pageEntity = computed(() => route.path === '/repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
-
 const repositories = ref<Repository[]>([]);
 const loading = ref(false);
 const search = ref('');
@@ -41,6 +44,8 @@ const selectedProjectState = ref<string | boolean>('');
 const selectedProjectPublicState = ref<string | boolean>('');
 const selectedProjectStatus = ref<string>('');
 const path = computed(() => route.path)
+const selectedTags = ref<string[]>([]);
+const convertedTags = computed(() => arrayToString(selectedTags.value));
 
 
 const manageRepoStatusCallback = async (id: string, isActive: boolean) => {
@@ -124,7 +129,8 @@ const headers = computed(() => [
   { title: 'Priority', key: 'priority_level', sortable: true, visible: false },
   { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
   { title: 'End Date', key: 'end_date', sortable: true, visible: false },
-  { title: 'Actions', key: 'actions', sortable: false, visible: true },
+  { title: 'Tags', key: 'tags', sortable: false, visible: true },
+  { title: 'Actions', key: 'actions', sortable: false, visible: true }
 ]);
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
@@ -230,7 +236,8 @@ const loadRepositories = async () => {
         selectedProjectState.value,
         selectedProjectPublicState.value,
         path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value ,
-        selectedProjectStatus.value
+        selectedProjectStatus.value,
+        convertedTags.value as string
     );
     repositories.value = data;
   } catch (error) {
@@ -258,6 +265,12 @@ const formatDate = (dateString?: string): string => {
     month: 'short',
     day: 'numeric',
   }).format(date);
+};
+
+const formatRepoDate = (date?: string): string => {
+  if (!date) return 'N/A';
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(date).toLocaleDateString('en-US', options);
 };
 
 const getPriorityColor = (priority: string): string => {
@@ -292,7 +305,8 @@ const updateTotalCount = async () => {
         selectedProjectState.value,
         selectedProjectPublicState.value,
         path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value,
-        selectedProjectStatus.value
+        selectedProjectStatus.value,
+        convertedTags.value as string
     );
 
     totalItems.value = path.value === '/repositories' || route.path === '/e-library'
@@ -305,13 +319,14 @@ const updateTotalCount = async () => {
   }
 };
 
+
 watch(()=> route.path, async () => {
   loading.value = true;
   await updateTotalCount();
   await loadRepositories()
 })
 
-watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus],
+watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags],
     async() => {
       await loadData()
     });
@@ -323,6 +338,7 @@ watch([selectedProjectPublicState],
     });
 
 onMounted(async () => {
+  fetchTags()
   organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
   await loadData()
 });
@@ -426,6 +442,19 @@ onMounted(async () => {
       </VChip>
     </template>
 
+    <template #item.tags="{ item }">
+      <p style="max-width: 300px;">{{arrayToString(item.tags as string[])}}</p>
+    </template>
+
+    <template #item.start_date="{ item }">
+      <p style="max-width: 300px;">{{formatRepoDate(item.start_date)}}</p>
+    </template>
+
+    <template #item.end_date="{ item }">
+      <p style="max-width: 300px;">{{formatRepoDate(item.end_date)}}</p>
+    </template>
+
+
     <template #item.priority_level="{ item }">
       <VChip
           :color="getPriorityColor(item.priority_level)"
@@ -521,12 +550,29 @@ onMounted(async () => {
 
     <template #additional-filters>
       <VCol cols="12" sm="6" md="4" lg="3">
+        <VCombobox
+            v-model="selectedTags"
+            :items="tags"
+            label="Tags"
+            multiple
+            chips
+            closable-chips
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            hide-details
+            class="mb-3"
+        />
+      </VCol>
+      <VCol cols="12" sm="6" md="4" lg="3">
         <VSelect
             v-model="selectedOrganization"
             :items="organizations"
             :item-title="organization => organization.acronym ? `${organization.name} (${organization.acronym})` : organization.name"
             :item-value="organization => `${organization.uid}`"
-            label="Organization"
+            label="CMI"
             hide-details
             density="compact"
             variant="outlined"
