@@ -156,7 +156,7 @@
               </div>
             </div>
           </div>
-          <VMenu v-if="user && userData?.uid === selectedSector?.owner_id" v-model="sectorActionMenu" :close-on-content-click="false">
+          <VMenu v-if="(user && userData?.uid === selectedSector?.owner_id) || userData.is_superuser" v-model="sectorActionMenu" :close-on-content-click="false">
             <template #activator="{ props }">
               <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                 Options

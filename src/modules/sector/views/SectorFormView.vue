@@ -26,9 +26,9 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {userData} = useUserStore();
 const {addSector, updateSector, fetchSectorData, hasErrorMessages, errorMessage, loading} = useSectorServices()
-const {fetchOrganizationByUser} = useOrganizationServices();
+const {fetchOrganizationByUser, fetchOrganizationByAdmin} = useOrganizationServices();
 const {storedGeoJSON, confirmDialog, fileName} = useSectorMapStore();
-const {fetchRepositoriesByUser} = useRepositoryServices();
+const {fetchRepositoryIDsByUser} = useRepositoryServices();
 const {isEmptyObject} = useObjectChecker()
 const {tags, fetchTags} = useTags();
 const {route} = useRouting();
@@ -250,8 +250,10 @@ const updateSectorData = async () => {
 onMounted(async () => {
   pageLoading.value = true
   fetchTags();
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
-  repositories.value = await fetchRepositoriesByUser();
+  organizations.value = userData.is_superuser ? (await fetchOrganizationByAdmin()).filter(org => !org.is_deleted) : (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
+  repositories.value = await fetchRepositoryIDsByUser(
+      10000, !userData.is_superuser, '', '', '', true, true,
+  );
   sectorData.organization = organizations.value.length > 0 ? <string>organizations.value[0].uid : null;
   sectorData.repository = repositories.value.length > 0 ? <string>repositories.value[0].uid : null;
   const rawSegments = route.path.split('/').filter(Boolean) as string[];
@@ -501,9 +503,14 @@ onUnmounted(() => {
               <VListItem
                   v-bind="props"
                   :prepend-avatar="item.raw.image as string"
-                  :subtitle="item.raw.owner_data?.first_name + ' ' + item.raw.owner_data?.last_name!"
                   :title="`${item.raw.title}`"
               ></VListItem>
+<!--              <VListItem-->
+<!--                  v-bind="props"-->
+<!--                  :prepend-avatar="item.raw.image as string"-->
+<!--                  :subtitle="item.raw.owner_data?.first_name + ' ' + item.raw.owner_data?.last_name!"-->
+<!--                  :title="`${item.raw.title}`"-->
+<!--              ></VListItem>-->
             </template>
           </VAutocomplete>
         </div>

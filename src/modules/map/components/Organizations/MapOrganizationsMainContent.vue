@@ -4,14 +4,20 @@ import {useMapStore} from "../../stores/map.store.ts";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
 import {onMounted, onUnmounted} from "vue";
 import {useOrganizationServices} from "../../../organization/services/organization.services.ts";
+import {useUserStore} from "../../../../core/stores/user.store.ts";
 
+const {userData} = useUserStore();
 const {searchedMapOrganizations} = useOrganizationStore();
-const {fetchOrganizations} = useOrganizationServices();
+const {fetchOrganizations, fetchOrganizationByAdmin} = useOrganizationServices();
 const {clickOrganization, clickedBoundary, resetToDefault} = useMapStore();
 
 
 onMounted(async() => {
-  await fetchOrganizations();
+  if(userData.is_superuser) {
+    await fetchOrganizationByAdmin()
+  } else {
+    await fetchOrganizations()
+  }
 })
 
 onUnmounted(() => {

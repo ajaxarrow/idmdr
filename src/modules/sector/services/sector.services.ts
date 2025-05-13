@@ -134,7 +134,7 @@ export const useSectorServices = () => {
     })
   }
 
-  const fetchSectors = async (pageSize: number = 100): Promise<Sector[]> => {
+  const fetchSectors = async (pageSize: number = 10000): Promise<Sector[]> => {
     try{
       let data: Sector[] = []
       if(user.value){
@@ -156,6 +156,19 @@ export const useSectorServices = () => {
     }
   }
 
+  const fetchSectorsByAdmin = async (pageSize: number = 10000): Promise<Sector[]> => {
+    try{
+      const res = await server.get(`/v1/sector/?ordering=-updated_at&page_size=${pageSize}`, {
+        headers: authorizationHeader
+      });
+      const rawData = res.data;
+      const sectors: Sector[] = await mapSectorData(rawData);
+
+      return [...sectors];
+    } catch (e) {
+      return []
+    }
+  }
 
   const fetchSectorsByVisibility = async (visibilities: number[], pageSize: number = 100): Promise<Sector[][]> => {
     const promises = visibilities.map(async (visibility) => {
@@ -167,7 +180,7 @@ export const useSectorServices = () => {
     return Promise.all(promises);
   };
 
-  const fetchSectorsByUser = async(pageSize: number = 100): Promise<Sector[]> => {
+  const fetchSectorsByUser = async(pageSize: number = 10000): Promise<Sector[]> => {
     try{
       const res = await server.get(`/v1/sector/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`, {
         headers: {
@@ -218,9 +231,8 @@ export const useSectorServices = () => {
     errorMessage,
     hasErrorMessages,
     fetchSectors,
+    fetchSectorsByAdmin,
     fetchSectorData,
     deleteSector
   }
-
-
 }

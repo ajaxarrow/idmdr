@@ -4,13 +4,19 @@ import {useSectorsStore} from "../../../sector/stores/sectors.store.ts";
 import {useMapStore} from "../../stores/map.store.ts";
 import {onMounted, onUnmounted} from "vue";
 import {useSectorServices} from "../../../sector/services/sector.services.ts";
+import {useUserStore} from "../../../../core/stores/user.store.ts";
 
+const {userData} = useUserStore()
 const {allSectors} = useSectorsStore();
 const {clickProvince, clickedBoundary, resetToDefault} = useMapStore();
-const {fetchSectors} = useSectorServices()
+const {fetchSectors, fetchSectorsByAdmin} = useSectorServices()
 
 onMounted(async() => {
-  await fetchSectors()
+  if(userData.is_superuser) {
+    await fetchSectorsByAdmin()
+  } else {
+    await fetchSectors()
+  }
 })
 
 onUnmounted(() => {
