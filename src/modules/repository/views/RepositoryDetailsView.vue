@@ -211,7 +211,7 @@ onMounted(async () => {
               <div class="ql-editor" v-html="repository.description"></div>
             </div>
           </VCol>
-          <VCol cols="12" sm="12" md="4" lg="3" xxl="3" xl="9">
+          <VCol cols="12" sm="12" md="4" lg="3" xxl="3" xl="3">
             <p class="text-subheading">Last Updated</p>
             <p>{{getRelativeTime(repository?.updated_at as string)}}</p>
             <p class="text-subheading mt-3">Tags</p>

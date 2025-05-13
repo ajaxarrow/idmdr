@@ -25,7 +25,7 @@ import {useTags} from "../composables/useTags.ts";
 const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
-const {arrayToString} = useStringArrayHelper()
+const {arrayToString, stringToArray} = useStringArrayHelper()
 const { fetchAllRepositories, fetchRepositoryIDsByUser, manageRepositoryStatus, manageRepositoryAdminStatus } = useRepositoryServices();
 const {fetchAllOrganizationsBasicData} = useOrganizationServices();
 const {tags, fetchTags} = useTags();
@@ -224,6 +224,7 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
 };
 
 
+
 const loadRepositories = async () => {
   loading.value = true;
   try {
@@ -337,8 +338,28 @@ watch([selectedProjectPublicState],
       await loadData()
     });
 
+watch(
+    () => route.query.tag,
+    (newTagQuery) => {
+      if (newTagQuery) {
+        selectedTags.value = stringToArray(newTagQuery as string);
+      } else {
+        selectedTags.value = [];
+      }
+    }
+);
+
+const initTagsFromRoute = () => {
+  if (route.query.tag) {
+    selectedTags.value = stringToArray(route.query.tag as string);
+  }
+};
+
+
+
 onMounted(async () => {
   fetchTags()
+  initTagsFromRoute();
   organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
   await loadData()
 });
