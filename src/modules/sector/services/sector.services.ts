@@ -161,9 +161,9 @@ export const useSectorServices = () => {
       const res = await server.get(`/v1/sector/?ordering=-updated_at&page_size=${pageSize}`, {
         headers: authorizationHeader
       });
-      const rawData = res.data;
+      const rawData = res.data.results;
       const sectors: Sector[] = await mapSectorData(rawData);
-
+      allSectors.value = sectors;
       return [...sectors];
     } catch (e) {
       return []
@@ -198,7 +198,11 @@ export const useSectorServices = () => {
 
   const fetchSectorData = async(slug: string): Promise<Sector | null> => {
     try {
-      const res = await server.get(`v1/sector/${slug}/`)
+      const res = await server.get(`v1/sector/${slug}/`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      })
       return {
         uid: res.data.uid || '',
         slug: res.data.uid || '',
@@ -224,6 +228,79 @@ export const useSectorServices = () => {
     }
   }
 
+  const fetchAllSectors = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      type?: number,
+      object_id?: string,
+      tags?: string
+  ): Promise<Sector[]> => {
+    try {
+      let url = `/v1/sector/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery) {
+          url += `&search=${searchQuery}`;
+      }
+      if (type && type != 0) {
+          url += `&parent_content_type=${type}`;
+      }
+      if (object_id) {
+          url += `&parent_object_id=${object_id}`;
+      }
+      if (tags) {
+          url += `&tags=${tags}`;
+      }
+
+      const res = await server.get(url, {
+          headers: {
+              'Authorization': `Bearer ${userData.accessToken}`
+          }
+      });
+      const rawData = res.data.results;
+      const sectors: Sector[] = await mapSectorData(rawData);
+
+      return [...sectors];
+
+    } catch (e) {
+      return []
+    }
+  }
+
+  const fetchSectorTotalCount = async (
+      pageNumber: number,
+      pageSize: number,
+      searchQuery?: string,
+      type?: number,
+      object_id?: string,
+      tags?: string
+  ): Promise<number> => {
+    try {
+      let url = `/v1/sector/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
+      if (searchQuery) {
+        url += `&search=${searchQuery}`;
+      }
+      if (type && type != 0) {
+        url += `&parent_content_type=${type}`;
+      }
+      if (object_id) {
+        url += `&parent_object_id=${object_id}`;
+      }
+      if (tags) {
+        url += `&tags=${tags}`;
+      }
+
+      const res = await server.get(url, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      return res.data.count
+
+    } catch (e) {
+      return 0
+    }
+  }
+
   return {
     addSector,
     updateSector,
@@ -233,6 +310,8 @@ export const useSectorServices = () => {
     fetchSectors,
     fetchSectorsByAdmin,
     fetchSectorData,
-    deleteSector
+    deleteSector,
+    fetchAllSectors,
+    fetchSectorTotalCount,
   }
 }

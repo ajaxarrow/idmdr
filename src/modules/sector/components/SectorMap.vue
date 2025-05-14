@@ -26,14 +26,14 @@ import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 import * as maplibregl from 'maplibre-gl';
 import {geocoderApi} from "../utils/geocoder.utils.ts";
 
-const {fetchOrganizations} = useOrganizationServices()
+const {fetchOrganizations, fetchOrganizationByAdmin} = useOrganizationServices()
 const {user, userData} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
 const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
 const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer, provinceRepositoriesLayer, loadConsortiumRepoLayer, colorScalePink} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
-const {fetchSectors} = useSectorServices()
+const {fetchSectors, fetchSectorsByAdmin} = useSectorServices()
 const {router} = useRouting();
 const mapContainer = shallowRef<HTMLDivElement | null>(null);
 const coords = ref([])
@@ -167,8 +167,13 @@ watch(provinceRepositoriesLayer, async (newValue) => {
 
 onMounted(async () => {
   loading.value = true;
-  await fetchOrganizations();
-  await fetchSectors();
+  if(userData.is_superuser) {
+    await fetchSectorsByAdmin()
+    await fetchOrganizationByAdmin()
+  } else {
+    await fetchSectors()
+    await fetchOrganizations()
+  }
   initMap();
   if(user.value && userData.is_approved){
     (MapboxDraw as any).constants = MapboxDraw.constants || {};
