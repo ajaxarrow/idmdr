@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, computed, watch, PropType} from 'vue';
+import {ref, computed, watch, PropType, onMounted} from 'vue';
 import {PhArrowClockwise, PhFunnel, PhMagnifyingGlass} from "@phosphor-icons/vue";
 import {usePageSizeHelper} from "../../../../core/composables/usePageSizeHelper.ts";
 import EmptyStateInfo from "../../../../core/components/EmptyStateInfo.vue";
@@ -57,6 +57,10 @@ const props = defineProps({
     default: () => []
   },
   expandable: {
+    type: Boolean,
+    default: false
+  },
+  showFilter: {
     type: Boolean,
     default: false
   }
@@ -139,6 +143,18 @@ const refresh = () => {
   page.value = 1;
   emit('refreshData')
 }
+
+watch (
+  () => props.showFilter,
+  (newValue) => {
+    showFilterDrawer.value = newValue as boolean;
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  showFilterDrawer.value = props.showFilter ?? false;
+})
 </script>
 
 <template>

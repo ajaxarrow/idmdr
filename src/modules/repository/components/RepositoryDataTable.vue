@@ -46,7 +46,7 @@ const selectedProjectStatus = ref<string>('');
 const path = computed(() => route.path)
 const selectedTags = ref<string[]>([]);
 const convertedTags = computed(() => arrayToString(selectedTags.value));
-
+const showFilters = ref(false);
 
 const manageRepoStatusCallback = async (id: string, isActive: boolean) => {
   await manageRepositoryStatus(id, isActive);
@@ -323,6 +323,7 @@ const updateTotalCount = async () => {
 
 watch(()=> route.path, async () => {
   loading.value = true;
+  showFilters.value = false;
   await updateTotalCount();
   await loadRepositories()
 })
@@ -343,6 +344,7 @@ watch(
     (newTagQuery) => {
       if (newTagQuery) {
         selectedTags.value = stringToArray(newTagQuery as string);
+        showFilters.value = true;
       } else {
         selectedTags.value = [];
       }
@@ -352,6 +354,7 @@ watch(
 const initTagsFromRoute = () => {
   if (route.query.tag) {
     selectedTags.value = stringToArray(route.query.tag as string);
+    showFilters.value = true;
   }
 };
 
@@ -388,6 +391,7 @@ onMounted(async () => {
     @update:filter="handleFilterUpdate"
     @refreshData="loadData"
     :expandable="true"
+    :showFilter="showFilters"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{ name: 'new-repository' }" v-if="isSmall || isTablet" icon>
