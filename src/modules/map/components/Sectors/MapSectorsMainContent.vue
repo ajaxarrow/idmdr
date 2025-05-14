@@ -13,9 +13,9 @@ const {fetchSectors, fetchSectorsByAdmin} = useSectorServices()
 
 onMounted(async() => {
   if(userData.is_superuser) {
-    // await fetchSectorsByAdmin()
+    await fetchSectorsByAdmin()
   } else {
-    // await fetchSectors()
+    await fetchSectors()
   }
 })
 
