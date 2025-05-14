@@ -135,7 +135,6 @@ const headers = computed(() => [
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
 
-
 const updateColumnVisibility = (selectedKeys: string[]) => {
   selectedColumns.value = selectedKeys;
 };
@@ -197,6 +196,11 @@ const tableFilters = computed(() => [
   }
 ]);
 
+const isColumnVisible = (key: string) => {
+  const column = headers.value.find((h: any) => h.key === key);
+  return column ? selectedColumns.value.includes(key) : false;
+};
+
 const clearFilters = () => {
   selectedPriorityLevel.value = '';
   selectedProjectStatus.value = '';
@@ -204,6 +208,7 @@ const clearFilters = () => {
   selectedProjectPublicState.value = '';
   selectedType.value = '';
   selectedOrganization.value = ''
+  selectedTags.value = [];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -574,7 +579,7 @@ onMounted(async () => {
     </template>
 
     <template #additional-filters>
-      <VCol cols="12" sm="6" md="4" lg="3">
+      <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('tags')">
         <VCombobox
             v-model="selectedTags"
             :items="tags"

@@ -5,7 +5,16 @@ import {
   PhSignOut,
   PhUsersFour,
   PhUsersThree,
-  PhAirplaneLanding, PhUserCircle, PhLightbulbFilament, PhUsers, PhPen, PhCalendar, PhLeaf, PhFolderUser, PhBooks
+  PhAirplaneLanding,
+  PhUserCircle,
+  PhLightbulbFilament,
+  PhUsers,
+  PhPen,
+  PhCalendar,
+  PhLeaf,
+  PhFolderUser,
+  PhBooks,
+  PhMapTrifold
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
 
@@ -47,6 +56,11 @@ export const navLinks = [
     icon: PhMapPinLine
   },
   ...(userData.is_superuser ? [
+    {
+      name: 'Sectors',
+      link: '/sectors',
+      icon: PhMapTrifold
+      },
     {
       name: 'User Management',
       link: '/users',

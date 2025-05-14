@@ -6,6 +6,12 @@ const sectorRoutes = [
   //   component: () => import('../../modules/sector/views/SectorView.vue'),
   // },
   {
+    path: '/sectors/',
+    name: 'sector-admin',
+    // @ts-ignore
+    component: () => import('../../modules/sector/views/SectorAdminView.vue')
+  },
+  {
     path: '/sectors/new',
     name: 'new-sector',
     // @ts-ignore

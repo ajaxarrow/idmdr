@@ -212,7 +212,7 @@ export const useSectorServices = () => {
         created_at: res.data.created_at || '',
         updated_at: res.data.updated_at || '',
         description: res.data.description || '',
-        image: res.data.image || '',
+        image: res.data.image || 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1',
         tags: res.data.tags ? stringToArray(res.data.tags) : '',
         parent: res.data.parent || '',
         parent_id: res.data.parent_id || '',

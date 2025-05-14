@@ -107,6 +107,7 @@ const handlePageChange = (newPage: number) => {
 
 const resetAllFilters = () => {
   page.value = 1;
+  search.value = '';
   emit('clearFilters');
   const defaultColumns = props.headers!.filter((h: any) => h.visible).map((h: any) => h.key);
   selectedColumns.value = defaultColumns;
