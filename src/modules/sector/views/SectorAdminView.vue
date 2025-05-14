@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import {useTags} from "../../repository/composables/useTags.ts";
-import {onMounted, ref, watch, computed} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {Sector} from "../../../interfaces/sector.interface.ts";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
@@ -12,12 +12,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
-import {
-  PhDotsThreeOutlineVertical,
-  PhPencil,
-  PhPlus,
-  PhTrash,
-} from "@phosphor-icons/vue";
+import {PhDotsThreeOutlineVertical, PhPencil, PhPlus, PhTrash,} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 
 const { isSmall, isTablet } = useScreenStore();
@@ -103,7 +98,7 @@ const loadSectors = async () => {
     );
     sectors.value = data;
   } catch (error) {
-    showSnackbarMessage('Error loading sectors', error);
+    showSnackbarMessage('Error loading sectors', Status.error);
   } finally {
     loading.value = false;
   }
@@ -121,7 +116,7 @@ const updateTotalCount = async () => {
     );
     totalItems.value = count;
   } catch (error) {
-    showSnackbarMessage('Error fetching total count', error);
+    showSnackbarMessage('Error fetching total count', Status.error);
   }
 };
 
