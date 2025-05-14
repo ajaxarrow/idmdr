@@ -134,7 +134,7 @@ export const useRepositoryServices = () => {
         const orgMembers = await fetchOrgMembers(res.data.organization);
 
         for (const member of orgMembers) {
-          if(member.user.uid != userData.uid) {
+          if(member.user.uid != userData.uid && !member.is_deleted) {
             await addUserToRepository(res.data.uid, member.user.uid as string, member.access_level);
           }
         }
@@ -623,6 +623,7 @@ export const useRepositoryServices = () => {
 
       const rawData = user ? res.data.results.filter((repo: any) => !repo.is_deleted && repo.is_approved) : res.data.results.filter((repo: any) => !repo.is_deleted);
       const repositories: Repository[] = rawData.map((repo: any) => ({
+        uid: repo.uid,
         slug: repo.uid,
         type: repo.type,
         title: repo.title,

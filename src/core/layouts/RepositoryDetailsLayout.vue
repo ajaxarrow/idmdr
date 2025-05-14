@@ -116,7 +116,7 @@ const addAccessRequestCallback = async () => {
   buttonLoading.value = true
   await addAccessRequest({
     requestor: userData.uid,
-    content_type: 28,
+    content_type: 30,
     object_id: <string>route.params.slug,
     is_approved: false,
     is_reviewed: false
@@ -140,7 +140,7 @@ const addAccessRequestCallback = async () => {
       message: `${userData.username} has requested access to ${props.repository?.title}. Please review and manage the request.`,
       type: 'Access Request Pending',
       object_id: <string>route.params.slug,
-      content_type: 28,
+      content_type: 30,
       is_read: false,
       is_deleted: false,
     });

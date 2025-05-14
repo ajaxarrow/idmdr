@@ -654,7 +654,7 @@ const manageRepoStatusCallback = async (isActive: boolean) => {
 
 const manageRequestCallback = async (id: string, isApproved: boolean, accessRequest: AccessRequest) => {
   await updateAccessRequest({
-    content_type: 28,
+    content_type: 30,
     object_id: <string>route.params.slug,
     is_approved: isApproved,
     is_reviewed: true}, id
@@ -667,7 +667,7 @@ const manageRequestCallback = async (id: string, isApproved: boolean, accessRequ
     message: isApproved ? `Your request for access to ${repository.value?.title} has been approved.` : `Your access request for ${repository.value?.title} has been denied.`,
     type: 'Access Request',
     object_id: <string> route.params.slug,
-    content_type: 28,
+    content_type: 30,
     is_read: false,
     is_deleted: false
   })

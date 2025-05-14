@@ -281,8 +281,8 @@ onMounted(async () => {
                   :content="item.is_superuser ? 'Are you sure you want to revoke admin privileges?' : 'Are you sure you want to grant admin privileges?'">
                 <VListItem class="action-menu-item">
                   <template v-slot:prepend>
-                    <PhCheck v-if="item.is_superuser" class="mr-2" />
-                    <PhX v-else class="mr-2" />
+                    <PhX v-if="item.is_superuser" class="mr-2" />
+                    <PhCheck v-else class="mr-2" />
                   </template>
                   <VListItemTitle>{{item.is_superuser ? 'Revoke Admin Privileges' : 'Grant Admin Privileges'}}</VListItemTitle>
                 </VListItem>

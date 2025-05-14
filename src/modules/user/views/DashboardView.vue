@@ -11,9 +11,9 @@ import {onMounted, ref} from "vue";
 import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 
-const {fetchRepositories} = useRepositoryServices()
-const {fetchOrganizations} = useOrganizationServices()
-const {fetchSectors} = useSectorServices()
+const {fetchRepositoryIDsByUser, fetchRepositories} = useRepositoryServices()
+const {fetchOrganizationIDsByUser, fetchOrganizationCount} = useOrganizationServices()
+const {fetchSectors, fetchSectorTotalCount} = useSectorServices()
 const repositoryData = ref<Repository[]>([]);
 const sectorsLength = ref(0)
 const repoLength = ref (0)
@@ -41,9 +41,9 @@ const dataCards = [
 onMounted(async () => {
   pageLoading.value = true
   repositoryData.value = await fetchRepositories(3)
-  repoLength.value =  (await fetchRepositories()).length
-  sectorsLength.value = (await fetchSectors()).length
-  orgLength.value = (await fetchOrganizations()).length
+  repoLength.value =  (await fetchRepositoryIDsByUser(10000, !userData.is_superuser)).length
+  sectorsLength.value = userData.is_superuser ? (await fetchSectorTotalCount(1, 10000)) : (await fetchSectors()).length
+  orgLength.value = userData.is_superuser ? (await fetchOrganizationCount(1, 10000)) : (await fetchOrganizationIDsByUser()).length
   pageLoading.value = false
 })
 </script>
