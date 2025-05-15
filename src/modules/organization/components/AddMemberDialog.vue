@@ -28,6 +28,7 @@ const orgMembers = ref<OrgMember[]>([]);
 const addMembersDialog = ref(false);
 const selectedMember = ref<User | null>(null);
 const selectedAccessLevel = ref<string | null>(null);
+const pageLoading = ref(true);
 const accessLevels = computed(() => {
   if (userData.is_superuser) {
     return ['owner','admin', 'manager', 'member', 'viewer'];
@@ -51,6 +52,7 @@ const clearErrorMessage = () => {
 };
 
 const addMember = async () => {
+  pageLoading.value = true
   clearErrorMessage()
   if (!selectedMember.value) {
     errorMessage.name = "Please select a member";
@@ -78,9 +80,11 @@ const addMember = async () => {
   } catch (e: any) {
 
   }
+  pageLoading.value = false
 }
 
 const updateMember = async () => {
+  pageLoading.value = true
   clearErrorMessage()
   if (!selectedMember.value) {
     errorMessage.name = "Please select a member";
@@ -108,6 +112,7 @@ const updateMember = async () => {
   } catch (e: any) {
 
   }
+  pageLoading.value = false
 }
 
 const clearMemberData = () => {
@@ -129,6 +134,7 @@ const checkIfMember = (uid: string): OrgMember => {
 }
 
 onMounted(async () => {
+  pageLoading.value = true
   orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
   users.value = await fetchUsers();
 
@@ -138,6 +144,7 @@ onMounted(async () => {
       selectedAccessLevel.value = props.member.access_level
     }
   }
+  pageLoading.value = false
 })
 
 onUpdated(async () => {
@@ -154,9 +161,15 @@ onUpdated(async () => {
 
   <VDialog v-model="addMembersDialog" class="center">
     <VSheet class="sector-tagging-dialog-container" @click.stop>
-      <p class="dialog-title pa-5">Add Members</p>
+      <p class="dialog-title pa-5">{{props.formType == FormType.edit ? 'Edit Member' : 'Add Member'}}</p>
       <VDivider/>
-      <div class="pa-5">
+      <div v-if="pageLoading" class="loading-state-container" style="min-height: 150px;">
+        <VProgressCircular
+            indeterminate
+            color="#23668b"
+        ></VProgressCircular>
+      </div>
+      <div v-else class="pa-5">
         <div>
           <p class="dialog-label mb-2">Member</p>
           <VAutocomplete
@@ -222,12 +235,14 @@ onUpdated(async () => {
         <VBtnPrimaryAlt
             width="86"
             class="action-button"
+            :disabled="pageLoading"
             @click="formType === FormType.edit ? updateMember() : addMember()"
         >
           Save
         </VBtnPrimaryAlt>
       </VRow>
     </VSheet>
+
   </VDialog>
 </template>
 

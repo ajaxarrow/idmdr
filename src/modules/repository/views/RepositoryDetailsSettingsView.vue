@@ -617,31 +617,39 @@ const isSlugInRepoList = (repository: Repository | null | undefined, repoList: R
 };
 
 const fetchMembersCallback = async () => {
+  loading.value = true
   await fetchMembers()
   showSnackbarMessage('Member Added Successfully', Status.success)
+  loading.value = false
 }
 
 const updateMembersCallback = async () => {
+  loading.value = true
   await fetchMembers()
   showSnackbarMessage('Member Updated Successfully', Status.success)
   memberActionMenu.value = false
+  loading.value = false
 }
 
 const deleteMemberCallback = async (member: OrgMember) => {
+  loading.value = true
   await removeRepoMember(<string>route.params.slug, member)
   await fetchMembers()
   showSnackbarMessage('Member Removed Successfully', Status.success)
   memberActionMenu.value = false
+  loading.value = false
 }
 
 
 const fetchMembers = async () => {
+  loading.value = true
   const data = await fetchRepoMembers(<string>route.params.slug)
   const requests = await fetchAccessRequestsByRepository(route.params.slug as string)
   accessRequests.value = requests
   accessRequestData.value = requests
   repoMembers.value = data
   repoMemberData.value = data
+  loading.value = false
 }
 
 const manageRepoStatusCallback = async (isActive: boolean) => {
@@ -653,6 +661,7 @@ const manageRepoStatusCallback = async (isActive: boolean) => {
 }
 
 const manageRequestCallback = async (id: string, isApproved: boolean, accessRequest: AccessRequest) => {
+  loading.value = true;
   await updateAccessRequest({
     content_type: 30,
     object_id: <string>route.params.slug,
@@ -675,6 +684,7 @@ const manageRequestCallback = async (id: string, isApproved: boolean, accessRequ
   await fetchMembers()
   showSnackbarMessage(`Access Request ${isApproved ? 'Approved' : 'Denied'} Successfully`, Status.success)
   memberActionMenu.value = false
+  loading.value = false
 }
 
 const changeVisibilityCallback = async (newVisibility: number) => {

@@ -389,21 +389,27 @@ watch(() => searchQuery.value, () => {
 
 
 const fetchMembersCallback = async () => {
+  loading.value = true
   await fetchMembers()
   showSnackbarMessage('Member Added Successfully', Status.success)
+  loading.value = false
 }
 
 const updateMembersCallback = async () => {
+  loading.value = true
   await fetchMembers()
   showSnackbarMessage('Member Updated Successfully', Status.success)
   memberActionMenu.value = false
+  loading.value = false
 }
 
 const deleteMemberCallback = async (member: OrgMember) => {
+  loading.value = true
   await removeOrgMember(<string>route.params.slug, member)
   await fetchMembers()
   showSnackbarMessage('Member Removed Successfully', Status.success)
   memberActionMenu.value = false
+  loading.value = false
 }
 
 const changeVisibilityCallback = (newVisibility: number) => {

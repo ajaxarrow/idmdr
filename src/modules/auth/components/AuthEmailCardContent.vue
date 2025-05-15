@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import { useRouting } from "../../../core/composables/useRouting.ts";
 import { LocationQueryValue } from "vue-router";
 import emailLoad from "../../../assets/lottiefiles/email-load.json"
@@ -26,7 +26,7 @@ const loading = ref(false)
 const authType = computed(() => tab.value === 'login' ? 'Login' : 'Register')
 const { isMobile, isLargePhone } = useScreenStore()
 const layoutValue = computed(() => isMobile || isLargePhone ? '300' : '500')
-
+const emailInputRef = ref<HTMLInputElement | null>(null);
 // Get everything from the store
 const {
   handleLogin,
@@ -74,9 +74,14 @@ watch(() => route.query.tab, (newTab: LocationQueryValue | LocationQueryValue[])
   }
 });
 
-watch(() => tab.value, () => {
+watch(() => tab.value, async () => {
   if (tab.value !== "") {
-    router.push({ query: { tab: tab.value } });
+    await router.push({ query: { tab: tab.value } });
+  }
+
+  if (tab.value === "login") {
+    await nextTick(); // Wait for the DOM to update
+    emailInputRef.value?.focus(); // Programmatically focus the email input
   }
 });
 
@@ -141,6 +146,7 @@ onMounted(() => {
                 @input="() => handleNameInput('firstName')"
                 :maxlength="150"
                 class="mb-3"
+                :autofocus="authType === 'Register'"
             >
               <template v-slot:prepend-inner>
                 <PhUser :size="20" />
@@ -174,6 +180,7 @@ onMounted(() => {
             :maxlength="254"
             required
             class="mb-3"
+            ref="emailInputRef"
         >
           <template v-slot:prepend-inner>
             <PhEnvelope :size="20" />
