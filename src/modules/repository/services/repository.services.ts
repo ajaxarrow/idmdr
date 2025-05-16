@@ -535,9 +535,7 @@ export const useRepositoryServices = () => {
         }
       }
 
-
       console.log(url)
-
 
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }

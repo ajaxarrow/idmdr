@@ -913,6 +913,34 @@ onMounted( async () => {
             </template>
           </VCombobox>
         </div>
+        <div class="mb-3">
+          <label class="input-label">Start Date</label>
+          <VTextField
+              v-model="repositoryData.start_date"
+              type="date"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.start_date"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="input-label">End Date</label>
+          <VTextField
+              v-model="repositoryData.end_date"
+              type="date"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :error-messages="errorMessage.end_date"
+          />
+        </div>
         <div v-if="repositoryData.type === 'Project Repository'">
           <div class="mb-3">
             <label class="input-label">Project Status</label>
@@ -963,34 +991,6 @@ onMounted( async () => {
                 multiple
                 chips
                 closable-chips
-            />
-          </div>
-          <div class="mb-3">
-            <label class="input-label">Start Date</label>
-            <VTextField
-                v-model="repositoryData.start_date"
-                type="date"
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-                :error-messages="errorMessage.start_date"
-            />
-          </div>
-          <div class="mb-3">
-            <label class="input-label">End Date</label>
-            <VTextField
-                v-model="repositoryData.end_date"
-                type="date"
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-                :error-messages="errorMessage.end_date"
             />
           </div>
           <div class="mb-3">
