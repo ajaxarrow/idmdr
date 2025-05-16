@@ -260,7 +260,7 @@ onMounted(async () => {
             </p>
           </VCol>
           <VCol v-if="repository.author" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Author<span v-if="repository.authorsData?.length != 0">(s)</span></p>
+            <p class="text-subtitle text-gs20">Collaborator<span v-if="repository.authorsData?.length != 0">(s)</span></p>
             <p class="text-subtitle pr-3">
               <span v-if="repository.authorsData?.length == 0">N/A</span>
               <span v-else v-for="(author, index) in repository.authorsData">
@@ -273,7 +273,7 @@ onMounted(async () => {
             <p class="text-subtitle pr-3">{{ repository.status}}</p>
           </VCol>
           <VCol v-if="repository.org_data" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-            <p class="text-subtitle text-gs20">Organization</p>
+            <p class="text-subtitle text-gs20">Associated CMI</p>
             <p class="text-subtitle pr-3">{{ repository.org_data.name}} ({{repository.org_data.acronym}})</p>
           </VCol>
           <VCol v-if="repository.location" cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">

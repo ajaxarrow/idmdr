@@ -857,13 +857,13 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Author(s)</label>
+          <label class="input-label">Collaborator(s)</label>
           <VCombobox
               ref="authorRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
               v-model="repositoryData.authorsData"
-              placeholder="Enter Author"
+              placeholder="Enter Collaborator"
               class="my-2"
               rounded="lg"
               density="comfortable"
@@ -880,7 +880,7 @@ onMounted( async () => {
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('author')">
                 <VListItemTitle>
-                  Add {{ searchQueries.author }} as an author
+                  Add {{ searchQueries.author }} as a collaborator
                 </VListItemTitle>
               </VListItem>
             </template>

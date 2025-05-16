@@ -273,7 +273,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   currentY += 8;
 
   doc.setFont('helvetica', 'bold');
-  doc.text('Organization:', margin, currentY);
+  doc.text('Associated CMI:', margin, currentY);
   doc.setFont('helvetica', 'normal');
   const orgText = `${repository?.org_data?.name || 'N/A'} (${repository?.org_data?.acronym || 'N/A'})`;
   doc.text(orgText, margin + 70, currentY);
@@ -293,7 +293,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   currentY += 8;
 
   doc.setFont('helvetica', 'bold');
-  doc.text('Author:', margin, currentY);
+  doc.text('Collaborators:', margin, currentY);
   doc.setFont('helvetica', 'normal');
   doc.text(
       !repository?.authorsData || repository.authorsData.length === 0
@@ -336,7 +336,7 @@ const downloadRepositoryDataPDF = async (repository: Repository) => {
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(colors.primary);
-  doc.text('About Repository', margin, currentY);
+  doc.text('About Project', margin, currentY);
   doc.setDrawColor(colors.accent);
   doc.setLineWidth(0.5);
   doc.line(margin, currentY + 2, margin + 50, currentY + 2);
