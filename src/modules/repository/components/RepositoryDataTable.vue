@@ -22,7 +22,6 @@ import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useTags} from "../composables/useTags.ts";
 import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
-import {CustomUserData} from "../../../interfaces/member.interface.ts";
 
 const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
@@ -227,6 +226,8 @@ const clearFilters = () => {
   selectedType.value = '';
   selectedOrganization.value = ''
   selectedTags.value = [];
+  selectedUsers.value = [];
+  selectedUsersOption.value = ['All'];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -446,7 +447,9 @@ watch(
         selectedUsersOption.value = ['All'];
       }
 
-      loadData();
+      if(selectedUsers.value.length > 0){
+        loadData();
+      }
     },
     { deep: true }
 );
