@@ -164,11 +164,32 @@ onMounted(async () => {
                   cover
                   height="40px"
                   width="40px"
-                  :src="typeof topic.user === 'object' ? topic.user?.profile_picture!  : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+                  :src="typeof topic.user === 'object'
+    ? topic.user.profile_picture
+      ? topic.user.profile_picture
+      : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'
+    : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
               />
+
               <div class="ml-2" style="line-height: 20px">
-                <p class="topic-subtitle">{{ typeof topic.user === 'object' ? topic.user?.username : ''}}</p>
-                <p class="text-gs60" style="font-size: 14px"> {{ new Date(topic?.date_updated as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
+                <p class="topic-subtitle">
+                  {{
+                    typeof topic.user === 'object'
+                        ? topic.user.username
+                            ? topic.user.username
+                            : `${topic.user.first_name ?? ''} ${topic.user.last_name ?? ''}`.trim()
+                        : ''
+                  }}
+                </p>
+                <p class="text-gs60" style="font-size: 14px">
+                  {{
+                    new Date(topic?.date_updated as string).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: '2-digit',
+                      year: 'numeric'
+                    })
+                  }}
+                </p>
               </div>
             </div>
           </div>
@@ -223,7 +244,13 @@ onMounted(async () => {
                   class="mr-2 mt-2"
                   size="40"
               >
-                <VImg :src="typeof comment.user === 'object' ? comment.user?.profile_picture! : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"></VImg>
+                <VImg
+                  :src="typeof comment.user === 'object'
+                  ? comment.user.profile_picture
+                    ? comment.user.profile_picture
+                    : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'
+                  : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+                />
               </VAvatar>
               <VTextField
                   autofocus
@@ -270,7 +297,7 @@ onMounted(async () => {
                class="mr-2 mt-2"
                size="40"
            >
-             <VImg :src="userData.profilePicture"></VImg>
+             <VImg :src="userData.profilePicture ? userData.profilePicture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg' "></VImg>
            </VAvatar>
            <VTextField
                id="comment-input"
@@ -292,8 +319,7 @@ onMounted(async () => {
                @click="handleComment"
                rounded="lg"
                height="44px"
-           >
-             Submit
+           > Submit
            </VBtnPrimaryFilled>
          </VRow>
        </div>

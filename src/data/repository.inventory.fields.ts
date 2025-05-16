@@ -8,7 +8,7 @@ const commodities = [
 
 const status = ['Ongoing', 'Completed', 'Suspended', 'Terminated', 'Unliquidated']
 
-const categories = ['Program', 'Project', 'Activity']
+const categories = ['Program', 'Project', 'Study']
 
 const forPatent = [
   {

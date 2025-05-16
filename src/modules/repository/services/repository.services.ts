@@ -483,7 +483,13 @@ export const useRepositoryServices = () => {
       isActive?: string | boolean,
       type?: string,
       status?: string,
-      tags?: string
+      tags?: string,
+      user_fields?: string,
+      technology_owner?: string,
+      technology_generator?: string,
+      collaborator?: string,
+      lead?: string,
+      isAllDataIncluded: boolean = false
   ): Promise<Repository[]> => {
     try {
       let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
@@ -512,6 +518,26 @@ export const useRepositoryServices = () => {
       if (tags?.trim()) {
         url += `&tags=${encodeURIComponent(tags)}`;
       }
+      if (user_fields?.trim()) {
+          url += `&user_fields=${encodeURIComponent(user_fields)}`;
+      } else {
+        if (technology_owner?.trim()) {
+          url += `&tech_owner=${encodeURIComponent(technology_owner)}`;
+        }
+        if (technology_generator?.trim()) {
+          url += `&technology_generator=${encodeURIComponent(technology_generator)}`;
+        }
+        if (collaborator?.trim()) {
+          url += `&author=${encodeURIComponent(collaborator)}`;
+        }
+        if (lead?.trim()) {
+          url += `&lead=${encodeURIComponent(lead)}`;
+        }
+      }
+
+
+      console.log(url)
+
 
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
@@ -520,7 +546,7 @@ export const useRepositoryServices = () => {
       const rawData = res.data.results;
 
       let repositories: Repository[] = await mapRepoData(
-          rawData.filter((repo: any) => !repo.is_deleted)
+          rawData.filter((repo: any) => !repo.is_deleted), 'create', isAllDataIncluded
       );
 
       repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
@@ -582,7 +608,12 @@ export const useRepositoryServices = () => {
       isActive?: string | boolean,
       type?: string,
       status?: string,
-      tags?: string
+      tags?: string,
+      user_fields?: string,
+      technology_owner?: string,
+      technology_generator?: string,
+      collaborator?: string,
+      lead?: string,
   ): Promise<Repository[]> => {
     try {
       // Start with the base URL based on whether user filtering is enabled
@@ -617,6 +648,23 @@ export const useRepositoryServices = () => {
       if (tags?.trim()) {
         url += `&tags=${encodeURIComponent(tags)}`;
       }
+      if (user_fields?.trim()) {
+        url += `&user_fields=${encodeURIComponent(user_fields)}`;
+      } else {
+        if (technology_owner?.trim()) {
+          url += `&tech_owner=${encodeURIComponent(technology_owner)}`;
+        }
+        if (technology_generator?.trim()) {
+          url += `&technology_generator=${encodeURIComponent(technology_generator)}`;
+        }
+        if (collaborator?.trim()) {
+          url += `&author=${encodeURIComponent(collaborator)}`;
+        }
+        if (lead?.trim()) {
+          url += `&lead=${encodeURIComponent(lead)}`;
+        }
+      }
+
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
       });

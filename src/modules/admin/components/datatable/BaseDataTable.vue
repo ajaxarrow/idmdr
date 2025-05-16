@@ -291,6 +291,11 @@ onMounted(() => {
                   </VCol>
                 </template>
               </VRow>
+              <VRow>
+                <slot name="custom-filters">
+
+                </slot>
+              </VRow>
             </div>
           </VExpandTransition>
 

@@ -21,6 +21,8 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useTags} from "../composables/useTags.ts";
+import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
 
 const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
@@ -28,6 +30,7 @@ const {showSnackbarMessage} = useSnackbarStore()
 const {arrayToString, stringToArray} = useStringArrayHelper()
 const { fetchAllRepositories, fetchRepositoryIDsByUser, manageRepositoryStatus, manageRepositoryAdminStatus } = useRepositoryServices();
 const {fetchAllOrganizationsBasicData} = useOrganizationServices();
+const {fetchCustomUsers} = useRepositoryMemberServices();
 const {tags, fetchTags} = useTags();
 const selectedOrganization = ref<string>('');
 const pageEntity = computed(() => route.path === '/repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
@@ -47,7 +50,10 @@ const path = computed(() => route.path)
 const selectedTags = ref<string[]>([]);
 const convertedTags = computed(() => arrayToString(selectedTags.value));
 const showFilters = ref(false);
-
+const customUsers = ref<any[]>([])
+const selectedUsers = ref([])
+const convertedUsers = computed(() => arrayToString(selectedUsers.value));
+const selectedUsersOption = ref(['All'])
 const manageRepoStatusCallback = async (id: string, isActive: boolean) => {
   await manageRepositoryStatus(id, isActive);
   showSnackbarMessage(`Project Status Changed to ${isActive ? 'Active' : 'Inactive'}`, Status.success);
@@ -84,6 +90,14 @@ const getStatusInfo = (repository: Repository) => {
     };
   }
 };
+
+const includedUserOptions = [
+  { title: 'All Users', value: 'All' },
+  { title: 'Technology Owner', value: 'tech_owner' },
+  { title: 'Technology Generator', value: 'technology_generator' },
+  { title: 'Collaborators', value: 'author' },
+  { title: 'Lead', value: 'lead' },
+];
 
 const priorityLevelOptions = [
   { title: 'All Priorities', value: '' },
@@ -126,6 +140,10 @@ const headers = computed(() => [
   ...(route.path === '/repositories'
       ? [{ title: 'Type', key: 'type', sortable: true, visible: true }]
       : []),
+  { title: 'Technology Owners', key: 'tech_owner', sortable: true, visible: false },
+  { title: 'Technology Generator', key: 'tech_generator', sortable: true, visible: false },
+  { title: 'Collaborator', key: 'collaborator', sortable: true, visible: true },
+  { title: 'Lead', key: 'lead', sortable: true, visible: false },
   { title: 'Priority', key: 'priority_level', sortable: true, visible: false },
   { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
   { title: 'End Date', key: 'end_date', sortable: true, visible: false },
@@ -233,6 +251,31 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
 const loadRepositories = async () => {
   loading.value = true;
   try {
+    // Prepare user filter parameters
+    let tech_owner = '';
+    let tech_generator = '';
+    let author = '';
+    let lead = '';
+    let all_filters = '';
+
+    // Don't apply user filters if "All" is selected
+    if(selectedUsersOption.value.includes('All')) {
+      all_filters = convertedUsers.value;
+    } else {
+      if (selectedUsersOption.value.includes('tech_owner') || selectedUsersOption.value.includes('All')) {
+        tech_owner = convertedUsers.value;
+      }
+      if (selectedUsersOption.value.includes('technology_generator') || selectedUsersOption.value.includes('All')) {
+        tech_generator = convertedUsers.value;
+      }
+      if (selectedUsersOption.value.includes('author') || selectedUsersOption.value.includes('All')) {
+        author = convertedUsers.value;
+      }
+      if (selectedUsersOption.value.includes('lead') || selectedUsersOption.value.includes('All')) {
+        lead = convertedUsers.value;
+      }
+    }
+
     const data = await fetchAllRepositories(
         page.value,
         itemsPerPage.value,
@@ -241,9 +284,15 @@ const loadRepositories = async () => {
         selectedOrganization.value,
         selectedProjectState.value,
         selectedProjectPublicState.value,
-        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value ,
+        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value,
         selectedProjectStatus.value,
-        convertedTags.value as string
+        convertedTags.value as string,
+        all_filters,
+        tech_owner,    // Add the filtered value
+        tech_generator, // Add the filtered value
+        author,        // Add the filtered value
+        lead,          // Add the filtered value
+        true
     );
     repositories.value = data;
   } catch (error) {
@@ -302,6 +351,30 @@ const getStatusColor = (status: string): string => {
 const updateTotalCount = async () => {
   try {
     // Pass search and priority level to get accurate count
+    let tech_owner = '';
+    let tech_generator = '';
+    let author = '';
+    let lead = '';
+    let all_filters = '';
+
+    // Don't apply user filters if "All" is selected
+    if(selectedUsersOption.value.includes('All')) {
+      all_filters = convertedUsers.value;
+    } else {
+      if (selectedUsersOption.value.includes('tech_owner') || selectedUsersOption.value.includes('All')) {
+        tech_owner = convertedUsers.value;
+      }
+      if (selectedUsersOption.value.includes('technology_generator') || selectedUsersOption.value.includes('All')) {
+        tech_generator = convertedUsers.value;
+      }
+      if (selectedUsersOption.value.includes('author') || selectedUsersOption.value.includes('All')) {
+        author = convertedUsers.value;
+      }
+      if (selectedUsersOption.value.includes('lead') || selectedUsersOption.value.includes('All')) {
+        lead = convertedUsers.value;
+      }
+    }
+
     const repositoriesData = await fetchRepositoryIDsByUser(
         10000,
     false,
@@ -312,7 +385,12 @@ const updateTotalCount = async () => {
         selectedProjectPublicState.value,
         path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value,
         selectedProjectStatus.value,
-        convertedTags.value as string
+        convertedTags.value as string,
+        all_filters,
+        tech_owner,    // Add the filtered value
+        tech_generator, // Add the filtered value
+        author,        // Add the filtered value
+        lead,          // Add the filtered value
     );
 
     totalItems.value = path.value === '/repositories' || route.path === '/e-library'
@@ -333,7 +411,7 @@ watch(()=> route.path, async () => {
   await loadRepositories()
 })
 
-watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags],
+watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers],
     async() => {
       await loadData()
     });
@@ -356,6 +434,23 @@ watch(
     }
 );
 
+
+watch(
+    () => selectedUsersOption.value,
+    (newValue, oldValue) => {
+
+      if (oldValue.includes('All') && newValue.length > 1) {
+        selectedUsersOption.value = selectedUsersOption.value.filter(option => option !== 'All');
+      }
+      else if (newValue.includes('All') && newValue.length > 1) {
+        selectedUsersOption.value = ['All'];
+      }
+
+      loadData();
+    },
+    { deep: true }
+);
+
 const initTagsFromRoute = () => {
   if (route.query.tag) {
     selectedTags.value = stringToArray(route.query.tag as string);
@@ -366,6 +461,8 @@ const initTagsFromRoute = () => {
 
 
 onMounted(async () => {
+  loading.value = true;
+  customUsers.value =  await fetchCustomUsers();
   fetchTags()
   initTagsFromRoute();
   organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
@@ -463,6 +560,48 @@ onMounted(async () => {
           </VChip>
         </template>
       </VTooltip>
+    </template>
+
+    <template #item.tech_owner="{ item }">
+      <p class="pr-3">
+        <span v-if="item.techOwnerData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.techOwnerData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.techOwnerData?.length! - 1">, </span>
+          </span>
+      </p>
+    </template>
+
+    <template #item.tech_generator="{ item }">
+      <p class="pr-3">
+        <span v-if="item.techGeneratorData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.techGeneratorData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.techGeneratorData?.length! - 1">, </span>
+          </span>
+      </p>
+    </template>
+
+    <template #item.collaborator="{ item }">
+      <p class="pr-3">
+        <span v-if="item.authorsData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.authorsData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.authorsData?.length! - 1">, </span>
+          </span>
+      </p>
+    </template>
+
+    <template #item.lead="{ item }">
+      <p class="pr-3">
+        {{
+          item.leadData?.data?.first_name?.length
+              ? item.leadData.data.first_name
+              : 'N/A'
+        }}
+        {{
+          item.leadData?.data?.last_name?.length
+              ? item.leadData.data.last_name
+              : ''
+        }}
+      </p>
     </template>
 
 
@@ -610,6 +749,46 @@ onMounted(async () => {
             color="primary"
             base-color="gs60"
             class="mb-3"
+        />
+      </VCol>
+    </template>
+    <template #custom-filters>
+      <VCol cols="12" sm="6" md="4" lg="3">
+        <VAutocomplete
+            v-model="selectedUsersOption"
+            :items="includedUserOptions"
+            :item-title="user => user.title"
+            :item-value="user => user.value"
+            label="Included Fields"
+            hide-details
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            class="mb-3"
+            multiple
+            chips
+            closable-chips
+        />
+      </VCol>
+      <VCol cols="12" sm="6" md="4" lg="3">
+        <VAutocomplete
+            v-model="selectedUsers"
+            :items="customUsers"
+            :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
+            :item-value="user => user.data ? `${user.data.first_name}` : ''"
+            label="User"
+            hide-details
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            class="mb-3"
+            multiple
+            chips
+            closable-chips
         />
       </VCol>
     </template>
