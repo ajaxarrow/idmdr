@@ -51,7 +51,7 @@ const selectedTags = ref<string[]>([]);
 const convertedTags = computed(() => arrayToString(selectedTags.value));
 const showFilters = ref(false);
 const customUsers = ref<any[]>([])
-const selectedUsers = ref([])
+const selectedUsers = ref<CustomUserData[]>([])
 // const convertedUsers = computed(() => arrayToString(selectedUsers.value));
 const selectedUsersOption = ref(['All'])
 const selectedNames = computed(() =>
