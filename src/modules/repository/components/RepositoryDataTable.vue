@@ -291,16 +291,16 @@ const loadRepositories = async () => {
     if(selectedUsersOption.value.includes('All')) {
       all_filters = selectedNames.value;
     } else {
-      if (selectedUsersOption.value.includes('tech_owner') || selectedUsersOption.value.includes('All')) {
+      if (selectedUsersOption.value.includes('tech_owner')) {
         tech_owner = selectedNames.value;
       }
-      if (selectedUsersOption.value.includes('technology_generator') || selectedUsersOption.value.includes('All')) {
+      if (selectedUsersOption.value.includes('technology_generator')) {
         tech_generator = selectedNames.value;
       }
-      if (selectedUsersOption.value.includes('author') || selectedUsersOption.value.includes('All')) {
+      if (selectedUsersOption.value.includes('author')) {
         author = selectedNames.value;
       }
-      if (selectedUsersOption.value.includes('lead') || selectedUsersOption.value.includes('All')) {
+      if (selectedUsersOption.value.includes('lead')) {
         lead = selectedNames.value;
       }
     }

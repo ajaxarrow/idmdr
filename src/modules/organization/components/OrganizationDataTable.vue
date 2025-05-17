@@ -17,11 +17,15 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
 const {fetchAllOrganizations, fetchOrganizationCount, manageOrgStatus, manageOrgAdminStatus} = useOrganizationServices();
-
+const {fetchCustomUsers} = useRepositoryMemberServices();
+const {arrayToString} = useStringArrayHelper()
 const organizations = ref<Organization[]>([]);
 const loading = ref(false);
 const search = ref('');
@@ -30,8 +34,35 @@ const page = ref(1);
 const totalItems = ref(0);
 const selectedOrgStatus = ref<string | boolean>('');
 const selectedOrgAdminStatus = ref<string | boolean>('');
+const customUsers = ref<any[]>([])
+const selectedUsers = ref<CustomUserData[]>([])
+const userRef = ref(null);
+const userSearch = ref('')
+const selectedUsersOption = ref(['All'])
+const selectedNames = computed(() =>
+    arrayToString(selectedUsers.value.map(user => user?.data?.first_name || 'Unknown'))
+)
+const handleSearch = async (query: any) => {
+  userSearch.value = query
+}
 
-
+const addCustomUser = async () => {
+  const newUser: CustomUserData = {
+    type: 'custom',
+    data: {
+      username: userSearch.value as string,
+      first_name: userSearch.value as string,
+      last_name: '',
+      email: '',
+      uid: ''
+    }
+  };
+  selectedUsers.value?.push(newUser);
+  userSearch.value = '';
+  //@ts-ignore
+  userRef.value.search = '';
+  await loadData()
+}
 
 const manageOrgStatusCallback = async (id: string, isActive: boolean) => {
   await manageOrgStatus(id, isActive);
@@ -44,6 +75,14 @@ const manageOrgAdminStatusCallback = async (id: string, isEnabled: boolean) => {
   showSnackbarMessage(`CMI ${isEnabled ? 'Enabled' : 'Disabled'} Successfully`, Status.success);
   await loadOrganizations();
 };
+
+const includedUserOptions = [
+  { title: 'All Representatives', value: 'All' },
+  { title: 'Research & Development', value: 'rdc_rep' },
+  { title: 'Information Communication', value: 'icc_rep' },
+  { title: 'Technology Transfer', value: 'ttc_rep' },
+  { title: 'Science Communication', value: 'scc_rep' },
+];
 
 const getStatusInfo = (org: Organization) => {
   if (!org.is_approved) {
@@ -86,7 +125,11 @@ const orgStatusOptions = [
 const headers = computed(() => [
   { title: 'Title', key: 'title', sortable: true, visible: true },
   { title: 'Status', key: 'status', sortable: true, visible: true },
-  { title: 'Actions', key: 'actions', sortable: false, visible: true },
+  {title: 'Research and Development Rep', key: 'rdc_rep', sortable: false, visible: true},
+  {title: 'Information Communication Rep', key: 'icc_rep', sortable: false, visible: true},
+  {title: 'Technology Transfer Rep', key: 'ttc_rep', sortable: false, visible: true},
+  {title: 'Science Communication Rep', key: 'scc_rep', sortable: false, visible: true},
+  { title: 'Actions', key: 'actions', sortable: false, visible: true }
 ]);
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
@@ -102,18 +145,6 @@ const loadData = async ()=> {
   await loadOrganizations();
   await updateTotalCount();
 }
-
-watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus],
-    async() => {
-      await loadData()
-    });
-
-watch([selectedOrgStatus],
-    async () => {
-      selectedOrgAdminStatus.value = true;
-      await loadData()
-    });
-
 
 const tableFilters = computed(() => [
   {
@@ -139,6 +170,8 @@ const tableFilters = computed(() => [
 const clearFilters = () => {
   selectedOrgStatus.value = '';
   selectedOrgAdminStatus.value = '';
+  selectedUsers.value = [];
+  selectedUsersOption.value = ['All'];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -155,14 +188,42 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
 
 const loadOrganizations = async () => {
   loading.value = true;
+  let rdc_rep = '';
+  let icc_rep = '';
+  let ttc_rep = '';
+  let scc_rep = '';
+  let all_reps = '';
+
+  if (selectedUsersOption.value.includes('All')) {
+    all_reps = selectedNames.value;
+  } else {
+    if (selectedUsersOption.value.includes('rdc_rep')) {
+      rdc_rep = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('icc_rep')) {
+      icc_rep = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('ttc_rep')) {
+      ttc_rep = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('scc_rep')) {
+      scc_rep = selectedNames.value;
+    }
+  }
+
   try {
     const data = await fetchAllOrganizations(
         page.value,
         itemsPerPage.value,
         search.value,
         selectedOrgAdminStatus.value,
-        selectedOrgStatus.value
-
+        selectedOrgStatus.value,
+        all_reps,
+        rdc_rep,
+        ttc_rep,
+        icc_rep,
+        scc_rep,
+        true
     );
     organizations.value = data;
   } catch (error) {
@@ -176,6 +237,29 @@ const loadOrganizations = async () => {
 
 
 const updateTotalCount = async () => {
+  loading.value = true;
+  let rdc_rep = '';
+  let icc_rep = '';
+  let ttc_rep = '';
+  let scc_rep = '';
+  let all_reps = '';
+
+  if (selectedUsersOption.value.includes('All')) {
+    all_reps = selectedNames.value;
+  } else {
+    if (selectedUsersOption.value.includes('rdc_rep')) {
+      rdc_rep = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('icc_rep')) {
+      icc_rep = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('ttc_rep')) {
+      ttc_rep = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('scc_rep')) {
+      scc_rep = selectedNames.value;
+    }
+  }
   try {
     // Pass search and priority level to get accurate count
     totalItems.value = await fetchOrganizationCount(
@@ -183,18 +267,56 @@ const updateTotalCount = async () => {
         10000,
         search.value,
         selectedOrgAdminStatus.value,
-        selectedOrgStatus.value
+        selectedOrgStatus.value,
+        all_reps,
+        rdc_rep,
+        ttc_rep,
+        icc_rep,
+        scc_rep
     );
 
 
   } catch (error) {
     console.error('Failed to get total count:', error);
     totalItems.value = 0;
+  } finally {
+    loading.value = false;
   }
+
 };
 
+watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus, selectedUsers],
+    async() => {
+      await loadData()
+    });
+
+watch([selectedOrgStatus],
+    async () => {
+      selectedOrgAdminStatus.value = true;
+      await loadData()
+    });
+
+watch(
+    () => selectedUsersOption.value,
+    (newValue, oldValue) => {
+
+      if (oldValue.includes('All') && newValue.length > 1) {
+        selectedUsersOption.value = selectedUsersOption.value.filter(option => option !== 'All');
+      }
+      else if (newValue.includes('All') && newValue.length > 1) {
+        selectedUsersOption.value = ['All'];
+      }
+
+      if(selectedUsers.value.length > 0){
+        loadData();
+      }
+    },
+    { deep: true }
+);
 
 onMounted(async () => {
+  loading.value = true;
+  customUsers.value =  await fetchCustomUsers();
   await loadData()
 });
 </script>
@@ -269,6 +391,42 @@ onMounted(async () => {
           </VChip>
         </template>
       </VTooltip>
+    </template>
+
+    <template #item.rdc_rep="{ item }">
+      <p class="pr-3">
+        <span v-if="item.rd_repData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.rd_repData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.rd_repData?.length! - 1">, </span>
+          </span>
+      </p>
+    </template>
+
+    <template #item.ttc_rep="{ item }">
+      <p class="pr-3">
+        <span v-if="item.tt_repData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.tt_repData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.tt_repData?.length! - 1">, </span>
+          </span>
+      </p>
+    </template>
+
+    <template #item.icc_rep="{ item }">
+      <p class="pr-3">
+        <span v-if="item.ic_repData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.ic_repData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.ic_repData?.length! - 1">, </span>
+          </span>
+      </p>
+    </template>
+
+    <template #item.scc_rep="{ item }">
+      <p class="pr-3">
+        <span v-if="item.sc_repData?.length == 0">N/A</span>
+        <span v-else v-for="(owner, index) in item.sc_repData">
+            {{owner.data?.first_name}} {{owner.data?.last_name}}<span v-if="index != item.sc_repData?.length! - 1">, </span>
+          </span>
+      </p>
     </template>
 
 
@@ -354,7 +512,57 @@ onMounted(async () => {
         </td>
       </tr>
     </template>
-
+    <template #additional-filters>
+      <VCol cols="12" sm="6" md="4" lg="3">
+        <VAutocomplete
+            v-model="selectedUsersOption"
+            :items="includedUserOptions"
+            :item-title="user => user.title"
+            :item-value="user => user.value"
+            label="Included Fields"
+            hide-details
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            class="mb-3"
+            multiple
+            chips
+            closable-chips
+        />
+      </VCol>
+      <VCol cols="12" sm="6" md="4" lg="3">
+        <VCombobox
+            ref="userRef"
+            v-model="selectedUsers"
+            :items="customUsers"
+            :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
+            :item-value="user => user.data ? `${user.data.first_name}` : ''"
+            label="User"
+            hide-details
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            class="mb-3"
+            multiple
+            chips
+            closable-chips
+            @update:search="handleSearch($event)"
+            :hide-no-data="false"
+        >
+          <template v-slot:no-data>
+            <VListItem @click="addCustomUser()">
+              <VListItemTitle>
+                Add {{ userSearch }} in the filter
+              </VListItemTitle>
+            </VListItem>
+          </template>
+        </VCombobox>
+      </VCol>
+    </template>
 
   </BaseDataTable>
 </template>

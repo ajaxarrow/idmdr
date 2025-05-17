@@ -615,6 +615,12 @@ export const useOrganizationServices = () => {
       searchQuery?: string,
       isApproved?: string | boolean,
       isActive?: string | boolean,
+      rep_fields?: string,
+      rdc_rep?: string,
+      ttc_rep?: string,
+      icc_rep?: string,
+      scc_rep?: string,
+      isAllDataIncluded: boolean = false
   ) : Promise<Organization[]> => {
     try{
       let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
@@ -627,13 +633,30 @@ export const useOrganizationServices = () => {
       if (typeof isActive === 'boolean') {
         url += `&is_active=${isActive}`;
       }
+      if (rep_fields) {
+          url += `&rep_fields=${encodeURIComponent(rep_fields)}`;
+      } else {
+        if(rdc_rep) {
+          url += `&rdc_rep=${encodeURIComponent(rdc_rep)}`;
+        }
+        if(ttc_rep) {
+          url += `&ttc_rep=${encodeURIComponent(ttc_rep)}`;
+        }
+        if(icc_rep) {
+          url += `&icc_rep=${encodeURIComponent(icc_rep)}`;
+        }
+        if(scc_rep) {
+          url += `&scc_rep=${encodeURIComponent(scc_rep)}`;
+        }
+      }
+      console.log(url)
       const res = await server.get(url, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
       const rawData = res.data.results;
-      const organizations: Organization[] = await mapOrgData(rawData)
+      const organizations: Organization[] = await mapOrgData(rawData, 'create', isAllDataIncluded)
       const data = [ ...organizations];
       myOrganizations.value = data
       return data;
@@ -648,6 +671,11 @@ export const useOrganizationServices = () => {
       searchQuery?: string,
       isApproved?: string | boolean,
       isActive?: string | boolean,
+      rep_fields?: string,
+      rdc_rep?: string,
+      ttc_rep?: string,
+      icc_rep?: string,
+      scc_rep?: string,
   ) : Promise<number> => {
     try{
       let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
@@ -659,6 +687,22 @@ export const useOrganizationServices = () => {
       }
       if (typeof isActive === 'boolean') {
         url += `&is_active=${isActive}`;
+      }
+      if (rep_fields) {
+        url += `&rep_fields=${encodeURIComponent(rep_fields)}`;
+      } else {
+        if(rdc_rep) {
+          url += `&rdc_rep=${encodeURIComponent(rdc_rep)}`;
+        }
+        if(ttc_rep) {
+          url += `&ttc_rep=${encodeURIComponent(ttc_rep)}`;
+        }
+        if(icc_rep) {
+          url += `&icc_rep=${encodeURIComponent(icc_rep)}`;
+        }
+        if(scc_rep) {
+          url += `&scc_rep=${encodeURIComponent(scc_rep)}`;
+        }
       }
       const res = await server.get(url, {
         headers: {
