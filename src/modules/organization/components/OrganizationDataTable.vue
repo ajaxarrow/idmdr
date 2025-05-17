@@ -539,7 +539,7 @@ onMounted(async () => {
             :items="customUsers"
             :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
             :item-value="user => user.data ? `${user.data.first_name}` : ''"
-            label="User"
+            label="Representative"
             hide-details
             density="compact"
             variant="outlined"

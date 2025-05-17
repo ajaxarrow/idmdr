@@ -18,11 +18,16 @@ import {
 } from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
+import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore();
+const {arrayToString} = useStringArrayHelper()
 const {fetchRepositoryIDsByUser} = useRepositoryServices()
 const {fetchAllAtbis, fetchTotalAtbisCount, deleteAtbi} = useAtbiServices()
+const {fetchCustomUsers} = useRepositoryMemberServices();
 const selectedTechnology = ref<string>('');
 const atbis = ref<ATBI[]>([]);
 const loading = ref(false);
@@ -31,7 +36,35 @@ const itemsPerPage = ref(10);
 const page = ref(1);
 const totalItems = ref(0);
 const technologies = ref<any[]>([]);
+const customUsers = ref<any[]>([])
+const selectedUsers = ref<CustomUserData[]>([])
+const selectedNames = computed(() =>
+    arrayToString(selectedUsers.value.map(user => user?.data?.first_name || 'Unknown'))
+)
 
+const userRef = ref(null);
+const userSearch = ref('')
+const handleSearch = async (query: any) => {
+  userSearch.value = query
+}
+
+const addCustomUser = async () => {
+  const newUser: CustomUserData = {
+    type: 'custom',
+    data: {
+      username: userSearch.value as string,
+      first_name: userSearch.value as string,
+      last_name: '',
+      email: '',
+      uid: ''
+    }
+  };
+  selectedUsers.value?.push(newUser);
+  userSearch.value = '';
+  //@ts-ignore
+  userRef.value.search = '';
+  await loadData()
+}
 const deleteAtbiCallback = async (uuid: string) => {
   await deleteAtbi(uuid);
   showSnackbarMessage('ATBI Deleted Successfully', Status.success);
@@ -56,7 +89,8 @@ const tableFilters = computed(() => [
 ]);
 
 const clearFilters = () => {
-
+  selectedTechnology.value = '';
+  selectedUsers.value = [];
 }
 
 const handleFilterUpdate = () => {
@@ -72,7 +106,7 @@ const loadData = async () => {
 const loadAtbis = async () => {
   loading.value = true;
   try {
-    atbis.value = await fetchAllAtbis(page.value, itemsPerPage.value, search.value, selectedTechnology.value);
+    atbis.value = await fetchAllAtbis(page.value, itemsPerPage.value, search.value, selectedTechnology.value, selectedNames.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -81,17 +115,18 @@ const loadAtbis = async () => {
 }
 
 const updateTotalCount = async () => {
-  totalItems.value = await fetchTotalAtbisCount(1, 100000000, search.value, selectedTechnology.value);
+  totalItems.value = await fetchTotalAtbisCount(1, 100000000, search.value, selectedTechnology.value, selectedNames.value);
 }
 
-watch([selectedTechnology], async () => {
+watch([selectedTechnology, selectedUsers], async () => {
   await loadData();
 })
 
 onMounted(async() => {
   loading.value = true;
+  customUsers.value =  await fetchCustomUsers();
   technologies.value = [{ uid: '', title: 'All', slug: '' }, ...(await fetchRepositoryIDsByUser(
-      10000, false, '', '', '', true, true, 'Project Repository'
+      10000, false, '', '', '', '', '', 'Project Repository'
   ))];
   await loadData();
 })
@@ -254,6 +289,36 @@ onMounted(async() => {
             base-color="gs60"
             class="mb-3"
         />
+      </VCol>
+      <VCol cols="12" sm="6" md="4" lg="3">
+        <VCombobox
+            ref="userRef"
+            v-model="selectedUsers"
+            :items="customUsers"
+            :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
+            :item-value="user => user.data ? `${user.data.first_name}` : ''"
+            label="User"
+            hide-details
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            class="mb-3"
+            multiple
+            chips
+            closable-chips
+            @update:search="handleSearch($event)"
+            :hide-no-data="false"
+        >
+          <template v-slot:no-data>
+            <VListItem @click="addCustomUser()">
+              <VListItemTitle>
+                Add {{ userSearch }} in the filter
+              </VListItemTitle>
+            </VListItem>
+          </template>
+        </VCombobox>
       </VCol>
     </template>
 
