@@ -82,7 +82,7 @@ const addCustomUser = async () => {
   await loadData()
 }
 
-const changeVisibilityCallback = async (newVisibility: number) => {
+const changeVisibilityCallback = async () => {
   showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
   await loadOrganizations();
 }

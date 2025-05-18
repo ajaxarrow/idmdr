@@ -109,7 +109,7 @@ const manageRepoAdminStatusCallback = async (id: string, isEnabled: boolean) => 
   await loadRepositories();
 };
 
-const changeVisibilityCallback = async (newVisibility: number) => {
+const changeVisibilityCallback = async () => {
   showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
   await loadRepositories();
 }
@@ -746,7 +746,7 @@ onMounted(async () => {
                 <template v-slot:prepend>
                   <PhMagnifyingGlass class="mr-2" />
                 </template>
-                <VListItemTitle>Change {{entityTitle}} Visibility</VListItemTitle>
+                <VListItemTitle>Change {{pageEntity}} Visibility</VListItemTitle>
               </VListItem>
             </ChangeVisibilityDialog>
 
