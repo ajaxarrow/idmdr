@@ -489,7 +489,11 @@ export const useRepositoryServices = () => {
       technology_generator?: string,
       collaborator?: string,
       lead?: string,
-      isAllDataIncluded: boolean = false
+      visibility?: string,
+      isForUser?: boolean,
+      isAllDataIncluded: boolean = false,
+      filter_type?: string
+
   ): Promise<Repository[]> => {
     try {
       let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
@@ -534,6 +538,15 @@ export const useRepositoryServices = () => {
           url += `&lead=${encodeURIComponent(lead)}`;
         }
       }
+      if(visibility) {
+          url += `&visibility=${encodeURIComponent(visibility)}`;
+      }
+      if(isForUser) {
+        url += `&user=${userData.uid}`;
+      }
+      if(filter_type) {
+        url += `&filter_type=${filter_type}`;
+      }
 
       console.log(url)
 
@@ -556,46 +569,6 @@ export const useRepositoryServices = () => {
     }
   };
 
-
-
-
-  const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
-    try{
-      const res = await server.get(`/repositories/?ordering=-updated_at&user=${userData.uid}&page=${pageNumber}&page_size=10`, {
-        headers: {
-          'Authorization': `Bearer ${userData.accessToken}`
-        }
-      });
-      const rawData = res.data.results;
-      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
-      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
-      const data = [...repositories];
-      myRepositories.value = data
-      return data;
-    } catch (e) {
-      return []
-    }
-  }
-
-
-  const fetchRepositoriesByUser = async(pageSize: number = 100): Promise<Repository[]> => {
-    try{
-      const res = await server.get(`/repositories/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`, {
-        headers: {
-          'Authorization': `Bearer ${userData.accessToken}`
-        }
-      });
-      const rawData = res.data.results;
-      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
-      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
-      const data = [...repositories];
-      myRepositories.value = data
-      return data;
-    } catch (e) {
-      return []
-    }
-  }
-
   const fetchRepositoryIDsByUser = async (
       pageSize: number = 100,
       user: boolean = true,
@@ -612,12 +585,14 @@ export const useRepositoryServices = () => {
       technology_generator?: string,
       collaborator?: string,
       lead?: string,
+      visibility?: string,
+      filter_type?: string
   ): Promise<Repository[]> => {
     try {
       // Start with the base URL based on whether user filtering is enabled
       let url = user
-          ? `/repositories/?page=1&page_size=${pageSize}&user=${userData.uid}`
-          : `/repositories/?page=1&page_size=${pageSize}`;
+          ? `/repositories/?ordering=-updated_at&page=1&page_size=${pageSize}&user=${userData.uid}`
+          : `/repositories/?ordering=-updated_at&page=1&page_size=${pageSize}`;
 
       // Append search parameter if provided
       if (searchQuery && searchQuery.trim()) {
@@ -662,6 +637,16 @@ export const useRepositoryServices = () => {
           url += `&lead=${encodeURIComponent(lead)}`;
         }
       }
+      if (visibility) {
+          url += `&visibility=${encodeURIComponent(visibility)}`;
+      }
+
+      if(filter_type) {
+        url += `&filter_type=${filter_type}`;
+      }
+
+
+      console.log(`ID URL: ${url}`)
 
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
@@ -683,6 +668,42 @@ export const useRepositoryServices = () => {
     }
   };
 
+  const fetchRepositoriesByUserWithPagination = async(pageNumber: number): Promise<Repository[]> => {
+    try{
+      const res = await server.get(`/repositories/?ordering=-updated_at&user=${userData.uid}&page=${pageNumber}&page_size=10`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      const data = [...repositories];
+      myRepositories.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
+
+
+  const fetchRepositoriesByUser = async(pageSize: number = 100): Promise<Repository[]> => {
+    try{
+      const res = await server.get(`/repositories/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const rawData = res.data.results;
+      let repositories: Repository[] = await mapRepoData(rawData.filter((repo: any) => !repo.is_deleted && repo.is_approved));
+      repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
+      const data = [...repositories];
+      myRepositories.value = data
+      return data;
+    } catch (e) {
+      return []
+    }
+  }
 
 
   const fetchRepositoriesWithPagination = async (pageNumber: number, isForIPT: boolean = false): Promise<Repository[]> => {

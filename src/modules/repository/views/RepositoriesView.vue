@@ -6,7 +6,7 @@
   import {useUserStore} from "../../../core/stores/user.store.ts";
   import RepositoryDataTable from "../components/RepositoryDataTable.vue";
 
-  const {userData} = useUserStore()
+  const {user, userData} = useUserStore()
   const path = ref('repositories')
   const {route} = useRouting();
   const computedTitle = computed(() => {
@@ -33,7 +33,7 @@
 
 <template>s
   <MainLayout :title="computedTitle">
-    <RepositoryDataTable v-if="userData.is_superuser"/>
+    <RepositoryDataTable v-if="user && userData.is_approved" :isForUser="!userData.is_superuser"/>
     <RepositoryListViewContent v-else/>
   </MainLayout>
 </template>

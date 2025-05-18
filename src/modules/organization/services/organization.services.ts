@@ -444,7 +444,9 @@ export const useOrganizationServices = () => {
       const organizations: Organization[] = rawData.map((org: any) => {
         return {
           uid: org.organization.uid,
-          slug: org.organization.uid
+          slug: org.organization.uid,
+          name: org.organization.name,
+          acronym: org.organization.acronym
         }
       })
       const data = [ ...organizations];
@@ -620,10 +622,13 @@ export const useOrganizationServices = () => {
       ttc_rep?: string,
       icc_rep?: string,
       scc_rep?: string,
-      isAllDataIncluded: boolean = false
+      visibility?: string,
+      isForUser?: boolean,
+      isAllDataIncluded: boolean = false,
+      filter_type?: string
   ) : Promise<Organization[]> => {
     try{
-      let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
+      let url = `/v1/organization/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
       if (searchQuery && searchQuery.trim()) {
         url += `&search=${encodeURIComponent(searchQuery.trim())}`;
       }
@@ -648,6 +653,15 @@ export const useOrganizationServices = () => {
         if(scc_rep) {
           url += `&scc_rep=${encodeURIComponent(scc_rep)}`;
         }
+      }
+      if (visibility) {
+        url += `&visibility=${encodeURIComponent(visibility)}`;
+      }
+      if(isForUser) {
+        url += `&user=${userData.uid}`;
+      }
+      if(filter_type) {
+        url += `&filter_type=${filter_type}`;
       }
       console.log(url)
       const res = await server.get(url, {
@@ -676,9 +690,12 @@ export const useOrganizationServices = () => {
       ttc_rep?: string,
       icc_rep?: string,
       scc_rep?: string,
+      visibility?: string,
+      isForUser?: boolean,
+      filter_type?: string
   ) : Promise<number> => {
     try{
-      let url = `/v1/organization/?page=${pageNumber}&page_size=${pageSize}`;
+      let url = `/v1/organization/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
       if (searchQuery && searchQuery.trim()) {
         url += `&search=${encodeURIComponent(searchQuery.trim())}`;
       }
@@ -703,6 +720,15 @@ export const useOrganizationServices = () => {
         if(scc_rep) {
           url += `&scc_rep=${encodeURIComponent(scc_rep)}`;
         }
+      }
+      if(visibility) {
+        url += `&visibility=${encodeURIComponent(visibility)}`;
+      }
+      if(isForUser) {
+        url += `&user=${userData.uid}`;
+      }
+      if(filter_type) {
+        url += `&filter_type=${filter_type}`;
       }
       const res = await server.get(url, {
         headers: {

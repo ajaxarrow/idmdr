@@ -10,7 +10,7 @@ import {
   PhPencil,
   PhDotsThreeOutlineVertical,
   PhEye,
-  PhGear
+  PhGear, PhMagnifyingGlass
 } from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
@@ -23,17 +23,22 @@ import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelp
 import {useTags} from "../composables/useTags.ts";
 import {useRepositoryMemberServices} from "../services/repository-member.services.ts";
 import {CustomUserData} from "../../../interfaces/member.interface.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
+import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 
+const {userData} = useUserStore()
 const {route} = useRouting();
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
 const {arrayToString, stringToArray} = useStringArrayHelper()
 const { fetchAllRepositories, fetchRepositoryIDsByUser, manageRepositoryStatus, manageRepositoryAdminStatus } = useRepositoryServices();
-const {fetchAllOrganizationsBasicData} = useOrganizationServices();
+const {fetchAllOrganizationsBasicData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {fetchCustomUsers} = useRepositoryMemberServices();
 const {tags, fetchTags} = useTags();
+const {getVisibilityLabel} = useVisibilityHelper()
 const selectedOrganization = ref<string>('');
-const pageEntity = computed(() => route.path === '/repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
+const pageEntity = computed(() => route.path === '/repositories' || route.path == '/my-repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
 const repositories = ref<Repository[]>([]);
 const loading = ref(false);
 const search = ref('');
@@ -57,12 +62,23 @@ const selectedUsersOption = ref(['All'])
 const selectedNames = computed(() =>
     arrayToString(selectedUsers.value.map(user => user?.data?.first_name || 'Unknown'))
 )
+const selectedVisibilities = ref<string[]>([]);
+const convertedVisibilities = computed(() => {
+  return arrayToString(selectedVisibilities.value)
+});
 
 const userRef = ref(null);
 const userSearch = ref('')
 const handleSearch = async (query: any) => {
   userSearch.value = query
 }
+
+const props = defineProps({
+  isForUser: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const addCustomUser = async () => {
   const newUser: CustomUserData = {
@@ -92,6 +108,11 @@ const manageRepoAdminStatusCallback = async (id: string, isEnabled: boolean) => 
   showSnackbarMessage(`Project ${isEnabled ? 'Enabled' : 'Disabled'} Successfully`, Status.success);
   await loadRepositories();
 };
+
+const changeVisibilityCallback = async (newVisibility: number) => {
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  await loadRepositories();
+}
 
 const getStatusInfo = (repository: Repository) => {
   if (!repository.is_approved) {
@@ -133,6 +154,13 @@ const priorityLevelOptions = [
   { title: 'Low', value: 'low' },
 ];
 
+const visibilityOptions = [
+  { title: 'Public', value: '1' },
+  { title: 'Private', value: '2' },
+  { title: 'Within Organization', value: '3' },
+  { title: 'Within All Organization', value: '4' },
+];
+
 const typeOptions = [
   { title: 'All Types', value: '' },
   { title: 'Document Type', value: 'Document Repository' },
@@ -163,10 +191,10 @@ const projectStatusOptions = [
 const headers = computed(() => [
   { title: 'Project', key: 'title', sortable: true, visible: true },
   { title: 'Status', key: 'status', sortable: true, visible: true },
-  { title: 'State', key: 'state', sortable: true, visible: true },
-  ...(route.path === '/repositories'
-      ? [{ title: 'Type', key: 'type', sortable: true, visible: true }]
+  ...(route.path === '/repositories' || route.path == '/my-repositories'
+      ? [{ title: 'Type', key: 'type', sortable: true, visible: true },]
       : []),
+  { title: 'State', key: 'state', sortable: true, visible: true },
   { title: 'Technology Owners', key: 'tech_owner', sortable: true, visible: false },
   { title: 'Technology Generator', key: 'tech_generator', sortable: true, visible: false },
   { title: 'Collaborator', key: 'collaborator', sortable: true, visible: true },
@@ -174,8 +202,11 @@ const headers = computed(() => [
   { title: 'Priority', key: 'priority_level', sortable: true, visible: false },
   { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
   { title: 'End Date', key: 'end_date', sortable: true, visible: false },
+  ...(path.value === '/repositories' && props.isForUser
+      ? []
+      : [{ title: 'Visibility', key: 'visibility', sortable: false, visible: true }]),
   { title: 'Tags', key: 'tags', sortable: false, visible: true },
-  { title: 'Actions', key: 'actions', sortable: false, visible: true }
+  { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
@@ -203,7 +234,7 @@ const tableFilters = computed(() => [
     itemValue: (type: any) => type.value,
     visibleKey: 'priority_level'
   },
-  {
+  ...(!props.isForUser ? [{
     key: 'projectState',
     label: `${path.value == '/repositories' ? 'Project' : 'IP Technology'} State`,
     value: selectedProjectState.value,
@@ -211,7 +242,7 @@ const tableFilters = computed(() => [
     itemTitle: (type: any) => type.title,
     itemValue: (type: any) => type.value,
     visibleKey: 'state'
-  },
+  }] : []),
   {
     key: 'projectPublicState',
     label: `${path.value == '/repositories' ? 'Project' : 'IP Technology'} Availability`,
@@ -256,6 +287,7 @@ const clearFilters = () => {
   selectedTags.value = [];
   selectedUsers.value = [];
   selectedUsersOption.value = ['All'];
+  selectedVisibilities.value = [];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -272,62 +304,6 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
     selectedProjectStatus.value = value;
   } else if (key === 'projectType') {
     selectedType.value = value;
-  }
-};
-
-
-
-const loadRepositories = async () => {
-  loading.value = true;
-  try {
-    // Prepare user filter parameters
-    let tech_owner = '';
-    let tech_generator = '';
-    let author = '';
-    let lead = '';
-    let all_filters = '';
-
-    // Don't apply user filters if "All" is selected
-    if(selectedUsersOption.value.includes('All')) {
-      all_filters = selectedNames.value;
-    } else {
-      if (selectedUsersOption.value.includes('tech_owner')) {
-        tech_owner = selectedNames.value;
-      }
-      if (selectedUsersOption.value.includes('technology_generator')) {
-        tech_generator = selectedNames.value;
-      }
-      if (selectedUsersOption.value.includes('author')) {
-        author = selectedNames.value;
-      }
-      if (selectedUsersOption.value.includes('lead')) {
-        lead = selectedNames.value;
-      }
-    }
-
-    const data = await fetchAllRepositories(
-        page.value,
-        itemsPerPage.value,
-        search.value,
-        selectedPriorityLevel.value,
-        selectedOrganization.value,
-        selectedProjectState.value,
-        selectedProjectPublicState.value,
-        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value,
-        selectedProjectStatus.value,
-        convertedTags.value as string,
-        all_filters,
-        tech_owner,    // Add the filtered value
-        tech_generator, // Add the filtered value
-        author,        // Add the filtered value
-        lead,          // Add the filtered value
-        true
-    );
-    repositories.value = data;
-  } catch (error) {
-    console.error('Failed to load repositories:', error);
-  } finally {
-    loading.value = false;
   }
 };
 
@@ -377,60 +353,109 @@ const getStatusColor = (status: string): string => {
   return statusMap[status] || 'grey-lighten-1';
 }
 
-const updateTotalCount = async () => {
-  try {
-    // Pass search and priority level to get accurate count
-    let tech_owner = '';
-    let tech_generator = '';
-    let author = '';
-    let lead = '';
-    let all_filters = '';
+const getUserFilters = () => {
+  let tech_owner = '';
+  let tech_generator = '';
+  let author = '';
+  let lead = '';
+  let all_filters = '';
 
-    // Don't apply user filters if "All" is selected
-    if(selectedUsersOption.value.includes('All')) {
-      all_filters = selectedNames.value;
-    } else {
-      if (selectedUsersOption.value.includes('tech_owner') || selectedUsersOption.value.includes('All')) {
-        tech_owner = selectedNames.value;
-      }
-      if (selectedUsersOption.value.includes('technology_generator') || selectedUsersOption.value.includes('All')) {
-        tech_generator = selectedNames.value;
-      }
-      if (selectedUsersOption.value.includes('author') || selectedUsersOption.value.includes('All')) {
-        author = selectedNames.value;
-      }
-      if (selectedUsersOption.value.includes('lead') || selectedUsersOption.value.includes('All')) {
-        lead = selectedNames.value;
-      }
+  if (selectedUsersOption.value.includes('All')) {
+    all_filters = selectedNames.value;
+  } else {
+    if (selectedUsersOption.value.includes('tech_owner')) {
+      tech_owner = selectedNames.value;
     }
+    if (selectedUsersOption.value.includes('technology_generator')) {
+      tech_generator = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('author')) {
+      author = selectedNames.value;
+    }
+    if (selectedUsersOption.value.includes('lead')) {
+      lead = selectedNames.value;
+    }
+  }
 
-    const repositoriesData = await fetchRepositoryIDsByUser(
-        10000,
-    false,
+  return { tech_owner, tech_generator, author, lead, all_filters };
+};
+
+const getRepositoryType = () => {
+  if (path.value === '/ip-technologies') return 'Project Repository';
+  if (route.path === '/e-library') return 'Document Repository';
+  return selectedType.value;
+};
+
+const loadRepositories = async () => {
+  loading.value = true;
+  try {
+    const { tech_owner, tech_generator, author, lead, all_filters } = getUserFilters();
+
+    const data = await fetchAllRepositories(
+        page.value,
+        itemsPerPage.value,
         search.value,
         selectedPriorityLevel.value,
         selectedOrganization.value,
-        selectedProjectState.value,
+        props.isForUser ? true : selectedProjectState.value,
         selectedProjectPublicState.value,
-        path.value == '/ip-technologies' ? 'Project Repository' : route.path === '/e-library' ? 'Document Repository' : selectedType.value,
+        getRepositoryType(),
         selectedProjectStatus.value,
         convertedTags.value as string,
         all_filters,
-        tech_owner,    // Add the filtered value
-        tech_generator, // Add the filtered value
-        author,        // Add the filtered value
-        lead,          // Add the filtered value
+        tech_owner,
+        tech_generator,
+        author,
+        lead,
+        path.value === '/repositories' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        props.isForUser,
+        true,
+        path.value === '/repositories' && props.isForUser ? 'or' : 'and'
     );
 
-    totalItems.value = path.value === '/repositories' || route.path === '/e-library'
-        ? repositoriesData.length
-        : repositoriesData.filter((repo: any) => repo.type === 'Project Repository').length;
+    repositories.value = data;
+  } catch (error) {
+    console.error('Failed to load repositories:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const updateTotalCount = async () => {
+  try {
+    const { tech_owner, tech_generator, author, lead, all_filters } = getUserFilters();
+
+    const repositoriesData = await fetchRepositoryIDsByUser(
+        10000,
+        props.isForUser,
+        search.value,
+        selectedPriorityLevel.value,
+        selectedOrganization.value,
+        props.isForUser ? true : selectedProjectState.value,
+        selectedProjectPublicState.value,
+        getRepositoryType(),
+        selectedProjectStatus.value,
+        convertedTags.value as string,
+        all_filters,
+        tech_owner,
+        tech_generator,
+        author,
+        lead,
+        path.value === '/repositories' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        path.value === '/repositories' && props.isForUser ? 'or' : 'and'
+    );
+
+    totalItems.value =
+        path.value === '/repositories' || route.path === '/e-library' || route.path === '/my-repositories'
+            ? repositoriesData.length
+            : repositoriesData.filter((repo: any) => repo.type === 'Project Repository').length;
 
   } catch (error) {
     console.error('Failed to get total count:', error);
     totalItems.value = 0;
   }
 };
+
 
 
 watch(()=> route.path, async () => {
@@ -440,7 +465,7 @@ watch(()=> route.path, async () => {
   await loadRepositories()
 })
 
-watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers],
+watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers, selectedVisibilities],
     async() => {
       await loadData()
     });
@@ -496,7 +521,12 @@ onMounted(async () => {
   customUsers.value =  await fetchCustomUsers();
   fetchTags()
   initTagsFromRoute();
-  organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
+  organizations.value = [
+    { uid: '', name: 'All', acronym: '' },
+    ...(userData.is_superuser
+        ? await fetchAllOrganizationsBasicData(1, 1000)
+        : await fetchOrganizationIDsByUser())
+  ];
   await loadData()
 });
 </script>
@@ -504,15 +534,15 @@ onMounted(async () => {
 
 <template>
   <BaseDataTable
-    :title="`All ${path == '/repositories' ? 'Projects' : route.path === '/e-library' ? 'E-Library' : 'IP Technologies'}`"
-    :subtitle="`Create and manage all ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'materials' : 'IP technologies'} across NOMCAARRD`"
+    :title="`All ${path == '/repositories' || route.path == '/my-repositories' ? 'Projects' : route.path === '/e-library' ? 'E-Library' : 'IP Technologies'}`"
+    :subtitle="`Create and manage all ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'materials' : 'IP technologies'} across NOMCAARRD`"
     :items="repositories"
     :headers="headers"
     :loading="loading"
     :totalItems="totalItems"
-    :searchPlaceholder="`Search ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP Technologies'}...`"
-    :emptyStateHeader="`No ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found`"
-    :emptyStateDescription="`There are no ${path == '/repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found matching your criteria`"
+    :searchPlaceholder="`Search ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP Technologies'}...`"
+    :emptyStateHeader="`No ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found`"
+    :emptyStateDescription="`There are no ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found matching your criteria`"
     :filters="tableFilters"
     :itemsPerPageOptions="itemsPerPage"
     @update:search="search = $event"
@@ -539,7 +569,7 @@ onMounted(async () => {
           style="font-size: 14px !important"
       >
         <PhPlus size="16" class="mr-2" />
-        New {{path == '/repositories' ? 'Project' : route.path === '/e-library' ? 'Document Repository' : 'IP Technology'}}
+        New {{path == '/repositories' ||route.path == '/my-repositories' ? 'Project' : route.path === '/e-library' ? 'Document Repository' : 'IP Technology'}}
       </VBtnPrimaryFilled>
     </template>
 
@@ -636,7 +666,7 @@ onMounted(async () => {
     </template>
 
 
-    <template v-if="path === '/repositories'" #item.type="{ item }">
+    <template v-if="path === '/repositories' || path === '/my-repositories' " #item.type="{ item }">
       <VChip size="small">
         {{ item.type === 'Document Repository' ? 'Document Project' : 'IP Technology' }}
       </VChip>
@@ -654,6 +684,10 @@ onMounted(async () => {
       <p style="max-width: 300px;">{{formatRepoDate(item.end_date)}}</p>
     </template>
 
+    <template #item.visibility="{ item }">
+      <p style="max-width: 300px;">{{getVisibilityLabel(item.visibility as number)}}</p>
+    </template>
+
 
     <template #item.priority_level="{ item }">
       <VChip
@@ -667,6 +701,7 @@ onMounted(async () => {
 
     <template #item.actions="{ item }">
       <VMenu
+          v-if="userData.is_superuser"
           location="bottom end"
           :close-on-content-click="false"
           transition="slide-y-transition"
@@ -701,6 +736,20 @@ onMounted(async () => {
 
             <VDivider class="my-1"></VDivider>
 
+            <ChangeVisibilityDialog
+                :id="<string>item?.uid!"
+                :visibility="item?.visibility as number"
+                type="project"
+                @callback="changeVisibilityCallback"
+            >
+              <VListItem class="action-menu-item cursor-pointer">
+                <template v-slot:prepend>
+                  <PhMagnifyingGlass class="mr-2" />
+                </template>
+                <VListItemTitle>Change {{entityTitle}} Visibility</VListItemTitle>
+              </VListItem>
+            </ChangeVisibilityDialog>
+
             <ConfirmationDialog
                 :isWarning="item?.is_approved"
                 @callback="manageRepoAdminStatusCallback(item.uid as string, !item.is_approved)"
@@ -733,6 +782,9 @@ onMounted(async () => {
           </VList>
         </VCard>
       </VMenu>
+      <RouterLink v-else :to="{ name: 'repository-data', params: { slug: item.slug }}" class="text-bs50 text-decoration-none">
+          <PhEye class="mr-2" size="16" />
+      </RouterLink>
     </template>
 
     <template #expanded-row="{ item }">
@@ -779,6 +831,23 @@ onMounted(async () => {
             rounded="md"
             color="primary"
             base-color="gs60"
+            class="mb-3"
+        />
+      </VCol>
+      <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('visibility')">
+        <VAutocomplete
+            v-model="selectedVisibilities"
+            :items="visibilityOptions"
+            label="Visibility"
+            multiple
+            chips
+            closable-chips
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            hide-details
             class="mb-3"
         />
       </VCol>

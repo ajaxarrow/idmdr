@@ -72,7 +72,7 @@ onUnmounted(() => {
     <VRow justify="space-between" align="center" class="ma-0 my-6">
       <p class="text-title d-flex align-center">
         <PhHardDrives size="24" class="mr-1"/>
-        Browse Experts
+        Browse Posts
       </p>
     </VRow>
     <div v-if="pageLoading" class="loading-state-container">

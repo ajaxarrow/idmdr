@@ -8,7 +8,7 @@ import {
   PhPencil,
   PhDotsThreeOutlineVertical,
   PhEye,
-  PhGear
+  PhGear, PhMagnifyingGlass
 } from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
@@ -20,10 +20,17 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
+import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
+import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
+const {userData} = useUserStore()
 const { isSmall, isTablet } = useScreenStore();
+const {route} = useRouting();
 const {showSnackbarMessage} = useSnackbarStore()
 const {fetchAllOrganizations, fetchOrganizationCount, manageOrgStatus, manageOrgAdminStatus} = useOrganizationServices();
+const {getVisibilityLabel} = useVisibilityHelper()
 const {fetchCustomUsers} = useRepositoryMemberServices();
 const {arrayToString} = useStringArrayHelper()
 const organizations = ref<Organization[]>([]);
@@ -42,9 +49,20 @@ const selectedUsersOption = ref(['All'])
 const selectedNames = computed(() =>
     arrayToString(selectedUsers.value.map(user => user?.data?.first_name || 'Unknown'))
 )
+const selectedVisibilities = ref<string[]>([]);
+const convertedVisibilities = computed(() => {
+  return arrayToString(selectedVisibilities.value)
+});
 const handleSearch = async (query: any) => {
   userSearch.value = query
 }
+
+const props = defineProps({
+  isForUser: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const addCustomUser = async () => {
   const newUser: CustomUserData = {
@@ -64,6 +82,11 @@ const addCustomUser = async () => {
   await loadData()
 }
 
+const changeVisibilityCallback = async (newVisibility: number) => {
+  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  await loadOrganizations();
+}
+
 const manageOrgStatusCallback = async (id: string, isActive: boolean) => {
   await manageOrgStatus(id, isActive);
   showSnackbarMessage(`CMI Status Changed to ${isActive ? 'Active' : 'Inactive'}`, Status.success);
@@ -76,12 +99,20 @@ const manageOrgAdminStatusCallback = async (id: string, isEnabled: boolean) => {
   await loadOrganizations();
 };
 
+
 const includedUserOptions = [
   { title: 'All Representatives', value: 'All' },
   { title: 'Research & Development', value: 'rdc_rep' },
   { title: 'Information Communication', value: 'icc_rep' },
   { title: 'Technology Transfer', value: 'ttc_rep' },
   { title: 'Science Communication', value: 'scc_rep' },
+];
+
+const visibilityOptions = [
+  { title: 'Public', value: '1' },
+  { title: 'Private', value: '2' },
+  { title: 'Within Organization', value: '3' },
+  { title: 'Within All Organization', value: '4' },
 ];
 
 const getStatusInfo = (org: Organization) => {
@@ -125,6 +156,9 @@ const orgStatusOptions = [
 const headers = computed(() => [
   { title: 'Title', key: 'title', sortable: true, visible: true },
   { title: 'Status', key: 'status', sortable: true, visible: true },
+  ...(route.path === '/organizations' && props.isForUser
+      ? []
+      : [{ title: 'Visibility', key: 'visibility', sortable: false, visible: true },]),
   {title: 'Research and Development Rep', key: 'rdc_rep', sortable: false, visible: true},
   {title: 'Information Communication Rep', key: 'icc_rep', sortable: false, visible: true},
   {title: 'Technology Transfer Rep', key: 'ttc_rep', sortable: false, visible: true},
@@ -134,7 +168,10 @@ const headers = computed(() => [
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
 
-
+const isColumnVisible = (key: string) => {
+  const column = headers.value.find((h: any) => h.key === key);
+  return column ? selectedColumns.value.includes(key) : false;
+};
 const updateColumnVisibility = (selectedKeys: string[]) => {
   selectedColumns.value = selectedKeys;
 };
@@ -147,15 +184,15 @@ const loadData = async ()=> {
 }
 
 const tableFilters = computed(() => [
-  {
+  ...(!props.isForUser ? [{
     key: 'orgAdminStatus',
     label: 'CMI State',
     value: selectedOrgAdminStatus.value,
     items: orgAdminStatusOptions,
     itemTitle: (type: any) => type.title,
     itemValue: (type: any) => type.value,
-    visibleKey: 'state'
-  },
+    visibleKey: 'status'
+  }] : []),
   {
     key: 'orgStatus',
     label: 'CMI Availability Status',
@@ -163,7 +200,7 @@ const tableFilters = computed(() => [
     items: orgStatusOptions,
     itemTitle: (type: any) => type.title,
     itemValue: (type: any) => type.value,
-    visibleKey: 'state'
+    visibleKey: 'status'
   },
 ]);
 
@@ -172,6 +209,7 @@ const clearFilters = () => {
   selectedOrgAdminStatus.value = '';
   selectedUsers.value = [];
   selectedUsersOption.value = ['All'];
+  selectedVisibilities.value = [];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -223,7 +261,10 @@ const loadOrganizations = async () => {
         ttc_rep,
         icc_rep,
         scc_rep,
-        true
+        route.path === '/organizations' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        props.isForUser,
+        true,
+        route.path === '/organizations' && props.isForUser ? 'or' : 'and'
     );
     organizations.value = data;
   } catch (error) {
@@ -272,7 +313,10 @@ const updateTotalCount = async () => {
         rdc_rep,
         ttc_rep,
         icc_rep,
-        scc_rep
+        scc_rep,
+        route.path === '/organizations' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        props.isForUser,
+        route.path === '/organizations' && props.isForUser ? 'or' : 'and'
     );
 
 
@@ -285,7 +329,7 @@ const updateTotalCount = async () => {
 
 };
 
-watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus, selectedUsers],
+watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus, selectedUsers, selectedVisibilities],
     async() => {
       await loadData()
     });
@@ -429,9 +473,14 @@ onMounted(async () => {
       </p>
     </template>
 
+    <template #item.visibility="{ item }">
+      <p style="max-width: 300px;">{{getVisibilityLabel(item.visibility as number)}}</p>
+    </template>
+
 
     <template #item.actions="{ item }">
       <VMenu
+          v-if="userData.is_superuser"
           location="bottom end"
           :close-on-content-click="false"
           transition="slide-y-transition"
@@ -466,6 +515,20 @@ onMounted(async () => {
 
             <VDivider class="my-1"></VDivider>
 
+            <ChangeVisibilityDialog
+                :id="<string>item?.uid!"
+                :visibility="item?.visibility as number"
+                type="organization"
+                @callback="changeVisibilityCallback"
+            >
+              <VListItem class="action-menu-item cursor-pointer">
+                <template v-slot:prepend>
+                  <PhMagnifyingGlass class="mr-2" />
+                </template>
+                <VListItemTitle>Change CMI Visibility</VListItemTitle>
+              </VListItem>
+            </ChangeVisibilityDialog>
+
             <ConfirmationDialog
                 :isWarning="item?.is_approved"
                 @callback="manageOrgAdminStatusCallback(item.uid as string, !item.is_approved)"
@@ -498,6 +561,9 @@ onMounted(async () => {
           </VList>
         </VCard>
       </VMenu>
+      <RouterLink v-else :to="{ name: 'organization-data', params: { slug: item.slug }}" class="text-bs50 text-decoration-none">
+        <PhEye class="mr-2" size="16" />
+      </RouterLink>
     </template>
 
     <template #expanded-row="{ item }">
@@ -513,6 +579,23 @@ onMounted(async () => {
       </tr>
     </template>
     <template #additional-filters>
+      <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('visibility')">
+        <VAutocomplete
+            v-model="selectedVisibilities"
+            :items="visibilityOptions"
+            label="Visibility"
+            multiple
+            chips
+            closable-chips
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            hide-details
+            class="mb-3"
+        />
+      </VCol>
       <VCol cols="12" sm="6" md="4" lg="3">
         <VAutocomplete
             v-model="selectedUsersOption"

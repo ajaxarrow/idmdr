@@ -70,7 +70,8 @@ onMounted(async () => {
             color="#ff9800"
             variant="tonal"
             border="start"
-            class="inactive-repo-banner mb-4"
+            class="inactive-repo-banner mb-8"
+            style="margin: 0;"
         >
           <div class="d-flex align-center">
             <div class="warning-icon-container me-3">
