@@ -132,9 +132,6 @@ export const useRepositoryServices = () => {
       } else {
         errorMessage.end_date = '';
       }
-    } else {
-        errorMessage.start_date = 'Date should not be empty';
-        errorMessage.end_date = 'Date should not be empty';
     }
 
     if(repository.com_extra == null) {
