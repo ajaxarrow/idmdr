@@ -612,6 +612,33 @@ const updateRepositoryData = async () => {
   }
 }
 
+watch(() => repositoryData.start_date, (newStartDate) => {
+  // Clear previous error message
+  errorMessage.start_date = '';
+
+  // Skip validation if either date is empty
+  if (!newStartDate || !repositoryData.end_date) return;
+
+  // Compare dates
+  if (newStartDate > repositoryData.end_date) {
+    errorMessage.start_date = 'Start date cannot be later than end date';
+  }
+});
+
+// Watch end date changes
+watch(() => repositoryData.end_date, (newEndDate) => {
+  // Clear previous error message
+  errorMessage.end_date = '';
+
+  // Skip validation if either date is empty
+  if (!newEndDate || !repositoryData.start_date) return;
+
+  // Compare dates
+  if (newEndDate < repositoryData.start_date) {
+    errorMessage.end_date = 'End date cannot be earlier than start date';
+  }
+});
+
 
 onMounted( async () => {
   pageLoading.value = true
@@ -1104,7 +1131,7 @@ onMounted( async () => {
             </VCombobox>
           </div>
           <div class="mb-3">
-            <label class="input-label">Affiliation<span class="text-pink">*</span></label>
+            <label class="input-label">Affiliation</label>
             <VCombobox
                 v-model="repositoryData.affiliation as string[]"
                 placeholder="Enter Affiliation"
@@ -1386,7 +1413,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-5">
-          <label class="input-label">Image</label>
+          <label class="input-label">Project Thumbmnail</label>
           <div v-if="hasImage" class="my-3">
             <VDivider/>
             <div class="d-flex align-center justify-space-between pa-2" >
@@ -1419,7 +1446,7 @@ onMounted( async () => {
           <VFileInput
               v-else
               @change="handleUploadChange($event)"
-              label="Choose Repository Image by Clicking Here"
+              label="Choose Project Thumbnail by Clicking Here"
               class="my-2"
               rounded="lg"
               density="comfortable"

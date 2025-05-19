@@ -100,6 +100,40 @@ export const useRepositoryServices = () => {
   };
 
   const saveRepository = async (repository: Repository, endpoint: string, type: string, id: string = '') => {
+    if(repository.title.trim() == '' || !repository.title || repository.title == ''){
+      errorMessage.title = 'Title should not be empty'
+      return;
+    } else {
+      errorMessage.title = '';
+    }
+    if(repository.description.trim() == '' || !repository.description || repository.description == ''){
+      errorMessage.description = 'Description should not be empty'
+      return;
+    } else {
+      errorMessage.description = '';
+    }
+    if(!repository.tags){
+      errorMessage.tags = 'Tags should not be empty'
+      return;
+    } else {
+      errorMessage.tags = '';
+    }
+    if(repository.start_date && repository.end_date) {
+      if(repository.start_date > repository.end_date) {
+        errorMessage.start_date = 'Start date cannot be later than end date';
+        return;
+      } else {
+        errorMessage.start_date = '';
+      }
+
+      if(repository.end_date < repository.start_date) {
+        errorMessage.end_date = 'End date cannot be earlier than start date';
+        return;
+      } else {
+        errorMessage.end_date = '';
+      }
+    }
+
     if(repository.com_extra == null) {
       repository.com_extra = {};
     }
