@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "./MainLayout.vue";
-import {computed, onUpdated, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
 import {Organization} from "../../interfaces/organization.interface.ts";
