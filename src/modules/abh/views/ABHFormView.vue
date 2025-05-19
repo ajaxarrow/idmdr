@@ -216,7 +216,7 @@ onMounted(async () => {
           </VAutocomplete>
         </div>
         <div class="mb-3" v-if="abhData.technology_assessment">
-          <label class="input-label">Technology Assessment</label>
+          <label class="input-label">Technology Assessment<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.technology_assessment"
               @update:modelValue="$event => (abhData.technology_assessment = $event)"
@@ -224,7 +224,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Technology Assessment</label>
+          <label class="input-label">Technology Assessment<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.technology_assessment"
               @update:modelValue="$event => (abhData.technology_assessment = $event)"
@@ -233,7 +233,7 @@ onMounted(async () => {
         </div>
 
         <div class="mb-3" v-if="abhData.business_model_development">
-          <label class="input-label">Business Model Development</label>
+          <label class="input-label">Business Model Development<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.business_model_development"
               @update:modelValue="$event => (abhData.business_model_development = $event)"
@@ -241,7 +241,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Business Model Development</label>
+          <label class="input-label">Business Model Development<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.business_model_development"
               @update:modelValue="$event => (abhData.business_model_development = $event)"
@@ -250,7 +250,7 @@ onMounted(async () => {
         </div>
 
         <div class="mb-3" v-if="abhData.business_plan_preparation">
-          <label class="input-label">Business Plan Preparation</label>
+          <label class="input-label">Business Plan Preparation<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.business_plan_preparation"
               @update:modelValue="$event => (abhData.business_plan_preparation = $event)"
@@ -258,7 +258,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Business Plan Preparation</label>
+          <label class="input-label">Business Plan Preparation<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.business_plan_preparation"
               @update:modelValue="$event => (abhData.business_plan_preparation = $event)"
@@ -267,7 +267,7 @@ onMounted(async () => {
         </div>
 
         <div class="mb-3" v-if="abhData.market_research">
-          <label class="input-label">Market Research</label>
+          <label class="input-label">Market Research<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.market_research"
               @update:modelValue="$event => (abhData.market_research = $event)"
@@ -275,7 +275,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Market Research</label>
+          <label class="input-label">Market Research<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.market_research"
               @update:modelValue="$event => (abhData.market_research = $event)"
@@ -284,7 +284,7 @@ onMounted(async () => {
         </div>
 
         <div class="mb-3" v-if="abhData.technology_registration_assistance">
-          <label class="input-label">Technology Registration Assistance</label>
+          <label class="input-label">Technology Registration Assistance<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.technology_registration_assistance"
               @update:modelValue="$event => (abhData.technology_registration_assistance = $event)"
@@ -292,7 +292,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Technology Registration Assistance</label>
+          <label class="input-label">Technology Registration Assistance<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.technology_registration_assistance"
               @update:modelValue="$event => (abhData.technology_registration_assistance = $event)"
@@ -301,7 +301,7 @@ onMounted(async () => {
         </div>
 
         <div class="mb-3" v-if="abhData.feasibility">
-          <label class="input-label">Feasibility</label>
+          <label class="input-label">Feasibility<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.feasibility"
               @update:modelValue="$event => (abhData.feasibility = $event)"
@@ -309,7 +309,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Feasibility</label>
+          <label class="input-label">Feasibility<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.feasibility"
               @update:modelValue="$event => (abhData.feasibility = $event)"
@@ -318,7 +318,7 @@ onMounted(async () => {
         </div>
 
         <div class="mb-3" v-if="abhData.partnership_and_networking">
-          <label class="input-label">Partnership and Networking</label>
+          <label class="input-label">Partnership and Networking<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.partnership_and_networking"
               @update:modelValue="$event => (abhData.partnership_and_networking = $event)"
@@ -326,7 +326,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-else>
-          <label class="input-label">Partnership and Networking</label>
+          <label class="input-label">Partnership and Networking<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="abhData.partnership_and_networking"
               @update:modelValue="$event => (abhData.partnership_and_networking = $event)"
@@ -344,7 +344,7 @@ onMounted(async () => {
                 @dragleave.prevent="toggleActive"
                 @drop.prevent="handleBulkImagesUpload">
               <PhFileDashed size="50"/>
-              <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <p class="text-dropzone">Drag and drop images here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
               <VFileInput @change="handleBulkImagesUpload" multiple accept="image/*"  id="dropzoneFile" style="display: none"/>
             </div>
           </div>
@@ -401,7 +401,7 @@ onMounted(async () => {
                     rounded="lg"
                     style="font-size: 14px !important;"
                 >
-                  Add More File
+                  Add More Image
                 </VBtnPrimaryFilled>
               </div>
             </div>
@@ -413,14 +413,24 @@ onMounted(async () => {
           />
         </div>
         <VRow class="ma-0" justify="end" align="center">
-          <VBtnPrimaryFilled
-              @click="formType === FormType.edit ? updateAbhData() : addAbhData()"
-              rounded="lg"
-              height="44px"
-              width="166px"
-          >
-            Submit
-          </VBtnPrimaryFilled>
+          <VTooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <VBtnPrimaryFilled
+
+                    :disabled="abhData.business_model_development === '' && abhData.business_plan_preparation === '' || abhData.market_research === '' || abhData.technology_registration_assistance === '' || abhData.feasibility === '' || abhData.partnership_and_networking === ''"
+                    @click="formType === FormType.edit ? updateAbhData() : addAbhData()"
+                    rounded="lg"
+                    height="44px"
+                    width="166px"
+                >
+                  Submit
+                </VBtnPrimaryFilled>
+              </div>
+
+            </template>
+            <span>The form can only be submitted if all required data is inputted.</span>
+          </VTooltip>
 
         </VRow>
       </div>
