@@ -291,7 +291,7 @@ onMounted(async () => {
             :delete-comment="deleteCommentData"
           />
         </div>
-       <div v-if="user">
+       <div v-if="(user && userData.is_approved )|| userData.is_superuser">
          <VRow class="ma-0 mt-3">
            <VAvatar
                class="mr-2 mt-2"
@@ -324,7 +324,7 @@ onMounted(async () => {
          </VRow>
        </div>
       <div v-else class="d-flex ga-1 mt-3 align-center text-gs60">
-        <PhInfo/> Commenting is only for authenticated user.
+        <PhInfo/> Commenting is only for authenticated and approved user.
       </div>
       </div>
       <div v-else style="height: 100%">

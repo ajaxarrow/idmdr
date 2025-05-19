@@ -47,8 +47,8 @@ const deleteSectorCallback = async (id: string) => {
 
 const typeOptions = [
   { title: 'All', value: 0 },
-  { title: 'CMI', value: 14 },
-  { title: 'Project', value: 30 },
+  { title: 'CMI', value: 8888 },
+  { title: 'Project', value: 9999 },
 ]
 
 const headers = computed(() => [

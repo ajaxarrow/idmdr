@@ -15,7 +15,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRepositoryServices} from "../services/repository.services.ts";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 const {showSnackbarMessage} = useSnackbarStore();
 const {fetchDiscussionTopicsByRepository} = useRepositoryDiscussionTopicServices();
 const {repository} = useRepositoryStore()
@@ -83,7 +83,7 @@ onMounted(async() => {
           Discussions<span v-if="topicList.length > 0" class="ml-1">({{searchedTopics.length}})</span>
         </p>
         <TopicFormDialog
-          v-if="user"
+          v-if="(user && userData.is_approved )|| userData.is_superuser"
           :form-type="FormType.create"
           @callback="addTopicCallback"
         >

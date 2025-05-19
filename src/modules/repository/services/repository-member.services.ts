@@ -112,7 +112,7 @@ export const useRepositoryMemberServices = () => {
         message: `Your membership in ${repo?.title} has been changed. Your access level has been changed to ${member.access_level}.`,
         type: 'Repository',
         object_id: repoID,
-        content_type: 30,
+        content_type: 9999,
         is_read: false,
         is_deleted: false
       })
@@ -144,7 +144,7 @@ export const useRepositoryMemberServices = () => {
         message: `Your membership in ${repo?.title} has been removed. You are no longer a member of this repository.`,
         type: 'Repository',
         object_id: repoID,
-        content_type: 30,
+        content_type: 9999,
         is_read: false,
         is_deleted: false
       })
@@ -174,7 +174,7 @@ export const useRepositoryMemberServices = () => {
       message: `You have been added to ${repo?.title} with ${member.access_level} access level`,
       type: 'Repository',
       object_id: repoID,
-      content_type: 30,
+      content_type: 9999,
       is_read: false,
       is_deleted: false
     })
@@ -202,7 +202,7 @@ export const useRepositoryMemberServices = () => {
       message: `You have been added to ${repo?.title} with ${member.access_level} access level`,
       type: 'Repository',
       object_id: repoID,
-      content_type: 30,
+      content_type: 9999,
       is_read: false,
       is_deleted: false
     })
