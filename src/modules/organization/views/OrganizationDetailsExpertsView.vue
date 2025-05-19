@@ -6,6 +6,7 @@ import {Organization} from "../../../interfaces/organization.interface.ts";
 import ExpertListViewContent from "../components/ExpertListViewContent.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
+import ExpertDataTable from "../components/ExpertDataTable.vue";
 
 
 const {setSnackbarMessage} = useSnackbarStore()
@@ -45,9 +46,10 @@ onMounted(async () => {
       :organization="organization"
       activeTab="experts">
     <ExpertListViewContent
-      v-if="organization"
+      v-if="!organization.is_member"
       :forOrganization="true"
     />
+    <ExpertDataTable v-else/>
   </OrganizationDetailsLayout>
 </template>
 

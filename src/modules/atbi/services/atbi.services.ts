@@ -215,7 +215,8 @@ export const useAtbiServices = () => {
         pageSize: number,
         searchQuery?: string,
         technology?: string,
-        owners?: string
+        owners?: string,
+        isForUser: boolean = false
     ): Promise<ATBI[]> => {
         try {
             let url = `/atbis/?page=${pageNumber}&page_size=${pageSize}`
@@ -228,6 +229,9 @@ export const useAtbiServices = () => {
             }
             if (owners) {
                 url += `&owners=${owners}`
+            }
+            if (isForUser) {
+                url += `&user=${userData.uid}`;
             }
             const res = await server.get(url, {
                 headers: authorizationHeader
@@ -244,7 +248,8 @@ export const useAtbiServices = () => {
         pageSize: number,
         searchQuery?: string,
         technology?: string,
-        owners?: string
+        owners?: string,
+        isForUser: boolean = false
     ) : Promise<number> => {
         try {
             let url = `/atbis/?page=${pageNumber}&page_size=${pageSize}`
@@ -257,6 +262,9 @@ export const useAtbiServices = () => {
             }
             if (owners) {
                 url += `&owners=${owners}`
+            }
+            if (isForUser) {
+                url += `&user=${userData.uid}`;
             }
             const res = await server.get(url, {
                 headers: authorizationHeader

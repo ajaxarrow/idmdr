@@ -1600,7 +1600,7 @@ onMounted( async () => {
             </div>
           </div>
         </div>
-        <div class="mb-10" v-if="repositoryData.type === 'Project Repository'">
+        <div class="mb-10">
           <label class="input-label">Location/Area</label>
           <OrganizationFormMapPreview
               class="my-2"

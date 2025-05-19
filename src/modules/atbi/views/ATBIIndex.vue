@@ -6,13 +6,13 @@ import {PhPlus} from "@phosphor-icons/vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import ATBIDataTable from "../components/ATBIDataTable.vue";
 
-const {userData} = useUserStore()
+const {userData, user} = useUserStore()
 const {isSmall, isTablet} = useScreenStore();
 </script>
 
 <template>
   <MainLayout title="ATBI">
-    <ATBIDataTable v-if="userData.is_superuser"/>
+    <ATBIDataTable v-if="user && userData.is_approved"/>
     <div v-else style="height: 100%" class="relative-container circle-quarter">
       <div class="pa-6 relative-container" style="z-index: 20;">
         <VRow justify="space-between" align="center" class="ma-0">

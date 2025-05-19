@@ -21,7 +21,9 @@ import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
+const {userData} = useUserStore()
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore();
 const {arrayToString} = useStringArrayHelper()
@@ -106,7 +108,7 @@ const loadData = async () => {
 const loadAtbis = async () => {
   loading.value = true;
   try {
-    atbis.value = await fetchAllAtbis(page.value, itemsPerPage.value, search.value, selectedTechnology.value, selectedNames.value);
+    atbis.value = await fetchAllAtbis(page.value, itemsPerPage.value, search.value, selectedTechnology.value, selectedNames.value, !userData.is_superuser);
   } catch (error) {
     console.error(error);
   } finally {
@@ -115,7 +117,7 @@ const loadAtbis = async () => {
 }
 
 const updateTotalCount = async () => {
-  totalItems.value = await fetchTotalAtbisCount(1, 100000000, search.value, selectedTechnology.value, selectedNames.value);
+  totalItems.value = await fetchTotalAtbisCount(1, 100000000, search.value, selectedTechnology.value, selectedNames.value, !userData.is_superuser);
 }
 
 watch([selectedTechnology, selectedUsers], async () => {
@@ -126,7 +128,7 @@ onMounted(async() => {
   loading.value = true;
   customUsers.value =  await fetchCustomUsers();
   technologies.value = [{ uid: '', title: 'All', slug: '' }, ...(await fetchRepositoryIDsByUser(
-      10000, false, '', '', '', '', '', 'Project Repository'
+      10000, !userData.is_superuser, '', '', '', '', '', 'Project Repository'
   ))];
   await loadData();
 })
@@ -297,7 +299,7 @@ onMounted(async() => {
             :items="customUsers"
             :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
             :item-value="user => user.data ? `${user.data.first_name}` : ''"
-            label="User"
+            label="Owners"
             hide-details
             density="compact"
             variant="outlined"

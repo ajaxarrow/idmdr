@@ -128,7 +128,8 @@ export const useOrganizationExpertsServices = () => {
       pageSize: number,
       searchQuery?: string,
       organization?: string,
-      expertise?: string
+      expertise?: string,
+      isForUser: boolean = false
   ): Promise<Expert[]> => {
     try {
       let url = `/experts/?page=${pageNumber}&page_size=${pageSize}`;
@@ -140,6 +141,9 @@ export const useOrganizationExpertsServices = () => {
       }
       if (expertise) {
         url += `&expertise=${expertise}`;
+      }
+      if (isForUser) {
+          url += `&user=${userData.uid}`;
       }
       const res = await server.get(url, {
         headers: authorizationHeader
@@ -156,7 +160,8 @@ export const useOrganizationExpertsServices = () => {
       pageSize: number,
       searchQuery?: string,
       organization?: string,
-      expertise?: string
+      expertise?: string,
+      isForUser: boolean = false
   ): Promise<number> => {
     try {
       let url = `/experts/?page=${pageNumber}&page_size=${pageSize}`;
@@ -168,6 +173,9 @@ export const useOrganizationExpertsServices = () => {
       }
       if (expertise) {
         url += `&expertise=${expertise}`;
+      }
+      if (isForUser) {
+        url += `&user=${userData.uid}`;
       }
       const res = await server.get(url, {
         headers: authorizationHeader

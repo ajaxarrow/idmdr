@@ -133,9 +133,11 @@ export const useRepositoryServices = () => {
         await addRepositoryToOrganization(res.data.organization, res.data.uid);
         const orgMembers = await fetchOrgMembers(res.data.organization);
 
-        for (const member of orgMembers) {
-          if(member.user.uid != userData.uid && !member.is_deleted) {
-            await addUserToRepository(res.data.uid, member.user.uid as string, member.access_level);
+        if(repository.visibility != 2){
+          for (const member of orgMembers) {
+            if(member.user.uid != userData.uid && !member.is_deleted) {
+              await addUserToRepository(res.data.uid, member.user.uid as string, member.access_level);
+            }
           }
         }
 

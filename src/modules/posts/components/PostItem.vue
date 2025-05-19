@@ -24,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <RouterLink class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == '/organizations' ?  'organization-posts-details' : 'my-organization-posts-details', params: { slug: props.post?.organizationData?.uid, post: props.post?.uid } }">
+  <RouterLink class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == '/organizations' ?  'organization-posts-details' : 'organization-posts-details', params: { slug: props.post?.organizationData?.uid, post: props.post?.uid } }">
     <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
       <div class="d-flex align-center">
         <VImg

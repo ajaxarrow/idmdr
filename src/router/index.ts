@@ -19,7 +19,7 @@ const protectedUserPages = [
     'my-organization-posts-details', 'my-organization-posts', 'my-organizations', 'new-organization-my', 'edit-organization-my', 'my-organization', 'my-repositories', 'my-organization-data', 'my-organization-settings', 'my-organization-repositories', 'my-repository-data', 'my-repository-settings', 'my-repository-discussions', 'my-repository-discussions-topic', 'my-organization-settings',
 ]
 const protectedPages = [
-    'settings', 'settings-account', 'settings-organizations', 'sectors', 'repository-settings', 'organization-settings', 'new-organization', 'edit-organization', 'new-repository', 'edit-repository', 'notifications', 'profile',  'organization-experts', 'my-organization-experts', 'experts', 'edit-expert', 'new-expert', 'posts', 'new-post', 'edit-post', 'post-details', 'organization-events', 'my-organization-events', 'events', 'organization-posts-details', 'organization-post', ...protectedUserPages
+    'settings', 'settings-account', 'settings-organizations', 'sectors', 'repository-settings', 'organization-settings', 'new-organization', 'edit-organization', 'new-repository', 'edit-repository', 'notifications', 'profile', 'my-organization-experts', 'experts', 'edit-expert', 'new-expert', 'posts', 'new-post', 'edit-post', 'my-organization-events', 'events', ...protectedUserPages
 ];
 
 router.beforeEach(async (to, _: RouteLocationNormalized, next: NavigationGuardNext) => {

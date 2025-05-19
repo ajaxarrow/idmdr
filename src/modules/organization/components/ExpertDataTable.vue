@@ -11,10 +11,14 @@ import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue"
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import {useRouting} from "../../../core/composables/useRouting.ts";
 
+const {userData} = useUserStore()
+const {route} = useRouting()
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore();
-const {fetchAllOrganizationsBasicData} = useOrganizationServices();
+const {fetchAllOrganizationsBasicData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {arrayToString} = useStringArrayHelper()
 const {fetchExpertsByAdmin, fetchTotalExperts, deleteExpert} = useOrganizationExpertsServices()
 const selectedOrganization = ref<string>('');
@@ -89,8 +93,10 @@ const loadExperts = async() => {
         page.value,
         itemsPerPage.value,
         search.value,
-        selectedOrganization.value,
-        selectedExpertise.value
+        route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value,
+        selectedExpertise.value,
+        !userData.is_superuser
+
     );
   } catch (error) {
     console.error(error);
@@ -100,7 +106,7 @@ const loadExperts = async() => {
 }
 
 const updateTotalCount = async() => {
-  totalItems.value = await fetchTotalExperts(1, 10000000, search.value, selectedOrganization.value, selectedExpertise.value);
+  totalItems.value = await fetchTotalExperts(1, 10000000, search.value, route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value, selectedExpertise.value, !userData.is_superuser);
 }
 
 watch([selectedOrganization, selectedExpertise], async () => {
@@ -108,7 +114,12 @@ watch([selectedOrganization, selectedExpertise], async () => {
 })
 
 onMounted(async () => {
-  organizations.value = [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];
+  organizations.value = [
+    { uid: '', name: 'All', acronym: '' },
+    ...(userData.is_superuser
+        ? await fetchAllOrganizationsBasicData(1, 1000)
+        : await fetchOrganizationIDsByUser())
+  ];
   await loadData()
 })
 
@@ -137,6 +148,7 @@ onMounted(async () => {
       @update:filter="handleFilterUpdate"
       @refreshData="loadData"
       :expandable="true"
+      :showCircle="route.name !== 'organization-experts'"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-if="isSmall || isTablet" icon >
@@ -221,7 +233,7 @@ onMounted(async () => {
     </template>
 
     <template #additional-filters>
-      <VCol cols="12" sm="6" md="4" lg="3">
+      <VCol cols="12" sm="6" md="4" lg="3" v-if="route.name !== 'organization-experts'">
         <VSelect
             v-model="selectedOrganization"
             :items="organizations"

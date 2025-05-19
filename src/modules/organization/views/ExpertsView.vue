@@ -11,34 +11,34 @@ const {userData} = useUserStore()
 
 <template>
   <MainLayout title="Experts">
-    <ExpertDataTable v-if="userData.is_superuser" />
-    <div v-else style="height: 100%" class="relative-container circle-quarter">
-      <div class="pa-6 relative-container" style="z-index: 20;">
-        <VRow justify="space-between" align="center" class="ma-0">
-          <VCol md="9" class="pa-0">
-            <div>
-              <p class="text-heading d-flex align-center">
-                Experts
-              </p>
-              <p class="text-subtitle">Discover and connect with experts from a consortium of agencies and institutions engaged in research and development in agriculture, aquatic resources, and natural resources across Northern Mindanao. </p>
-            </div>
-          </VCol>
-          <VCol md="3" class="pa-0">
-            <VRow class="ma-0 justify-end">
-              <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-if="isSmall || isTablet" icon >
-                <PhPlus size="16"/>
-              </VBtnPrimaryFilled>
-              <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-                <PhPlus size="16" class="mr-2"/>
-                New Expert
-              </VBtnPrimaryFilled>
-            </VRow>
-          </VCol>
-        </VRow>
-      </div>
-      <VDivider/>
-      <ExpertListViewContent/>
-    </div>
+    <ExpertDataTable />
+<!--    <div v-else style="height: 100%" class="relative-container circle-quarter">-->
+<!--      <div class="pa-6 relative-container" style="z-index: 20;">-->
+<!--        <VRow justify="space-between" align="center" class="ma-0">-->
+<!--          <VCol md="9" class="pa-0">-->
+<!--            <div>-->
+<!--              <p class="text-heading d-flex align-center">-->
+<!--                Experts-->
+<!--              </p>-->
+<!--              <p class="text-subtitle">Discover and connect with experts from a consortium of agencies and institutions engaged in research and development in agriculture, aquatic resources, and natural resources across Northern Mindanao. </p>-->
+<!--            </div>-->
+<!--          </VCol>-->
+<!--          <VCol md="3" class="pa-0">-->
+<!--            <VRow class="ma-0 justify-end">-->
+<!--              <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-if="isSmall || isTablet" icon >-->
+<!--                <PhPlus size="16"/>-->
+<!--              </VBtnPrimaryFilled>-->
+<!--              <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-else height="45px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">-->
+<!--                <PhPlus size="16" class="mr-2"/>-->
+<!--                New Expert-->
+<!--              </VBtnPrimaryFilled>-->
+<!--            </VRow>-->
+<!--          </VCol>-->
+<!--        </VRow>-->
+<!--      </div>-->
+<!--      <VDivider/>-->
+<!--      <ExpertListViewContent/>-->
+<!--    </div>-->
   </MainLayout>
 </template>
 

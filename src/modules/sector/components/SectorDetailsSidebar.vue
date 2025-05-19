@@ -188,7 +188,7 @@
           <div v-if="selectedSector.repoData && selectedSector.parent === 'Repository'">
 
             <RouterLink
-                v-if="(selectedSector.repoData?.visibility == 1 || selectedSector.repoData?.visibility == 4) || isRepoAvailable"
+                v-if="((selectedSector.repoData?.visibility == 1 || selectedSector.repoData?.visibility == 4) || isRepoAvailable) || userData.is_superuser"
                 class="text-decoration-none "
                 :to="{name: 'repository-data', params: { slug: selectedSector.repoData?.uid }}">
               <div
@@ -226,7 +226,7 @@
           </div>
          <div v-else-if="selectedSector.orgData && selectedSector.parent === 'Organization'">
            <RouterLink
-               v-if="(selectedSector.orgData?.visibility == 1 || selectedSector.orgData?.visibility == 4) || isOrgAvailable"
+               v-if="((selectedSector.orgData?.visibility == 1 || selectedSector.orgData?.visibility == 4) || isOrgAvailable) || userData.is_superuser"
                class="text-decoration-none "
                :to="{name: 'organization-data', params: { slug: selectedSector.orgData?.uid }}">
              <div
