@@ -179,6 +179,13 @@ watch(() => isPageLoading.value, () => {
   }
 })
 
+watch(() => props.repository, (newRepository) => {
+  if (newRepository) {
+    // Update tabs whenever repository changes
+    tabs.value = getTabs()
+  }
+}, { deep: true })
+
 onMounted(async () => {
   pageLoading.value = true;
   if (props.repository) {
@@ -196,6 +203,8 @@ onMounted(async () => {
     pageLoading.value = isPageLoading.value
   }
 });
+
+
 
 
 </script>
