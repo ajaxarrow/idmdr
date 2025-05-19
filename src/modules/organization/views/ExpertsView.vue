@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import MainLayout from "../../../core/layouts/MainLayout.vue";
-import {PhPlus} from "@phosphor-icons/vue";
-import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
-import ExpertListViewContent from "../components/ExpertListViewContent.vue";
-import {useUserStore} from "../../../core/stores/user.store.ts";
+// import {PhPlus} from "@phosphor-icons/vue";
+// import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
+// import ExpertListViewContent from "../components/ExpertListViewContent.vue";
+// import {useUserStore} from "../../../core/stores/user.store.ts";
 import ExpertDataTable from "../components/ExpertDataTable.vue";
-const {isSmall, isTablet} = useScreenStore();
-const {userData} = useUserStore()
+// const {isSmall, isTablet} = useScreenStore();
+// const {userData} = useUserStore()
 </script>
 
 <template>

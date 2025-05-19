@@ -46,7 +46,7 @@ onMounted(async () => {
       :organization="organization"
       activeTab="experts">
     <ExpertListViewContent
-      v-if="!organization.is_member"
+      v-if="!organization.is_member!"
       :forOrganization="true"
     />
     <ExpertDataTable v-else/>
