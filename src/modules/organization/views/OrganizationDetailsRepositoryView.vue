@@ -10,7 +10,7 @@ import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import FilterRepositoryDialog from "../../repository/components/FilterRepositoryDialog.vue";
 import {Organization} from "../../../interfaces/organization.interface.ts";
-import Observer from "../../../core/components/Observer.vue";
+// import Observer from "../../../core/components/Observer.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
@@ -21,7 +21,7 @@ const {route} = useRouting()
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {user, userData} = useUserStore()
 const {tags, selectedTags} = useTags();
-const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization, fetchAllRepositories} = useRepositoryServices();
+const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags, fetchAllRepositories} = useRepositoryServices();
 
 const path = ref('organizations')
 const searchQuery = ref('');
@@ -32,7 +32,7 @@ const organization = ref<Organization | null>();
 const currentTags = ref<string[]>([]);
 const pageLoading = ref(false)
 const reachEnd = ref(false)
-const lastItemValue = ref(1);
+// const lastItemValue = ref(1);
 const observerReady = ref(false)
 
 const filterRepositoryCallback = (currentSelectedTags: string[]) => {
@@ -58,29 +58,29 @@ watch(() => selectedTags.value, (newVal) => {
   }
 })
 
-const fetchMoreRepositories = async () => {
-  const data = await fetchRepositoriesByOrganization(
-      route.params.slug as string,
-      false,
-      10,
-      lastItemValue.value
-  );
-  repositoryData.value = [...repositoryData.value, ...data];
-  repositoryItems.value = repositoryData.value
-  searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
-  lastItemValue.value = lastItemValue.value + 1
-  if(data.length === 0){
-    reachEnd.value = true
-  }
-}
+// const fetchMoreRepositories = async () => {
+//   const data = await fetchRepositoriesByOrganization(
+//       route.params.slug as string,
+//       false,
+//       10,
+//       lastItemValue.value
+//   );
+//   repositoryData.value = [...repositoryData.value, ...data];
+//   repositoryItems.value = repositoryData.value
+//   searchedRepositories.value = filterRepositoriesbyTags(repositoryItems.value, repositoryData.value, selectedTags.value);
+//   lastItemValue.value = lastItemValue.value + 1
+//   if(data.length === 0){
+//     reachEnd.value = true
+//   }
+// }
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
 
-const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
-  return orgList.some(org => org.slug === organization?.slug);
-};
+// const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
+//   return orgList.some(org => org.slug === organization?.slug);
+// };
 
 
 onMounted(async () => {
@@ -125,114 +125,116 @@ onUnmounted(() => {
     activeTab="projects">
     <RepositoryDataTable v-if="user && userData.is_approved" :isForUser="!userData.is_superuser"/>
     <div v-else class="pa-6">
-      <VTextField
-          v-model="searchQuery"
-          hide-details
-          variant="outlined"
-          rounded="xl"
-          density="comfortable"
-          color="primary"
-          base-color="gs60"
-      >
-        <template v-slot:prepend-inner>
-          <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
-        </template>
-        <template v-slot:label>
-          <p class="text-gs20">Search projects by title, keyword, tags.</p>
-        </template>
-      </VTextField>
-      <VRow class="ma-0 mt-2" align="center">
-        <VChipGroup
-            selected-class="text-primary"
-            v-model="selectedTags"
-            multiple
-            column
+      <div v-if="organization">
+        <VTextField
+            v-model="searchQuery"
+            hide-details
+            variant="outlined"
+            rounded="xl"
+            density="comfortable"
+            color="primary"
+            base-color="gs60"
         >
-          <VChip
-              :class="{
+          <template v-slot:prepend-inner>
+            <PhMagnifyingGlass size="20" class="mx-1" color="#5F6061"/>
+          </template>
+          <template v-slot:label>
+            <p class="text-gs20">Search projects by title, keyword, tags.</p>
+          </template>
+        </VTextField>
+        <VRow class="ma-0 mt-2" align="center">
+          <VChipGroup
+              selected-class="text-primary"
+              v-model="selectedTags"
+              multiple
+              column
+          >
+            <VChip
+                :class="{
                 'text-primary outlined-chip' : selectedTags.length === 0
               }"
-              class="tag d-flex align-center mr-2 tag-chips chip"
-              variant="outlined"
-              key="All Repositories"
-              value="All Repositories">
-            All Projects
-            <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
-          </VChip>
-          <VChip
-              v-for="(tag, index) in currentTags"
-              class="tag chip"
-              :class="{
+                class="tag d-flex align-center mr-2 tag-chips chip"
+                variant="outlined"
+                key="All Repositories"
+                value="All Repositories">
+              All Projects
+              <PhX v-if="selectedTags.length === 0" size="12" class="ml-1"/>
+            </VChip>
+            <VChip
+                v-for="(tag, index) in currentTags"
+                class="tag chip"
+                :class="{
                 'd-flex align-center mr-2 tag-chips' : !selectedTags.includes(tag)
               }"
-              variant="outlined"
-              :key="index"
-              :value="tag">
-            {{tag}}
-            <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
-          </VChip>
-        </VChipGroup>
-        <FilterRepositoryDialog
-            :tags="tags"
-            :selectedTags="selectedTags"
-            @callback="filterRepositoryCallback"
-        >
-          <VChip
-              class="tag d-flex align-center mr-2 show-chip chip"
-              variant="outlined"
-              key="Toggle Chips">
-            More Filtering Options
-            <PhFaders size="12" class="ml-1"/>
-          </VChip>
-        </FilterRepositoryDialog>
-      </VRow>
-      <VRow justify="space-between" align="center" class="ma-0 my-6">
-        <p class="text-title d-flex align-center">
-          <PhHardDrives size="24" class="mr-1"/>
-          Browse Projects by {{organization.name}} ({{organization.acronym}})
-        </p>
-        <p class="d-flex align-center">
-          <VBtnPrimaryFilled v-if="organization.is_member && user" :to="{ name: 'new-repository-my'}" height="40px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
-            <PhPlus size="16" class="mr-2"/>
-            New Project
-          </VBtnPrimaryFilled>
-        </p>
-      </VRow>
-      <div v-if="pageLoading" class="loading-state-container">
-        <VProgressCircular
-            indeterminate
-            color="#23668b"
-        ></VProgressCircular>
-      </div>
-      <div v-else>
-        <div v-if="searchedRepositories.length > 0">
-          <RepositoryItem
-              v-if="searchedRepositories.length > 0"
-              v-for="repository in searchedRepositories"
-              :repository="repository"
-          />
-          <div class="pa-3" v-if="reachEnd">
-            <p class="text-center">
-              All {{organization.acronym}}'s projects are loaded!
-              <span
-                  @click="scrollTop"
-                  class="text-bs50 cursor-pointer scroll-top-link"
-              >
+                variant="outlined"
+                :key="index"
+                :value="tag">
+              {{tag}}
+              <PhX v-if="selectedTags.includes(tag)" size="12" class="ml-1"/>
+            </VChip>
+          </VChipGroup>
+          <FilterRepositoryDialog
+              :tags="tags"
+              :selectedTags="selectedTags"
+              @callback="filterRepositoryCallback"
+          >
+            <VChip
+                class="tag d-flex align-center mr-2 show-chip chip"
+                variant="outlined"
+                key="Toggle Chips">
+              More Filtering Options
+              <PhFaders size="12" class="ml-1"/>
+            </VChip>
+          </FilterRepositoryDialog>
+        </VRow>
+        <VRow justify="space-between" align="center" class="ma-0 my-6">
+          <p class="text-title d-flex align-center">
+            <PhHardDrives size="24" class="mr-1"/>
+            Browse Projects by {{organization?.name}} ({{organization?.acronym}})
+          </p>
+          <p class="d-flex align-center">
+            <VBtnPrimaryFilled v-if="organization?.is_member && user" :to="{ name: 'new-repository-my'}" height="40px" rounded="lg" class="satoshi-md" style="font-size: 14px !important;">
+              <PhPlus size="16" class="mr-2"/>
+              New Project
+            </VBtnPrimaryFilled>
+          </p>
+        </VRow>
+        <div v-if="pageLoading" class="loading-state-container">
+          <VProgressCircular
+              indeterminate
+              color="#23668b"
+          ></VProgressCircular>
+        </div>
+        <div v-else>
+          <div v-if="searchedRepositories.length > 0">
+            <RepositoryItem
+                v-if="searchedRepositories.length > 0"
+                v-for="repository in searchedRepositories"
+                :repository="repository"
+            />
+            <div class="pa-3" v-if="reachEnd">
+              <p class="text-center">
+                All {{organization?.acronym}}'s projects are loaded!
+                <span
+                    @click="scrollTop"
+                    class="text-bs50 cursor-pointer scroll-top-link"
+                >
                   Jump back to the top?
                 </span>
-            </p>
+              </p>
+            </div>
+            <!--          <div class="pa-3" v-else>-->
+            <!--            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>-->
+            <!--          </div>-->
           </div>
-<!--          <div class="pa-3" v-else>-->
-<!--            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>-->
-<!--          </div>-->
+          <EmptyStateInfo
+              v-else
+              header="No Projects Found"
+              description="We couldn't find any projects at the moment."
+              :isCallbackNeeded="searchQuery !== ''"
+              @callback="searchQuery = ''"
+          />
         </div>
-        <EmptyStateInfo
-            v-else
-            header="No Projects Found"
-            description="We couldn't find any projects at the moment."
-            :isCallbackNeeded="searchQuery !== ''"
-            @callback="searchQuery = ''"
-        />
       </div>
     </div>
 

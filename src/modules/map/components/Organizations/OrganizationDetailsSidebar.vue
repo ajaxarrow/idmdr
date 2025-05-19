@@ -5,14 +5,14 @@ import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useOrganizationStore} from "../../../organization/stores/organization.store.ts";
 import {useMapStore} from "../../stores/map.store.ts";
 import {useRepositoryServices} from "../../../repository/services/repository.services.ts";
-import Observer from "../../../../core/components/Observer.vue";
+// import Observer from "../../../../core/components/Observer.vue";
 import OrgRepoCharts from "../../../organization/components/Reports/OrgRepoCharts.vue";
 import {useOrganizationServices} from "../../../organization/services/organization.services.ts";
 import {Organization} from "../../../../interfaces/organization.interface.ts";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
 const {fetchOrganizationByUser} = useOrganizationServices()
 const {resetToDefault} = useMapStore();
-const {fetchRepositoriesByOrganization, fetchAllRepositories} = useRepositoryServices()
+const {fetchAllRepositories} = useRepositoryServices()
 
 const pageLoading = ref(false);
 const repositoryData = ref<Repository[]>([]);
@@ -34,19 +34,19 @@ const isSlugInOrgList = (organization: Organization | null | undefined, orgList:
   return orgList.some(org => org.uid === organization?.uid);
 };
 
-const fetchMoreRepositories = async () => {
-  const data = await fetchRepositoriesByOrganization(
-      selectedOrganization.value?.slug as string,
-      false,
-      5,
-      lastItemValue.value
-  );
-  repositoryData.value = [...repositoryData.value, ...data];
-  lastItemValue.value = lastItemValue.value + 1;
-  if(data.length === 0){
-    reachEnd.value = true
-  }
-}
+// const fetchMoreRepositories = async () => {
+//   const data = await fetchRepositoriesByOrganization(
+//       selectedOrganization.value?.slug as string,
+//       false,
+//       5,
+//       lastItemValue.value
+//   );
+//   repositoryData.value = [...repositoryData.value, ...data];
+//   lastItemValue.value = lastItemValue.value + 1;
+//   if(data.length === 0){
+//     reachEnd.value = true
+//   }
+// }
 
 watch(() => selectedOrganization.value, async () => {
   observerReady.value = false
