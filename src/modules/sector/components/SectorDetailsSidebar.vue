@@ -130,7 +130,7 @@
           color="#23668b"
       ></VProgressCircular>
     </div>
-    <div v-else class="">
+    <div v-else class="sidebar-content-wrapper">
       <VImg
           rounded="lg"
           class="mx-auto"
@@ -307,8 +307,6 @@
           </div>
         </div>
       </div>
-
-
     </div>
   </VSheet>
 </template>
@@ -332,11 +330,6 @@
   .repo-item:hover{
     background-color: #F0F5F9;
     transition: background-color 0.3s ease;
-  }
-
-  .scrollable-container{
-    overflow-y: auto;
-    height: 450px;
   }
 
   .sidebar-title{
@@ -389,5 +382,17 @@
 
   .action-menu-item:hover{
     background-color: #e0e3e3;
+  }
+
+  .sidebar-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 174px); /* Subtract VImg height */
+  }
+
+  .scrollable-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 </style>

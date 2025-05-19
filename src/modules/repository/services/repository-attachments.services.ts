@@ -2,7 +2,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {server} from "../../../plugins/axios.ts";
 import {Attachment} from "../../../interfaces/repository.interface.ts";
 
-const { userData } = useUserStore();
+const { userData, user } = useUserStore();
 export const useRepositoryAttachmentServices = () => {
   const saveAttachment = async (attachment: Attachment, endpoint: string, type: string) => {
     try {
@@ -27,11 +27,11 @@ export const useRepositoryAttachmentServices = () => {
 
   const fetchAttachmentsByRepository = async(repositoryId: string, type: string = 'create'): Promise<Attachment[]> => {
     try {
-      const res = await server.get(`/v1/repository/attachments/?repository=${repositoryId}`, {
+      const res = await server.get(`/v1/repository/attachments/?repository=${repositoryId}`, user.value ? {
         headers: {
           Authorization: `Bearer ${userData.accessToken}`
         }
-      });
+      } : {});
 
       return res.data.map((attachment: any)=> {
         return {

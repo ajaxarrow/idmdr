@@ -27,16 +27,16 @@
 
 <template>
   <RouterLink class="mb-2 cursor-pointer text-decoration-none " :to="{ name: path == '/my-repositories' ?  'my-repository-data' : 'repository-data', params: { slug: props.repository?.slug } }">
-    <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
+    <VRow justify="space-between" align="center" class="ma-0 data-list-item item-wrap" >
         <div class="d-flex align-center">
           <VImg
-              style="border-radius: 8px"
+              style="border-radius: 8px; flex: none;"
               cover
               height="40px"
               width="40px"
               :src="props.repository?.image ? <string>props.repository.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
           />
-          <div class="ml-2">
+          <div class="ml-2 text-item">
             <p class="repository-title">{{ props.repository?.title }}</p>
             <p class="repository-subtitle">{{ props.repository?.owner_data?.username ? props.repository?.owner_data?.username : `${props.repository?.owner_data?.first_name} ${props.repository?.owner_data?.last_name}` }} · {{ props.repository?.org_data?.name }} ({{ props.repository?.org_data?.acronym }}) · {{ new Date(props.repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
           </div>

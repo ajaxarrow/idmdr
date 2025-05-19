@@ -28,16 +28,16 @@ onMounted(() => {
 
 <template>
   <RouterLink class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == '/organizations' ?  'organization-data' : 'my-organization-data', params: { slug: props.organization?.slug } }">
-    <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
+    <VRow justify="space-between" align="center" class="ma-0 data-list-item item-wrap" >
       <div class="d-flex align-center">
         <VImg
-            style="border-radius: 8px"
+            style="border-radius: 8px; flex: none;"
             cover
             height="40px"
             width="40px"
             :src="props.organization?.image ? <string>props.organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
         />
-        <div class="ml-2">
+        <div class="ml-2 text-item">
           <p class="organization-title">{{ props.organization?.name }} ({{props.organization?.acronym}})</p>
           <p class="organization-subtitle">{{ props.organization?.president }} · {{ props.organization?.email }}</p>
         </div>

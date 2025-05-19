@@ -41,7 +41,7 @@ const getTabs = () => {
     { name: "Posts" },
     { name: "Scheduled Events" },
     ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
-    ...((user.value && !isInPublic.value) || userData.is_superuser ? [{ name: "Settings" }] : [])
+    ...((user.value && !isInPublic.value && userData.is_approved) || userData.is_superuser ? [{ name: "Settings" }] : [])
   ]
 }
 
@@ -65,7 +65,7 @@ const computedTabs = computed(() => {
       baseName = 'events';
     } else if (tab.name === "Reports" && user.value && isMember.value) {
       baseName = 'reports';
-    } else if (tab.name === "Settings" && user.value) {
+    } else if (tab.name === "Settings" && user.value && userData.is_approved) {
       baseName = 'settings';
     } else {
       baseName = '';

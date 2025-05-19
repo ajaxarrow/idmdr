@@ -69,7 +69,7 @@ const getTabs = () => {
     { name: "Discussions"},
     ...(props.repository?.type === 'Project Repository' ? [{ name: "ABH"}] : []),
     ...((user.value && isMember.value) || userData.is_superuser ? [{ name: "Reports"}] : []),
-    ...(user.value || userData.is_superuser ? [
+    ...((user.value && userData.is_approved)|| userData.is_superuser ? [
       { name: "Settings" }] : [])
   ]
 }
@@ -87,7 +87,7 @@ const computedTabs = computed(() => {
       linkName = path.value === 'repositories' ? 'repository-abh' : 'my-repository-abh';
     } else if(tab.name === "Reports" && ((user.value && isMember.value) || userData.is_superuser)){
       linkName = path.value === 'repositories' ? 'repository-reports' : 'my-repository-reports';
-    } else if(tab.name === "Settings" && user.value){
+    } else if(tab.name === "Settings" && user.value && userData.is_approved){
       linkName = path.value === 'repositories' ? 'repository-settings' : 'my-repository-settings';
     }
     return {
@@ -116,7 +116,7 @@ const addAccessRequestCallback = async () => {
   buttonLoading.value = true
   await addAccessRequest({
     requestor: userData.uid,
-    content_type: 30,
+    content_type: 28,
     object_id: <string>route.params.slug,
     is_approved: false,
     is_reviewed: false
@@ -140,7 +140,7 @@ const addAccessRequestCallback = async () => {
       message: `${userData.username} has requested access to ${props.repository?.title}. Please review and manage the request.`,
       type: 'Access Request Pending',
       object_id: <string>route.params.slug,
-      content_type: 30,
+      content_type: 28,
       is_read: false,
       is_deleted: false,
     });
@@ -232,15 +232,15 @@ onMounted(async () => {
               </p>
             </RouterLink>
           </div>
-          <VRow justify="space-between" align="center" class="ma-0 ga-4">
-            <div>
+          <VRow justify="space-between" align="center" class="ma-0 ga-4" style="flex-wrap: nowrap;">
+            <div class="text-item">
               <p class="text-repository-heading d-flex align-center">
                 {{repository.title}}
               </p>
               <!--            <p class="text-subtitle text-gs20">{{repository.subtitle}}</p>-->
               <p class="text-subtitle">{{ repository?.owner_data?.username ? repository?.owner_data?.username : `${repository?.owner_data?.first_name} ${repository?.owner_data?.last_name}` }} · {{ repository?.org_data?.name }} ({{ repository?.org_data?.acronym }}) · {{ new Date(repository?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
             </div>
-            <div v-if="user">
+            <div v-if="user && userData.is_approved">
               <VBtnPrimaryFilled v-if="isMember || userData.is_superuser" :loading="buttonLoading" height="45px" rounded="lg" class="satoshi-md" @click="downloadRepoFiles" style="font-size: 14px !important;">
                 <PhDownload size="16" class="mr-2"/>
                 Download

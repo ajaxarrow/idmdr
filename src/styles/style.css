@@ -239,3 +239,14 @@ ul {
     color: #ff5722;
     text-decoration: underline;
 }
+
+
+.text-item{
+    max-width: 90% !important;
+    word-break: break-word;
+    white-space: break-spaces;
+}
+
+.item-wrap{
+    flex-wrap: nowrap !important;
+}

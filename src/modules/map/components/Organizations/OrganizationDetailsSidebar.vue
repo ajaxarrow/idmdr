@@ -81,11 +81,11 @@ onUnmounted(() => {
 
 <template>
   <VSheet class="sector-details-sidebar ma-4" v-if="selectedOrganization">
-    <VRow justify="space-between" align="center" class="ma-0 pa-4">
+    <VRow justify="space-between" align="center" class="ma-0 pa-4" style="flex: none;">
       <p class="sidebar-title">CMI</p>
       <PhX color="#C83246" size="24" weight="bold" class="cursor-pointer" @click="resetToDefault('Organization')"/>
     </VRow>
-    <div class="">
+    <div class="sidebar-content-wrapper">
       <VImg
           rounded="lg"
           class="mx-auto"
@@ -205,11 +205,8 @@ onUnmounted(() => {
   box-shadow: 0px 0px 7px 0px #5d6e87;
   transition: opacity 1s ease;
   overflow: hidden;
-}
-
-.scrollable-container{
-  overflow-y: auto;
-  height: 450px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-title{
@@ -245,4 +242,17 @@ onUnmounted(() => {
   font-size: 14px;
   color: #000000;
 }
+
+.sidebar-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 174px); /* Subtract VImg height */
+}
+
+.scrollable-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 </style>

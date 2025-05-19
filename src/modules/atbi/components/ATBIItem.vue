@@ -22,7 +22,7 @@ onMounted(() => {
 
 <template>
   <RouterLink class="mb-2 cursor-pointer text-decoration-none" :to="{ name: 'atbi-details', params: { slug: props.atbi?.uuid } }">
-    <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
+    <VRow justify="space-between" align="center" class="ma-0 data-list-item item-wrap" >
       <div class="d-flex align-center">
         <VImg
             style="border-radius: 8px"
@@ -31,7 +31,7 @@ onMounted(() => {
             width="40px"
             :src="props.atbi?.logo? <string>props.atbi?.logo: 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
         />
-        <div class="ml-2">
+        <div class="ml-2 text-item">
           <p class="organization-title">
             {{
              props.atbi?.name

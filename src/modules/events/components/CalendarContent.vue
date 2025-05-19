@@ -298,6 +298,20 @@ onUnmounted(() => {
 :deep(.fc-icon) {
   height: unset;
 }
+/* Fix for event title text wrapping */
+:deep(.fc-event-title) {
+  white-space: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
 
+:deep(.event-content) {
+  white-space: normal !important;
+  overflow: hidden;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  padding: 0 2px;
+}
 
 </style>

@@ -73,7 +73,7 @@ onMounted(async () => {
             class="inactive-repo-banner mb-8"
             style="margin: 0;"
         >
-          <div class="d-flex align-center">
+          <div class="d-flex align-start">
             <div class="warning-icon-container me-3">
               <PhWarning size="24" weight="fill" class="warning-icon" />
             </div>
@@ -82,9 +82,11 @@ onMounted(async () => {
                 Account Awaiting Approval
               </VAlert-title>
               <div class="warning-message">
-                Your account has not yet been approved, and access is currently restricted. Reach out to the system administrator to request approval and gain full user privileges.
+                Your account has not yet been approved, and access is currently restricted.
+                Reach out to the system administrator to request approval and gain full user privileges.
+                <br />
+                <strong>Note:</strong> If your account has already been approved, please log out and log back in to refresh your access.
               </div>
-
             </div>
           </div>
         </VAlert>

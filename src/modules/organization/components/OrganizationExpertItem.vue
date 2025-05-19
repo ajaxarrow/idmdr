@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <RouterLink v-if="typeof props.expert?.organization === 'object'" class="mb-2 cursor-pointer text-decoration-none" :to="{ name: path == 'organizations' ?  'organization-experts-details' : 'my-organization-experts-details', params: { slug: props.expert?.organization?.uid, expert: props.expert?.uid } }">
-    <VRow justify="space-between" align="center" class="ma-0 data-list-item" >
+    <VRow justify="space-between" align="center" class="ma-0 data-list-item item-wrap" >
       <div class="d-flex align-center">
 <!--        <VImg-->
 <!--            style="border-radius: 8px"-->
@@ -34,8 +34,8 @@ onMounted(() => {
 <!--            width="40px"-->
 <!--            :src="props.organization?.image ? <string>props.organization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"-->
 <!--        />-->
-        <div class="ml-2">
-          <p class="organization-title">
+        <div class="ml-2 text-item">
+          <p class="organization-title ">
             {{
               typeof props.expert?.name === 'object'
                   ? `${props.expert?.name?.first_name || ''} ${props.expert?.name?.middle_name || ''} ${props.expert?.name?.last_name || ''} ${props.expert?.name?.extension || ''}`.trim()

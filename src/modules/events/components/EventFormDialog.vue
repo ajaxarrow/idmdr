@@ -29,6 +29,8 @@ const props = defineProps({
 
 const loading = ref(false);
 const eventDialog = ref(false);
+const dateTimeError = ref('');
+const titleError = ref('');
 const eventInitialState = reactive<OrganizationEvent>({
   uid: '',
   title: '',
@@ -52,8 +54,52 @@ const eventData = reactive<OrganizationEvent>({
   ...eventInitialState
 })
 
+// Validate date and time inputs
+const validateDateTime = (): boolean => {
+  const startDate = new Date(`${eventData.start_date_object.date}T${eventData.start_date_object.time}`);
+  const endDate = new Date(`${eventData.end_date_object.date}T${eventData.end_date_object.time}`);
+
+  if (startDate >= endDate) {
+    dateTimeError.value = 'Start date and time must be before end date and time';
+    return false;
+  }
+
+  dateTimeError.value = '';
+  return true;
+}
+
+// Validate title field
+const validateTitle = (): boolean => {
+  if (!eventData.title || eventData.title.trim() === '') {
+    titleError.value = 'Event title is required';
+    return false;
+  }
+
+  titleError.value = '';
+  return true;
+}
+
+// Watch for changes in date/time fields and validate
+watch([
+  () => eventData.start_date_object.date,
+  () => eventData.start_date_object.time,
+  () => eventData.end_date_object.date,
+  () => eventData.end_date_object.time
+], () => {
+  validateDateTime();
+});
+
+// Watch for changes in title field
+watch(() => eventData.title, () => {
+  validateTitle();
+});
 
 const addEventData = async () => {
+  const isDateTimeValid = validateDateTime();
+  const isTitleValid = validateTitle();
+
+  if (!isDateTimeValid || !isTitleValid) return;
+
   eventData.start_date = JSON.stringify(eventData.start_date_object)
   eventData.end_date = JSON.stringify(eventData.end_date_object)
   eventData.created_by = userData.uid;
@@ -64,6 +110,11 @@ const addEventData = async () => {
 }
 
 const updateEventData = async () => {
+  const isDateTimeValid = validateDateTime();
+  const isTitleValid = validateTitle();
+
+  if (!isDateTimeValid || !isTitleValid) return;
+
   eventData.start_date = JSON.stringify(eventData.start_date_object)
   eventData.end_date = JSON.stringify(eventData.end_date_object)
   eventData.created_by = userData.uid;
@@ -75,6 +126,8 @@ const updateEventData = async () => {
 
 const clearEventData = () => {
   Object.assign(eventData, {...eventInitialState})
+  dateTimeError.value = '';
+  titleError.value = '';
 }
 
 const fetchData = async () => {
@@ -87,7 +140,6 @@ const fetchData = async () => {
       Object.assign(eventData, {...props.event})
     }
   }
-
 }
 
 watch(() => eventDialog.value, async() => {
@@ -126,7 +178,7 @@ onMounted(async()=> {
               <VTextField
                   v-model="eventData.start_date_object.date"
                   type="date"
-                  label="End Date"
+                  label="Start Date"
                   required
                   class="my-2"
                   rounded="lg"
@@ -134,6 +186,7 @@ onMounted(async()=> {
                   variant="outlined"
                   color="primary"
                   base-color="gs60"
+                  :error="!!dateTimeError"
               />
             </VCol>
             <VCol class="pa-0" cols="6">
@@ -141,7 +194,7 @@ onMounted(async()=> {
               <VTextField
                   v-model="eventData.start_date_object.time"
                   type="time"
-                  label="End Time"
+                  label="Start Time"
                   required
                   class="my-2"
                   rounded="lg"
@@ -149,6 +202,7 @@ onMounted(async()=> {
                   variant="outlined"
                   color="primary"
                   base-color="gs60"
+                  :error="!!dateTimeError"
               />
             </VCol>
           </VRow>
@@ -166,6 +220,7 @@ onMounted(async()=> {
                   variant="outlined"
                   color="primary"
                   base-color="gs60"
+                  :error="!!dateTimeError"
               />
             </VCol>
             <VCol class="pa-0" cols="6">
@@ -181,11 +236,16 @@ onMounted(async()=> {
                   variant="outlined"
                   color="primary"
                   base-color="gs60"
+                  :error="!!dateTimeError"
               />
             </VCol>
           </VRow>
+          <!-- Error message display -->
+          <div v-if="dateTimeError" class="error-message mb-2">
+            {{ dateTimeError }}
+          </div>
           <div class="mb-2">
-            <p class="dialog-label mb-2">Event Title</p>
+            <p class="dialog-label mb-2">Event Title<span class="text-pink">*</span></p>
             <VTextField
                 autofocus
                 v-model="eventData.title"
@@ -196,7 +256,12 @@ onMounted(async()=> {
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
+                required
+                :error="!!titleError"
             />
+            <div v-if="titleError" class="error-message">
+              {{ titleError }}
+            </div>
           </div>
           <div class="mb-2">
             <label class="dialog-label">Associated Consortium Member Institution<span class="text-pink">*</span></label>
@@ -275,6 +340,7 @@ onMounted(async()=> {
               @click="props.formType === FormType.edit ? updateEventData() : addEventData()"
               width="86"
               class="submit-button"
+              :disabled="!!dateTimeError || !!titleError"
           >
             {{action}}
           </VBtnPrimaryAlt>
@@ -334,6 +400,11 @@ onMounted(async()=> {
   border-radius: 8px;
 }
 
+.error-message {
+  color: #ff5252;
+  font-size: 14px;
+  margin-top: -5px;
+}
 
 :deep(.v-label){
   opacity: 100% !important;
