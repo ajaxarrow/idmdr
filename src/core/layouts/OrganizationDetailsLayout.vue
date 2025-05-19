@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MainLayout from "./MainLayout.vue";
-import {computed, ref, watch} from "vue";
+import {computed, onUpdated, ref, watch} from "vue";
 import {useRouting} from "../composables/useRouting.ts";
 import {PropType} from "vue";
 import {Organization} from "../../interfaces/organization.interface.ts";
@@ -19,12 +19,11 @@ const {router, route} = useRouting();
 const {isSmall} = useScreenStore();
 const {isPageLoading} = usePageLoadingStore()
 const isMember = ref(false)
-const pageLoading = ref(false);
+const pageLoading = ref(true);
 const isOrgAvailable = ref(false);
 const path = ref('organizations')
 const tab = ref("about");
 const isInPublic = ref(false);
-
 const props = defineProps({
   organization: {
     type: Object as PropType<Organization | null | undefined>,
@@ -42,7 +41,7 @@ const getTabs = () => {
     { name: "Posts" },
     { name: "Scheduled Events" },
     ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
-    ...((user.value && isMember.value && !isInPublic.value) || userData.is_superuser ? [{ name: "Settings" }] : [])
+    ...((user.value && !isInPublic.value) || userData.is_superuser ? [{ name: "Settings" }] : [])
   ]
 }
 
@@ -66,7 +65,7 @@ const computedTabs = computed(() => {
       baseName = 'events';
     } else if (tab.name === "Reports" && user.value && isMember.value) {
       baseName = 'reports';
-    } else if (tab.name === "Settings" && user.value && isMember.value) {
+    } else if (tab.name === "Settings" && user.value) {
       baseName = 'settings';
     } else {
       baseName = '';
@@ -100,10 +99,13 @@ const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
 }
 
-const navigateTo = (linkName: string) => {
-  router.push({
+const navigateTo = async (linkName: string) => {
+  await router.push({
     name: linkName,
   });
+  if(linkName === 'organization-settings' || linkName === 'organization-reports'){
+    window.location.reload();
+  }
 }
 
 const initialize = async () => {
@@ -214,6 +216,7 @@ onMounted(async() => {
         :isSmall="isSmall"
         :computedTabs="computedTabs"
         :navigateTo="navigateTo"
+        @updatePage="initialize()"
       >
       <slot/>
       </OrganizationLayoutHeaderContent>
