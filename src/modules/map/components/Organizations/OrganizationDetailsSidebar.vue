@@ -12,7 +12,7 @@ import {Organization} from "../../../../interfaces/organization.interface.ts";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
 const {fetchOrganizationByUser} = useOrganizationServices()
 const {resetToDefault} = useMapStore();
-const {fetchRepositoriesByOrganization} = useRepositoryServices()
+const {fetchRepositoriesByOrganization, fetchAllRepositories} = useRepositoryServices()
 
 const pageLoading = ref(false);
 const repositoryData = ref<Repository[]>([]);
@@ -59,7 +59,8 @@ watch(() => selectedOrganization.value, async () => {
   repositoryData.value = [];
   lastItemValue.value = 1;
   reachEnd.value = false
-  await fetchMoreRepositories()
+  // await fetchMoreRepositories()
+  repositoryData.value = await fetchAllRepositories(1, 1000, '', '', selectedOrganization.value?.slug as string, true, true, '', '', '', '', '', '', '', '', '1', false, false, 'and');
   observerReady.value = true
   pageLoading.value = false;
 })
@@ -169,9 +170,9 @@ onUnmounted(() => {
                 </span>
                 </p>
               </div>
-              <div class="pa-3" v-else>
-                <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
-              </div>
+<!--              <div class="pa-3" v-else>-->
+<!--                <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>-->
+<!--              </div>-->
             </div>
             <p v-else class="my-1 d-flex justify-center align-center mb-10">
               <PhInfo size="19" class="mr-1 mb-1"/>  No projects found
