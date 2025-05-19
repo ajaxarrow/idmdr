@@ -18,7 +18,7 @@ import RepositoryDataTable from "../../repository/components/RepositoryDataTable
 
 const {scrollTop} = useScroll()
 const {route} = useRouting()
-const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
+const {fetchOrganizationData} = useOrganizationServices();
 const {user, userData} = useUserStore()
 const {tags, selectedTags} = useTags();
 const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags, fetchAllRepositories} = useRepositoryServices();
