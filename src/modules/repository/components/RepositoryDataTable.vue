@@ -38,7 +38,7 @@ const {fetchCustomUsers} = useRepositoryMemberServices();
 const {tags, fetchTags} = useTags();
 const {getVisibilityLabel} = useVisibilityHelper()
 const selectedOrganization = ref<string>('');
-const pageEntity = computed(() => route.path === '/repositories' || route.path == '/my-repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
+const pageEntity = computed(() => route.path === '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'Project' : route.path === '/e-library' ? 'Document' : 'IP Technology');
 const repositories = ref<Repository[]>([]);
 const loading = ref(false);
 const search = ref('');
@@ -191,7 +191,7 @@ const projectStatusOptions = [
 const headers = computed(() => [
   { title: 'Project', key: 'title', sortable: true, visible: true },
   { title: 'Status', key: 'status', sortable: true, visible: true },
-  ...(route.path === '/repositories' || route.path == '/my-repositories'
+  ...(route.path === '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories'
       ? [{ title: 'Type', key: 'type', sortable: true, visible: true },]
       : []),
   { title: 'State', key: 'state', sortable: true, visible: true },
@@ -202,9 +202,9 @@ const headers = computed(() => [
   { title: 'Priority', key: 'priority_level', sortable: true, visible: false },
   { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
   { title: 'End Date', key: 'end_date', sortable: true, visible: false },
-  ...(path.value === '/repositories' && props.isForUser
-      ? []
-      : [{ title: 'Visibility', key: 'visibility', sortable: false, visible: true }]),
+  ...((path.value === '/my-repositories' && props.isForUser) || userData.is_superuser
+      ? [{ title: 'Visibility', key: 'visibility', sortable: false, visible: true }]
+      : []),
   { title: 'Tags', key: 'tags', sortable: false, visible: true },
   { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);
@@ -234,7 +234,7 @@ const tableFilters = computed(() => [
     itemValue: (type: any) => type.value,
     visibleKey: 'priority_level'
   },
-  ...(!props.isForUser ? [{
+  ...(!props.isForUser && userData.is_superuser ? [{
     key: 'projectState',
     label: `${path.value == '/repositories' ? 'Project' : 'IP Technology'} State`,
     value: selectedProjectState.value,
@@ -396,7 +396,7 @@ const loadRepositories = async () => {
         itemsPerPage.value,
         search.value,
         selectedPriorityLevel.value,
-        selectedOrganization.value,
+        (route.name == 'organization-repositories' || route.name == 'my-organization-repositories') && route.params.slug ? route.params.slug as string : selectedOrganization.value,
         props.isForUser ? true : selectedProjectState.value,
         selectedProjectPublicState.value,
         getRepositoryType(),
@@ -407,10 +407,10 @@ const loadRepositories = async () => {
         tech_generator,
         author,
         lead,
-        path.value === '/repositories' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        (path.value === '/repositories' || route.name == 'organization-repositories' ) && props.isForUser ? '1,4' : convertedVisibilities.value,
         props.isForUser,
         true,
-        path.value === '/repositories' && props.isForUser ? 'or' : 'and'
+        (path.value === '/repositories' || route.name == 'organization-repositories') && props.isForUser ? 'or' : 'and'
     );
 
     repositories.value = data;
@@ -430,7 +430,7 @@ const updateTotalCount = async () => {
         props.isForUser,
         search.value,
         selectedPriorityLevel.value,
-        selectedOrganization.value,
+        (route.name == 'organization-repositories' || route.name == 'my-organization-repositories') && route.params.slug ? route.params.slug as string : selectedOrganization.value,
         props.isForUser ? true : selectedProjectState.value,
         selectedProjectPublicState.value,
         getRepositoryType(),
@@ -534,15 +534,15 @@ onMounted(async () => {
 
 <template>
   <BaseDataTable
-    :title="`All ${path == '/repositories' || route.path == '/my-repositories' ? 'Projects' : route.path === '/e-library' ? 'E-Library' : 'IP Technologies'}`"
-    :subtitle="`Create and manage all ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'materials' : 'IP technologies'} across NOMCAARRD`"
+    :title="`All ${path == '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'Projects' : route.path === '/e-library' ? 'E-Library' : 'IP Technologies'}`"
+    :subtitle="`Create and manage all ${path == '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'projects' : route.path === '/e-library' ? 'materials' : 'IP technologies'} across NOMCAARRD`"
     :items="repositories"
     :headers="headers"
     :loading="loading"
     :totalItems="totalItems"
-    :searchPlaceholder="`Search ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP Technologies'}...`"
-    :emptyStateHeader="`No ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found`"
-    :emptyStateDescription="`There are no ${path == '/repositories' || route.path == '/my-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found matching your criteria`"
+    :searchPlaceholder="`Search ${path == '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP Technologies'}...`"
+    :emptyStateHeader="`No ${path == '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found`"
+    :emptyStateDescription="`There are no ${path == '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'projects' : route.path === '/e-library' ? 'documents' : 'IP technologies'} found matching your criteria`"
     :filters="tableFilters"
     :itemsPerPageOptions="itemsPerPage"
     @update:search="search = $event"
@@ -555,6 +555,7 @@ onMounted(async () => {
     @refreshData="loadData"
     :expandable="true"
     :showFilter="showFilters"
+    :showCircle="route.name != 'organization-repositories' && route.name != 'my-organization-repositories'"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{ name: 'new-repository' }" v-if="isSmall || isTablet" icon>
@@ -569,7 +570,7 @@ onMounted(async () => {
           style="font-size: 14px !important"
       >
         <PhPlus size="16" class="mr-2" />
-        New {{path == '/repositories' ||route.path == '/my-repositories' ? 'Project' : route.path === '/e-library' ? 'Document Repository' : 'IP Technology'}}
+        New {{path == '/repositories' ||route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories' ? 'Project' : route.path === '/e-library' ? 'Document Repository' : 'IP Technology'}}
       </VBtnPrimaryFilled>
     </template>
 
@@ -666,7 +667,7 @@ onMounted(async () => {
     </template>
 
 
-    <template v-if="path === '/repositories' || path === '/my-repositories' " #item.type="{ item }">
+    <template v-if="path === '/repositories' || path === '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories'  " #item.type="{ item }">
       <VChip size="small">
         {{ item.type === 'Document Repository' ? 'Document Project' : 'IP Technology' }}
       </VChip>
@@ -818,7 +819,7 @@ onMounted(async () => {
             class="mb-3"
         />
       </VCol>
-      <VCol cols="12" sm="6" md="4" lg="3">
+      <VCol cols="12" sm="6" md="4" lg="3" v-if="!((route.name == 'organization-repositories' || route.name == 'my-organization-repositories') && route.params.slug)">
         <VSelect
             v-model="selectedOrganization"
             :items="organizations"

@@ -552,9 +552,12 @@ export const useRepositoryServices = () => {
 
       console.log(url)
 
-      const res = await server.get(url, {
-        headers: { 'Authorization': `Bearer ${userData.accessToken}` }
-      });
+      const res = await server.get(url,
+          user.value
+              ? { headers: { Authorization: `Bearer ${userData.accessToken}` } }
+              : {}
+      );
+
 
       const rawData = res.data.results;
 

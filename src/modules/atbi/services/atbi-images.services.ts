@@ -2,7 +2,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {server} from "../../../plugins/axios.ts";
 import {AtbiImage} from "../../../interfaces/atbi.interface.ts";
 
-const { userData } = useUserStore();
+const { userData, user } = useUserStore();
 
 export const useAtbiImagesServices = () => {
     const saveAtbiImage = async (image: AtbiImage, endpoint: string, type: string) => {
@@ -40,11 +40,9 @@ export const useAtbiImagesServices = () => {
 
     const fetchAtbiImagesByPost = async(atbiID: string): Promise<AtbiImage[]> => {
         try {
-            const res = await server.get(`/atbis/${atbiID}/images/`, {
-                headers: {
-                    Authorization: `Bearer ${userData.accessToken}`
-                }
-            });
+            const res = await server.get(`/atbis/${atbiID}/images/`, user.value
+                ? { headers: { Authorization: `Bearer ${userData.accessToken}` } }
+                : {});
             return res.data.map((image: any)=> {
                 return {
                     uuid: image.uuid,

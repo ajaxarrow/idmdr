@@ -40,11 +40,14 @@ export const navLinks = [
     link: '/e-library',
     icon: PhBooks
   },
-  {
-    name: 'ATBI',
-    link: '/atbi',
-    icon: PhLeaf
-  },
+
+  ...(user.value && !userData.is_superuser && userData.is_approved? [
+    {
+      name: 'ATBI',
+      link: '/atbi',
+      icon: PhLeaf
+    },
+  ] : []),
   {
     name: 'CMIs',
     link: '/organizations',

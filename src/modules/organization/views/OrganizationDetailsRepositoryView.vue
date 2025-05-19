@@ -14,13 +14,14 @@ import Observer from "../../../core/components/Observer.vue";
 import {useScroll} from "../../../core/composables/useScroll.ts";
 import EmptyStateInfo from "../../../core/components/EmptyStateInfo.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import RepositoryDataTable from "../../repository/components/RepositoryDataTable.vue";
 
 const {scrollTop} = useScroll()
 const {route} = useRouting()
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
-const {user} = useUserStore()
+const {user, userData} = useUserStore()
 const {tags, selectedTags} = useTags();
-const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization} = useRepositoryServices();
+const {filterRepositoriesBySearchQuery, filterRepositoriesbyTags,  fetchRepositoriesByOrganization, fetchAllRepositories} = useRepositoryServices();
 
 const path = ref('organizations')
 const searchQuery = ref('');
@@ -60,7 +61,7 @@ watch(() => selectedTags.value, (newVal) => {
 const fetchMoreRepositories = async () => {
   const data = await fetchRepositoriesByOrganization(
       route.params.slug as string,
-      path.value !== 'organizations',
+      false,
       10,
       lastItemValue.value
   );
@@ -88,15 +89,16 @@ onMounted(async () => {
   path.value = getFirstPath(<string>route.path)
   organization.value = await fetchOrganizationData(route.params.slug as string);
 
-  const allUserOrg = await fetchOrganizationIDsByUser();
-  if(organization.value){
-    if( isSlugInOrgList(organization.value, allUserOrg)){
-      if ("is_member" in organization.value) {
-        organization.value.is_member = true;
-      }
-    }
-  }
-  await fetchMoreRepositories();
+  // const allUserOrg = await fetchOrganizationIDsByUser();
+  // if(organization.value){
+  //   if( isSlugInOrgList(organization.value, allUserOrg)){
+  //     if ("is_member" in organization.value) {
+  //       organization.value.is_member = true;
+  //     }
+  //   }
+  // }
+  // await fetchMoreRepositories();
+  repositoryData.value = await fetchAllRepositories(1, 1000, '', '', route.params.slug as string, true, true, '', '', '', '', '', '', '', '', '1', false, false, 'and');
   repositoryItems.value = repositoryData.value;
   searchedRepositories.value = repositoryData.value;
   observerReady.value = true
@@ -113,13 +115,16 @@ onUnmounted(() => {
   observerReady.value = false;
 })
 
+
+
 </script>
 
 <template>
   <OrganizationDetailsLayout
     :organization="organization"
     activeTab="projects">
-    <div v-if="organization" class="pa-6">
+    <RepositoryDataTable v-if="user && userData.is_approved" :isForUser="!userData.is_superuser"/>
+    <div v-else class="pa-6">
       <VTextField
           v-model="searchQuery"
           hide-details
@@ -217,9 +222,9 @@ onUnmounted(() => {
                 </span>
             </p>
           </div>
-          <div class="pa-3" v-else>
-            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>
-          </div>
+<!--          <div class="pa-3" v-else>-->
+<!--            <Observer @intersect="fetchMoreRepositories" v-if="observerReady"/>-->
+<!--          </div>-->
         </div>
         <EmptyStateInfo
             v-else
@@ -230,6 +235,7 @@ onUnmounted(() => {
         />
       </div>
     </div>
+
   </OrganizationDetailsLayout>
 </template>
 

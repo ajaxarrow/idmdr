@@ -3,7 +3,7 @@ import {server} from "../../../plugins/axios.ts";
 import {AtbiSubEntityImage} from "../../../interfaces/atbi.interface.ts";
 
 
-const { userData } = useUserStore();
+const { userData, user } = useUserStore();
 
 export const useAtbiSubEntityImagesServices = () => {
     const saveAtbiSubEntityImage = async (image: AtbiSubEntityImage, endpoint: string, type: string) => {
@@ -29,11 +29,9 @@ export const useAtbiSubEntityImagesServices = () => {
 
     const deleteAtbiSubEntityImage = async(id: string) => {
         try {
-            await server.delete(`/entity-images/${id}/`, {
-                headers: {
-                    Authorization: `Bearer ${userData.accessToken}`
-                }
-            });
+            await server.delete(`/entity-images/${id}/`, user.value
+                ? { headers: { Authorization: `Bearer ${userData.accessToken}` } }
+                : {});
         } catch (e) {
             console.log(e);
         }

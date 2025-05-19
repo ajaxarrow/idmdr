@@ -2,7 +2,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
 import {server} from "../../../plugins/axios.ts";
 import {PostImage} from "../../../interfaces/post.interface.ts";
 
-const { userData } = useUserStore();
+const { userData, user } = useUserStore();
 
 export const usePostImagesServices = () => {
   const savePostImage = async (image: PostImage, endpoint: string, type: string) => {
@@ -40,11 +40,9 @@ export const usePostImagesServices = () => {
 
   const fetchPostImagesByPost = async(postID: string): Promise<PostImage[]> => {
     try {
-      const res = await server.get(`/post-images/${postID}/`, {
-        headers: {
-          Authorization: `Bearer ${userData.accessToken}`
-        }
-      });
+      const res = await server.get(`/post-images/${postID}/`, user.value
+          ? { headers: { Authorization: `Bearer ${userData.accessToken}` } }
+          : {});
       return res.data.map((image: any)=> {
         return {
           uid: image.uid,
