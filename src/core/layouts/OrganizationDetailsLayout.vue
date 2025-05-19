@@ -41,7 +41,7 @@ const getTabs = () => {
     { name: "Experts" },
     { name: "Posts" },
     { name: "Scheduled Events" },
-    ...(user.value  ? [{ name: "Reports" }] : []),
+    ...(user.value && isMember.value ? [{ name: "Reports" }] : []),
     ...((user.value && isMember.value && !isInPublic.value) || userData.is_superuser ? [{ name: "Settings" }] : [])
   ]
 }
@@ -64,9 +64,9 @@ const computedTabs = computed(() => {
       baseName = 'posts';
     } else if (tab.name === "Scheduled Events") {
       baseName = 'events';
-    } else if (tab.name === "Reports" && user.value) {
+    } else if (tab.name === "Reports" && user.value && isMember.value) {
       baseName = 'reports';
-    } else if (tab.name === "Settings" && user.value) {
+    } else if (tab.name === "Settings" && user.value && isMember.value) {
       baseName = 'settings';
     } else {
       baseName = '';
@@ -130,7 +130,6 @@ const initialize = async () => {
   if (props.activeTab) {
     tab.value = props.activeTab;
   }
-
   pageLoading.value = false;
 };
 
@@ -139,6 +138,11 @@ watch(() => isPageLoading.value, () => {
     pageLoading.value = false
   }
 })
+
+watch(() => route.name, async () => {
+  pageLoading.value = true;
+  await initialize()
+});
 
 onMounted(async() => {
   path.value = getFirstPath(<string>route.path);

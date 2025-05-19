@@ -45,11 +45,12 @@ onMounted(async () => {
   <OrganizationDetailsLayout
       :organization="organization"
       activeTab="experts">
+    <ExpertDataTable v-if="organization?.is_member as boolean"/>
     <ExpertListViewContent
-      v-if="!organization.is_member! as boolean"
+      v-else
       :forOrganization="true"
     />
-    <ExpertDataTable v-else/>
+
   </OrganizationDetailsLayout>
 </template>
 
