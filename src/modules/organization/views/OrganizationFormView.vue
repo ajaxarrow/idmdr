@@ -105,6 +105,11 @@ const organizationData = reactive<Organization>({
   ...organizationDataInitialState
 });
 
+const rd_Data = ref<any[]>([])
+const tt_Data = ref<any[]>([])
+const ic_Data = ref<any[]>([])
+const sc_Data = ref<any[]>([])
+
 const attachments = ref<OrganizationAttachment[]>([])
 const attachmentData = reactive<OrganizationAttachment>({
   organization: '',
@@ -147,69 +152,104 @@ const handleSearch = (field: string, query: any) => {
 };
 const active = ref(false)
 
+const handleEnterKey = (field: string, event: KeyboardEvent) => {
+  if (searchQueries[field].value) {
+    event.preventDefault();
+    event.stopPropagation();
+    addCustomUser(field);
+    return false;
+  }
+  return false;
+};
+
+// Handle blur event
+const handleBlur = (field: string) => {
+  if (searchQueries[field].value) {
+    addCustomUser(field);
+  }
+};
+
 // Reusable function to add custom user for any field
 const addCustomUser = (field: string) => {
   if (field === 'rd_rep' && rd_repRef.value) {
-    const newUser: CustomUserData = {
-      type: 'custom',
-      data: {
-        username: searchQueries.rd_rep.value as string,
-        first_name: searchQueries.rd_rep.value as string,
-        last_name: '',
-        email: '',
-        uid: ''
-      }
-    };
-    organizationData.rd_repData?.push(newUser);
-    searchQueries.rd_rep.value = '';
-    //@ts-ignore
-    rd_repRef.value.search = '';
+    if(searchQueries.rd_rep.value.trim().length > 0){
+      const newUser: CustomUserData = {
+        type: 'custom',
+        data: {
+          username: searchQueries.rd_rep.value as string,
+          first_name: searchQueries.rd_rep.value as string,
+          last_name: '',
+          email: '',
+          uid: ''
+        }
+      };
+      rd_Data.value.push(newUser);
+      //@ts-ignore
+      rd_Data.value = rd_Data.value?.filter(user => typeof user === 'object');
+      searchQueries.rd_rep.value = '';
+      //@ts-ignore
+      rd_repRef.value.search = '';
+    }
   } else if (field === 'tt_rep' && tt_repRef.value) {
-    const newUser: CustomUserData = {
-      type: 'custom',
-      data: {
-        username: searchQueries.tt_rep.value as string,
-        first_name: searchQueries.tt_rep.value as string,
-        last_name: '',
-        email: '',
-        uid: ''
-      }
-    };
-    organizationData.tt_repData?.push(newUser);
-    searchQueries.tt_rep.value = '';
-    //@ts-ignore
-    tt_repRef.value.search = '';
+    if(searchQueries.tt_rep.value.trim().length > 0){
+      const newUser: CustomUserData = {
+        type: 'custom',
+        data: {
+          username: searchQueries.tt_rep.value as string,
+          first_name: searchQueries.tt_rep.value as string,
+          last_name: '',
+          email: '',
+          uid: ''
+        }
+      };
+      tt_Data.value.push(newUser);
+      //@ts-ignore
+      tt_Data.value = tt_Data.value?.filter(user => typeof user === 'object');
+      searchQueries.tt_rep.value = '';
+      //@ts-ignore
+      tt_repRef.value.search = '';
+    }
   } else if (field === 'ic_rep' && ic_repRef.value) {
-    const newUser: CustomUserData = {
-      type: 'custom',
-      data: {
-        username: searchQueries.ic_rep.value as string,
-        first_name: searchQueries.ic_rep.value as string,
-        last_name: '',
-        email: '',
-        uid: ''
-      }
-    };
-    organizationData.ic_repData?.push(newUser);
-    searchQueries.ic_rep.value = '';
-    //@ts-ignore
-    ic_repRef.value.search = '';
-    // leadRef.value.search = '';
+    if(searchQueries.ic_rep.value.trim().length > 0){
+      const newUser: CustomUserData = {
+        type: 'custom',
+        data: {
+          username: searchQueries.ic_rep.value as string,
+          first_name: searchQueries.ic_rep.value as string,
+          last_name: '',
+          email: '',
+          uid: ''
+        }
+      };
+      ic_Data.value.push(newUser);
+      // organizationData.ic_repData = ic_Data.value;
+      //@ts-ignore
+      ic_Data.value = ic_Data.value?.filter(user => typeof user === 'object');
+      searchQueries.ic_rep.value = '';
+      //@ts-ignore
+      ic_repRef.value.search = '';
+    }
   } else if (field === 'sc_rep' && sc_repRef.value) {
-    const newUser: CustomUserData = {
-      type: 'custom',
-      data: {
-        username: searchQueries.sc_rep.value as string,
-        first_name: searchQueries.sc_rep.value as string,
-        last_name: '',
-        email: '',
-        uid: ''
-      }
-    };
-    organizationData.sc_repData?.push(newUser);
-    searchQueries.sc_rep.value = '';
-    //@ts-ignore
-    sc_repRef.value.search = '';
+    if(searchQueries.sc_rep.value.trim().length > 0){
+      const newUser: CustomUserData = {
+        type: 'custom',
+        data: {
+          username: searchQueries.sc_rep.value as string,
+          first_name: searchQueries.sc_rep.value as string,
+          last_name: '',
+          email: '',
+          uid: ''
+        }
+      };
+      sc_Data.value.push(newUser);
+      // organizationData.sc_repData = sc_Data.value;
+      //@ts-ignore
+      sc_Data.value = sc_Data.value?.filter(user => typeof user === 'object');
+      searchQueries.sc_rep.value = '';
+      //@ts-ignore
+      sc_repRef.value.search = '';
+    }
+
   }
 };
 
@@ -373,16 +413,16 @@ const addOrganizationData = async () => {
       delete organizationData.image;
     }
     organizationData.rd_rep = JSON.stringify({
-      data: organizationData.rd_repData,
+      data: rd_Data.value,
     })
     organizationData.tt_rep = JSON.stringify({
-      data: organizationData.tt_repData,
+      data: tt_Data.value,
     })
     organizationData.ic_rep = JSON.stringify({
-      data: organizationData.ic_repData,
+      data: ic_Data.value,
     })
     organizationData.sc_rep = JSON.stringify({
-      data: organizationData.sc_repData,
+      data: sc_Data.value,
     })
     await addOrganization(organizationData)
     if(hasErrorMessages(errorMessage)){
@@ -414,16 +454,16 @@ const updateOrganizationData = async () => {
       delete organizationData.image;
     }
     organizationData.rd_rep = JSON.stringify({
-      data: organizationData.rd_repData,
+      data: rd_Data.value,
     })
     organizationData.tt_rep = JSON.stringify({
-      data: organizationData.tt_repData,
+      data: tt_Data.value,
     })
     organizationData.ic_rep = JSON.stringify({
-      data: organizationData.ic_repData,
+      data: ic_Data.value,
     })
     organizationData.sc_rep = JSON.stringify({
-      data: organizationData.sc_repData,
+      data: sc_Data.value,
     })
     await updateOrganization(organizationData, organizationData.slug)
     if(hasErrorMessages(errorMessage)){
@@ -529,6 +569,15 @@ onMounted(async () => {
     }
     formType.value = FormType.edit
     Object.assign(organizationData, {...organization.value});
+    // @ts-ignore
+    rd_Data.value = organizationData.rd_repData
+    // @ts-ignore
+    tt_Data.value = organizationData.tt_repData
+    // @ts-ignore
+    ic_Data.value = organizationData.ic_repData
+    // @ts-ignore
+    sc_Data.value = organizationData.sc_repData
+
     organizationData.geojson = JSON.stringify(organizationData.geojson)
     if(!isEmptyObject(organizationData.geojson)){
       isGeoJSONPreview.value = true
@@ -897,7 +946,7 @@ onMounted(async () => {
               ref="rd_repRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-              v-model="organizationData.rd_repData"
+              v-model="rd_Data"
               placeholder="Select Representatives"
               class="my-2"
               rounded="lg"
@@ -910,6 +959,8 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('rd_rep', $event)"
               :hide-no-data="false"
+              @keydown.enter="(e) => handleEnterKey('rd_rep', e)"
+              @blur="handleBlur('rd_rep')"
           >
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('rd_rep')">
@@ -926,7 +977,7 @@ onMounted(async () => {
               ref="tt_repRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-              v-model="organizationData.tt_repData"
+              v-model="tt_Data"
               placeholder="Select Representatives"
               class="my-2"
               rounded="lg"
@@ -939,6 +990,8 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('tt_rep', $event)"
               :hide-no-data="false"
+              @keydown.enter="(e) => handleEnterKey('tt_rep', e)"
+              @blur="handleBlur('tt_rep')"
           >
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('tt_rep')">
@@ -956,7 +1009,7 @@ onMounted(async () => {
               ref="ic_repRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-              v-model="organizationData.ic_repData"
+              v-model="ic_Data"
               placeholder="Select Representatives"
               class="my-2"
               rounded="lg"
@@ -969,6 +1022,8 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('ic_rep', $event)"
               :hide-no-data="false"
+              @keydown.enter="(e) => handleEnterKey('ic_rep', e)"
+              @blur="handleBlur('ic_rep')"
           >
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('ic_rep')">
@@ -986,7 +1041,7 @@ onMounted(async () => {
               ref="sc_repRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-              v-model="organizationData.sc_repData"
+              v-model="sc_Data"
               placeholder="Select Representatives"
               class="my-2"
               rounded="lg"
@@ -999,6 +1054,8 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('sc_rep', $event)"
               :hide-no-data="false"
+              @keydown.enter="(e) => handleEnterKey('sc_rep', e)"
+              @blur="handleBlur('sc_rep')"
           >
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('sc_rep')">

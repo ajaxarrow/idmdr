@@ -31,7 +31,7 @@
   })
 </script>
 
-<template>s
+<template>
   <MainLayout :title="computedTitle">
     <RepositoryDataTable v-if="user && userData.is_approved" :isForUser="!userData.is_superuser"/>
     <RepositoryListViewContent v-else/>
