@@ -614,58 +614,90 @@ onMounted(async () => {
             class="mb-3"
         />
       </VCol>
-      <VCol cols="12" sm="6" md="4" lg="3">
-        <VAutocomplete
-            v-model="selectedUsersOption"
-            :items="includedUserOptions"
-            :item-title="user => user.title"
-            :item-value="user => user.value"
-            label="Included Fields"
-            hide-details
-            density="compact"
-            variant="outlined"
-            rounded="md"
-            color="primary"
-            base-color="gs60"
-            class="mb-3"
-            multiple
-            chips
-            closable-chips
-        />
-      </VCol>
-      <VCol cols="12" sm="6" md="4" lg="3">
-        <VCombobox
-            ref="userRef"
-            v-model="selectedUsers"
-            :items="customUsers"
-            :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
-            :item-value="user => user.data ? `${user.data.first_name}` : ''"
-            label="Representative"
-            hide-details
-            density="compact"
-            variant="outlined"
-            rounded="md"
-            color="primary"
-            base-color="gs60"
-            class="mb-3"
-            multiple
-            chips
-            closable-chips
-            @update:search="handleSearch($event)"
-            :hide-no-data="false"
-            @keydown.enter="(e) => handleEnterKey(e)"
-            @blur="handleBlur()"
-        >
-          <template v-slot:no-data>
-            <VListItem @click="addCustomUser()">
-              <VListItemTitle>
-                Add {{ userSearch }} in the filter
-              </VListItemTitle>
-            </VListItem>
-          </template>
-        </VCombobox>
-      </VCol>
+
     </template>
+
+    <template #custom-filters>
+      <!-- Container for both representative filters -->
+
+        <div class="filter-container w-100 border border-2 rounded-lg ma-0 ma-3 pa-3 border-primary position-relative">
+          <!-- Heading with tooltip for both fields -->
+          <div class="d-flex align-center mb-3">
+            <span class="font-weight-medium">Representative Filters</span>
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                    v-bind="props"
+                    size="small"
+                    class="ms-2"
+                    color="primary"
+                >
+                  mdi-information-outline
+                </v-icon>
+              </template>
+              <span>These filters work together: first select which fields to include, then filter by specific representatives</span>
+            </v-tooltip>
+          </div>
+
+          <VRow class="ma-0">
+            <!-- Included Fields Filter -->
+            <VCol cols="12" sm="6" md="6" lg="6">
+              <VAutocomplete
+                  v-model="selectedUsersOption"
+                  :items="includedUserOptions"
+                  :item-title="user => user.title"
+                  :item-value="user => user.value"
+                  label="Included Fields"
+                  hint="Select which representative fields to include in the filter"
+                  persistent-hint
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  multiple
+                  chips
+                  closable-chips
+              />
+            </VCol>
+
+            <!-- Representative Filter -->
+            <VCol cols="12" sm="6" md="6" lg="6">
+              <VCombobox
+                  ref="userRef"
+                  v-model="selectedUsers"
+                  :items="customUsers"
+                  :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
+                  :item-value="user => user.data ? `${user.data.first_name}` : ''"
+                  label="Representative"
+                  hint="Select or add specific representatives to filter the results"
+                  persistent-hint
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  multiple
+                  chips
+                  closable-chips
+                  @update:search="handleSearch($event)"
+                  :hide-no-data="false"
+                  @keydown.enter="(e) => handleEnterKey(e)"
+                  @blur="handleBlur()"
+              >
+                <template v-slot:no-data>
+                  <VListItem @click="addCustomUser()">
+                    <VListItemTitle>
+                      Add {{ userSearch }} in the filter
+                    </VListItemTitle>
+                  </VListItem>
+                </template>
+              </VCombobox>
+            </VCol>
+          </VRow>
+        </div>
+    </template>
+
 
   </BaseDataTable>
 </template>
@@ -682,5 +714,10 @@ onMounted(async () => {
 .action-menu-item:hover {
   background-color: #f0f5f9;
 }
-
+.filter-container {
+  transition: all 0.2s ease;
+}
+.filter-container:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 </style>
