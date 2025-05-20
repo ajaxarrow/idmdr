@@ -47,7 +47,7 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
       mainContent: markRaw(MapProvincesMainContent)
     },
     {
-      name: 'Sectors',
+      name: 'Associated Area',
       icon: markRaw(PhFactory),
       header: markRaw(MapSectorsHeader),
       mainContent: markRaw(MapSectorsMainContent)

@@ -74,7 +74,7 @@ onMounted(() => {
           <VRadio color="bs50" :value="3" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Within Organization</p>
+                <p class="radio-text-heading">Within CMI</p>
                 <p class="radio-text-subtitle">The {{props.type == 'project' ? 'project' : 'CMI'}}'s information is exclusively visible to members within the consortium member institutions.</p>
               </div>
             </template>
@@ -82,7 +82,7 @@ onMounted(() => {
           <VRadio color="bs50" :value="4" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Within All Organization</p>
+                <p class="radio-text-heading">Within All CMI</p>
                 <p class="radio-text-subtitle">The {{props.type == 'project' ? 'project' : ' CMI'}}'s information is visible to all members of any consortium member institutions</p>
               </div>
             </template>

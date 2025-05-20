@@ -5,9 +5,15 @@ import PostListViewContent from "../components/PostListViewContent.vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import PostDataTable from "../components/PostDataTable.vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {onMounted} from "vue";
 const {isSmall, isTablet} = useScreenStore();
 const {userData} = useUserStore()
+const {setSnackbarMessage} = useSnackbarStore()
 
+onMounted(async () => {
+  await setSnackbarMessage()
+})
 </script>
 
 <template>

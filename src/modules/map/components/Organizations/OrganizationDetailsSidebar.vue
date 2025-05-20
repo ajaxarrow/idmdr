@@ -155,7 +155,7 @@ onUnmounted(() => {
                   />
                   <div class="ml-2">
                     <p class="default" style="font-size: 15px; font-weight: 600;">{{ repository.title }}</p>
-                    <p class="default" style="font-size: 13px; ">{{ repository.owner_data?.email }}</p>
+                    <p class="default" style="font-size: 13px; ">{{ repository.owner_data?.first_name}} {{ repository.owner_data?.last_name}}</p>
                   </div>
                 </div>
               </RouterLink>

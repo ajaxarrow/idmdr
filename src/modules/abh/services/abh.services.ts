@@ -35,11 +35,11 @@ export const useAbhServices = () => {
 
             if (type === 'create') {
                 setTimeout(async function () {
-                    window.location.href = `/my-repositories/${techID}/abhs/`;
+                    window.location.href = `/repositories/${techID}/abhs/`;
                 }, 1000);
             } else {
                 setTimeout(async function () {
-                    window.location.href = `/my-repositories/${techID}/abhs/${res.data.uuid}`;
+                    window.location.href = `/repositories/${techID}/abh/${res.data.uuid}`;
                 }, 1000);
             }
         } catch (e) {

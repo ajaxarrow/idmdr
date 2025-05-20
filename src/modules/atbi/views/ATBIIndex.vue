@@ -5,9 +5,15 @@ import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {PhPlus} from "@phosphor-icons/vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import ATBIDataTable from "../components/ATBIDataTable.vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {onMounted} from "vue";
 
 const {userData, user} = useUserStore()
 const {isSmall, isTablet} = useScreenStore();
+const {setSnackbarMessage} = useSnackbarStore()
+onMounted(async () => {
+  await setSnackbarMessage()
+})
 </script>
 
 <template>

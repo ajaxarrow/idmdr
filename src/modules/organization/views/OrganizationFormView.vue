@@ -667,15 +667,15 @@ onMounted(async () => {
           <VRadio color="bs50" :value="3" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Within Organization</p>
-                <p class="radio-text-subtitle">The organization's information is exclusively visible to members within the consortium member institutions.</p>
+                <p class="radio-text-heading">Within CMI</p>
+                <p class="radio-text-subtitle">The CMI's information is exclusively visible to members within the consortium member institutions.</p>
               </div>
             </template>
           </VRadio>
           <VRadio color="bs50" :value="4" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Within All Organization</p>
+                <p class="radio-text-heading">Within All CMI</p>
                 <p class="radio-text-subtitle">The CMI's information is visible to all members of any consortium member institutions</p>
               </div>
             </template>
@@ -684,7 +684,7 @@ onMounted(async () => {
       </div>
       <VDivider/>
       <div class="px-6 py-6">
-        <label class="input-label mb-3">Organization Type</label>
+        <label class="input-label mb-3">CMI Type</label>
         <VRadioGroup hide-details v-model="organizationData.org_type">
           <VRadio color="bs50" :value="1" class="my-3">
             <template v-slot:label>
@@ -738,7 +738,7 @@ onMounted(async () => {
       </div>
       <VDivider/>
       <div class="px-6 py-6">
-        <label class="input-label mb-3">Sub Organization Type</label>
+        <label class="input-label mb-3">Sub CMI Type</label>
         <VRadioGroup hide-details v-model="organizationData.sub_org_type">
           <VRadio color="bs50" :value="1" class="my-3">
             <template v-slot:label>
@@ -1086,7 +1086,7 @@ onMounted(async () => {
           <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
         </div>
         <div class="mb-5">
-          <label class="input-label">Organization Logo/Image</label>
+          <label class="input-label">CMI Logo/Image</label>
           <div v-if="hasImage" class="my-3">
             <VDivider/>
             <div class="d-flex align-center justify-space-between pa-2" >
@@ -1119,7 +1119,7 @@ onMounted(async () => {
           <VFileInput
               v-else
               @change="handleUploadChange"
-              label="Choose Organization Image by Clicking Here"
+              label="Choose CMI Image by Clicking Here"
               class="my-2"
               rounded="lg"
               density="comfortable"

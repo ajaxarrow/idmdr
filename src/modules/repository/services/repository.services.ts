@@ -178,13 +178,13 @@ export const useRepositoryServices = () => {
         if(!isEmptyObject(repository.geojson)){
           await addSector({
             address: repository.location || 'N/A',
-            description: repository.description,
+            description: repository.description || '',
             name: repository.title,
             parent: 'Repository',
             parent_id: res.data.uid,
             geojson: repository.geojson,
             visibility: repository.visibility,
-            image: repository.image,
+            image: repository.image || '',
             tags: repository.tags,
             owner_id: userData.uid
           }, false)
@@ -192,7 +192,7 @@ export const useRepositoryServices = () => {
 
 
         await localStorage.setItem('snackbarmessage', JSON.stringify({
-          message: 'Repository created successfully',
+          message: 'Project created successfully',
           status: 'success'
         }))
         setTimeout(async function() {
@@ -215,7 +215,7 @@ export const useRepositoryServices = () => {
           }
         }
         await localStorage.setItem('snackbarmessage', JSON.stringify({
-          message: 'Repository updated successfully',
+          message: 'Project updated successfully',
           status: 'success'
         }))
         setTimeout(async function() {
@@ -371,7 +371,7 @@ export const useRepositoryServices = () => {
       geojson: isEmptyObject(repo.geojson) ? {} : repo.geojson,
       com_extra: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
       commercialization: isEmptyObject(repo.com_extra) ? {} : repo.com_extra,
-      image: repo.image || 'https://dummyimage.com/600x400/023768/fff.png&text=Repo',
+      image: repo.image || 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1',
       created_at: repo.created_at || "",
       updated_at: repo.updated_at || "",
       owner_id: repo.owner_id || "",
@@ -697,7 +697,7 @@ export const useRepositoryServices = () => {
         slug: repo.uid,
         type: repo.type,
         title: repo.title,
-        image: repo.image
+        image: repo.image || 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'
       }));
 
       myRepositories.value = [...repositories];

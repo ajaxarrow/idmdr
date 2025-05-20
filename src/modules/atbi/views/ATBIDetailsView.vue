@@ -15,7 +15,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
-
+const {setSnackbarMessage} = useSnackbarStore()
 const {fetchRepositoryIDsByUser} = useRepositoryServices()
 const {userData} = useUserStore()
 const { route, router } = useRouting()
@@ -65,6 +65,7 @@ const isSlugInTechList = (atbi: ATBI | null | undefined, repoList: Repository[])
   }
 
   onMounted(async() => {
+    await setSnackbarMessage()
     pageLoading.value = true
 
     atbiData.value = await fetchAtbiData(route.params.slug as string)

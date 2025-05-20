@@ -5,6 +5,13 @@ import MainLayout from "../../../core/layouts/MainLayout.vue";
 // import ExpertListViewContent from "../components/ExpertListViewContent.vue";
 // import {useUserStore} from "../../../core/stores/user.store.ts";
 import ExpertDataTable from "../components/ExpertDataTable.vue";
+import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+import {onMounted} from "vue";
+const {setSnackbarMessage} = useSnackbarStore()
+
+onMounted(async () => {
+  await setSnackbarMessage()
+})
 // const {isSmall, isTablet} = useScreenStore();
 // const {userData} = useUserStore()
 </script>

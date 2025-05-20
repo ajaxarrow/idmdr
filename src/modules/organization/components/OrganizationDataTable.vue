@@ -428,7 +428,7 @@ onMounted(async () => {
             size="36"
             class="me-2"
         >
-          <VImg :src="item.image as string" alt="Project" />
+          <VImg :src="item.image as string" alt="CMI" />
         </VAvatar>
         <div>
           <p class="font-weight-medium mb-0">{{ item.name }} ({{item.acronym}})</p>

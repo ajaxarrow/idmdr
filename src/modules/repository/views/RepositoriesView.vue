@@ -5,7 +5,8 @@
   import RepositoryListViewContent from "../components/RepositoryListViewContent.vue";
   import {useUserStore} from "../../../core/stores/user.store.ts";
   import RepositoryDataTable from "../components/RepositoryDataTable.vue";
-
+  import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
+  const {setSnackbarMessage} = useSnackbarStore()
   const {user, userData} = useUserStore()
   const path = ref('repositories')
   const {route} = useRouting();
@@ -27,6 +28,7 @@
   })
 
   onMounted(async () => {
+    await setSnackbarMessage()
     await init();
   })
 </script>

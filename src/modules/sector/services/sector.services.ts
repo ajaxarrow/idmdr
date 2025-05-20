@@ -75,7 +75,7 @@ export const useSectorServices = () => {
 
       if(useInForm){
         await localStorage.setItem('snackbarmessage', JSON.stringify({
-          message: `Sector ${type === 'create' ? 'added' : 'updated'} successfully`,
+          message: `Associated Area ${type === 'create' ? 'added' : 'updated'} successfully`,
           status: 'success'
         }))
         setTimeout(async function() {
@@ -121,7 +121,7 @@ export const useSectorServices = () => {
         created_at: data.created_at || '',
         updated_at: data.updated_at || '',
         description: data.description || '',
-        image: data.image || '',
+        image: data.image || 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1',
         tags: data.tags ? stringToArray(data.tags) : '',
         parent: data.parent || '',
         parent_id: data.parent_id || '',

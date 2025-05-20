@@ -21,7 +21,7 @@ onMounted(() => {
 <template>
   <VTextField
       v-model="searchedSector"
-      placeholder="Search Sectors"
+      placeholder="Search Associated Areas"
       hide-details
       rounded="lg"
       density="comfortable"

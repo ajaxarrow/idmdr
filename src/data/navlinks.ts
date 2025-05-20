@@ -59,7 +59,7 @@ export const navLinks = [
   },
   ...(userData.is_superuser ? [
     {
-      name: 'Sectors',
+      name: 'Associated Areas',
       link: '/sectors',
       icon: PhMapTrifold
       },

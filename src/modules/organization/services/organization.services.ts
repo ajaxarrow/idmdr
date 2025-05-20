@@ -218,7 +218,7 @@ export const useOrganizationServices = () => {
         }
         await addMemberToOrganization(res.data.uid);
         await localStorage.setItem('snackbarmessage', JSON.stringify({
-          message: 'Organization created successfully',
+          message: 'CMI created successfully',
           status: 'success'
         }))
         setTimeout(async function() {
@@ -242,7 +242,7 @@ export const useOrganizationServices = () => {
           }
         }
         await localStorage.setItem('snackbarmessage', JSON.stringify({
-          message: 'Organization updated successfully',
+          message: 'CMI updated successfully',
           status: 'success'
         }))
         setTimeout(async function() {
@@ -331,7 +331,7 @@ export const useOrganizationServices = () => {
       website: organization?.website ?? '',
       geojson: isEmptyObject(organization?.geojson) ? {} : organization.geojson,
       is_public: organization?.is_public ?? false,
-      image: organization?.image ?? 'https://dummyimage.com/600x400/023768/fff.png&text=Org+Image',
+      image: organization?.image ?? 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1',
       type: organization?.org_type ?? '',
       tel_phone: organization?.tel_phone ?? '',
       president: organization?.president ?? '',

@@ -149,10 +149,10 @@
                   cover
                   height="40px"
                   width="40px"
-                  :src="selectedSector.owner ? selectedSector.owner ?.profile_picture!  : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
+                  :src="selectedSector.owner?.profile_picture ? selectedSector.owner?.profile_picture!  : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
               />
               <div class="ml-2" style="line-height: 20px">
-                <p class="topic-subtitle">{{ selectedSector.owner  ? selectedSector.owner ?.username : ''}}</p>
+                <p class="topic-subtitle">{{ selectedSector.owner  ? `${selectedSector.owner?.first_name} ${selectedSector.owner?.last_name}` : ''}}</p>
                 <p class="text-gs60" style="font-size: 14px"> {{ new Date(selectedSector?.updated_at as string).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }) }}</p>
               </div>
             </div>
@@ -204,7 +204,7 @@
                 />
                 <div class="ml-2">
                   <p class="default" style="font-size: 15px; font-weight: 600;">{{ selectedSector.repoData?.title }}</p>
-                  <p class="default" style="font-size: 13px; ">{{ selectedSector.repoData?.owner_data?.email }}</p>
+                  <p class="default" style="font-size: 13px; ">{{ selectedSector.repoData?.owner_data?.first_name }} {{selectedSector.repoData?.owner_data?.last_name}}</p>
                 </div>
               </div>
             </RouterLink>

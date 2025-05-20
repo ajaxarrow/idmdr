@@ -24,6 +24,7 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 
 const {showSnackbarMessage} = useSnackbarStore()
+const {setSnackbarMessage} = useSnackbarStore()
 const {isSmall, isTablet} = useScreenStore();
 const {userData} = useUserStore()
 const {route} = useRouting()
@@ -109,6 +110,7 @@ const deleteABHCallback = async (id: string) => {
 
 onMounted(async () => {
   await fetchRepositoryData(<string>route.params.slug);
+  await setSnackbarMessage()
   const allUserRepo = await fetchRepositoryIDsByUser();
   if(isSlugInRepoList(repository.value, allUserRepo)) {
     isMember.value = true;

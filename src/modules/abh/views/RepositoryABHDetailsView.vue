@@ -20,7 +20,8 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 import NotFound from "../../../assets/images/404.svg";
 
-const {showSnackbarMessage} = useSnackbarStore()
+const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore()
+
 const {userData} = useUserStore()
 const {route, router} = useRouting()
 const {repository} = useRepositoryStore();
@@ -52,6 +53,7 @@ const deleteABHCallback = async (id: string) => {
 }
 
 onMounted(async () => {
+  await setSnackbarMessage()
   loading.value = true
   abh.value = await fetchAbhData(<string>route.params.slug)
   await fetchRepositoryData(<string>route.params.repo);

@@ -304,7 +304,7 @@ onUnmounted(() => {
       :imageSrc="previewImage"
       @closeOverlay="isImagePreviewed = false"
   />
-  <MainLayout :title="formType === FormType.edit ? 'Edit Sector' : 'New Sector'">
+  <MainLayout :title="formType === FormType.edit ? 'Edit Associated Area' : 'New Associated Area'">
     <div v-if="pageLoading" class="loading-state-container h-screen">
       <VProgressCircular
           indeterminate
@@ -327,7 +327,7 @@ onUnmounted(() => {
         </div>
         <div>
           <p class="text-heading d-flex align-center">
-            {{formType === FormType.edit ? 'Edit Sector' : 'Create New Sector'}}
+            {{formType === FormType.edit ? 'Edit Associated Area' : 'Create New Associated Area'}}
           </p>
           <p class="text-subtitle">
             A sector is an area that represents an object
@@ -358,16 +358,16 @@ onUnmounted(() => {
           <VRadio color="bs50" :value="3" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Within Organization</p>
-                <p class="radio-text-subtitle">The sector's information is exclusively visible to members within the organization.</p>
+                <p class="radio-text-heading">Within CMI</p>
+                <p class="radio-text-subtitle">The sector's information is exclusively visible to members within the CMI.</p>
               </div>
             </template>
           </VRadio>
           <VRadio color="bs50" :value="4" class="my-3">
             <template v-slot:label>
               <div>
-                <p class="radio-text-heading">Within All Organization</p>
-                <p class="radio-text-subtitle">The sector's information is visible to all members of any organization</p>
+                <p class="radio-text-heading">Within All CMI</p>
+                <p class="radio-text-subtitle">The sector's information is visible to all members of any CMI</p>
               </div>
             </template>
           </VRadio>
@@ -431,7 +431,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="mb-3">
-          <label class="input-label">Sector Title<span class="text-pink">*</span></label>
+          <label class="input-label">Associated Area Title<span class="text-pink">*</span></label>
           <VTextField
               v-model="sectorData.name"
               placeholder="E.g. Soil Health Monitoring: Databases on Agricultural Lands Across Borders"
@@ -515,7 +515,7 @@ onUnmounted(() => {
           </VAutocomplete>
         </div>
         <div class="mb-3">
-          <label class="input-label">Sector Site of Implementation<span class="text-pink">*</span></label>
+          <label class="input-label">Associated Area Site of Implementation<span class="text-pink">*</span></label>
           <VTextField
               v-model="sectorData.address"
               placeholder="E.g. Musuan, Bukidnon"

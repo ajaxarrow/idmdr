@@ -41,7 +41,7 @@ const showFilters = ref(false);
 
 const deleteSectorCallback = async (id: string) => {
   await deleteSector(id);
-  showSnackbarMessage('Sector Deleted Successfully', Status.success)
+  showSnackbarMessage('Associated Area Deleted Successfully', Status.success)
   await loadSectors();
 }
 
@@ -172,18 +172,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <MainLayout title="Sectors">
+  <MainLayout title="Associated Areas">
     <BaseDataTable
         id="uid"
-        title="All Sectors"
-        subtitle="Browse and manage associated locations or sectors in NOMCAARRD"
+        title="All Associated Areas"
+        subtitle="Browse and manage associated areas, boundaries and locations in NOMCAARRD"
         :headers="headers"
         :items="sectors"
         :loading="loading"
         :totalItems="totalItems"
-        searchPlaceholder="Search Sectors"
-        emptyStateHeader="No Sectors Found"
-        emptyStateDescription="No sectors found. Please check your filters or add a new sector."
+        searchPlaceholder="Search Associated Areas"
+        emptyStateHeader="No Associated Areas Found"
+        emptyStateDescription="No associated areas found. Please check your filters or add a new associated area."
         :filters="tableFilters"
         :itemsPerPageOptions="itemsPerPage"
         @update:search="search = $event"
@@ -210,7 +210,7 @@ onMounted(async () => {
             style="font-size: 14px !important"
         >
           <PhPlus size="16" class="mr-2" />
-          New Sector
+          New Associated Area
         </VBtnPrimaryFilled>
       </template>
       <template #item.name="{ item }">

@@ -163,7 +163,7 @@ export const useAtbiServices = () => {
         const baseData = {
             uuid: atbi.uuid,
             name: atbi.name || '',
-            logo: atbi.logo || 'https://dummyimage.com/600x400/023768/fff.png&text=ATBI',
+            logo: atbi.logo || 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1',
             description: atbi.description || '',
             owner: atbi.owner,
             ownerData: atbi.ownerData,

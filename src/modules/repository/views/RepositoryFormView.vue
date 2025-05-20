@@ -861,7 +861,7 @@ onMounted( async () => {
           </VAutocomplete>
         </div>
         <div class="mb-3" v-if="repositoryData.description">
-          <label class="input-label">Abstract<span class="text-pink">*</span></label>
+          <label class="input-label">Description<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="repositoryData.description"
               @update:modelValue="$event => (repositoryData.description = $event)"
@@ -1438,7 +1438,7 @@ onMounted( async () => {
               @update:modelValue="$event => (repositoryData.additional_info = $event)"
               placeholder="Enter additional information related to this project "
           />
-          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>
+<!--          <p class="pl-2 pt-2" style="color: #b00020; font-size: 12px;" v-if="errorMessage.description">{{errorMessage.description}}</p>-->
         </div>
         <div class="mb-3">
           <label class="input-label">Tags<span class="text-pink">*</span></label>
