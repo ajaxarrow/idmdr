@@ -4,14 +4,11 @@ import {PhX} from "@phosphor-icons/vue";
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import {useMapStore} from "../../stores/map.store.ts";
 import {useRepositoryServices} from "../../../repository/services/repository.services.ts";
-import {Organization} from "../../../../interfaces/organization.interface.ts";
-
-import {useUserStore} from "../../../../core/stores/user.store.ts";
 import {useRepositoryStore} from "../../../repository/stores/repository.store.ts";
 const {selectedRepository, removeSelectedRepository} = useRepositoryStore();
 const {resetToDefault} = useMapStore();
 const {fetchRepositoriesByUser} = useRepositoryServices()
-const {userData} = useUserStore()
+
 
 const pageLoading = ref(false);
 const allUserRepo = ref<Repository[]>([])
@@ -20,13 +17,13 @@ const reachEnd = ref(false)
 const lastItemValue = ref(1);
 const observerReady = ref(false)
 const scrollableContainer = ref<HTMLElement | null>(null);
-const scrollToTop = () => {
-  if (scrollableContainer.value) {
-    if ("scrollTo" in scrollableContainer.value) {
-      scrollableContainer.value.scrollTo({top: 0, behavior: 'smooth'});
-    }
-  }
-};
+// const scrollToTop = () => {
+//   if (scrollableContainer.value) {
+//     if ("scrollTo" in scrollableContainer.value) {
+//       scrollableContainer.value.scrollTo({top: 0, behavior: 'smooth'});
+//     }
+//   }
+// };
 
 const isSlugInRepoList = (organization: Repository | null | undefined, orgList: Repository[]) => {
   return orgList.some(org => org.uid === organization?.uid);
