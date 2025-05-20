@@ -344,15 +344,23 @@ onMounted(async () => {
 <!--            Save as Draft-->
 <!--          </VBtnPrimaryAlt>-->
 <!--          <span v-if="formType == FormType.create" class="mx-2" >Or</span>-->
-          <VBtnPrimaryFilled
-              @click="formType === FormType.edit ? updatePostData() : addPostData(false)"
-              rounded="lg"
-              height="44px"
-              width="166px"
-          >
-            Submit
-          </VBtnPrimaryFilled>
+          <VTooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <VBtnPrimaryFilled
+                    :disabled="postData.title?.trim() == ''"
+                    @click="formType === FormType.edit ? updatePostData() : addPostData(false)"
+                    rounded="lg"
+                    height="44px"
+                    width="166px"
+                >
+                  Submit
+                </VBtnPrimaryFilled>
+              </div>
 
+            </template>
+            <span>The form can only be submitted if all required data is inputted.</span>
+          </VTooltip>
         </VRow>
       </div>
     </VForm>

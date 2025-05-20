@@ -284,14 +284,31 @@ onMounted(async () => {
           />
         </div>
         <VRow class="ma-0" justify="end">
-          <VBtnPrimaryFilled
-              @click="formType === FormType.edit ? updateExpertData() : addExpertData()"
-              rounded="lg"
-              height="44px"
-              width="166px"
-          >
-            Submit
-          </VBtnPrimaryFilled>
+          <VTooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <VBtnPrimaryFilled
+                    :disabled="
+                      typeof expertData.name === 'object' &&
+                      expertData.name !== null &&
+                      ('first_name' in expertData.name) &&
+                      ('last_name' in expertData.name) &&
+                      expertData.name.first_name.trim() === '' || expertData.name.last_name.trim() === ''
+                    "
+
+                    @click="formType === FormType.edit ? updateExpertData() : addExpertData()"
+                    rounded="lg"
+                    height="44px"
+                    width="166px"
+                >
+                  Submit
+                </VBtnPrimaryFilled>
+              </div>
+
+            </template>
+            <span>The form can only be submitted if all required data is inputted.</span>
+          </VTooltip>
+
         </VRow>
       </div>
     </VForm>
