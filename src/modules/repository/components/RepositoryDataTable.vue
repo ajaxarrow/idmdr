@@ -80,22 +80,38 @@ const props = defineProps({
   }
 })
 
+const handleEnterKey = (event: KeyboardEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+  addCustomUser();
+  return false;
+};
+
+// Handle blur event
+const handleBlur = () => {
+  addCustomUser();
+};
+
 const addCustomUser = async () => {
-  const newUser: CustomUserData = {
-    type: 'custom',
-    data: {
-      username: userSearch.value as string,
-      first_name: userSearch.value as string,
-      last_name: '',
-      email: '',
-      uid: ''
-    }
-  };
-  selectedUsers.value?.push(newUser);
-  userSearch.value = '';
-  //@ts-ignore
-  userRef.value.search = '';
-  await loadData()
+  if(userSearch.value.trim().length > 0){
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: userSearch.value as string,
+        first_name: userSearch.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    selectedUsers.value?.push(newUser);
+    //@ts-ignore
+    selectedUsers.value = selectedUsers.value?.filter(user => typeof user === 'object');
+    userSearch.value = '';
+    //@ts-ignore
+    userRef.value.search = '';
+    await loadData()
+  }
 }
 const manageRepoStatusCallback = async (id: string, isActive: boolean) => {
   await manageRepositoryStatus(id, isActive);
@@ -854,55 +870,83 @@ onMounted(async () => {
       </VCol>
     </template>
     <template #custom-filters>
-      <VCol cols="12" sm="6" md="4" lg="3">
-        <VAutocomplete
-            v-model="selectedUsersOption"
-            :items="includedUserOptions"
-            :item-title="user => user.title"
-            :item-value="user => user.value"
-            label="Included Fields"
-            hide-details
-            density="compact"
-            variant="outlined"
-            rounded="md"
-            color="primary"
-            base-color="gs60"
-            class="mb-3"
-            multiple
-            chips
-            closable-chips
-        />
-      </VCol>
-      <VCol cols="12" sm="6" md="4" lg="3">
-        <VCombobox
-          ref="userRef"
-          v-model="selectedUsers"
-          :items="customUsers"
-          :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
-          :item-value="user => user.data ? `${user.data.first_name}` : ''"
-          label="User"
-          hide-details
-          density="compact"
-          variant="outlined"
-          rounded="md"
-          color="primary"
-          base-color="gs60"
-          class="mb-3"
-          multiple
-          chips
-          closable-chips
-          @update:search="handleSearch($event)"
-          :hide-no-data="false"
-        >
-          <template v-slot:no-data>
-            <VListItem @click="addCustomUser()">
-              <VListItemTitle>
-                Add {{ userSearch }} in the filter
-              </VListItemTitle>
-            </VListItem>
-          </template>
-        </VCombobox>
-      </VCol>
+      <!-- Container for both representative filters -->
+
+      <div class="filter-container w-100 border border-2 rounded-lg ma-0 ma-3 pa-3 border-primary position-relative">
+        <!-- Heading with tooltip for both fields -->
+        <div class="d-flex align-center mb-3">
+          <span class="font-weight-medium">User Filters</span>
+          <v-tooltip location="top">
+            <template v-slot:activator="{ props }">
+              <v-icon
+                  v-bind="props"
+                  size="small"
+                  class="ms-2"
+                  color="primary"
+              >
+                mdi-information-outline
+              </v-icon>
+            </template>
+            <span>These filters work together: first select which fields to include, then filter by specific users</span>
+          </v-tooltip>
+        </div>
+
+        <VRow class="ma-0">
+          <VCol cols="12" sm="6" md="6" lg="6">
+            <VAutocomplete
+                v-model="selectedUsersOption"
+                :items="includedUserOptions"
+                :item-title="user => user.title"
+                :item-value="user => user.value"
+                label="Included Fields"
+                hide-details
+                density="compact"
+                variant="outlined"
+                rounded="md"
+                color="primary"
+                base-color="gs60"
+                class="mb-3"
+                multiple
+                chips
+                closable-chips
+                hint="Select which user fields to include in the filter"
+            />
+          </VCol>
+          <VCol cols="12" sm="6" md="6" lg="6">
+            <VCombobox
+                ref="userRef"
+                v-model="selectedUsers"
+                :items="customUsers"
+                :item-title="user => user.data ? `${user.data.first_name} ${user.data.last_name || ''}` : 'Unknown'"
+                :item-value="user => user.data ? `${user.data.first_name}` : ''"
+                label="User"
+                hide-details
+                density="compact"
+                variant="outlined"
+                rounded="md"
+                color="primary"
+                base-color="gs60"
+                class="mb-3"
+                multiple
+                chips
+                closable-chips
+                @update:search="handleSearch($event)"
+                :hide-no-data="false"
+                hint="Select or add specific users, experts or custom users to filter the results"
+                @keydown.enter="(e: any) => handleEnterKey(e)"
+                @blur="handleBlur()"
+            >
+              <template v-slot:no-data>
+                <VListItem @click="addCustomUser()">
+                  <VListItemTitle>
+                    Add {{ userSearch }} in the filter
+                  </VListItemTitle>
+                </VListItem>
+              </template>
+            </VCombobox>
+          </VCol>
+        </VRow>
+      </div>
     </template>
 
   </BaseDataTable>
@@ -920,5 +964,10 @@ onMounted(async () => {
 .action-menu-item:hover {
   background-color: #f0f5f9;
 }
-
+.filter-container {
+  transition: all 0.2s ease;
+}
+.filter-container:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 </style>

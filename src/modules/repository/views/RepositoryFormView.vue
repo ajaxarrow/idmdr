@@ -181,6 +181,11 @@ const techOwnerRef = ref(null);
 const leadRef = ref(null);
 const techGenRef = ref(null);
 
+const techGenData = ref<any[]>([])
+const techOwnerData = ref<any[]>([])
+const collaboratorsData = ref<any[]>([])
+
+
 // Reusable search query handling
 const searchQueries = {
   author: ref(''),
@@ -193,6 +198,25 @@ const searchQueries = {
 const handleSearch = (field: string, query: any) => {
   // @ts-ignore
   searchQueries[field].value = query;
+};
+
+const handleEnterKey = (field: string, event: KeyboardEvent) => {
+  // @ts-ignore
+  if (searchQueries[field].value) {
+    event.preventDefault();
+    event.stopPropagation();
+    addCustomUser(field);
+    return false;
+  }
+  return false;
+};
+
+// Handle blur event
+const handleBlur = (field: string) => {
+  // @ts-ignore
+  if (searchQueries[field].value) {
+    addCustomUser(field);
+  }
 };
 
 // Reusable function to add custom user for any field
@@ -208,7 +232,9 @@ const addCustomUser = (field: string) => {
         uid: ''
       }
     };
-    repositoryData.authorsData?.push(newUser);
+    collaboratorsData.value.push(newUser);
+    //@ts-ignore
+    collaboratorsData.value = collaboratorsData.value?.filter(user => typeof user === 'object');
     searchQueries.author.value = '';
     //@ts-ignore
     authorRef.value.search = '';
@@ -223,7 +249,9 @@ const addCustomUser = (field: string) => {
         uid: ''
       }
     };
-    repositoryData.techOwnerData?.push(newUser);
+    techOwnerData.value.push(newUser);
+    //@ts-ignore
+    techOwnerData.value = techOwnerData.value?.filter(user => typeof user === 'object');
     searchQueries.techOwner.value = '';
     //@ts-ignore
     techOwnerRef.value.search = '';
@@ -253,7 +281,9 @@ const addCustomUser = (field: string) => {
         uid: ''
       }
     };
-    repositoryData.techGeneratorData?.push(newUser);
+    techGenData.value.push(newUser);
+    //@ts-ignore
+    techGenData.value = techGenData.value?.filter(user => typeof user === 'object');
     searchQueries.techGen.value = '';
     //@ts-ignore
     techGenRef.value.search = '';
@@ -510,15 +540,15 @@ const addRepositoryData = async () => {
     repositoryData.affiliation = arrayToString(<string[]>repositoryData.affiliation)
     repositoryData.funding_agency = arrayToString(<string[]>repositoryData.funding_agency)
     repositoryData.author = JSON.stringify({
-      data: repositoryData.authorsData
+      data: collaboratorsData.value
     })
 
     repositoryData.tech_owner = JSON.stringify({
-      data: repositoryData.techOwnerData
+      data: techOwnerData.value
     })
 
     repositoryData.technology_generator = JSON.stringify({
-      data: repositoryData.techGeneratorData
+      data: techGenData.value
     })
     repositoryData.lead = JSON.stringify(repositoryData.leadData)
 
@@ -540,6 +570,8 @@ const addRepositoryData = async () => {
       repositoryData.affiliation = previousAffiliations.value
       repositoryData.industry = previousIndustries.value
       repositoryData.funding_agency = previousFundingAgencies.value
+      repositoryData.rpt = previousRPTs.value
+      repositoryData.adaptors = previousAdopters.value
       scrollToFirstErrorMessage()
     } else {
       clearFields();
@@ -584,14 +616,15 @@ const updateRepositoryData = async () => {
     repositoryData.affiliation = arrayToString(<string[]>repositoryData.affiliation)
     repositoryData.funding_agency = arrayToString(<string[]>repositoryData.funding_agency)
     repositoryData.author = JSON.stringify({
-      data: repositoryData.authorsData
+      data: collaboratorsData.value
     })
+
     repositoryData.tech_owner = JSON.stringify({
-      data: repositoryData.techOwnerData
+      data: techOwnerData.value
     })
 
     repositoryData.technology_generator = JSON.stringify({
-      data: repositoryData.techGeneratorData
+      data: techGenData.value
     })
     repositoryData.lead = JSON.stringify(repositoryData.leadData)
 
@@ -605,6 +638,8 @@ const updateRepositoryData = async () => {
       repositoryData.affiliation = previousAffiliations.value
       repositoryData.industry = previousIndustries.value
       repositoryData.funding_agency = previousFundingAgencies.value
+      repositoryData.rpt = previousRPTs.value
+      repositoryData.adaptors = previousAdopters.value
       scrollToFirstErrorMessage()
     } else {
       clearFields();
@@ -664,6 +699,12 @@ onMounted( async () => {
     }
     formType.value = FormType.edit
     Object.assign(repositoryData, {...repository.value});
+    //@ts-ignore
+    collaboratorsData.value = repositoryData.authorsData
+    //@ts-ignore
+    techOwnerData.value = repositoryData.techOwnerData
+    //@ts-ignore
+    techGenData.value = repositoryData.techGeneratorData
     // console.log(repositoryData.tags)
     // repositoryData.tags = stringToArray(<string>repositoryData.tags)
     repositoryData.geojson = JSON.stringify(repositoryData.geojson)
@@ -889,7 +930,7 @@ onMounted( async () => {
               ref="authorRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-              v-model="repositoryData.authorsData"
+              v-model="collaboratorsData"
               placeholder="Enter Collaborator"
               class="my-2"
               rounded="lg"
@@ -903,6 +944,8 @@ onMounted( async () => {
               closable-chips
               @update:search="handleSearch('author', $event)"
               :hide-no-data="false"
+              @keydown.enter="(e: any) => handleEnterKey('author', e)"
+              @blur="handleBlur('author')"
           >
             <template v-slot:no-data>
               <VListItem @click="addCustomUser('author')">
@@ -915,7 +958,7 @@ onMounted( async () => {
         </div>
         <div class="mb-3">
           <label class="input-label">Project Lead</label>
-          <VCombobox
+          <VAutocomplete
               ref="leadRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
@@ -928,17 +971,16 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :error-messages="errorMessage.commodity"
-              @update:search="handleSearch('lead', $event)"
-              :hide-no-data="false"
+
           >
-            <template v-slot:no-data>
-              <VListItem @click="addCustomUser('lead')">
-                <VListItemTitle>
-                  Add {{ searchQueries.lead }} as Project Lead
-                </VListItemTitle>
-              </VListItem>
-            </template>
-          </VCombobox>
+<!--            <template v-slot:no-data>-->
+<!--              <VListItem @click="addCustomUser('lead')">-->
+<!--                <VListItemTitle>-->
+<!--                  Add {{ searchQueries.lead }} as Project Lead-->
+<!--                </VListItemTitle>-->
+<!--              </VListItem>-->
+<!--            </template>-->
+          </VAutocomplete>
         </div>
         <div class="mb-3">
           <label class="input-label">Start Date</label>
@@ -1084,7 +1126,7 @@ onMounted( async () => {
           </div>
           <div class="mb-3">
             <label class="input-label">Funding Agency</label>
-            <VAutocomplete
+            <VCombobox
                 v-model="repositoryData.funding_agency as string[]"
                 placeholder="Select Funding Agency"
                 class="my-2"
@@ -1106,7 +1148,7 @@ onMounted( async () => {
                 ref="techGenRef"
                 :items="customUsers"
                 :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-                v-model="repositoryData.techGeneratorData"
+                v-model="techGenData"
                 placeholder="Select Technology Generator"
                 class="my-2"
                 rounded="lg"
@@ -1119,6 +1161,8 @@ onMounted( async () => {
                 closable-chips
                 :error-messages="errorMessage.technology_generator"
                 @update:search="handleSearch('techGen', $event)"
+                @keydown.enter="(e: any) => handleEnterKey('techGen', e)"
+                @blur="handleBlur('techGen')"
                 :hide-no-data="false"
             >
               <template v-slot:no-data>
@@ -1154,7 +1198,7 @@ onMounted( async () => {
                 ref="techOwnerRef"
                 :items="customUsers"
                 :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-                v-model="repositoryData.techOwnerData"
+                v-model="techOwnerData"
                 placeholder="Select Technology Owners"
                 class="my-2"
                 rounded="lg"
@@ -1168,6 +1212,8 @@ onMounted( async () => {
                 :error-messages="errorMessage.tech_owner"
                 :hide-no-data="false"
                 @update:search="handleSearch('techOwner', $event)"
+                @keydown.enter="(e: any) => handleEnterKey('techOwner', e)"
+                @blur="handleBlur('techOwner')"
             >
               <template v-slot:no-data>
                 <VListItem @click="addCustomUser('techOwner')">
@@ -1199,8 +1245,8 @@ onMounted( async () => {
           <div class="mb-3">
             <label class="input-label">Patenting Status</label>
             <VAutocomplete
-                v-model="repositoryData.  is_patentable"
-                placeholder="Select Funding Agency"
+                v-model="repositoryData.is_patentable"
+                placeholder="Select Patenting Status"
                 class="my-2"
                 rounded="lg"
                 density="comfortable"
