@@ -132,6 +132,7 @@
     </div>
     <div v-else class="sidebar-content-wrapper">
       <VImg
+          style="flex: none;"
           rounded="lg"
           class="mx-auto"
           :cover="true"
