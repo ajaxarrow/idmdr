@@ -1139,7 +1139,7 @@ onMounted(async () => {
         </div>
         <div class="mb-10">
           <div v-if="attachments.length == 0">
-            <label class="input-label">File</label>
+            <label class="input-label">CMI Files</label>
             <div
                 class="my-2 file-upload-container"
                 :class="{'dropzone-active': active}"
