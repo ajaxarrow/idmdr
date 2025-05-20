@@ -57,8 +57,6 @@ const handleSearch = async (query: any) => {
   userSearch.value = query
 }
 
-const repData = ref<CustomUserData[]>([])
-
 const props = defineProps({
   isForUser: {
     type: Boolean,
@@ -682,7 +680,7 @@ onMounted(async () => {
                   closable-chips
                   @update:search="handleSearch($event)"
                   :hide-no-data="false"
-                  @keydown.enter="(e) => handleEnterKey(e)"
+                  @keydown.enter="(e: any) => handleEnterKey(e)"
                   @blur="handleBlur()"
               >
                 <template v-slot:no-data>

@@ -153,6 +153,7 @@ const handleSearch = (field: string, query: any) => {
 const active = ref(false)
 
 const handleEnterKey = (field: string, event: KeyboardEvent) => {
+  // @ts-ignore
   if (searchQueries[field].value) {
     event.preventDefault();
     event.stopPropagation();
@@ -164,6 +165,7 @@ const handleEnterKey = (field: string, event: KeyboardEvent) => {
 
 // Handle blur event
 const handleBlur = (field: string) => {
+  // @ts-ignore
   if (searchQueries[field].value) {
     addCustomUser(field);
   }
@@ -959,7 +961,7 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('rd_rep', $event)"
               :hide-no-data="false"
-              @keydown.enter="(e) => handleEnterKey('rd_rep', e)"
+              @keydown.enter="(e: any) => handleEnterKey('rd_rep', e)"
               @blur="handleBlur('rd_rep')"
           >
             <template v-slot:no-data>
@@ -990,7 +992,7 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('tt_rep', $event)"
               :hide-no-data="false"
-              @keydown.enter="(e) => handleEnterKey('tt_rep', e)"
+              @keydown.enter="(e: any) => handleEnterKey('tt_rep', e)"
               @blur="handleBlur('tt_rep')"
           >
             <template v-slot:no-data>
@@ -1022,7 +1024,7 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('ic_rep', $event)"
               :hide-no-data="false"
-              @keydown.enter="(e) => handleEnterKey('ic_rep', e)"
+              @keydown.enter="(e: any) => handleEnterKey('ic_rep', e)"
               @blur="handleBlur('ic_rep')"
           >
             <template v-slot:no-data>
@@ -1054,7 +1056,7 @@ onMounted(async () => {
               closable-chips
               @update:search="handleSearch('sc_rep', $event)"
               :hide-no-data="false"
-              @keydown.enter="(e) => handleEnterKey('sc_rep', e)"
+              @keydown.enter="(e: any) => handleEnterKey('sc_rep', e)"
               @blur="handleBlur('sc_rep')"
           >
             <template v-slot:no-data>
