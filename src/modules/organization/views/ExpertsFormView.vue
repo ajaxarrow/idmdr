@@ -288,14 +288,16 @@ onMounted(async () => {
             <template v-slot:activator="{ props }">
               <div v-bind="props">
                 <VBtnPrimaryFilled
-                    :disabled="
+                    :disabled="(
                       typeof expertData.name === 'object' &&
                       expertData.name !== null &&
-                      ('first_name' in expertData.name) &&
-                      ('last_name' in expertData.name) &&
-                      expertData.name.first_name.trim() === '' || expertData.name.last_name.trim() === ''
-                    "
-
+                      'first_name' in expertData.name &&
+                      'last_name' in expertData.name &&
+                      (
+                        expertData.name.first_name?.trim() === '' ||
+                        expertData.name.last_name?.trim() === ''
+                      )
+                    )"
                     @click="formType === FormType.edit ? updateExpertData() : addExpertData()"
                     rounded="lg"
                     height="44px"
