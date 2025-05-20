@@ -10,7 +10,7 @@ const userData = reactive({
   // profilePicture: user.value.user.profile_picture ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'
   email: user.value ? user.value.user.email : '@guestuser',
   username: user.value ? user.value.user.username : 'Guest User',
-  profilePicture: user.value ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
+  profilePicture: user.value && user.value.user.profile_picture != null ? user.value.user.profile_picture : 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
   uid: user.value ? user.value.user.uid: '',
   is_superuser: user.value ? user.value.user.is_superuser : false,
   is_active: user.value ? user.value.user.is_active : false,
