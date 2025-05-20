@@ -57,7 +57,7 @@ const active = ref(false);
 const isImagePreviewed = ref(false);
 const previewImage = ref('');
 const pageLoading = ref(false)
-
+const ownerData = ref<any>([])
 const toggleActive = () => {
   active.value = !active.value;
 };
@@ -148,21 +148,37 @@ const handleSearch = async (query: any) => {
   ownerSearch.value = query
 }
 
+const handleEnterKey = (event: KeyboardEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+  addCustomUser();
+  return false;
+};
+
+// Handle blur event
+const handleBlur = () => {
+  addCustomUser();
+};
+
 const addCustomUser = () => {
-  const newUser: CustomUserData = {
-    type: 'custom',
-    data: {
-      username: ownerSearch.value as string,
-      first_name: ownerSearch.value as string,
-      last_name: '',
-      email: '',
-      uid: ''
-    }
-  };
-  atbiData.ownerData?.push(newUser);
-  ownerSearch.value = '';
-  //@ts-ignore
-  ownerRef.value.search = '';
+  if(ownerSearch.value.trim().length > 0){
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: ownerSearch.value as string,
+        first_name: ownerSearch.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    ownerData.value.push(newUser);
+    //@ts-ignore
+    ownerData.value = ownerData.value?.filter(user => typeof user === 'object');
+    ownerSearch.value = '';
+    //@ts-ignore
+    ownerRef.value.search = '';
+  }
 }
 
 const scrollToFirstErrorMessage = () => {
@@ -190,7 +206,7 @@ const addAtbiData = async() => {
     delete atbiData.logo;
   }
   atbiData.owners = JSON.stringify({
-    data: atbiData.ownerData
+    data: ownerData.value
   })
   await addAtbi(atbiData);
   if(hasErrorMessages(errorMessage)){
@@ -211,7 +227,7 @@ const updateAtbiData = async() => {
     delete atbiData.logo;
   }
   atbiData.owners = JSON.stringify({
-    data: atbiData.ownerData
+    data: ownerData.value
   })
   await updateAtbi(atbiData, atbiData.uuid as string);
   if(hasErrorMessages(errorMessage)){
@@ -243,6 +259,8 @@ onMounted(async () => {
       await router.push({name: 'repositories'})
     }
     Object.assign(atbiData, {...atbi});
+    //@ts-ignore
+    ownerData.value = atbiData.ownerData
     if (Array.isArray(atbiData.image_urls)) {
       for (let i = 0; i < atbiData.image_urls.length; i++) {
         atbiImages.value.push({
@@ -348,7 +366,7 @@ onMounted(async () => {
               ref="ownerRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
-              v-model="atbiData.ownerData"
+              v-model="ownerData"
               placeholder="Select Owners"
               class="my-2"
               rounded="lg"
@@ -360,6 +378,8 @@ onMounted(async () => {
               chips
               closable-chips
               @update:search="handleSearch($event)"
+              @keydown.enter="(e: any) => handleEnterKey(e)"
+              @blur="handleBlur()"
               :hide-no-data="false"
           >
             <template v-slot:no-data>
@@ -559,14 +579,22 @@ onMounted(async () => {
           />
         </div>
         <VRow class="ma-0" justify="end" align="center">
-          <VBtnPrimaryFilled
-              @click="formType === FormType.edit ? updateAtbiData() : addAtbiData()"
-              rounded="lg"
-              height="44px"
-              width="166px"
-          >
-            Submit
-          </VBtnPrimaryFilled>
+          <VTooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <div v-bind="props">
+                <VBtnPrimaryFilled
+                    @click="formType === FormType.edit ? updateAtbiData() : addAtbiData()"
+                    rounded="lg"
+                    height="44px"
+                    width="166px"
+                    :disabled="atbiData.name.trim() == ''"
+                >
+                  Submit
+                </VBtnPrimaryFilled>
+              </div>
+            </template>
+            <span>The form can only be submitted if all required data is inputted.</span>
+          </VTooltip>
 
         </VRow>
       </div>

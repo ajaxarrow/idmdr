@@ -50,22 +50,38 @@ const handleSearch = async (query: any) => {
   userSearch.value = query
 }
 
+const handleEnterKey = (event: KeyboardEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+  addCustomUser();
+  return false;
+};
+
+// Handle blur event
+const handleBlur = () => {
+  addCustomUser();
+};
+
 const addCustomUser = async () => {
-  const newUser: CustomUserData = {
-    type: 'custom',
-    data: {
-      username: userSearch.value as string,
-      first_name: userSearch.value as string,
-      last_name: '',
-      email: '',
-      uid: ''
-    }
-  };
-  selectedUsers.value?.push(newUser);
-  userSearch.value = '';
-  //@ts-ignore
-  userRef.value.search = '';
-  await loadData()
+  if(userSearch.value.trim() != ''){
+    const newUser: CustomUserData = {
+      type: 'custom',
+      data: {
+        username: userSearch.value as string,
+        first_name: userSearch.value as string,
+        last_name: '',
+        email: '',
+        uid: ''
+      }
+    };
+    selectedUsers.value?.push(newUser);
+    //@ts-ignore
+    selectedUsers.value = selectedUsers.value?.filter(user => typeof user === 'object');
+    userSearch.value = '';
+    //@ts-ignore
+    userRef.value.search = '';
+    await loadData()
+  }
 }
 const deleteAtbiCallback = async (uuid: string) => {
   await deleteAtbi(uuid);
@@ -312,6 +328,8 @@ onMounted(async() => {
             closable-chips
             @update:search="handleSearch($event)"
             :hide-no-data="false"
+            @keydown.enter="(e: any) => handleEnterKey(e)"
+            @blur="handleBlur()"
         >
           <template v-slot:no-data>
             <VListItem @click="addCustomUser()">
