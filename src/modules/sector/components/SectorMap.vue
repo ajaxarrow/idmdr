@@ -25,12 +25,17 @@ import MaplibreGeocoder from '@maplibre/maplibre-gl-geocoder';
 import '@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css';
 import * as maplibregl from 'maplibre-gl';
 import {geocoderApi} from "../utils/geocoder.utils.ts";
+import {useRepositoryStore} from "../../repository/stores/repository.store.ts";
+import {useRepositoryServices} from "../../repository/services/repository.services.ts";
+import RepositoryDetailsSidebar from "../../map/components/Projects/RepositoryDetailsSidebar.vue";
 
 const {fetchOrganizations, fetchOrganizationByAdmin} = useOrganizationServices()
+const {fetchRepositories, fetchAllRepositories} = useRepositoryServices()
 const {user, userData} = useUserStore()
 const {setGeoJSONData, storedGeoJSON, confirmDialog} = useSectorMapStore()
 const {mapOrganizations} = useOrganizationStore();
-const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries} = useMapStore();
+const {mapRepositories} = useRepositoryStore()
+const {map, lnglat, setupBoundaries, setupBoundariesforOrganization, clickedBoundary, removeBoundaries, setupBoundariesforRepository, removeRepositoryBoundaries} = useMapStore();
 const {dotDensityLayer, loadDotDensityLayer, removeDotDensityLayer, loadRandomCoordinates, limits, colorScale, provinceConsortiumsLayer, removeConsortiumLayer, loadConsortiumLayer, provinceRepositoriesLayer, loadConsortiumRepoLayer, colorScalePink} = useFilterStore()
 const {removeSelectedSector, allSectors} = useSectorsStore();
 const {fetchSectors, fetchSectorsByAdmin} = useSectorServices()
@@ -170,9 +175,11 @@ onMounted(async () => {
   if(userData.is_superuser) {
     await fetchSectorsByAdmin()
     await fetchOrganizationByAdmin()
+    await fetchAllRepositories(1, 1000);
   } else {
     await fetchSectors()
     await fetchOrganizations()
+    await fetchRepositories()
   }
   initMap();
   if(user.value && userData.is_approved){
@@ -201,6 +208,7 @@ onMounted(async () => {
   map.value?.on('style.load', async () => {
     await loadConsortiumLayer(true)
     await setupBoundariesforOrganization(mapOrganizations.value);
+    await setupBoundariesforRepository(mapRepositories.value);
     setupBoundaries(boundaries, 'Province');
     setupBoundaries(allSectors.value, 'Sector');
     loadRandomCoordinates(boundaries)
@@ -214,10 +222,12 @@ onMounted(async () => {
       removeBoundaries(boundaries);
       removeBoundaries(allSectors.value);
       removeBoundaries(mapOrganizations.value);
+      removeRepositoryBoundaries(mapRepositories.value);
     } else {
       setupBoundaries(boundaries, 'Province');
       setupBoundaries(allSectors.value, 'Sector');
       await setupBoundariesforOrganization(mapOrganizations.value);
+      await setupBoundariesforRepository(mapRepositories.value);
     }
   });
 
@@ -242,6 +252,9 @@ onUnmounted(()=> {
   />
   <transition name="fade">
     <OrganizationDetailsSidebar/>
+  </transition>
+  <transition name="fade">
+    <RepositoryDetailsSidebar/>
   </transition>
   <transition name="fade">
     <SectorDetailsSidebar/>

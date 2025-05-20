@@ -11,10 +11,13 @@ import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import boundaries from "../../../data/boundaries.ts";
+import {Repository} from "../../../interfaces/repository.interface.ts";
+import {useRepositoryStore} from "../../repository/stores/repository.store.ts";
 
 const {isEmptyObject} = useObjectChecker()
 const {selectSector, removeSelectedSector} = useSectorsStore();
 const {selectOrganization, removeSelectedOrganization} = useOrganizationStore();
+const {selectRepository, removeSelectedRepository} = useRepositoryStore();
 const {showSnackbarMessage} = useSnackbarStore();
 
 const map = shallowRef<null | Map>(null);
@@ -25,6 +28,7 @@ const popup = ref<Popup | null>(new Popup({
 }));
 const clickedBoundary = ref('');
 const color = ref('#00c16a');
+const repoColor = ref('#d486ef')
 const lnglat: LngLatLike = [124.6, 7.858930800481815];
 // const getCenter = (bbox: [number, number, number, number]) => {
 //   return [
@@ -71,7 +75,7 @@ const clickProvince = (boundary: Sector, type: string) => {
 
 const clickOrganization = (boundary: Organization) => {
   if(isEmptyObject(boundary.geojson)){
-    showSnackbarMessage('No location data available for this organization', Status.error)
+    showSnackbarMessage('No location data available for this CMI', Status.error)
   }
   if (boundary.name !== clickedBoundary.value) {
     removeBoundaries(boundaries);
@@ -79,12 +83,9 @@ const clickOrganization = (boundary: Organization) => {
     if (clickedBoundary.value) {
       map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
     }
-
     // @ts-ignore
     // const center = getCenter(boundary.bbox);
-
     // console.log(calculatePolygonSize(boundary.geojson));
-
     map.value?.fitBounds(
       // @ts-ignore
       boundary.bbox ? boundary.bbox : turf.bbox(boundary.geojson["geometry"]),
@@ -104,6 +105,9 @@ const clickOrganization = (boundary: Organization) => {
 const resetToDefault = (type: string) => {
   if(type === 'Organization') {
     removeSelectedOrganization()
+
+  } else if(type === 'Repository'){
+    removeSelectedRepository()
   } else {
     removeSelectedSector()
   }
@@ -210,6 +214,25 @@ const removeBoundaries = (boundaries: Sector[]) => {
   });
 };
 
+const removeRepositoryBoundaries = (boundaries: Repository[]) => {
+  boundaries.forEach((boundary: Repository) => {
+    const layerId = `id-${boundary.title}`;
+
+    if (map.value?.getLayer(layerId)) {
+      // Remove event listeners first
+      // map.value?.off('mouseover', layerId);
+      // // @ts-ignore
+      // map.value?.off('mouseleave', layerId);
+      // map.value?.off('click', layerId);
+
+      // Remove the layer and source from the map
+      map.value?.removeLayer(layerId);
+      map.value?.removeSource(boundary.title);
+    }
+  });
+};
+
+
 
 
 const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
@@ -282,6 +305,106 @@ const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
   });
 }
 
+const clickRepository = (boundary: Repository) => {
+  if(isEmptyObject(boundary.geojson)){
+    showSnackbarMessage('No location data available for this project', Status.error)
+  }
+  if (boundary.title !== clickedBoundary.value) {
+    removeBoundaries(boundaries);
+    selectRepository(boundary);
+    if (clickedBoundary.value) {
+      map.value?.setPaintProperty(`id-${clickedBoundary.value}`, 'fill-color', 'transparent');
+    }
+    // @ts-ignore
+    // const center = getCenter(boundary.bbox);
+    // console.log(calculatePolygonSize(boundary.geojson));
+    map.value?.fitBounds(
+        // @ts-ignore
+        boundary.bbox ? boundary.bbox : turf.bbox(boundary.geojson["geometry"]),
+        {padding: 30, duration: 2000}
+    )
+
+    map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
+    map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', repoColor.value);
+
+    clickedBoundary.value = boundary.title;
+  } else {
+    resetToDefault('Repository')
+    setupBoundaries(boundaries, 'Province');
+  }
+}
+const setupBoundariesforRepository = async (boundaries: Repository[]) => {
+  boundaries.forEach((boundary: Repository) => {
+    if(!isEmptyObject(boundary.geojson)){
+      // @ts-ignore
+      map.value?.addSource(boundary.title, {
+        type: 'geojson',
+        data: boundary.geojson,
+      });
+
+      map.value?.addLayer({
+        id: `id-${boundary.title}`,
+        type: 'fill',
+        source: boundary.title,
+        layout: {},
+        paint: {
+          'fill-opacity': 0,
+          'fill-color': 'transparent',
+        },
+      });
+
+      // @ts-ignore
+      map.value?.on('mouseover', `id-${boundary.title}`, (e) => {
+        if (boundary.title !== clickedBoundary.value) {
+          map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', .5);
+          map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-color', repoColor.value);
+        }
+
+        const popupContent = `<h4>${boundary.title}</h4>
+                              <p>${boundary.location}</p>`
+        popup.value?.setHTML(popupContent);
+        // @ts-ignore
+        popup.value?.setLngLat([e.lngLat.lng, e.lngLat.lat]);
+        // @ts-ignore
+        popup.value?.addTo(map.value);
+      });
+
+      // @ts-ignore
+      map.value?.on('mouseleave', `id-${boundary.title}`, () => {
+        if (boundary.title !== clickedBoundary.value) {
+          map.value?.setPaintProperty(`id-${boundary.title}`, 'fill-opacity', 0);
+        }
+        popup.value?.remove();
+      });
+
+
+      // @ts-ignore
+      map.value?.on('click', `id-${boundary.title}`, (e) => {
+        // @ts-ignore
+        if (map.value?.getZoom() < 6.25){
+          // @ts-ignore
+          map.value?.easeTo({
+            zoom: 6,
+            center: [e.lngLat.lng, e.lngLat.lat],
+            duration: 1000
+          });
+        }
+        else{
+          // @ts-ignore
+          map.value?.easeTo({
+            zoom: 8,
+            center: [e.lngLat.lng, e.lngLat.lat],
+            duration: 1000
+          });
+        }
+        clickRepository(boundary)
+      });
+    }
+
+  });
+}
+
+
 
 
 
@@ -301,4 +424,4 @@ const setupBoundariesforOrganization = async (boundaries: Organization[]) => {
 // }
 
 
-export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, removeBoundaries, resetToDefault, setupBoundariesforOrganization, clickOrganization, popup}))
+export const useMapStore = createGlobalState(() => ({map, clickProvince, color, lnglat, clickedBoundary, setupBoundaries, removeBoundaries, resetToDefault, setupBoundariesforOrganization, setupBoundariesforRepository ,clickOrganization, popup, removeRepositoryBoundaries, clickRepository}))

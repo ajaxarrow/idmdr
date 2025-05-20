@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  PhCloud,
   PhFactory, PhFileArrowUp,
   PhGlobeHemisphereWest, PhHouse, PhPlusCircle, PhSliders, PhUsersThree,
 } from "@phosphor-icons/vue";
@@ -19,6 +20,8 @@ import SectorTaggingGuideDialog from "../../sector/components/SectorTaggingGuide
 import {useSectorMapStore} from "../../../core/stores/sector-map.store.ts";
 import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import MapRepositoryHeader from "./Projects/MapRepositoryHeader.vue";
+import MapRepositoryMainContent from "./Projects/MapRepositoryMainContent.vue";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
 
@@ -51,6 +54,12 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
       icon: markRaw(PhFactory),
       header: markRaw(MapSectorsHeader),
       mainContent: markRaw(MapSectorsMainContent)
+    },
+    {
+      name: 'Projects',
+      icon: markRaw(PhCloud),
+      header: markRaw(MapRepositoryHeader),
+      mainContent: markRaw(MapRepositoryMainContent)
     },
     {
       name: 'CMIs',
@@ -153,8 +162,6 @@ import {useUserStore} from "../../../core/stores/user.store.ts";
                  </div>
                </VSheet>
              </VMenu>
-
-
            </VRow>
            <VListItem
                :class="{'active-nav': activeNav === navLink.name}"

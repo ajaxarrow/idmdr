@@ -29,7 +29,7 @@ onUnmounted(() => {
 <template>
   <div v-if="searchedMapOrganizations.length === 0">
     <p class="justify-center d-flex align-center">
-      No Organizations Found <PhInfo size="19" class="ml-1"/>
+      No CMIs Found <PhInfo size="19" class="ml-1"/>
     </p>
   </div>
   <VList

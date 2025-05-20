@@ -9,10 +9,12 @@ import {useRepositoryServices} from "../../../repository/services/repository.ser
 import OrgRepoCharts from "../../../organization/components/Reports/OrgRepoCharts.vue";
 import {useOrganizationServices} from "../../../organization/services/organization.services.ts";
 import {Organization} from "../../../../interfaces/organization.interface.ts";
+import {useUserStore} from "../../../../core/stores/user.store.ts";
 const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore();
 const {fetchOrganizationByUser} = useOrganizationServices()
 const {resetToDefault} = useMapStore();
 const {fetchAllRepositories} = useRepositoryServices()
+const {userData} = useUserStore()
 
 const pageLoading = ref(false);
 const repositoryData = ref<Repository[]>([]);
@@ -60,7 +62,7 @@ watch(() => selectedOrganization.value, async () => {
   lastItemValue.value = 1;
   reachEnd.value = false
   // await fetchMoreRepositories()
-  repositoryData.value = await fetchAllRepositories(1, 1000, '', '', selectedOrganization.value?.slug as string, true, true, '', '', '', '', '', '', '', '', '1', false, false, 'and');
+  repositoryData.value = await fetchAllRepositories(1, 1000, '', '', selectedOrganization.value?.slug as string, !userData.is_superuser, !userData.is_superuser, '', '', '', '', '', '', '', '', '1', false, false, 'and');
   observerReady.value = true
   pageLoading.value = false;
 })
@@ -93,6 +95,7 @@ onUnmounted(() => {
           height="174"
           width="328"
           :src="selectedOrganization.image ? selectedOrganization.image : 'https://i0.wp.com/sunrisedaycamp.org/wp-content/uploads/2020/10/placeholder.png?ssl=1'"
+          style="flex: none;"
       />
       <div ref="scrollableContainer" class="pa-4 scrollable-container">
         <VTooltip location="bottom">

@@ -8,13 +8,13 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 import {useRepositoryAttachmentServices} from "./repository-attachments.services.ts";
-import {useSectorServices} from "../../sector/services/sector.services.ts";
+// import {useSectorServices} from "../../sector/services/sector.services.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
 import {useCustomUsersServices} from "./custom-users.services.ts";
 import {usePageLoadingStore} from "../../../core/stores/loading.store.ts";
 
-
+const {mapRepositories, searchedMapRepositories} = useRepositoryStore()
 const {isPageLoading} = usePageLoadingStore()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
@@ -24,7 +24,7 @@ const { repository, myRepositories, allRepositories, orgRepositories} = useRepos
 const {fetchOrgMembers} = useOrganizationMembersServices()
 const {mapCustomUsers} = useCustomUsersServices()
 const {fetchAttachmentsByRepository, addAttachment, updateAttachment} = useRepositoryAttachmentServices()
-const {addSector} = useSectorServices()
+// const {addSector} = useSectorServices()
 const {stringToArray} = useStringArrayHelper()
 const {compareDateStrings} = useDateHelper()
 
@@ -175,20 +175,20 @@ export const useRepositoryServices = () => {
           }
         }
 
-        if(!isEmptyObject(repository.geojson)){
-          await addSector({
-            address: repository.location || 'N/A',
-            description: repository.description || '',
-            name: repository.title,
-            parent: 'Repository',
-            parent_id: res.data.uid,
-            geojson: repository.geojson,
-            visibility: repository.visibility,
-            image: repository.image || '',
-            tags: repository.tags,
-            owner_id: userData.uid
-          }, false)
-        }
+        // if(!isEmptyObject(repository.geojson)){
+        //   await addSector({
+        //     address: repository.location || 'N/A',
+        //     description: repository.description || '',
+        //     name: repository.title,
+        //     parent: 'Repository',
+        //     parent_id: res.data.uid,
+        //     geojson: repository.geojson,
+        //     visibility: repository.visibility,
+        //     image: repository.image || '',
+        //     tags: repository.tags,
+        //     owner_id: userData.uid
+        //   }, false)
+        // }
 
 
         await localStorage.setItem('snackbarmessage', JSON.stringify({
@@ -602,6 +602,9 @@ export const useRepositoryServices = () => {
       repositories.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       const data = [...repositories];
       myRepositories.value = data;
+      mapRepositories.value = data;
+      searchedMapRepositories.value = data;
+      console.log(searchedMapRepositories.value)
       return data;
     } catch (e) {
       return [];
@@ -803,6 +806,8 @@ export const useRepositoryServices = () => {
       }
       data.sort((a, b) => compareDateStrings(a.updated_at!, b.updated_at!));
       allRepositories.value = data.filter(repo => !repo.is_deleted && repo.is_approved);
+      searchedMapRepositories.value = data.filter(repo => !repo.is_deleted && repo.is_approved);
+      mapRepositories.value = data.filter(repo => !repo.is_deleted && repo.is_approved);
       return data.filter(repo => !repo.is_deleted && repo.is_approved);
     } catch (e) {
       return []
