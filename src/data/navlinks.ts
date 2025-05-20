@@ -40,7 +40,7 @@ export const navLinks = [
     link: '/e-library',
     icon: PhBooks
   },
-  ...(user.value && !userData.is_superuser && userData.is_approved? [
+  ...((user.value && userData.is_approved) || userData.is_superuser ? [
     {
       name: 'ATBI',
       link: '/atbi',
