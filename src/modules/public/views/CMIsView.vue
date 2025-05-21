@@ -96,6 +96,8 @@ onMounted(async() => {
           <template v-else>
             <!-- Research Institutions Section -->
             <section v-if="organizationData.length > 0" class="mb-10">
+              
+              
               <VRow>
                 <VCol cols="12">
                   <div class="d-flex align-center mb-4">
