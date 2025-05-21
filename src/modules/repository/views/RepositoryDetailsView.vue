@@ -25,6 +25,7 @@ import {
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 // Define the Attachment interface to match the description
 interface Attachment {
@@ -49,6 +50,7 @@ interface Attachment {
   isNameUpdated?: boolean;
 }
 
+const {userData} = useUserStore()
 const {route} = useRouting()
 const {arrayToString} = useStringArrayHelper()
 const {repository} = useRepositoryStore();
@@ -187,7 +189,7 @@ const getRelativeTime = (dateString: string): string => {
 onMounted(async () => {
   await fetchRepositoryData(<string>route.params.slug);
   const allUserRepo = await fetchRepositoryIDsByUser();
-  if(isSlugInRepoList(repository.value, allUserRepo)) {
+  if(isSlugInRepoList(repository.value, allUserRepo) || userData.is_superuser) {
     isMember.value = true;
   }
   await setSnackbarMessage()
