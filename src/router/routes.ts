@@ -1,7 +1,6 @@
 import authRoutes from "./routes/auth.routes.ts";
 import repositoryRoutes from "./routes/repository.routes.ts";
 import organizationRoutes from "./routes/organization.routes.ts";
-
 import sectorRoutes from "./routes/sector.routes.ts";
 import postRoutes from "./routes/post.routes.ts";
 import publicRoutes from "./routes/public.routes.ts";
@@ -77,5 +76,4 @@ export const routes = [
   ...postRoutes,
   ...atbiRoutes,
   ...adminRoutes,
-
 ]
