@@ -37,7 +37,7 @@ export const useOrganizationMembersServices = () => {
 
   const fetchUsers = async (): Promise<User[]> => {
     try {
-      const res = await server.get(`/users/`, {
+      const res = await server.get(`/users/?page_size=1000`, {
         headers: authorizationHeader,
       });
 
