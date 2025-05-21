@@ -423,10 +423,10 @@ const loadRepositories = async () => {
         tech_generator,
         author,
         lead,
-        (path.value === '/repositories' || route.name == 'organization-repositories' ) && props.isForUser ? '1,4' : convertedVisibilities.value,
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? '1,4' : convertedVisibilities.value,
         props.isForUser,
         true,
-        (path.value === '/repositories' || route.name == 'organization-repositories') && props.isForUser ? 'or' : 'and'
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? 'or' : 'and'
     );
 
     repositories.value = data;
@@ -457,8 +457,8 @@ const updateTotalCount = async () => {
         tech_generator,
         author,
         lead,
-        path.value === '/repositories' && props.isForUser ? '1,4' : convertedVisibilities.value,
-        path.value === '/repositories' && props.isForUser ? 'or' : 'and'
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? '1,4' : convertedVisibilities.value,
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? 'or' : 'and'
     );
 
     totalItems.value =

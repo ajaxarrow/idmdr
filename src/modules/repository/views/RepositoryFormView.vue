@@ -958,7 +958,7 @@ onMounted( async () => {
         </div>
         <div class="mb-3">
           <label class="input-label">Project Lead</label>
-          <VAutocomplete
+          <VCombobox
               ref="leadRef"
               :items="customUsers"
               :item-title="item => `${item.data?.first_name} ${item.data?.last_name}`"
@@ -971,16 +971,19 @@ onMounted( async () => {
               color="primary"
               base-color="gs60"
               :error-messages="errorMessage.commodity"
-
+              @update:search="handleSearch('lead', $event)"
+              :hide-no-data="false"
+              @keydown.enter="(e: any) => handleEnterKey('lead', e)"
+              @blur="handleBlur('lead')"
           >
-<!--            <template v-slot:no-data>-->
-<!--              <VListItem @click="addCustomUser('lead')">-->
-<!--                <VListItemTitle>-->
-<!--                  Add {{ searchQueries.lead }} as Project Lead-->
-<!--                </VListItemTitle>-->
-<!--              </VListItem>-->
-<!--            </template>-->
-          </VAutocomplete>
+            <template v-slot:no-data>
+              <VListItem @click="addCustomUser('lead')">
+                <VListItemTitle>
+                  Add {{ searchQueries.lead }} as Project Lead
+                </VListItemTitle>
+              </VListItem>
+            </template>
+          </VCombobox>
         </div>
         <div class="mb-3">
           <label class="input-label">Start Date</label>

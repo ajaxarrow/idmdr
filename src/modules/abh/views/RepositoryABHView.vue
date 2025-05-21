@@ -49,10 +49,9 @@ const loadAbhs = async () => {
 const stripHtmlTags = (html: string | null | undefined): string => {
   if (!html) return '';
 
-  // Create a temporary DOM element
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  // Extract just the text content
-  return doc.body.textContent || '';
+  const textContent = doc.body.textContent || '';
+  return textContent.length > 300 ? textContent.slice(0, 300) + '...' : textContent;
 };
 
 const headers = computed(() => {
@@ -183,7 +182,9 @@ onMounted(async () => {
             >
               <!-- Image column template -->
               <template #item.technology_assessment="{ item }">
-                {{ stripHtmlTags(item.technology_assessment) }}
+                <p style="max-width: 700px;">
+                  {{ stripHtmlTags(item.technology_assessment) }}
+                </p>
               </template>
               <template #item.image_data="{ item }">
                 <VBtn
