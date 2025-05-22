@@ -297,7 +297,7 @@ onMounted(async () => {
             :items="organizations"
             :item-title="organization => organization.acronym ? `${organization.name} (${organization.acronym})` : organization.name"
             :item-value="organization => `${organization.uid}`"
-            label="Organization"
+            label="CMI"
             hide-details
             density="compact"
             variant="outlined"

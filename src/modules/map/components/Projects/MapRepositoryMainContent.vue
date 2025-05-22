@@ -21,7 +21,7 @@ onMounted(async() => {
 })
 
 onUnmounted(() => {
-  resetToDefault('Organization');
+  resetToDefault('Repository');
 })
 
 </script>

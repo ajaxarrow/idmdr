@@ -14,7 +14,7 @@ const {selectedOrganization, removeSelectedOrganization} = useOrganizationStore(
 const {fetchOrganizationByUser} = useOrganizationServices()
 const {resetToDefault} = useMapStore();
 const {fetchAllRepositories} = useRepositoryServices()
-const {userData} = useUserStore()
+const {userData, user} = useUserStore()
 
 const pageLoading = ref(false);
 const repositoryData = ref<Repository[]>([]);
@@ -62,7 +62,7 @@ watch(() => selectedOrganization.value, async () => {
   lastItemValue.value = 1;
   reachEnd.value = false
   // await fetchMoreRepositories()
-  repositoryData.value = await fetchAllRepositories(1, 1000, '', '', selectedOrganization.value?.slug as string, !userData.is_superuser, !userData.is_superuser, '', '', '', '', '', '', '', '', '1', false, false, 'and');
+  repositoryData.value = await fetchAllRepositories(1, 1000, '', '', selectedOrganization.value?.slug as string, userData.is_superuser ? '' : true, userData.is_superuser ? '' : true, '', '', '', '', '', '', '', '', userData.is_superuser ? '' : user.value ? '1,4' : '1', !userData.is_superuser, false, 'or');
   observerReady.value = true
   pageLoading.value = false;
 })

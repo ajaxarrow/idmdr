@@ -28,7 +28,7 @@ onUnmounted(() => {
 <template>
   <div v-if="allSectors.length === 0">
     <p class="justify-center d-flex align-center">
-      No Sectors Found <PhInfo size="19" class="ml-1"/>
+      No Associated Areas Found <PhInfo size="19" class="ml-1"/>
     </p>
   </div>
   <VList

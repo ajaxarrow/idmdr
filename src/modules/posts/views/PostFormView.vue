@@ -195,7 +195,7 @@ onMounted(async () => {
             {{formType === FormType.edit ? 'Edit Post' : 'Add New Post'}}
           </p>
           <p class="text-subtitle">
-            Post will be published in the public section of the application and will showcases news and updates about the organization
+            Post will be published in the public section of the application and will showcases news and updates about the cmi
           </p>
         </div>
       </div>
@@ -217,7 +217,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3" v-if="postData.description">
-          <label class="input-label">Post Content</label>
+          <label class="input-label">Post Content<span class="text-pink">*</span></label>
           <QuillRichTextEditor
               :modelValue="postData.description"
               @update:modelValue="$event => (postData.description = $event)"
@@ -233,7 +233,7 @@ onMounted(async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">Assigned Consortium Member Institution<span class="text-pink">*</span></label>
+          <label class="input-label">Posted By<span class="text-pink">*</span></label>
           <VAutocomplete
               v-model="postData.organization"
               placeholder="Select Organization"
@@ -244,6 +244,7 @@ onMounted(async () => {
               color="primary"
               base-color="gs60"
               :items="organizations"
+              hint="Select CMI to post this content"
               :item-value="organization => `${organization.uid}`"
               :item-title="organization => `${organization.name} (${organization.acronym})`"
           >
@@ -268,9 +269,10 @@ onMounted(async () => {
                 @dragleave.prevent="toggleActive"
                 @drop.prevent="handleBulkImagesUpload">
               <PhFileDashed size="50"/>
-              <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <p class="text-dropzone">Drag and drop images here to include in the post or <label class="file-label" for="dropzoneFile">Choose Images hre</label></p>
               <VFileInput @change="handleBulkImagesUpload" multiple accept="image/*"  id="dropzoneFile" style="display: none"/>
             </div>
+            <small>Select Images that will be associated to the post</small>
           </div>
           <div v-else>
             <label class="input-label mb-5">Images</label>
@@ -348,7 +350,7 @@ onMounted(async () => {
             <template v-slot:activator="{ props }">
               <div v-bind="props">
                 <VBtnPrimaryFilled
-                    :disabled="postData.title?.trim() == ''"
+                    :disabled="postData.title?.trim() == '' || postData.description?.trim() == '' || postData.description?.trim() == '<p><br></p>'"
                     @click="formType === FormType.edit ? updatePostData() : addPostData(false)"
                     rounded="lg"
                     height="44px"

@@ -604,7 +604,6 @@ export const useRepositoryServices = () => {
       myRepositories.value = data;
       mapRepositories.value = data;
       searchedMapRepositories.value = data;
-      console.log(searchedMapRepositories.value)
       return data;
     } catch (e) {
       return [];

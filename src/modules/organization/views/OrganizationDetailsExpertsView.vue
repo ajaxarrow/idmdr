@@ -7,6 +7,7 @@ import ExpertListViewContent from "../components/ExpertListViewContent.vue";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import ExpertDataTable from "../components/ExpertDataTable.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 
 const {setSnackbarMessage} = useSnackbarStore()
@@ -14,7 +15,7 @@ const {route} = useRouting()
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const path = ref('organizations')
 const organization = ref<Organization | null>();
-
+const {userData} = useUserStore()
 const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
   return orgList.some(org => org.slug === organization?.slug);
 };
@@ -38,6 +39,7 @@ onMounted(async () => {
     }
   }
   await setSnackbarMessage()
+  console.log(path.value)
 })
 </script>
 
@@ -45,7 +47,7 @@ onMounted(async () => {
   <OrganizationDetailsLayout
       :organization="organization"
       activeTab="experts">
-    <ExpertDataTable v-if="organization?.is_member as boolean"/>
+    <ExpertDataTable v-if="organization?.is_member || userData.is_superuser as boolean"/>
     <ExpertListViewContent
       v-else
       :forOrganization="true"

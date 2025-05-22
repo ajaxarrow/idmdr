@@ -22,13 +22,15 @@ import ConfirmGeoJSONDialog from "../../../core/components/ConfirmGeoJSONDialog.
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import MapRepositoryHeader from "./Projects/MapRepositoryHeader.vue";
 import MapRepositoryMainContent from "./Projects/MapRepositoryMainContent.vue";
+import boundaries from "../../../data/boundaries.ts";
+import {useMapStore} from "../stores/map.store.ts";
 
   type CustomComponent = ReturnType<typeof defineComponent>;
-
 
   const {user, userData} = useUserStore()
   const {router} = useRouting();
   const {storedGeoJSON, handleGeoJSON, confirmDialog, fileName} = useSectorMapStore();
+  const {removeBoundaries, setupBoundaries} = useMapStore()
   const addSectorDialogMenu = ref(false);
   const showAdditionalContent = ref(false);
   const header = ref<CustomComponent | null>(null);
@@ -77,6 +79,9 @@ import MapRepositoryMainContent from "./Projects/MapRepositoryMainContent.vue";
 
 
   const assignContent = (headerComponent: CustomComponent, mainContentComponent: CustomComponent, activeNavTitle: string) => {
+    removeBoundaries(boundaries);
+    setupBoundaries(boundaries, 'Province');
+    // clickedBoundary.value = ''
     if (activeNav.value === activeNavTitle) {
       showAdditionalContent.value = false;
       activeNav.value = '';

@@ -109,6 +109,10 @@ const updateTotalCount = async() => {
   totalItems.value = await fetchTotalExperts(1, 10000000, search.value, route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value, selectedExpertise.value, !userData.is_superuser);
 }
 
+const getFirstPath = (url: string) => {
+  return url.split('/').filter(Boolean)[0];
+}
+
 watch([selectedOrganization, selectedExpertise], async () => {
   await loadData();
 })
@@ -148,7 +152,7 @@ onMounted(async () => {
       @update:filter="handleFilterUpdate"
       @refreshData="loadData"
       :expandable="true"
-      :showCircle="route.name !== 'organization-experts'"
+      :showCircle="route.name !== 'organization-experts' && getFirstPath(<string>route.path) != 'cmis'"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{name: 'new-expert'}" v-if="isSmall || isTablet" icon >

@@ -472,6 +472,9 @@ const updateTotalCount = async () => {
   }
 };
 
+const getFirstPath = (url: string) => {
+  return url.split('/').filter(Boolean)[0];
+}
 
 
 watch(()=> route.path, async () => {
@@ -571,7 +574,7 @@ onMounted(async () => {
     @refreshData="loadData"
     :expandable="true"
     :showFilter="showFilters"
-    :showCircle="route.name != 'organization-repositories' && route.name != 'my-organization-repositories'"
+    :showCircle="route.name != 'organization-repositories' && route.name != 'my-organization-repositories' && getFirstPath(<string>route.path) != 'cmis'"
   >
     <template #header-actions>
       <VBtnPrimaryFilled :to="{ name: 'new-repository' }" v-if="isSmall || isTablet" icon>
