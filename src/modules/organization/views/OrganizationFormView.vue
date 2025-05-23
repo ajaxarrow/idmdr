@@ -1264,27 +1264,27 @@ onMounted(async () => {
                         base-color="gs60"
                     />
                   </div>
-                  <div class="mb-3">
-                    <label class="input-label d-flex justify-space-between">
-                      Attachment Visibility
-                      <span style="font-size: 14px; font-weight: 400;">
-                    <AttachmentsVisibilityInfoDialog/>
-                  </span>
-                    </label>
-                    <VAutocomplete
-                        v-model="attachments[index].visibility"
-                        :items="visibilityInfo"
-                        :item-title="item => item.name"
-                        :item-value="item => item.value"
-                        label="Enter File Visibility"
-                        class="my-2"
-                        rounded="lg"
-                        density="comfortable"
-                        variant="outlined"
-                        color="primary"
-                        base-color="gs60"
-                    />
-                  </div>
+<!--                  <div class="mb-3">-->
+<!--                    <label class="input-label d-flex justify-space-between">-->
+<!--                      Attachment Visibility-->
+<!--                      <span style="font-size: 14px; font-weight: 400;">-->
+<!--                    <AttachmentsVisibilityInfoDialog/>-->
+<!--                  </span>-->
+<!--                    </label>-->
+<!--                    <VAutocomplete-->
+<!--                        v-model="attachments[index].visibility"-->
+<!--                        :items="visibilityInfo"-->
+<!--                        :item-title="item => item.name"-->
+<!--                        :item-value="item => item.value"-->
+<!--                        label="Enter File Visibility"-->
+<!--                        class="my-2"-->
+<!--                        rounded="lg"-->
+<!--                        density="comfortable"-->
+<!--                        variant="outlined"-->
+<!--                        color="primary"-->
+<!--                        base-color="gs60"-->
+<!--                    />-->
+<!--                  </div>-->
                 </div>
                 <VDivider v-if="index != attachments.length - 1 "/>
               </div>

@@ -12,8 +12,8 @@ import QuillRichTextEditor from "../../../core/components/QuillRichTextEditor.vu
 
 const {userData} = useUserStore();
 const {addEvent, updateEvent} = useEventsServices();
-const {fetchOrganizationByUser} = useOrganizationServices();
-const {fetchRepositoriesByUser} = useRepositoryServices()
+const {fetchOrganizationByUser, fetchAllOrganizations} = useOrganizationServices();
+const {fetchRepositoriesByUser, fetchAllRepositories} = useRepositoryServices()
 const emits = defineEmits(['callback']);
 const organizations = ref<Organization[]>([])
 const repositories = ref<Repository[]>([])
@@ -131,8 +131,8 @@ const clearEventData = () => {
 }
 
 const fetchData = async () => {
-  organizations.value = (await fetchOrganizationByUser()).filter(org => !org.is_deleted);
-  repositories.value = (await fetchRepositoriesByUser()).filter(repo => !repo.is_deleted);
+  organizations.value = userData.is_superuser ? await fetchAllOrganizations(1, 1000) :(await fetchOrganizationByUser()).filter(org => !org.is_deleted)
+  repositories.value = userData.is_superuser ? await fetchAllRepositories(1, 1000) :(await fetchRepositoriesByUser()).filter(repo => !repo.is_deleted);
   eventData.organization = organizations.value[0].uid;
   eventData.repository = repositories.value[0].uid;
   if(props.formType === FormType.edit) {
