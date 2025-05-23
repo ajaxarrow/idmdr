@@ -40,7 +40,7 @@ export const useUserManagementServices = () => {
                     is_active: user.is_active,
                     is_superuser: user.is_superuser,
                     is_approved: user.is_approved,
-                    profile_picture: user.profile_picture ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg',
+                    profile_picture: user.profile_picture ? user.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg',
                 }));
         } catch {
             return [];

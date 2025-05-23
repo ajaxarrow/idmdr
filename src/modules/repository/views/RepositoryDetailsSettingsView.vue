@@ -871,7 +871,7 @@ onMounted(async () => {
                        size="40"
                        class="mr-1 cursor-pointer"
                    >
-                     <VImg :src="member.user.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
+                     <VImg :src="member.user.profile_picture ?? 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"></VImg>
                    </VAvatar>
                    <div class="mr-2">
                      <p class="text-name text-container">{{member.user.first_name}} {{member.user.last_name}}</p>
@@ -953,7 +953,7 @@ onMounted(async () => {
                        size="40"
                        class="mr-1 cursor-pointer"
                    >
-                     <VImg :src="accessRequest.requestor_user_obj?.profile_picture ?? 'https://dummyimage.com/400x400/023768/fff.png&text=N/A'"></VImg>
+                     <VImg :src="accessRequest.requestor_user_obj?.profile_picture ?? 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"></VImg>
                    </VAvatar>
                    <div class="mr-2">
                      <p class="text-name text-container">{{accessRequest.requestor_user_obj?.first_name}} {{accessRequest.requestor_user_obj?.last_name}}</p>

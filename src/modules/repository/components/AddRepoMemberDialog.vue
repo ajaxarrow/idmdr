@@ -210,7 +210,7 @@ onUpdated(async () => {
               <VListItem
                   :disabled="!!checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted"
                   v-bind="props"
-                  :prepend-avatar="item.raw.profile_picture as string || 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'"
+                  :prepend-avatar="item.raw.profile_picture as string || 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'"
                   :subtitle="checkIfMember(item.raw.uid as string) && !checkIfMember(item.raw.uid as string).is_deleted ? checkIfMember(item.raw.uid as string).access_level : item.raw.email as string"
                   :title="`${item.raw.first_name} ${item.raw.last_name}`"
               ></VListItem>

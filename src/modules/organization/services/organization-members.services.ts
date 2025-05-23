@@ -28,7 +28,7 @@ export const useOrganizationMembersServices = () => {
         first_name: member.user.first_name,
         last_name: member.user.last_name,
         email: member.user.email,
-        profile_picture: member.user.profile_picture,
+        profile_picture: member.user.profile_picture ? member.user.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg',
       },
       access_level: member.access_level,
       is_deleted: member.is_deleted,
@@ -127,7 +127,7 @@ export const useOrganizationMembersServices = () => {
         { headers: authorizationHeader }
       );
 
-      const org = await fetchOrganizationData(orgID)
+      const org = await fetchOrganizationData(orgID, 'create', false)
 
       await addNotification({
         sender: userData.uid,
@@ -159,7 +159,7 @@ export const useOrganizationMembersServices = () => {
         { headers: authorizationHeader }
       );
 
-      const org = await fetchOrganizationData(orgID)
+      const org = await fetchOrganizationData(orgID, 'create', false)
 
       await addNotification({
         sender: userData.uid,
@@ -190,7 +190,7 @@ export const useOrganizationMembersServices = () => {
       { headers: authorizationHeader }
     );
 
-    const org = await fetchOrganizationData(orgID)
+    const org = await fetchOrganizationData(orgID, 'create', false)
 
     await addNotification({
       sender: userData.uid,
@@ -218,7 +218,7 @@ export const useOrganizationMembersServices = () => {
       { headers: authorizationHeader }
     );
 
-    const org = await fetchOrganizationData(orgID)
+    const org = await fetchOrganizationData(orgID, 'create', false)
 
     await addNotification({
       sender: userData.uid,

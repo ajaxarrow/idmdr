@@ -846,9 +846,11 @@ export const useRepositoryServices = () => {
     return Promise.all(promises);
   };
 
-  const fetchRepositoryData = async (slug: string,  type: string = 'create'): Promise<Repository | null> => {
+  const fetchRepositoryData = async (slug: string,  type: string = 'create', forPage: boolean = true): Promise<Repository | null> => {
     try{
-      isPageLoading.value = true;
+      if(forPage){
+        isPageLoading.value = true;
+      }
       const res = await server.get(`/repositories/${slug}`, {
         headers: authorizationHeader
       });
@@ -862,7 +864,9 @@ export const useRepositoryServices = () => {
         return null;
       }
     } catch(e: any){
-      isPageLoading.value = false;
+      if(forPage){
+        isPageLoading.value = false;
+      }
       console.log(e)
       return null;
     }

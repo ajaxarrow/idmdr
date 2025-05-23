@@ -103,7 +103,7 @@ export const useRepositoryMemberServices = () => {
         { headers: authorizationHeader }
       );
 
-      const repo = await fetchRepositoryData(repoID)
+      const repo = await fetchRepositoryData(repoID, 'create', false)
 
       await addNotification({
         sender: userData.uid,
@@ -135,7 +135,7 @@ export const useRepositoryMemberServices = () => {
         { headers: authorizationHeader }
       );
 
-      const repo = await fetchRepositoryData(repoID)
+      const repo = await fetchRepositoryData(repoID, 'create', false)
 
       await addNotification({
         sender: userData.uid,
@@ -165,7 +165,7 @@ export const useRepositoryMemberServices = () => {
       { headers: authorizationHeader }
     );
 
-    const repo = await fetchRepositoryData(repoID)
+    const repo = await fetchRepositoryData(repoID, 'create', false)
 
     await addNotification({
       sender: userData.uid,
@@ -193,7 +193,7 @@ export const useRepositoryMemberServices = () => {
       { headers: authorizationHeader }
     );
 
-    const repo = await fetchRepositoryData(repoID)
+    const repo = await fetchRepositoryData(repoID, 'create', false)
 
     await addNotification({
       sender: userData.uid,

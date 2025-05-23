@@ -528,9 +528,11 @@ export const useOrganizationServices = () => {
   };
 
 
-  const fetchOrganizationData = async (slug: string, type: string = 'create'): Promise<Organization | null> => {
+  const fetchOrganizationData = async (slug: string, type: string = 'create', forPage: boolean = true): Promise<Organization | null> => {
     try{
-      isPageLoading.value = true;
+      if(forPage) {
+        isPageLoading.value = true;
+      }
       const res = await server.get(`/v1/organization/${slug}/`, {
         headers: authorizationHeader
       });
@@ -543,7 +545,9 @@ export const useOrganizationServices = () => {
         return null;
       }
     } catch (e) {
-      isPageLoading.value = false;
+      if(forPage){
+        isPageLoading.value = false;
+      }
       return null;
     }
 
