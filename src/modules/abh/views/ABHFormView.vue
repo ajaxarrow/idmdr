@@ -344,7 +344,7 @@ onMounted(async () => {
                 @dragleave.prevent="toggleActive"
                 @drop.prevent="handleBulkImagesUpload">
               <PhFileDashed size="50"/>
-              <p class="text-dropzone">Drag and drop images here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
+              <p class="text-dropzone">Drag and drop images here or <label class="file-label" for="dropzoneFile">Choose images here</label></p>
               <VFileInput @change="handleBulkImagesUpload" multiple accept="image/*"  id="dropzoneFile" style="display: none"/>
             </div>
           </div>

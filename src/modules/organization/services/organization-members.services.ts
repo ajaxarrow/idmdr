@@ -89,7 +89,8 @@ export const useOrganizationMembersServices = () => {
         headers: authorizationHeader,
       });
       return mapOrgMembers(res.data.results);
-    } catch {
+    } catch(e: any) {
+      console.log(e)
       return [];
     }
   };

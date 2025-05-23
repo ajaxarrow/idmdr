@@ -77,8 +77,8 @@ const addMember = async () => {
     orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
     closeDialog();
     emits('callback')
+    console.log('ss')
   } catch (e: any) {
-
   }
   pageLoading.value = false
 }
@@ -109,6 +109,7 @@ const updateMember = async () => {
     orgMembers.value = await fetchOrgMembers(<string>route.params.slug);
     closeDialog();
     emits('callback')
+    console.log('ss')
   } catch (e: any) {
 
   }
@@ -232,14 +233,22 @@ onUpdated(async () => {
         >
           Close
         </VBtnPrimaryAlt>
-        <VBtnPrimaryAlt
-            width="86"
-            class="action-button"
-            :disabled="pageLoading"
-            @click="formType === FormType.edit ? updateMember() : addMember()"
-        >
-          Save
-        </VBtnPrimaryAlt>
+        <VTooltip location="bottom">
+          <template v-slot:activator="{ props }">
+            <div v-bind="props">
+              <VBtnPrimaryAlt
+                  width="86"
+                  class="action-button"
+                  :disabled="pageLoading || (!selectedMember || !selectedAccessLevel)"
+                  @click="formType === FormType.edit ? updateMember() : addMember()"
+              >
+                Save
+              </VBtnPrimaryAlt>
+            </div>
+          </template>
+          <span>The form can only be submitted if all data is inputted.</span>
+        </VTooltip>
+
       </VRow>
     </VSheet>
 

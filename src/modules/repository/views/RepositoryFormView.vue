@@ -775,12 +775,9 @@ onMounted( async () => {
       <VDivider/>
       <div
           class="px-6 py-3"
-          :class="{ 'disabled-cursor': repositoryData.is_patentable }"
-          :title="repositoryData.is_patentable ? 'This project is open for patenting, visibility set to Private' : ''"
       >
         <VRadioGroup
             v-model="repositoryData.visibility"
-            :disabled="repositoryData.is_patentable"
         >
           <VRadio color="bs50" :value="1" class="my-3">
             <template v-slot:label>
@@ -1256,6 +1253,7 @@ onMounted( async () => {
                 variant="outlined"
                 color="primary"
                 base-color="gs60"
+                hint="If the project is applicable for patenting, the project visibility will be set to private. It can still be edited and changed."
                 :items="forPatent"
                 :item-value="item => item.value"
                 :item-title="item => item.title"
