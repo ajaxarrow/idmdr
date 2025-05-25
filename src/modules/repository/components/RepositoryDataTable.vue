@@ -679,6 +679,7 @@ const downloadCSV = async () => {
 
       return {
         'Title': repo.title || '',
+        'Associated CMI': repo.org_data ? repo.org_data.name : '',
         'Description': repo.description ? repo.description.replace(/<[^>]*>/g, '') : '',
         'Type': repo.type === 'Project Repository' ? 'With Technology' : 'No Associated Technology',
         'Site of Implementation': repo.location || '',
@@ -711,7 +712,8 @@ const downloadCSV = async () => {
         'Registration No': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.regNo ? repo.commercialization.regNo : 'N/A',
         'Mode of Commercialization': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.modeStatus ? repo.commercialization.modeStatus : 'N/A',
         'Adopter Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.adopterStatus ? repo.commercialization.adopterStatus : 'N/A',
-      'Current Commercialization Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.currentStatus ? repo.commercialization.currentStatus : 'N/A',
+        'Current Commercialization Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.currentStatus ? repo.commercialization.currentStatus : 'N/A',
+        'Additional Info': repo.additional_info ? repo.additional_info.replace(/<[^>]*>/g, '') : '',
         'Created Date': repo.created_at ? new Date(repo.created_at).toLocaleDateString() : '',
         'Updated Date': repo.updated_at ? new Date(repo.updated_at).toLocaleDateString() : '',
         'State': repo.is_active ? 'Active' : 'Inactive',
@@ -781,6 +783,7 @@ const downloadVisibleCSV = () => {
 
       return {
         'Title': repo.title || '',
+        'Associated CMI': repo.org_data ? repo.org_data.name : '',
         'Description': repo.description ? repo.description.replace(/<[^>]*>/g, '') : '',
         'Type': repo.type === 'Project Repository' ? 'With Technology' : 'No Associated Technology',
         'Site of Implementation': repo.location || '',
@@ -814,6 +817,7 @@ const downloadVisibleCSV = () => {
         'Mode of Commercialization': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.modeStatus ? repo.commercialization.modeStatus : 'N/A',
         'Adopter Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.adopterStatus ? repo.commercialization.adopterStatus : 'N/A',
         'Current Commercialization Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.currentStatus ? repo.commercialization.currentStatus : 'N/A',
+        'Additional Info': repo.additional_info ? repo.additional_info.replace(/<[^>]*>/g, '') : '',
         'Created Date': repo.created_at ? new Date(repo.created_at).toLocaleDateString() : '',
         'Updated Date': repo.updated_at ? new Date(repo.updated_at).toLocaleDateString() : '',
         'State': repo.is_active ? 'Active' : 'Inactive',
