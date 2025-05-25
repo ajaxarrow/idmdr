@@ -19,7 +19,6 @@ import {
   PhX
 } from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
-import {Organization} from "../../../interfaces/organization.interface.ts";
 import Papa from "papaparse";
 
 const { isSmall, isTablet } = useScreenStore();

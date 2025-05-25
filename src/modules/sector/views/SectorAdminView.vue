@@ -14,8 +14,6 @@ import {useRepositoryServices} from "../../repository/services/repository.servic
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {PhCaretDown, PhDotsThreeOutlineVertical, PhDownload, PhPencil, PhPlus, PhTrash,} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
-import {expertise} from "../../../data/repository.inventory.fields.ts";
-import {Expert} from "../../../interfaces/organization.interface.ts";
 import Papa from "papaparse";
 
 const { isSmall, isTablet } = useScreenStore();

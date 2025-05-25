@@ -21,7 +21,6 @@ import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelp
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
-import {Post} from "../../../interfaces/post.interface.ts";
 import Papa from "papaparse";
 
 const {userData} = useUserStore()

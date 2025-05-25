@@ -23,8 +23,6 @@ import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
-import {expertise} from "../../../data/repository.inventory.fields.ts";
-import {Expert} from "../../../interfaces/organization.interface.ts";
 import Papa from "papaparse";
 
 const {userData} = useUserStore()
@@ -150,7 +148,7 @@ const downloadCSV = async () => {
         'UID': atbi.uuid || '',
         'Name': atbi.name || '',
         'Owners': atbi.ownerData && atbi.ownerData.length > 0
-          ? atbi.ownerData.map(owner => `${"first_name" in owner.data ? owner.data.first_name : ''} ${"last_name" in owner.data && owner.data.last_name || ''}`).join(', ')
+          ? atbi.ownerData.map(owner => `${"first_name" in owner.data ? owner.data?.first_name : ''} ${"last_name" in owner.data && owner.data?.last_name || ''}`).join(', ')
           : 'N/A',
         'Mobile': atbi.mobile || '',
         'Email': atbi.email || '',
