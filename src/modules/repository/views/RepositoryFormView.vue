@@ -1524,6 +1524,7 @@ onMounted( async () => {
               <p class="text-dropzone">Drag and drop files here or <label class="file-label" for="dropzoneFile">Choose files</label></p>
               <VFileInput @change="handleBulkAttachmentsUpload" multiple id="dropzoneFile" style="display: none"/>
             </div>
+            <small>Maximum file size: 10 MB per file</small>
           </div>
           <div v-else>
             <label class="input-label mb-5">Files</label>

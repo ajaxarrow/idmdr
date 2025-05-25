@@ -269,7 +269,7 @@ onMounted(async () => {
                 @dragleave.prevent="toggleActive"
                 @drop.prevent="handleBulkImagesUpload">
               <PhFileDashed size="50"/>
-              <p class="text-dropzone">Drag and drop images here to include in the post or <label class="file-label" for="dropzoneFile">Choose Images hre</label></p>
+              <p class="text-dropzone">Drag and drop images here to include in the post or <label class="file-label" for="dropzoneFile">Choose Images here</label></p>
               <VFileInput @change="handleBulkImagesUpload" multiple accept="image/*"  id="dropzoneFile" style="display: none"/>
             </div>
             <small>Select Images that will be associated to the post</small>

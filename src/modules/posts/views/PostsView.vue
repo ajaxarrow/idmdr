@@ -27,7 +27,7 @@ onMounted(async () => {
               <p class="text-heading d-flex align-center">
                 Posts
               </p>
-              <p class="text-subtitle">Discover updates and <span v-if="!userData.is_superuser">published</span> articles posted within NOMCAARRD</p>
+              <p class="text-subtitle">Discover updates and articles posted within your managed and associated CMIs</p>
             </div>
           </VCol>
           <VCol md="3" class="pa-0">

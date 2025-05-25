@@ -121,4 +121,4 @@ interface OrganizationAttachment{
   isNameUpdated?: boolean
 }
 
-export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent, OrganizationAttachment}
+export type {Organization, ClusterRepresentative, Representative, Expert, OrganizationEvent, OrganizationAttachment, Name}

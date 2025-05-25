@@ -12,8 +12,11 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import {useRepositoryServices} from "../../repository/services/repository.services.ts";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
-import {PhDotsThreeOutlineVertical, PhPencil, PhPlus, PhTrash,} from "@phosphor-icons/vue";
+import {PhCaretDown, PhDotsThreeOutlineVertical, PhDownload, PhPencil, PhPlus, PhTrash,} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import {expertise} from "../../../data/repository.inventory.fields.ts";
+import {Expert} from "../../../interfaces/organization.interface.ts";
+import Papa from "papaparse";
 
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
@@ -126,6 +129,153 @@ const loadData = async () => {
   await updateTotalCount();
 };
 
+const downloadCSV = async () => {
+  try {
+    const allData = await fetchAllSectors(
+        page.value,
+        itemsPerPage.value,
+        search.value,
+        selectedType.value,
+        selectedEntity.value,
+        convertedTags.value as string
+    );
+
+    // Transform data for CSV export
+    const csvData = allData.map((sector: Sector) => {
+      return {
+        'UID': sector.uid || '',
+        'Name': sector.name || '',
+        'Description': sector.description
+            ? sector.description.replace(/<[^>]*>/g, '') // Remove HTML tags
+            : '',
+        'Associated Entity': sector.parent === 'Organization'
+            ? sector.orgData?.name || ''
+            : sector.repoData?.title || '',
+        'Additional Info': sector.additional_info
+            ? sector.additional_info.replace(/<[^>]*>/g, '')
+            : '',
+        'Created Date': sector.created_at
+            ? new Date(sector.created_at).toLocaleDateString()
+            : '',
+        'Owner': sector.owner
+            ? `${sector.owner.first_name} ${sector.owner.last_name}` : '',
+        'Updated Date': sector.updated_at
+            ? new Date(sector.updated_at).toLocaleDateString()
+            : '',
+        'GeoJSON': sector.geojson
+            ? JSON.stringify(sector.geojson).replace(/"/g, '""')
+            : '',
+      };
+    });
+
+    // Generate CSV content
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    // Create and download the file
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      // Generate filename with current date and filter info
+      const currentDate = new Date().toISOString().split('T')[0];
+      let filename = `associated_areas_${currentDate}`;
+
+      // Add filter info to filename if filters are applied
+      if (search.value) {
+        filename += `_search-${search.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      }
+
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
+
+const downloadVisibleCSV = () => {
+
+  try {
+    const csvData = sectors.value.map((sector: Sector) => {
+      return {
+        'UID': sector.uid || '',
+        'Name': sector.name || '',
+        'Description': sector.description
+            ? sector.description.replace(/<[^>]*>/g, '') // Remove HTML tags
+            : '',
+        'Associated Entity': sector.parent === 'Organization'
+            ? sector.orgData?.name || ''
+            : sector.repoData?.title || '',
+        'Additional Info': sector.additional_info
+            ? sector.additional_info.replace(/<[^>]*>/g, '')
+            : '',
+        'Created Date': sector.created_at
+            ? new Date(sector.created_at).toLocaleDateString()
+            : '',
+        'Owner': sector.owner
+            ? `${sector.owner.first_name} ${sector.owner.last_name}` : '',
+        'Updated Date': sector.updated_at
+            ? new Date(sector.updated_at).toLocaleDateString()
+            : '',
+        'GeoJSON': sector.geojson
+            ? JSON.stringify(sector.geojson).replace(/"/g, '""')
+            : '',
+      };
+    });
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filename = `associated_areas_page-${page.value}_${currentDate}.csv`;
+
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records from current page)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
+
 watch(
     () => route.query.tag,
     (newTagQuery) => {
@@ -144,6 +294,8 @@ const initTagsFromRoute = () => {
     showFilters.value = true;
   }
 };
+
+
 
 watch(() => selectedCmi.value, async () => {
   selectedEntity.value = selectedCmi.value;
@@ -358,6 +510,56 @@ onMounted(async () => {
           />
         </VCol>
 
+      </template>
+      <template #additional-toolbar-buttons>
+        <VMenu
+            location="bottom end"
+            transition="slide-y-transition"
+        >
+          <template #activator="{ props }">
+            <VBtn
+                v-bind="props"
+                variant="tonal"
+                color="primary"
+                rounded="md"
+                class="satoshi-md me-2 filter-btn px-3"
+                height="40px"
+                style="font-size: 14px !important"
+            >
+              <PhDownload size="16" class="mr-2" />
+              <span class="text-body-2">Export</span>
+              <PhCaretDown size="12" class="ml-1" />
+            </VBtn>
+          </template>
+
+          <VCard class="rounded-lg" min-width="200" elevation="3">
+            <VList density="compact" nav>
+              <VListItem
+                  @click="downloadCSV"
+                  :disabled="loading || sectors.length === 0"
+                  class="cursor-pointer"
+              >
+                <template v-slot:prepend>
+                  <PhDownload class="mr-2" />
+                </template>
+                <VListItemTitle>Download All Data</VListItemTitle>
+                <VListItemSubtitle>Export all filtered results</VListItemSubtitle>
+              </VListItem>
+
+              <VListItem
+                  @click="downloadVisibleCSV"
+                  :disabled="loading || sectors.length === 0"
+                  class="cursor-pointer"
+              >
+                <template v-slot:prepend>
+                  <PhDownload class="mr-2" />
+                </template>
+                <VListItemTitle>Download Current Page</VListItemTitle>
+                <VListItemSubtitle>Export visible page only</VListItemSubtitle>
+              </VListItem>
+            </VList>
+          </VCard>
+        </VMenu>
       </template>
     </BaseDataTable>
   </MainLayout>

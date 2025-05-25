@@ -3,16 +3,26 @@ import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
-import {Expert} from "../../../interfaces/organization.interface.ts";
+import {Expert, Name} from "../../../interfaces/organization.interface.ts";
 import {expertise} from "../../../data/repository.inventory.fields.ts";
 import {onMounted, watch, computed, ref} from "vue";
-import {PhDotsThreeOutlineVertical, PhEye, PhPencil, PhPlus, PhTrash} from "@phosphor-icons/vue";
+import {
+  PhCaretDown,
+  PhDotsThreeOutlineVertical,
+  PhDownload,
+  PhEye,
+  PhPencil,
+  PhPlus,
+  PhTrash
+} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
+import {Post} from "../../../interfaces/post.interface.ts";
+import Papa from "papaparse";
 
 const {userData} = useUserStore()
 const {route} = useRouting()
@@ -28,7 +38,8 @@ const search = ref('');
 const itemsPerPage = ref(10);
 const page = ref(1);
 const totalItems = ref(0);
-const selectedExpertise = ref<string>('');
+const selectedExpertise = ref<string[]>([]);
+const convertedExpertise = computed(() => arrayToString(selectedExpertise.value.map((item: any) => item.value)));
 const organizations = ref<any[]>([]);
 
 const deleteExpertCallback = async (uuid: string) => {
@@ -39,7 +50,7 @@ const deleteExpertCallback = async (uuid: string) => {
 
 const expertiseOptions = [
   { title: "All", value: "" },
-  ...expertise.map((item) => ({
+  ...expertise.slice().sort().map((item) => ({
     title: item,
     value: item,
   })),
@@ -53,25 +64,21 @@ const headers = computed(() => [
 
 const selectedColumns = ref(headers.value.filter(h => h.visible).map(h => h.key));
 
+const isColumnVisible = (key: string) => {
+  const column = headers.value.find((h: any) => h.key === key);
+  return column ? selectedColumns.value.includes(key) : false;
+};
 
 const updateColumnVisibility = (selectedKeys: string[]) => {
   selectedColumns.value = selectedKeys;
 };
 
 const tableFilters = computed(() => [
-  {
-    key: 'expertise',
-    label: 'Expertise',
-    value: selectedExpertise.value,
-    items: expertiseOptions,
-    itemTitle: (type: any) => type.title,
-    itemValue: (type: any) => type.value,
-    visibleKey: 'expertise',
-  },
+
 ]);
 
 const clearFilters = () => {
-  selectedExpertise.value = '';
+  selectedExpertise.value = [];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -94,7 +101,7 @@ const loadExperts = async() => {
         itemsPerPage.value,
         search.value,
         route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value,
-        selectedExpertise.value,
+        convertedExpertise.value,
         !userData.is_superuser
 
     );
@@ -106,8 +113,179 @@ const loadExperts = async() => {
 }
 
 const updateTotalCount = async() => {
-  totalItems.value = await fetchTotalExperts(1, 10000000, search.value, route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value, selectedExpertise.value, !userData.is_superuser);
+  totalItems.value = await fetchTotalExperts(1, 10000000, search.value, route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value, convertedExpertise.value, !userData.is_superuser);
 }
+
+const getNameComponent = (nameField: Name | string | undefined, component: keyof Name): string => {
+  if (typeof nameField === 'object' && nameField !== null) {
+    return nameField[component] || '';
+  }
+  return '';
+};
+
+// Helper function to get full name
+const getFullName = (nameField: Name | string | undefined): string => {
+  if (typeof nameField === 'string') {
+    return nameField;
+  }
+  if (typeof nameField === 'object' && nameField !== null) {
+    const parts = [
+      nameField.salutation,
+      nameField.first_name,
+      nameField.middle_name,
+      nameField.last_name,
+      nameField.extension
+    ].filter(part => {
+      //@ts-ignore
+      return part && typeof part === 'string' && part.trim() !== ''
+    });
+    return parts.join(' ');
+  }
+  return '';
+};
+const downloadCSV = async () => {
+  try {
+    const allData = await fetchExpertsByAdmin(
+        1,
+        1000,
+        search.value,
+        route.name == 'organization-experts' && route.params.slug ? route.params.slug as string : selectedOrganization.value,
+        convertedExpertise.value,
+        !userData.is_superuser
+
+    );
+
+    // Transform data for CSV export
+    const csvData = allData.map((expert: Expert) => {
+      return {
+        'UID': expert.uid || '',
+        'Salutation': getNameComponent(expert.name, 'salutation'),
+        'First Name': getNameComponent(expert.name, 'first_name'),
+        'Middle Name': getNameComponent(expert.name, 'middle_name'),
+        'Last Name': getNameComponent(expert.name, 'last_name'),
+        'Extension': getNameComponent(expert.name, 'extension'),
+        'Full Name': getFullName(expert.name),
+        'Expertise': convertedExpertise.value,
+        'Associated CMI': typeof expert.organization === 'object' && expert.organization !== null
+            ? expert.organization.name || ''
+            : expert.organization || '',
+        'Additional Info': expert.additional_info
+            ? expert.additional_info.replace(/<[^>]*>/g, '')
+            : '',
+        'Created Date': expert.created_at
+            ? new Date(expert.created_at).toLocaleDateString()
+            : '',
+        'Updated Date': expert.updated_at
+            ? new Date(expert.updated_at).toLocaleDateString()
+            : '',
+      };
+    });
+
+    // Generate CSV content
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    // Create and download the file
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      // Generate filename with current date and filter info
+      const currentDate = new Date().toISOString().split('T')[0];
+      let filename = `experts_${currentDate}`;
+
+      // Add filter info to filename if filters are applied
+      if (search.value) {
+        filename += `_search-${search.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      }
+
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
+
+const downloadVisibleCSV = () => {
+
+  try {
+    const csvData = experts.value.map((expert: Expert) => {
+      return {
+        'UID': expert.uid || '',
+        'Salutation': getNameComponent(expert.name, 'salutation'),
+        'First Name': getNameComponent(expert.name, 'first_name'),
+        'Middle Name': getNameComponent(expert.name, 'middle_name'),
+        'Last Name': getNameComponent(expert.name, 'last_name'),
+        'Extension': getNameComponent(expert.name, 'extension'),
+        'Full Name': getFullName(expert.name),
+        'Expertise': convertedExpertise.value,
+        'Associated CMI': typeof expert.organization === 'object' && expert.organization !== null
+            ? expert.organization.name || ''
+            : expert.organization || '',
+        'Additional Info': expert.additional_info
+            ? expert.additional_info.replace(/<[^>]*>/g, '')
+            : '',
+        'Created Date': expert.created_at
+            ? new Date(expert.created_at).toLocaleDateString()
+            : '',
+        'Updated Date': expert.updated_at
+            ? new Date(expert.updated_at).toLocaleDateString()
+            : '',
+      };
+    });
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filename = `experts_page-${page.value}_${currentDate}.csv`;
+
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records from current page)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -253,6 +431,73 @@ onMounted(async () => {
             class="mb-3"
         />
       </VCol>
+      <VCol cols="12" sm="6" md="4" lg="3" v-if="isColumnVisible('expertise')">
+        <VCombobox
+            v-model="selectedExpertise"
+            :items="expertiseOptions"
+            label="Expertise"
+            multiple
+            chips
+            closable-chips
+            density="compact"
+            variant="outlined"
+            rounded="md"
+            color="primary"
+            base-color="gs60"
+            hide-details
+            class="mb-3"
+        />
+      </VCol>
+    </template>
+    <template #additional-toolbar-buttons>
+      <VMenu
+          location="bottom end"
+          transition="slide-y-transition"
+      >
+        <template #activator="{ props }">
+          <VBtn
+              v-bind="props"
+              variant="tonal"
+              color="primary"
+              rounded="md"
+              class="satoshi-md me-2 filter-btn px-3"
+              height="40px"
+              style="font-size: 14px !important"
+          >
+            <PhDownload size="16" class="mr-2" />
+            <span class="text-body-2">Export</span>
+            <PhCaretDown size="12" class="ml-1" />
+          </VBtn>
+        </template>
+
+        <VCard class="rounded-lg" min-width="200" elevation="3">
+          <VList density="compact" nav>
+            <VListItem
+                @click="downloadCSV"
+                :disabled="loading || expertise.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download All Data</VListItemTitle>
+              <VListItemSubtitle>Export all filtered results</VListItemSubtitle>
+            </VListItem>
+
+            <VListItem
+                @click="downloadVisibleCSV"
+                :disabled="loading || expertise.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download Current Page</VListItemTitle>
+              <VListItemSubtitle>Export visible page only</VListItemSubtitle>
+            </VListItem>
+          </VList>
+        </VCard>
+      </VMenu>
     </template>
   </BaseDataTable>
 </template>

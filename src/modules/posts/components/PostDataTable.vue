@@ -9,8 +9,9 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {onMounted, watch} from "vue";
 import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {
+  PhCaretDown,
   PhCheck,
-  PhDotsThreeOutlineVertical,
+  PhDotsThreeOutlineVertical, PhDownload,
   PhEye,
   PhPencil,
   PhPlus,
@@ -18,6 +19,8 @@ import {
   PhX
 } from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import Papa from "papaparse";
 
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
@@ -131,6 +134,124 @@ const loadPosts = async () => {
 const updateTotalCount = async () => {
   totalItems.value = await fetchTotalPosts(1, 10000000, search.value, selectedOrganization.value, selectedStatus.value);
 }
+
+const downloadCSV = async () => {
+  try {
+    const allData = await fetchPostsByAdmin(
+        1,
+        10000,
+        search.value,
+        selectedOrganization.value,
+        selectedStatus.value
+    );
+
+    // Transform data for CSV export
+    const csvData = allData.map((post: Post) => {
+
+      return {
+        'Title': post.title || '',
+        'Description': post.description ? post.description.replace(/<[^>]*>/g, '') : '',
+        'Status': post.is_published ? 'Published' : 'Unpublished',
+        'Posted By': post.organizationData?.name || '',
+        'Created Date': post.created_at ? new Date(post.created_at).toLocaleDateString() : '',
+        'Updated Date': post.updated_at ? new Date(post.updated_at).toLocaleDateString() : '',
+        'UID': post.uid || '',
+      };
+    });
+
+    // Generate CSV content
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    // Create and download the file
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      // Generate filename with current date and filter info
+      const currentDate = new Date().toISOString().split('T')[0];
+      let filename = `posts_${currentDate}`;
+
+      // Add filter info to filename if filters are applied
+      if (search.value) {
+        filename += `_search-${search.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      }
+
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
+
+const downloadVisibleCSV = () => {
+
+  try {
+    const csvData = posts.value.map((post: Post) => {
+
+      return {
+        'Title': post.title || '',
+        'Description': post.description ? post.description.replace(/<[^>]*>/g, '') : '',
+        'Status': post.is_published ? 'Published' : 'Unpublished',
+        'Posted By': post.organizationData?.name || '',
+        'Created Date': post.created_at ? new Date(post.created_at).toLocaleDateString() : '',
+        'Updated Date': post.updated_at ? new Date(post.updated_at).toLocaleDateString() : '',
+        'UID': post.uid || '',
+      };
+    });
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filename = `posts_page-${page.value}_${currentDate}.csv`;
+
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records from current page)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
 
 watch([selectedOrganization, selectedStatus], async () => {
   await loadData();
@@ -308,7 +429,56 @@ onMounted(async () => {
         />
       </VCol>
     </template>
+    <template #additional-toolbar-buttons>
+      <VMenu
+          location="bottom end"
+          transition="slide-y-transition"
+      >
+        <template #activator="{ props }">
+          <VBtn
+              v-bind="props"
+              variant="tonal"
+              color="primary"
+              rounded="md"
+              class="satoshi-md me-2 filter-btn px-3"
+              height="40px"
+              style="font-size: 14px !important"
+          >
+            <PhDownload size="16" class="mr-2" />
+            <span class="text-body-2">Export</span>
+            <PhCaretDown size="12" class="ml-1" />
+          </VBtn>
+        </template>
 
+        <VCard class="rounded-lg" min-width="200" elevation="3">
+          <VList density="compact" nav>
+            <VListItem
+                @click="downloadCSV"
+                :disabled="loading || posts.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download All Data</VListItemTitle>
+              <VListItemSubtitle>Export all filtered results</VListItemSubtitle>
+            </VListItem>
+
+            <VListItem
+                @click="downloadVisibleCSV"
+                :disabled="loading || posts.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download Current Page</VListItemTitle>
+              <VListItemSubtitle>Export visible page only</VListItemSubtitle>
+            </VListItem>
+          </VList>
+        </VCard>
+      </VMenu>
+    </template>
   </BaseDataTable>
 </template>
 

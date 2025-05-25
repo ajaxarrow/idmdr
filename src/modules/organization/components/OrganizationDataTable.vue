@@ -922,15 +922,15 @@ onMounted(async () => {
           <template #activator="{ props }">
             <VBtn
                 v-bind="props"
-                variant="outlined"
+                variant="tonal"
                 color="primary"
-                height="45px"
-                rounded="lg"
-                class="satoshi-md me-2"
+                rounded="md"
+                class="satoshi-md me-2 filter-btn px-3"
+                height="40px"
                 style="font-size: 14px !important"
             >
               <PhDownload size="16" class="mr-2" />
-              Export
+              <span class="text-body-2">Export</span>
               <PhCaretDown size="12" class="ml-1" />
             </VBtn>
           </template>
@@ -958,7 +958,7 @@ onMounted(async () => {
                   <PhDownload class="mr-2" />
                 </template>
                 <VListItemTitle>Download Current Page</VListItemTitle>
-                <VListItemSubtitle>Export visible data only</VListItemSubtitle>
+                <VListItemSubtitle>Export visible page only</VListItemSubtitle>
               </VListItem>
             </VList>
           </VCard>
