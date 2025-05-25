@@ -166,6 +166,9 @@ const downloadCSV = async () => {
         'Extension': getNameComponent(expert.name, 'extension'),
         'Full Name': getFullName(expert.name),
         'Expertise': convertedExpertise.value,
+        'Contact': expert.contact
+            ? expert.contact.value
+            : '',
         'Associated CMI': typeof expert.organization === 'object' && expert.organization !== null
             ? expert.organization.name || ''
             : expert.organization || '',
@@ -237,6 +240,9 @@ const downloadVisibleCSV = () => {
         'Extension': getNameComponent(expert.name, 'extension'),
         'Full Name': getFullName(expert.name),
         'Expertise': convertedExpertise.value,
+        'Contact': expert.contact
+            ? expert.contact.value
+            : '',
         'Associated CMI': typeof expert.organization === 'object' && expert.organization !== null
             ? expert.organization.name || ''
             : expert.organization || '',

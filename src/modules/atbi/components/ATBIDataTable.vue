@@ -7,7 +7,8 @@ import {ATBI} from "../../../interfaces/atbi.interface.ts";
 import {onMounted, ref, watch, computed} from "vue";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {
-  PhDotsThreeOutlineVertical,
+  PhCaretDown,
+  PhDotsThreeOutlineVertical, PhDownload,
   PhEnvelope,
   PhEye,
   PhFacebookLogo,
@@ -22,6 +23,9 @@ import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
+import {expertise} from "../../../data/repository.inventory.fields.ts";
+import {Expert} from "../../../interfaces/organization.interface.ts";
+import Papa from "papaparse";
 
 const {userData} = useUserStore()
 const { isSmall, isTablet } = useScreenStore();
@@ -135,6 +139,132 @@ const loadAtbis = async () => {
 const updateTotalCount = async () => {
   totalItems.value = await fetchTotalAtbisCount(1, 100000000, search.value, selectedTechnology.value, selectedNames.value, !userData.is_superuser);
 }
+
+const downloadCSV = async () => {
+  try {
+    const allData = await fetchAllAtbis(1, 100000, search.value, selectedTechnology.value, selectedNames.value, !userData.is_superuser);
+
+    // Transform data for CSV export
+    const csvData = allData.map((atbi: ATBI) => {
+      return {
+        'UID': atbi.uuid || '',
+        'Name': atbi.name || '',
+        'Owners': atbi.ownerData && atbi.ownerData.length > 0
+          ? atbi.ownerData.map(owner => `${"first_name" in owner.data ? owner.data.first_name : ''} ${"last_name" in owner.data && owner.data.last_name || ''}`).join(', ')
+          : 'N/A',
+        'Mobile': atbi.mobile || '',
+        'Email': atbi.email || '',
+        'Facebook': atbi.facebook || '',
+        'Associated Technology': atbi.tech_name || '',
+        'Description': atbi.description
+            ? atbi.description.replace(/<[^>]*>/g, '') // Remove HTML tags
+            : '',
+        'Additional Info': atbi.additional_info
+            ? atbi.additional_info.replace(/<[^>]*>/g, '') // Remove HTML tags
+            : ''
+      };
+    });
+
+    // Generate CSV content
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    // Create and download the file
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      // Generate filename with current date and filter info
+      const currentDate = new Date().toISOString().split('T')[0];
+      let filename = `atbis_${currentDate}`;
+
+      // Add filter info to filename if filters are applied
+      if (search.value) {
+        filename += `_search-${search.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      }
+
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
+
+const downloadVisibleCSV = () => {
+
+  try {
+    const csvData = atbis.value.map((atbi: ATBI) => {
+      return {
+        'UID': atbi.uuid || '',
+        'Name': atbi.name || '',
+        'Owners': atbi.ownerData && atbi.ownerData.length > 0
+            ? atbi.ownerData.map(owner => `${"first_name" in owner.data ? owner.data.first_name : ''} ${"last_name" in owner.data && owner.data.last_name || ''}`).join(', ')
+            : 'N/A',
+        'Mobile': atbi.mobile || '',
+        'Email': atbi.email || '',
+        'Facebook': atbi.facebook || '',
+        'Associated Technology': atbi.tech_name || '',
+        'Description': atbi.description
+            ? atbi.description.replace(/<[^>]*>/g, '') // Remove HTML tags
+            : '',
+        'Additional Info': atbi.additional_info
+            ? atbi.additional_info.replace(/<[^>]*>/g, '') // Remove HTML tags
+            : ''
+      };
+    });
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filename = `atbis_page-${page.value}_${currentDate}.csv`;
+
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records from current page)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  }
+};
 
 watch([selectedTechnology, selectedUsers], async () => {
   await loadData();
@@ -341,7 +471,56 @@ onMounted(async() => {
         </VCombobox>
       </VCol>
     </template>
+    <template #additional-toolbar-buttons>
+      <VMenu
+          location="bottom end"
+          transition="slide-y-transition"
+      >
+        <template #activator="{ props }">
+          <VBtn
+              v-bind="props"
+              variant="tonal"
+              color="primary"
+              rounded="md"
+              class="satoshi-md me-2 filter-btn px-3"
+              height="40px"
+              style="font-size: 14px !important"
+          >
+            <PhDownload size="16" class="mr-2" />
+            <span class="text-body-2">Export</span>
+            <PhCaretDown size="12" class="ml-1" />
+          </VBtn>
+        </template>
 
+        <VCard class="rounded-lg" min-width="200" elevation="3">
+          <VList density="compact" nav>
+            <VListItem
+                @click="downloadCSV"
+                :disabled="loading || atbis.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download All Data</VListItemTitle>
+              <VListItemSubtitle>Export all filtered results</VListItemSubtitle>
+            </VListItem>
+
+            <VListItem
+                @click="downloadVisibleCSV"
+                :disabled="loading || atbis.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download Current Page</VListItemTitle>
+              <VListItemSubtitle>Export visible page only</VListItemSubtitle>
+            </VListItem>
+          </VList>
+        </VCard>
+      </VMenu>
+    </template>
   </BaseDataTable>
 </template>
 

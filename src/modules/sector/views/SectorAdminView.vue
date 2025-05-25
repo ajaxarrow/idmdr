@@ -132,8 +132,8 @@ const loadData = async () => {
 const downloadCSV = async () => {
   try {
     const allData = await fetchAllSectors(
-        page.value,
-        itemsPerPage.value,
+        1,
+        1000,
         search.value,
         selectedType.value,
         selectedEntity.value,
