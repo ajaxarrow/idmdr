@@ -10,7 +10,7 @@ import {
   PhPencil,
   PhDotsThreeOutlineVertical,
   PhEye,
-  PhGear, PhMagnifyingGlass
+  PhGear, PhMagnifyingGlass, PhDownload, PhCaretDown
 } from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
@@ -34,6 +34,8 @@ import {
   technologyCategories, technologyStatus,
   transferPlans
 } from "../../../data/repository.inventory.fields.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import Papa from "papaparse";
 
 const {userData} = useUserStore()
 const {route} = useRouting();
@@ -627,6 +629,238 @@ const updateTotalCount = async () => {
   } catch (error) {
     console.error('Failed to get total count:', error);
     totalItems.value = 0;
+  }
+};
+
+const downloadCSV = async () => {
+
+
+  try {
+    const { tech_owner, tech_generator, author, lead, all_filters } = getUserFilters();
+
+    const allData = await fetchAllRepositories(
+        1,
+        1000,
+        search.value,
+        selectedPriorityLevel.value,
+        (route.name == 'organization-repositories' || route.name == 'my-organization-repositories') && route.params.slug ? route.params.slug as string : selectedOrganization.value,
+        props.isForUser ? true : selectedProjectState.value,
+        selectedProjectPublicState.value,
+        getRepositoryType(),
+        selectedProjectStatus.value,
+        convertedTags.value as string,
+        all_filters,
+        tech_owner,
+        tech_generator,
+        author,
+        lead,
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
+        props.isForUser,
+        true,
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and',
+        convertedCommodity.value as string,
+        convertedIndustries.value as string,
+        selectedTechnologyCategory.value,
+        selectedTechnologyReadinessLevel.value,
+        selectedTransferPlan.value,
+        selectedTechnologyStatus.value,
+        convertedFundingAgencies.value as string,
+        convertedAffiliations.value as string,
+        convertedAdaptors.value as string,
+    );
+
+
+    // Transform data for CSV export
+    const csvData = allData.map((repo: Repository) => {
+      // Helper function to format representative data
+      const formatReps = (repData: any[]) => {
+        if (!repData || repData.length === 0) return 'N/A';
+        return repData.map(rep => `${rep.data?.first_name || ''} ${rep.data?.last_name || ''}`.trim()).join(', ');
+      };
+
+      return {
+        'Title': repo.title || '',
+        'Description': repo.description ? repo.description.replace(/<[^>]*>/g, '') : '',
+        'Type': repo.type === 'Project Repository' ? 'With Technology' : 'No Associated Technology',
+        'Site of Implementation': repo.location || '',
+        'Project Category': repo.proj_type,
+        'Collaborators': formatReps(repo.authorsData!),
+        'Project Lead': repo.leadData?.data
+            ? `${repo.leadData.data.first_name?.length ? repo.leadData.data.first_name : 'N/A'} ${repo.leadData.data.last_name?.length ? repo.leadData.data.last_name : ''}`
+            : 'N/A',
+        'Start Date': repo.start_date ? formatDate(repo.start_date) : 'N/A',
+        'End Date': repo.end_date ? formatDate(repo.end_date) : 'N/A',
+        'Project Status': repo.type === 'Project Repository' && repo.status ? repo.status : 'N/A',
+        'Commodity': repo.type === 'Project Repository' && repo.commodity ? arrayToString(repo.commodity as string[]) : 'N/A',
+        'Industries': repo.type === 'Project Repository' && repo.industry ? arrayToString(repo.industry as string[]) : 'N/A',
+        'Technology Category': repo.type === 'Project Repository' && repo.technology_category ? repo.technology_category : 'N/A',
+        'Technology Readiness Level': repo.type === 'Project Repository' && repo.technology_readiness_level ? repo.technology_readiness_level : 'N/A',
+        'Transfer Plan': repo.type === 'Project Repository' && repo.transfer_plan ? repo.transfer_plan : 'N/A',
+        'Research Projects Conducted': repo.type === 'Project Repository' && repo.rpt ? repo.rpt : 'N/A',
+        'Technology Status': repo.type === 'Project Repository' && repo.technology_status ? repo.technology_status : 'N/A',
+        'Funding Agencies': repo.type === 'Project Repository' && repo.funding_agency ? arrayToString(repo.funding_agency as string[]) : 'N/A',
+        'Affiliations': repo.type === 'Project Repository' && repo.affiliation ? arrayToString(repo.affiliation as string[]) : 'N/A',
+        'Technology Generators': repo.type === 'Project Repository' ? formatReps(repo.techGeneratorData!) : 'N/A',
+        'Technology Owners': repo.type === 'Project Repository' ? formatReps(repo.techOwnerData!) : 'N/A',
+        'Adopters': repo.type === 'Project Repository' && repo.adaptors ? arrayToString(repo.adaptors as string[]) : 'N/A',
+        'Patenting Status': repo.type === 'Project Repository' ? (repo.is_patentable ? 'Applicable for Patenting' : 'Not Applicable for Patenting') : 'N/A',
+        'Priority Level': repo.type === 'Project Repository' && repo.priority_level ? repo.priority_level : 'N/A',
+        'Tags': repo.type === 'Project Repository' && repo.tags ? arrayToString(repo.tags as string[]) : 'N/A',
+        // Commercialization fields if applicable
+        'IP Type': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipType ? repo.commercialization.ipType : 'N/A',
+        'IP Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipStatus ? repo.commercialization.ipStatus : 'N/A',
+        'Registration No': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.regNo ? repo.commercialization.regNo : 'N/A',
+        'Mode of Commercialization': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.modeStatus ? repo.commercialization.modeStatus : 'N/A',
+        'Adopter Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.adopterStatus ? repo.commercialization.adopterStatus : 'N/A',
+      'Current Commercialization Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.currentStatus ? repo.commercialization.currentStatus : 'N/A',
+        'Created Date': repo.created_at ? new Date(repo.created_at).toLocaleDateString() : '',
+        'Updated Date': repo.updated_at ? new Date(repo.updated_at).toLocaleDateString() : '',
+        'State': repo.is_active ? 'Active' : 'Inactive',
+        'Admin Status': repo.is_approved ? 'Enabled' : 'Disabled',
+        'Visibility': getVisibilityLabel(repo.visibility as number),
+        'UID': repo.uid || '',
+        'GeoJSON': repo.geojson
+            ? JSON.stringify(repo.geojson).replace(/"/g, '""')
+            : '',
+      };
+    });
+
+    // Generate CSV content
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    // Create and download the file
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      // Generate filename with current date and filter info
+      const currentDate = new Date().toISOString().split('T')[0];
+      let filename = `projects_${currentDate}`;
+
+      // Add filter info to filename if filters are applied
+      if (search.value) {
+        filename += `_search-${search.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      }
+
+
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  } finally {
+  }
+};
+const downloadVisibleCSV = () => {
+
+  try {
+    // Use current organizations data
+    const csvData = repositories.value.map((repo: Repository) => {
+      // Helper function to format representative data
+      const formatReps = (repData: any[]) => {
+        if (!repData || repData.length === 0) return 'N/A';
+        return repData.map(rep => `${rep.data?.first_name || ''} ${rep.data?.last_name || ''}`.trim()).join(', ');
+      };
+
+      return {
+        'Title': repo.title || '',
+        'Description': repo.description ? repo.description.replace(/<[^>]*>/g, '') : '',
+        'Type': repo.type === 'Project Repository' ? 'With Technology' : 'No Associated Technology',
+        'Site of Implementation': repo.location || '',
+        'Project Category': repo.proj_type,
+        'Collaborators': formatReps(repo.authorsData!),
+        'Project Lead': repo.leadData?.data
+            ? `${repo.leadData.data.first_name?.length ? repo.leadData.data.first_name : 'N/A'} ${repo.leadData.data.last_name?.length ? repo.leadData.data.last_name : ''}`
+            : 'N/A',
+        'Start Date': repo.start_date ? formatDate(repo.start_date) : 'N/A',
+        'End Date': repo.end_date ? formatDate(repo.end_date) : 'N/A',
+        'Project Status': repo.type === 'Project Repository' && repo.status ? repo.status : 'N/A',
+        'Commodity': repo.type === 'Project Repository' && repo.commodity ? arrayToString(repo.commodity as string[]) : 'N/A',
+        'Industries': repo.type === 'Project Repository' && repo.industry ? arrayToString(repo.industry as string[]) : 'N/A',
+        'Technology Category': repo.type === 'Project Repository' && repo.technology_category ? repo.technology_category : 'N/A',
+        'Technology Readiness Level': repo.type === 'Project Repository' && repo.technology_readiness_level ? repo.technology_readiness_level : 'N/A',
+        'Transfer Plan': repo.type === 'Project Repository' && repo.transfer_plan ? repo.transfer_plan : 'N/A',
+        'Research Projects Conducted': repo.type === 'Project Repository' && repo.rpt ? repo.rpt : 'N/A',
+        'Technology Status': repo.type === 'Project Repository' && repo.technology_status ? repo.technology_status : 'N/A',
+        'Funding Agencies': repo.type === 'Project Repository' && repo.funding_agency ? arrayToString(repo.funding_agency as string[]) : 'N/A',
+        'Affiliations': repo.type === 'Project Repository' && repo.affiliation ? arrayToString(repo.affiliation as string[]) : 'N/A',
+        'Technology Generators': repo.type === 'Project Repository' ? formatReps(repo.techGeneratorData!) : 'N/A',
+        'Technology Owners': repo.type === 'Project Repository' ? formatReps(repo.techOwnerData!) : 'N/A',
+        'Adopters': repo.type === 'Project Repository' && repo.adaptors ? arrayToString(repo.adaptors as string[]) : 'N/A',
+        'Patenting Status': repo.type === 'Project Repository' ? (repo.is_patentable ? 'Applicable for Patenting' : 'Not Applicable for Patenting') : 'N/A',
+        'Priority Level': repo.type === 'Project Repository' && repo.priority_level ? repo.priority_level : 'N/A',
+        'Tags': repo.type === 'Project Repository' && repo.tags ? arrayToString(repo.tags as string[]) : 'N/A',
+        // Commercialization fields if applicable
+        'IP Type': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipType ? repo.commercialization.ipType : 'N/A',
+        'IP Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipStatus ? repo.commercialization.ipStatus : 'N/A',
+        'Registration No': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.regNo ? repo.commercialization.regNo : 'N/A',
+        'Mode of Commercialization': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.modeStatus ? repo.commercialization.modeStatus : 'N/A',
+        'Adopter Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.adopterStatus ? repo.commercialization.adopterStatus : 'N/A',
+        'Current Commercialization Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.currentStatus ? repo.commercialization.currentStatus : 'N/A',
+        'Created Date': repo.created_at ? new Date(repo.created_at).toLocaleDateString() : '',
+        'Updated Date': repo.updated_at ? new Date(repo.updated_at).toLocaleDateString() : '',
+        'State': repo.is_active ? 'Active' : 'Inactive',
+        'Admin Status': repo.is_approved ? 'Enabled' : 'Disabled',
+        'Visibility': getVisibilityLabel(repo.visibility as number),
+        'UID': repo.uid || '',
+        'GeoJSON': repo.geojson
+            ? JSON.stringify(repo.geojson).replace(/"/g, '""')
+            : '',
+      };
+    });
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filename = `projects_page-${page.value}_${currentDate}.csv`;
+
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records from current page)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  } finally {
+
   }
 };
 
@@ -1271,6 +1505,56 @@ onMounted(async () => {
           </VRow>
         </div>
       </VRow>
+    </template>
+    <template #additional-toolbar-buttons>
+      <VMenu
+          location="bottom end"
+          transition="slide-y-transition"
+      >
+        <template #activator="{ props }">
+          <VBtn
+              v-bind="props"
+              variant="tonal"
+              color="primary"
+              rounded="md"
+              class="satoshi-md me-2 filter-btn px-3"
+              height="40px"
+              style="font-size: 14px !important"
+          >
+            <PhDownload size="16" class="mr-2" />
+            <span class="text-body-2">Export</span>
+            <PhCaretDown size="12" class="ml-1" />
+          </VBtn>
+        </template>
+
+        <VCard class="rounded-lg" min-width="200" elevation="3">
+          <VList density="compact" nav>
+            <VListItem
+                @click="downloadCSV"
+                :disabled="loading || repositories.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download All Data</VListItemTitle>
+              <VListItemSubtitle>Export all filtered results</VListItemSubtitle>
+            </VListItem>
+
+            <VListItem
+                @click="downloadVisibleCSV"
+                :disabled="loading || repositories.length === 0"
+                class="cursor-pointer"
+            >
+              <template v-slot:prepend>
+                <PhDownload class="mr-2" />
+              </template>
+              <VListItemTitle>Download Current Page</VListItemTitle>
+              <VListItemSubtitle>Export visible page only</VListItemSubtitle>
+            </VListItem>
+          </VList>
+        </VCard>
+      </VMenu>
     </template>
 
   </BaseDataTable>

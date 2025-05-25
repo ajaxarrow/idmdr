@@ -428,13 +428,16 @@ const downloadCSV = async () => {
         'Address': org.address || '',
         'Description': org.description ? org.description.replace(/<[^>]*>/g, '') : '', // Strip HTML tags
         'Status': statusInfo.status,
-        'Is Active': org.is_active ? 'Yes' : 'No',
-        'Is Approved': org.is_approved ? 'Yes' : 'No',
+        'State': org.is_active ? 'Active' : 'Inactive',
+        'Admin Status': org.is_approved ? 'Enabled' : 'Disabled',
         'Visibility': getVisibilityLabel(org.visibility as number),
         'Research & Development Rep': formatReps(org.rd_repData!),
         'Information Communication Rep': formatReps(org.ic_repData!),
         'Technology Transfer Rep': formatReps(org.tt_repData!),
         'Science Communication Rep': formatReps(org.sc_repData!),
+        'GeoJSON': org.geojson
+            ? JSON.stringify(org.geojson).replace(/"/g, '""')
+            : '',
         // 'Created Date': org.created_at ? new Date(org.created_at).toLocaleDateString() : '',
         // 'Updated Date': org.updated_at ? new Date(org.updated_at).toLocaleDateString() : '',
         'UID': org.uid || '',
@@ -509,15 +512,18 @@ const downloadVisibleCSV = () => {
         'Title': org.name || '',
         'Acronym': org.acronym || '',
         'Address': org.address || '',
-        'Description': org.description ? org.description.replace(/<[^>]*>/g, '') : '',
+        'Description': org.description ? org.description.replace(/<[^>]*>/g, '') : '', // Strip HTML tags
         'Status': statusInfo.status,
-        'Is Active': org.is_active ? 'Yes' : 'No',
-        'Is Approved': org.is_approved ? 'Yes' : 'No',
+        'State': org.is_active ? 'Active' : 'Inactive',
+        'Admin Status': org.is_approved ? 'Enabled' : 'Disabled',
         'Visibility': getVisibilityLabel(org.visibility as number),
         'Research & Development Rep': formatReps(org.rd_repData!),
         'Information Communication Rep': formatReps(org.ic_repData!),
         'Technology Transfer Rep': formatReps(org.tt_repData!),
         'Science Communication Rep': formatReps(org.sc_repData!),
+        'GeoJSON': org.geojson
+            ? JSON.stringify(org.geojson).replace(/"/g, '""')
+            : '',
         'UID': org.uid || '',
         'Slug': org.slug || ''
       };

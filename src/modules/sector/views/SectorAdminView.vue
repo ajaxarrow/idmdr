@@ -152,16 +152,17 @@ const downloadCSV = async () => {
         'Additional Info': sector.additional_info
             ? sector.additional_info.replace(/<[^>]*>/g, '')
             : '',
-        'Created Date': sector.created_at
-            ? new Date(sector.created_at).toLocaleDateString()
-            : '',
-        'Owner': sector.owner
-            ? `${sector.owner.first_name} ${sector.owner.last_name}` : '',
-        'Updated Date': sector.updated_at
-            ? new Date(sector.updated_at).toLocaleDateString()
+        'Tags': sector.tags
+            ? arrayToString(sector.tags as string[])
             : '',
         'GeoJSON': sector.geojson
             ? JSON.stringify(sector.geojson).replace(/"/g, '""')
+            : '',
+        'Updated Date': sector.updated_at
+            ? new Date(sector.updated_at).toLocaleDateString()
+            : '',
+        'Created Date': sector.created_at
+            ? new Date(sector.created_at).toLocaleDateString()
             : '',
       };
     });
@@ -225,17 +226,20 @@ const downloadVisibleCSV = () => {
         'Additional Info': sector.additional_info
             ? sector.additional_info.replace(/<[^>]*>/g, '')
             : '',
-        'Created Date': sector.created_at
-            ? new Date(sector.created_at).toLocaleDateString()
-            : '',
         'Owner': sector.owner
             ? `${sector.owner.first_name} ${sector.owner.last_name}` : '',
-        'Updated Date': sector.updated_at
-            ? new Date(sector.updated_at).toLocaleDateString()
+        'Tags': sector.tags
+            ? arrayToString(sector.tags as string[])
             : '',
         'GeoJSON': sector.geojson
             ? JSON.stringify(sector.geojson).replace(/"/g, '""')
             : '',
+        'Updated Date': sector.updated_at
+            ? new Date(sector.updated_at).toLocaleDateString()
+            : '',
+        'Created Date': sector.created_at
+            ? new Date(sector.created_at).toLocaleDateString()
+            : ''
       };
     });
 
