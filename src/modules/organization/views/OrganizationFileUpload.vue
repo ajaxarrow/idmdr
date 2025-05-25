@@ -13,24 +13,24 @@ import {useOrganizationAttachmentServices} from "../services/organization-attach
 
 const {fetchOrganizationVisibility, loading} = useOrganizationServices();
 const {fetchAttachmentsByOrganization, deleteAttachment, updateAttachment, addAttachment} = useOrganizationAttachmentServices()
-const visibilityInfo = [
-  {
-    name: 'Public',
-    value: 1
-  },
-  {
-    name: 'Private',
-    value: 2
-  },
-  {
-    name: 'Within Organization',
-    value: 3
-  },
-  {
-    name: 'Within All Organizations',
-    value: 4
-  }
-]
+// const visibilityInfo = [
+//   {
+//     name: 'Public',
+//     value: 1
+//   },
+//   {
+//     name: 'Private',
+//     value: 2
+//   },
+//   {
+//     name: 'Within Organization',
+//     value: 3
+//   },
+//   {
+//     name: 'Within All Organizations',
+//     value: 4
+//   }
+// ]
 const {showSnackbarMessage} = useSnackbarStore();
 const {router, route} = useRouting();
 const repositoryForm = ref(null);

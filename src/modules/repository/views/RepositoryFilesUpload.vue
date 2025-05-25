@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AttachmentsVisibilityInfoDialog from "../components/AttachmentsVisibilityInfoDialog.vue";
 import MainLayout from "../../../core/layouts/MainLayout.vue";
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useRepositoryServices} from "../services/repository.services.ts";
@@ -14,24 +13,24 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 
 const {fetchRepositoryVisibility, loading} = useRepositoryServices();
 const {fetchAttachmentsByRepository, deleteAttachment, updateAttachment, addAttachment} = useRepositoryAttachmentServices()
-const visibilityInfo = [
-  {
-    name: 'Public',
-    value: 1
-  },
-  {
-    name: 'Private',
-    value: 2
-  },
-  {
-    name: 'Within Organization',
-    value: 3
-  },
-  {
-    name: 'Within All Organizations',
-    value: 4
-  }
-]
+// const visibilityInfo = [
+//   {
+//     name: 'Public',
+//     value: 1
+//   },
+//   {
+//     name: 'Private',
+//     value: 2
+//   },
+//   {
+//     name: 'Within Organization',
+//     value: 3
+//   },
+//   {
+//     name: 'Within All Organizations',
+//     value: 4
+//   }
+// ]
 const {showSnackbarMessage} = useSnackbarStore();
 const {router, route} = useRouting();
 const repositoryForm = ref(null);

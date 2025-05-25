@@ -25,7 +25,6 @@ import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vu
 import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useRepositoryMemberServices} from "../../repository/services/repository-member.services.ts";
 import DeleteDialog from "../../../core/components/DeleteDialog.vue";
-import AttachmentsVisibilityInfoDialog from "../../repository/components/AttachmentsVisibilityInfoDialog.vue";
 import {useOrganizationAttachmentServices} from "../services/organization-attachments.services.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
@@ -52,24 +51,24 @@ const previewImage = ref('');
 const file = ref<File | null>(null);
 const customUsers = ref<CustomUserData[]>([])
 const {route, router} = useRouting();
-const visibilityInfo = [
-  {
-    name: 'Public',
-    value: 1
-  },
-  {
-    name: 'Private',
-    value: 2
-  },
-  {
-    name: 'Within Organization',
-    value: 3
-  },
-  {
-    name: 'Within All Organizations',
-    value: 4
-  }
-]
+// const visibilityInfo = [
+//   {
+//     name: 'Public',
+//     value: 1
+//   },
+//   {
+//     name: 'Private',
+//     value: 2
+//   },
+//   {
+//     name: 'Within Organization',
+//     value: 3
+//   },
+//   {
+//     name: 'Within All Organizations',
+//     value: 4
+//   }
+// ]
 
 const organizationDataInitialState = reactive<Organization>({
   is_active: true,

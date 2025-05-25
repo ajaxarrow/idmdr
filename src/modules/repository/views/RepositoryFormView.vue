@@ -30,7 +30,6 @@ import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useRepositoryStore} from "../stores/repository.store.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
-import AttachmentsVisibilityInfoDialog from "../components/AttachmentsVisibilityInfoDialog.vue";
 import {useRepositoryAttachmentServices} from "../services/repository-attachments.services.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
 import {Status} from "../../../interfaces/enums/status.enum.ts";
@@ -51,24 +50,24 @@ const {tags, fetchTags} = useTags();
 const {route, router} = useRouting();
 const {userData} = useUserStore();
 
-const visibilityInfo = [
-  {
-    name: 'Public',
-    value: 1
-  },
-  {
-    name: 'Private',
-    value: 2
-  },
-  {
-    name: 'Within Organization',
-    value: 3
-  },
-  {
-    name: 'Within All Organizations',
-    value: 4
-  }
-]
+// const visibilityInfo = [
+//   {
+//     name: 'Public',
+//     value: 1
+//   },
+//   {
+//     name: 'Private',
+//     value: 2
+//   },
+//   {
+//     name: 'Within Organization',
+//     value: 3
+//   },
+//   {
+//     name: 'Within All Organizations',
+//     value: 4
+//   }
+// ]
 
 const repositoryForm = ref(null);
 const isImagePreviewed = ref(false);
