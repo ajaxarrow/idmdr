@@ -14,7 +14,7 @@ const props = defineProps({
         class="pa-4 card circle relative-container">
       <component :is="props.data?.icon" weight="bold" size="32" class="mt-7 mb-4"/>
       <p class="dashboard-card-num">{{props.data?.value}}</p>
-      <p class="dashboard-card-subtitle">{{props.data?.name}}</p>
+      <p class="dashboard-card-subtitle">Managed and Affiliated {{props.data?.name}}</p>
     </VSheet>
   </div>
 </template>
@@ -45,13 +45,13 @@ const props = defineProps({
   }
 
   .dashboard-card-num{
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 900;
     line-height: 1;
   }
 
   .dashboard-card-subtitle{
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 600;
   }
 </style>

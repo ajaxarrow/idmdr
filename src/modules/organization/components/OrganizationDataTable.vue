@@ -50,12 +50,14 @@ const selectedNames = computed(() =>
     arrayToString(selectedUsers.value.map(user => user?.data?.first_name || 'Unknown'))
 )
 const selectedVisibilities = ref<string[]>([]);
+const allType = ref<boolean>(true);
 const convertedVisibilities = computed(() => {
   return arrayToString(selectedVisibilities.value)
 });
 const handleSearch = async (query: any) => {
   userSearch.value = query
 }
+
 
 const props = defineProps({
   isForUser: {
@@ -131,6 +133,11 @@ const visibilityOptions = [
   { title: 'Within All Organization', value: '4' },
 ];
 
+const orgOptions = [
+  { title: 'All CMIs', value: true },
+  { title: 'Managed and Affiliated CMIs', value: false }
+]
+
 const getStatusInfo = (org: Organization) => {
   if (!org.is_approved) {
     return {
@@ -200,6 +207,15 @@ const loadData = async ()=> {
 }
 
 const tableFilters = computed(() => [
+  ...(!userData.is_superuser ? [{
+    key: 'orgTypeStatus',
+    label: 'Filter By Organization',
+    value: allType.value,
+    items: orgOptions,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
+    visibleKey: 'title'
+  }] : []),
   ...(!props.isForUser ? [{
     key: 'orgAdminStatus',
     label: 'CMI State',
@@ -217,7 +233,7 @@ const tableFilters = computed(() => [
     itemTitle: (type: any) => type.title,
     itemValue: (type: any) => type.value,
     visibleKey: 'status'
-  },
+  }
 ]);
 
 const clearFilters = () => {
@@ -226,6 +242,7 @@ const clearFilters = () => {
   selectedUsers.value = [];
   selectedUsersOption.value = ['All'];
   selectedVisibilities.value = [];
+  allType.value = true;
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -236,6 +253,8 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
     if (value !== '') {
       selectedOrgAdminStatus.value = true;
     }
+  } else if (key === 'orgTypeStatus') {
+    allType.value = value;
   }
 };
 
@@ -277,10 +296,10 @@ const loadOrganizations = async () => {
         ttc_rep,
         icc_rep,
         scc_rep,
-        route.path === '/organizations' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        route.path === '/organizations' && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
         props.isForUser,
         true,
-        route.path === '/organizations' && props.isForUser ? 'or' : 'and'
+        route.path === '/organizations' && props.isForUser && allType.value ? 'or' : 'and'
     );
     organizations.value = data;
   } catch (error) {
@@ -330,9 +349,9 @@ const updateTotalCount = async () => {
         ttc_rep,
         icc_rep,
         scc_rep,
-        route.path === '/organizations' && props.isForUser ? '1,4' : convertedVisibilities.value,
+        route.path === '/organizations' && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
         props.isForUser,
-        route.path === '/organizations' && props.isForUser ? 'or' : 'and'
+        route.path === '/organizations' && props.isForUser && allType.value ? 'or' : 'and'
     );
 
 
@@ -345,7 +364,7 @@ const updateTotalCount = async () => {
 
 };
 
-watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus, selectedUsers, selectedVisibilities],
+watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus, selectedUsers, selectedVisibilities, allType],
     async() => {
       await loadData()
     });

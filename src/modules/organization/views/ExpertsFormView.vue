@@ -8,7 +8,7 @@ import {Expert, Organization} from "../../../interfaces/organization.interface.t
 import LoadingOverlay from "../../../core/components/LoadingOverlay.vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {useOrganizationExpertsServices} from "../services/organization-experts.services.ts";
-import {contactVisibility, expertise} from "../../../data/repository.inventory.fields.ts";
+import {contactVisibility, expertise, salutations} from "../../../data/repository.inventory.fields.ts";
 import {useStringArrayHelper} from "../../../core/composables/useStringArrayHelper.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useSnackbarStore} from "../../../core/stores/snackbar.store.ts";
@@ -30,6 +30,7 @@ const formType = ref<FormType>(FormType.create);
 const expertDataInitialState = reactive<Expert>({
   uid: '',
   name: {
+    salutation: '',
     first_name: '',
     last_name: '',
     middle_name: '',
@@ -141,6 +142,21 @@ onMounted(async () => {
       <VDivider/>
       <div class="pa-6">
         <div class="mb-3">
+          <label class="input-label">Salutation</label>
+          <VAutocomplete
+              v-if="typeof expertData.name === 'object'"
+              v-model="expertData.name.salutation"
+              placeholder="Enter salutation"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+              :items="salutations.slice().sort()"
+          />
+        </div>
+        <div class="mb-3">
           <label class="input-label">Expert First Name<span class="text-pink">*</span></label>
           <VTextField
               v-if="typeof expertData.name === 'object'"
@@ -231,7 +247,7 @@ onMounted(async () => {
               density="comfortable"
               variant="outlined"
               color="primary"
-              :items="expertise"
+              :items="expertise.slice().sort()"
               base-color="gs60"
               multiple
               chips

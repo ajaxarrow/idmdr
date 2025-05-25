@@ -66,7 +66,7 @@ const selectedVisibilities = ref<string[]>([]);
 const convertedVisibilities = computed(() => {
   return arrayToString(selectedVisibilities.value)
 });
-
+const allType = ref<boolean>(true);
 const userRef = ref(null);
 const userSearch = ref('')
 const handleSearch = async (query: any) => {
@@ -163,6 +163,11 @@ const includedUserOptions = [
   { title: 'Lead', value: 'lead' },
 ];
 
+const repoOptions = [
+  { title: 'All Projects', value: true },
+  { title: 'Managed and Affiliated Projects', value: false }
+]
+
 const priorityLevelOptions = [
   { title: 'All Priorities', value: '' },
   { title: 'High', value: 'high' },
@@ -179,7 +184,7 @@ const visibilityOptions = [
 
 const typeOptions = [
   { title: 'All Types', value: '' },
-  { title: 'Document Type', value: 'Document Repository' },
+  { title: 'No Associated Technology', value: 'Document Repository' },
   { title: 'With Technology', value: 'Project Repository' },
 ];
 
@@ -241,6 +246,15 @@ const loadData = async ()=> {
 
 
 const tableFilters = computed(() => [
+  ...(!userData.is_superuser ? [{
+    key: 'repoAllType',
+    label: 'Filter By Repository',
+    value: allType.value,
+    items: repoOptions,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
+    visibleKey: 'title'
+  }] : []),
   {
     key: 'priorityLevel',
     label: 'Priority Level',
@@ -304,6 +318,7 @@ const clearFilters = () => {
   selectedUsers.value = [];
   selectedUsersOption.value = ['All'];
   selectedVisibilities.value = [];
+  allType.value = true;
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -320,6 +335,8 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
     selectedProjectStatus.value = value;
   } else if (key === 'projectType') {
     selectedType.value = value;
+  } else if (key === 'repoAllType') {
+    allType.value = value;
   }
 };
 
@@ -423,10 +440,10 @@ const loadRepositories = async () => {
         tech_generator,
         author,
         lead,
-        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? '1,4' : convertedVisibilities.value,
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
         props.isForUser,
         true,
-        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? 'or' : 'and'
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and'
     );
 
     repositories.value = data;
@@ -457,8 +474,8 @@ const updateTotalCount = async () => {
         tech_generator,
         author,
         lead,
-        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? '1,4' : convertedVisibilities.value,
-        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser ? 'or' : 'and'
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and'
     );
 
     totalItems.value =
@@ -484,7 +501,7 @@ watch(()=> route.path, async () => {
   await loadRepositories()
 })
 
-watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers, selectedVisibilities],
+watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers, selectedVisibilities, allType],
     async() => {
       await loadData()
     });
@@ -688,7 +705,7 @@ onMounted(async () => {
 
     <template v-if="path === '/repositories' || path === '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories'  " #item.type="{ item }">
       <VChip size="small">
-        {{ item.type === 'Document Repository' ? 'Document Project' : 'IP Technology' }}
+        {{ item.type === 'Document Repository' ? 'No Associated Technology' : 'IP Technology' }}
       </VChip>
     </template>
 

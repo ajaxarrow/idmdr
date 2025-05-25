@@ -103,7 +103,7 @@ onUnmounted(() => {
               <div style="line-height: 20px">
                 <p class="topic-subtitle">{{
                     typeof expertData?.name === 'object'
-                        ? `${expertData?.name?.first_name || ''} ${expertData?.name?.middle_name || ''} ${expertData?.name?.last_name || ''} ${expertData?.name?.extension || ''}`.trim()
+                        ? `${expertData?.name?.salutation ? expertData?.name?.salutation : ''} ${expertData?.name?.first_name || ''} ${expertData?.name?.middle_name || ''} ${expertData?.name?.last_name || ''} ${expertData?.name?.extension || ''}`.trim()
                         : expertData?.name || ''
                   }}</p>
                 <p class="text-gs60" style="font-size: 14px"> {{organization?.name}} ({{organization?.acronym}})</p>
@@ -141,7 +141,7 @@ onUnmounted(() => {
             <p class="text-subtitle text-gs20">Expert Name</p>
             <p class="text-subtitle">{{
                 typeof expertData?.name === 'object'
-                    ? `${expertData?.name?.first_name || ''} ${expertData?.name?.middle_name || ''} ${expertData?.name?.last_name || ''} ${expertData?.name?.extension || ''}`.trim()
+                    ? `${expertData?.name?.salutation ? expertData?.name?.salutation : ''} ${expertData?.name?.first_name || ''} ${expertData?.name?.middle_name || ''} ${expertData?.name?.last_name || ''} ${expertData?.name?.extension || ''}`.trim()
                     : expertData?.name || ''
               }}</p>
           </VCol>

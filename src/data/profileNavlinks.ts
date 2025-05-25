@@ -11,13 +11,13 @@ const {user, userData} = useUserStore()
 export const profileNavlinks = [
   ...(user.value && userData.is_approved ? [
     {
-      name: "My Repositories",
-      link: "/my-repositories",
+      name: "Projects",
+      link: "/repositories",
       icon: PhCloud,
     },
     {
-      name: 'My Organizations',
-      link: '/my-organizations',
+      name: 'Organizations',
+      link: '/organizations',
       icon: PhUsersFour
     },
     {

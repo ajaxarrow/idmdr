@@ -38,7 +38,7 @@ onMounted(() => {
           <p class="organization-title ">
             {{
               typeof props.expert?.name === 'object'
-                  ? `${props.expert?.name?.first_name || ''} ${props.expert?.name?.middle_name || ''} ${props.expert?.name?.last_name || ''} ${props.expert?.name?.extension || ''}`.trim()
+                  ? `${expertData?.name?.salutation ? expertData?.name?.salutation : ''} ${props.expert?.name?.first_name || ''} ${props.expert?.name?.middle_name || ''} ${props.expert?.name?.last_name || ''} ${props.expert?.name?.extension || ''}`.trim()
                   : props.expert?.name || ''
             }}
           </p>

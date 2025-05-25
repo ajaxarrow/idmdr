@@ -3,17 +3,16 @@ import {
   PhHouse,
   PhMapPinLine,
   PhSignOut,
-  PhUsersFour,
   PhUsersThree,
   PhAirplaneLanding,
   PhUserCircle,
-  PhLightbulbFilament,
+  // PhLightbulbFilament,
   PhUsers,
   PhPen,
   PhCalendar,
   PhLeaf,
   PhFolderUser,
-  PhBooks,
+  // PhBooks,
   PhMapTrifold
 } from "@phosphor-icons/vue";
 import {useUserStore} from "../core/stores/user.store.ts";
@@ -30,16 +29,16 @@ export const navLinks = [
     link: '/repositories',
     icon: PhCloud
   },
-  {
-    name: 'IP Technologies',
-    link: '/ip-technologies',
-    icon: PhLightbulbFilament
-  },
-  {
-    name: 'E-Library',
-    link: '/e-library',
-    icon: PhBooks
-  },
+  // {
+  //   name: 'IP Technologies',
+  //   link: '/ip-technologies',
+  //   icon: PhLightbulbFilament
+  // },
+  // {
+  //   name: 'E-Library',
+  //   link: '/e-library',
+  //   icon: PhBooks
+  // },
   ...((user.value && userData.is_approved) || userData.is_superuser ? [
     {
       name: 'ATBI',
@@ -69,18 +68,18 @@ export const navLinks = [
       icon: PhFolderUser
     }
   ] : []),
-  ...(user.value && !userData.is_superuser && userData.is_approved? [
-    {
-      name: 'My Projects',
-      link: '/my-repositories',
-      icon: PhCloud
-    },
-    {
-      name: 'My CMIs',
-      link: '/my-organizations',
-      icon: PhUsersFour
-    }
-  ] : []),
+  // ...(user.value && !userData.is_superuser && userData.is_approved? [
+  //   {
+  //     name: 'My Projects',
+  //     link: '/my-repositories',
+  //     icon: PhCloud
+  //   },
+  //   {
+  //     name: 'My CMIs',
+  //     link: '/my-organizations',
+  //     icon: PhUsersFour
+  //   }
+  // ] : []),
   ...((user.value && userData.is_approved ) || userData.is_superuser? [
     {
       name: 'Experts',

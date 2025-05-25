@@ -317,5 +317,39 @@ const contactVisibility = [
   }
 ]
 
+const salutations = [
+  "Mr.",
+  "Mrs.",
+  "Ms.",
+  "Miss",
+  "Dr.",
+  "Prof.",
+  "Engr.",
+  "Rev.",
+  "Hon.",
+  "Sir",
+  "Madam",
+  "Lady",
+  "Capt.",
+  "Col.",
 
-export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent, expertise, contactVisibility, categories}
+  // Academic-specific
+  "Dean",
+  "Chancellor",
+  "Vice Chancellor",
+  "Rector",
+  "Principal",
+  "Lecturer",
+  "Instructor",
+  "Fellow",
+  "Researcher",
+  "Scholar",
+  "TA", // Teaching Assistant
+  "Adjunct Professor",
+  "Associate Professor",
+  "Assistant Professor",
+  "Emeritus Professor"
+];
+
+
+export {commodities, industries, technologyCategories, agencies, transferPlans, adopters, ipType, ipStatus, modeStatus, currentStatus, priorityLevels, technologyStatus, readinessLevel, repoType, status, forPatent, expertise, contactVisibility, categories, salutations}

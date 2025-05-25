@@ -42,7 +42,7 @@ export const useEventsServices = () => {
 
   const fetchEvents = async (): Promise<OrganizationEvent[]> => {
     try {
-      const res = await server.get('/events/', {
+      const res = await server.get('/events/?page_size=1000', {
         headers: authorizationHeader
       });
       return res.data.map((event: any) => mapEventData(event));

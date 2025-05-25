@@ -997,7 +997,7 @@ onMounted( async () => {
           />
         </div>
         <div class="mb-3">
-          <label class="input-label">End Date</label>
+          <label class="input-label">End Date (or Projected End Date)</label>
           <VTextField
               v-model="repositoryData.end_date"
               type="date"

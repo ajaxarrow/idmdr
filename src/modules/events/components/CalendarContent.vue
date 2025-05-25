@@ -154,6 +154,10 @@ const deleteEventCallback = async (id: string) => {
   closeContextMenu();
 }
 
+const deleteCallback = async () => {
+  events.value = await fetchEvents();
+}
+
 const fetchEventsData = async () => {
   pageLoading.value = true;
   if (props.forOrganization) {
@@ -188,6 +192,7 @@ onUnmounted(() => {
       :event="selectedEventInfo!"
       @callback="viewEventCallback"
       @fetchCallback="fetchEventCallback"
+      @deleteCallback="deleteCallback"
   />
     <div class="pa-6">
       <div v-if="pageLoading" class="loading-state-container">
@@ -225,6 +230,7 @@ onUnmounted(() => {
                     :use-outside-dialog-model="false"
                     :event="selectedEvent!"
                     @callback="viewEventCallback"
+                    @deleteCallback="deleteCallback"
                 >
                   <p class="cursor-pointer action-menu-item">
                     <PhEye/>

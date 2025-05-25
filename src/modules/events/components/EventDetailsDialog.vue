@@ -11,7 +11,7 @@ import {useEventsServices} from "../services/events.services.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const {showSnackbarMessage} = useSnackbarStore();
-const emits = defineEmits(['callback', 'fetchCallback']);
+const emits = defineEmits(['callback', 'fetchCallback', 'deleteCallback']);
 const {fetchEventByID, deleteEvent} = useEventsServices()
 const props = defineProps({
   event: {
@@ -45,8 +45,7 @@ const updateEventCallback = async () => {
 
 const deleteEventCallback = async (id: string) => {
   await deleteEvent(id);
-  showSnackbarMessage('Event Updated Successfully', Status.success)
-  event.value = (await fetchEventByID(props.event!.uid!))!;
+  emits('deleteCallback')
   showSnackbarMessage('Event Deleted Successfully', Status.success)
   eventDetailsDialog.value = false
 }
@@ -170,7 +169,7 @@ onMounted(() => {
 
                       </EventFormDialog>
 
-                      <DeleteDialog :event-id="event.uid" @callback="deleteEventCallback">
+                      <DeleteDialog :event-id="event.uid" @callback="deleteEventCallback(event.uid as string)">
                         <p class="cursor-pointer action-menu-item">
                           <PhTrash/>
                           Delete
