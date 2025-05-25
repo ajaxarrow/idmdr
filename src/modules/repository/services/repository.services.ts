@@ -528,8 +528,16 @@ export const useRepositoryServices = () => {
       visibility?: string,
       isForUser?: boolean,
       isAllDataIncluded: boolean = false,
-      filter_type?: string
-
+      filter_type?: string,
+      commodity?: string,
+      industry?: string,
+      technology_category?: string,
+      technology_readiness_level?: string,
+      transfer_plan?: string,
+      technology_status?: string,
+      funding_agency?: string,
+      affiliation?: string,
+      adaptors?: string
   ): Promise<Repository[]> => {
     try {
       let url = `/repositories/?ordering=-updated_at&page=${pageNumber}&page_size=${pageSize}`;
@@ -559,7 +567,7 @@ export const useRepositoryServices = () => {
         url += `&tags=${encodeURIComponent(tags)}`;
       }
       if (user_fields?.trim()) {
-          url += `&user_fields=${encodeURIComponent(user_fields)}`;
+        url += `&user_fields=${encodeURIComponent(user_fields)}`;
       } else {
         if (technology_owner?.trim()) {
           url += `&tech_owner=${encodeURIComponent(technology_owner)}`;
@@ -574,17 +582,46 @@ export const useRepositoryServices = () => {
           url += `&lead=${encodeURIComponent(lead)}`;
         }
       }
-      if(visibility) {
-          url += `&visibility=${encodeURIComponent(visibility)}`;
+      if (visibility) {
+        url += `&visibility=${encodeURIComponent(visibility)}`;
       }
-      if(isForUser) {
+      if (isForUser) {
         url += `&user=${userData.uid}`;
       }
-      if(filter_type) {
+      if (filter_type) {
         url += `&filter_type=${filter_type}`;
       }
 
-      console.log(url)
+      // Add the new filters
+      if (commodity?.trim()) {
+        url += `&commodity=${encodeURIComponent(commodity)}`;
+      }
+      if (industry?.trim()) {
+        url += `&industry=${encodeURIComponent(industry)}`;
+      }
+      if (technology_category?.trim()) {
+        url += `&technology_category=${encodeURIComponent(technology_category)}`;
+      }
+      if (technology_readiness_level?.trim()) {
+        url += `&technology_readiness_level=${encodeURIComponent(technology_readiness_level)}`;
+      }
+      if (funding_agency?.trim()) {
+        url += `&funding_agency=${encodeURIComponent(funding_agency)}`;
+      }
+      if (affiliation?.trim()) {
+        url += `&affiliation=${encodeURIComponent(affiliation)}`;
+      }
+      if (transfer_plan?.trim()) {
+        url += `&transfer_plan=${encodeURIComponent(transfer_plan)}`;
+      }
+      if (technology_status?.trim()) {
+        url += `&technology_status=${encodeURIComponent(technology_status)}`;
+      }
+      if (adaptors?.trim()) {
+        url += `&adaptors=${encodeURIComponent(adaptors)}`;
+      }
+
+      console.log(url);
 
       const res = await server.get(url,
           user.value
@@ -592,9 +629,7 @@ export const useRepositoryServices = () => {
               : {}
       );
 
-
       const rawData = res.data.results;
-
       let repositories: Repository[] = await mapRepoData(
           rawData.filter((repo: any) => !repo.is_deleted), 'create', isAllDataIncluded
       );
@@ -609,6 +644,7 @@ export const useRepositoryServices = () => {
       return [];
     }
   };
+
 
   const fetchRepositoryIDsByUser = async (
       pageSize: number = 100,
@@ -627,7 +663,16 @@ export const useRepositoryServices = () => {
       collaborator?: string,
       lead?: string,
       visibility?: string,
-      filter_type?: string
+      filter_type?: string,
+      commodity?: string,
+      industry?: string,
+      technology_category?: string,
+      technology_readiness_level?: string,
+      transfer_plan?: string,
+      technology_status?: string,
+      funding_agency?: string,
+      affiliation?: string,
+      adaptors?: string
   ): Promise<Repository[]> => {
     try {
       // Start with the base URL based on whether user filtering is enabled
@@ -685,6 +730,33 @@ export const useRepositoryServices = () => {
       if(filter_type) {
         url += `&filter_type=${filter_type}`;
       }
+      if (commodity?.trim()) {
+        url += `&commodity=${encodeURIComponent(commodity)}`;
+      }
+      if (industry?.trim()) {
+        url += `&industry=${encodeURIComponent(industry)}`;
+      }
+      if (technology_category?.trim()) {
+        url += `&technology_category=${encodeURIComponent(technology_category)}`;
+      }
+      if (technology_readiness_level?.trim()) {
+        url += `&technology_readiness_level=${encodeURIComponent(technology_readiness_level)}`;
+      }
+      if (funding_agency?.trim()) {
+        url += `&funding_agency=${encodeURIComponent(funding_agency)}`;
+      }
+      if (affiliation?.trim()) {
+        url += `&affiliation=${encodeURIComponent(affiliation)}`;
+      }
+      if (transfer_plan?.trim()) {
+        url += `&transfer_plan=${encodeURIComponent(transfer_plan)}`;
+      }
+      if (technology_status?.trim()) {
+        url += `&technology_status=${encodeURIComponent(technology_status)}`;
+      }
+      if (adaptors?.trim()) {
+        url += `&adaptors=${encodeURIComponent(adaptors)}`;
+      }
 
 
       console.log(`ID URL: ${url}`)
@@ -692,7 +764,6 @@ export const useRepositoryServices = () => {
       const res = await server.get(url, {
         headers: { 'Authorization': `Bearer ${userData.accessToken}` }
       });
-
       const rawData = user ? res.data.results.filter((repo: any) => !repo.is_deleted && repo.is_approved) : res.data.results.filter((repo: any) => !repo.is_deleted);
       const repositories: Repository[] = rawData.map((repo: any) => ({
         uid: repo.uid,

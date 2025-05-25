@@ -26,6 +26,15 @@ import {CustomUserData} from "../../../interfaces/member.interface.ts";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper.ts";
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
+import {
+  adopters,
+  agencies,
+  commodities,
+  expertise, industries,
+  readinessLevel,
+  technologyCategories, technologyStatus,
+  transferPlans
+} from "../../../data/repository.inventory.fields.ts";
 
 const {userData} = useUserStore()
 const {route} = useRouting();
@@ -66,6 +75,21 @@ const selectedVisibilities = ref<string[]>([]);
 const convertedVisibilities = computed(() => {
   return arrayToString(selectedVisibilities.value)
 });
+const selectedCommodity = ref<string[]>([]);
+const convertedCommodity = computed(() => arrayToString(selectedCommodity.value));
+const selectedIndustries = ref<string[]>([]);
+const convertedIndustries = computed(() => arrayToString(selectedIndustries.value));
+const selectedAffiliations = ref<string[]>([]);
+const convertedAffiliations = computed(() => arrayToString(selectedAffiliations.value));
+const selectedFundingAgencies = ref<string[]>([]);
+const convertedFundingAgencies = computed(() => arrayToString(selectedFundingAgencies.value));
+const selectedAdaptors = ref<string[]>([]);
+const convertedAdaptors = computed(() => arrayToString(selectedAdaptors.value));
+const selectedTechnologyCategory = ref('');
+const selectedTechnologyReadinessLevel = ref('');
+const selectedTransferPlan = ref('');
+const selectedTechnologyStatus = ref('')
+
 const allType = ref<boolean>(true);
 const userRef = ref(null);
 const userSearch = ref('')
@@ -155,6 +179,41 @@ const getStatusInfo = (repository: Repository) => {
   }
 };
 
+const transferPlanOptions = [
+  { title: "All", value: "" },
+  ...transferPlans.slice().sort().map((item) => ({
+    title: item,
+    value: item,
+  })),
+];
+
+const technologyCategoryOptions = [
+  { title: "All", value: "" },
+  ...technologyCategories.slice().sort().map((item) => ({
+    title: item,
+    value: item,
+  })),
+];
+
+const technologyReadinessLevelOptions = [
+  { title: "All", value: "" },
+  ...readinessLevel.slice().sort().map((item) => ({
+    title: item,
+    value: item,
+  })),
+];
+
+const technologyStatusOptions = [
+  { title: "All", value: "" },
+  ...technologyStatus.slice().sort().map((item) => ({
+    title: item,
+    value: item,
+  })),
+];
+
+
+
+
 const includedUserOptions = [
   { title: 'All Users', value: 'All' },
   { title: 'Technology Owner', value: 'tech_owner' },
@@ -223,6 +282,18 @@ const headers = computed(() => [
   { title: 'Priority', key: 'priority_level', sortable: true, visible: false },
   { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
   { title: 'End Date', key: 'end_date', sortable: true, visible: false },
+  ...((selectedType.value != 'Document Repository') ? [
+      { title: 'Commodity', key: 'commodity', sortable: false, visible: false },
+      { title: 'Industries', key: 'industries', sortable: false, visible: false },
+      { title: 'Affiliations', key: 'affiliations', sortable: false, visible: false },
+      { title: 'Funding Agencies', key: 'funding_agencies', sortable: false, visible: false },
+      { title: 'Adapters', key: 'adaptors', sortable: false, visible: false },
+      { title: 'Technology Category', key: 'technology_category', sortable: false, visible: false },
+      { title: 'Technology Readiness Level', key: 'technology_readiness_level', sortable: false, visible: false },
+      { title: 'Transfer Plan', key: 'transfer_plan', sortable: false, visible: false },
+      { title: 'Technology Status', key: 'technology_status', sortable: false, visible: false }
+      ]
+      : []),
   ...((path.value === '/my-repositories' && props.isForUser) || userData.is_superuser
       ? [{ title: 'Visibility', key: 'visibility', sortable: false, visible: true }]
       : []),
@@ -299,6 +370,42 @@ const tableFilters = computed(() => [
     itemTitle: (type: any) => type.title,
     itemValue: (type: any) => type.value,
     visibleKey: 'type'
+  },
+  {
+    key: 'technology_category',
+    label: "Technology Category",
+    value: selectedTechnologyCategory.value,
+    items: technologyCategoryOptions,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
+    visibleKey: 'technology_category'
+  },
+  {
+    key: 'technology_readiness_level',
+    label: "Technology Readiness Level",
+    value: selectedTechnologyReadinessLevel.value,
+    items: technologyReadinessLevelOptions,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
+    visibleKey: 'technology_readiness_level'
+  },
+  {
+    key: 'transfer_plan',
+    label: "Transfer Plan",
+    value: selectedTransferPlan.value,
+    items: transferPlanOptions,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
+    visibleKey: 'transfer_plan'
+  },
+  {
+    key: 'technology_status',
+    label: "Technology Status",
+    value: selectedTechnologyStatus.value,
+    items: technologyStatusOptions,
+    itemTitle: (type: any) => type.title,
+    itemValue: (type: any) => type.value,
+    visibleKey: 'technology_status'
   }
 ]);
 
@@ -319,6 +426,15 @@ const clearFilters = () => {
   selectedUsersOption.value = ['All'];
   selectedVisibilities.value = [];
   allType.value = true;
+  selectedTechnologyCategory.value = '';
+  selectedTechnologyReadinessLevel.value = '';
+  selectedTransferPlan.value = '';
+  selectedTechnologyStatus.value = '';
+  selectedCommodity.value = [];
+  selectedIndustries.value = [];
+  selectedAffiliations.value = [];
+  selectedFundingAgencies.value = [];
+  selectedAdaptors.value = [];
 }
 
 const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
@@ -337,6 +453,14 @@ const handleFilterUpdate = ({ key, value }: { key: any, value: any }) => {
     selectedType.value = value;
   } else if (key === 'repoAllType') {
     allType.value = value;
+  } else if (key === 'technology_category') {
+    selectedTechnologyCategory.value = value;
+  } else if (key === 'technology_readiness_level') {
+    selectedTechnologyReadinessLevel.value = value;
+  } else if (key === 'transfer_plan') {
+    selectedTransferPlan.value = value;
+  } else if (key === 'technology_status') {
+    selectedTechnologyStatus.value = value;
   }
 };
 
@@ -443,7 +567,16 @@ const loadRepositories = async () => {
         (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
         props.isForUser,
         true,
-        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and'
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and',
+        convertedCommodity.value as string,
+        convertedIndustries.value as string,
+        selectedTechnologyCategory.value,
+        selectedTechnologyReadinessLevel.value,
+        selectedTransferPlan.value,
+        selectedTechnologyStatus.value,
+        convertedFundingAgencies.value as string,
+        convertedAffiliations.value as string,
+        convertedAdaptors.value as string,
     );
 
     repositories.value = data;
@@ -475,7 +608,16 @@ const updateTotalCount = async () => {
         author,
         lead,
         (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
-        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and'
+        (path.value === '/repositories' || path.value === '/ip-technologies' || path.value === '/e-library' || route.name == 'organization-repositories' ) && props.isForUser && allType.value ? 'or' : 'and',
+        convertedCommodity.value as string,
+        convertedIndustries.value as string,
+        selectedTechnologyCategory.value,
+        selectedTechnologyReadinessLevel.value,
+        selectedTransferPlan.value,
+        selectedTechnologyStatus.value,
+        convertedFundingAgencies.value as string,
+        convertedAffiliations.value as string,
+        convertedAdaptors.value as string,
     );
 
     totalItems.value =
@@ -501,7 +643,7 @@ watch(()=> route.path, async () => {
   await loadRepositories()
 })
 
-watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers, selectedVisibilities, allType],
+watch([selectedPriorityLevel, itemsPerPage, selectedOrganization, selectedType, selectedProjectState, selectedProjectPublicState, selectedProjectStatus, selectedTags, selectedUsers, selectedVisibilities, allType, selectedCommodity, selectedIndustries, selectedAffiliations, selectedFundingAgencies, selectedAdaptors, selectedTechnologyCategory, selectedTechnologyReadinessLevel, selectedTransferPlan, selectedTechnologyStatus],
     async() => {
       await loadData()
     });
@@ -723,6 +865,59 @@ onMounted(async () => {
 
     <template #item.visibility="{ item }">
       <p style="max-width: 300px;">{{getVisibilityLabel(item.visibility as number)}}</p>
+    </template>
+    <template #item.commodity="{ item }">
+      <p style="max-width: 300px;">
+        {{ (item.commodity && item.commodity.length && arrayToString(item.commodity as string[])) || 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.industries="{ item }">
+      <p style="max-width: 300px;">
+        {{ (item.industry && item.industry.length && arrayToString(item.industry as string[])) || 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.affiliations="{ item }">
+      <p style="max-width: 300px;">
+        {{ (item.affiliation && item.affiliation.length && arrayToString(item.affiliation as string[])) || 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.funding_agencies="{ item }">
+      <p style="max-width: 300px;">
+        {{ (item.funding_agency && item.funding_agency.length && arrayToString(item.funding_agency as string[])) || 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.adaptors="{ item }">
+      <p style="max-width: 300px;">
+        {{ (item.adaptors && item.adaptors.length && arrayToString(item.adaptors as string[])) || 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.technology_category="{ item }">
+      <p style="max-width: 300px;">
+        {{ item.type === 'Project Repository' && item.technology_category ? item.technology_category : 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.technology_readiness_level="{ item }">
+      <p style="max-width: 300px;">
+        {{ item.type === 'Project Repository' && item.technology_readiness_level ? item.technology_readiness_level : 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.transfer_plan="{ item }">
+      <p style="max-width: 300px;">
+        {{ item.type === 'Project Repository' && item.transfer_plan ? item.transfer_plan : 'N/A' }}
+      </p>
+    </template>
+
+    <template #item.technology_status="{ item }">
+      <p style="max-width: 300px;">
+        {{ item.type === 'Project Repository' && item.technology_status ? item.technology_status : 'N/A' }}
+      </p>
     </template>
 
 
@@ -967,6 +1162,116 @@ onMounted(async () => {
           </VCol>
         </VRow>
       </div>
+      <VRow class="ma-0" v-if="selectedType != 'Document Repository' && (isColumnVisible('commodity') || isColumnVisible('industries') || isColumnVisible('funding_agencies') || isColumnVisible('affiliations') || isColumnVisible('adaptors'))">
+        <div class="filter-container w-100 border border-2 rounded-lg ma-0 ma-3 pa-3 border-primary position-relative">
+          <!-- Heading with tooltip for both fields -->
+          <div class="d-flex align-center mb-3">
+            <span class="font-weight-medium">IP Technology Multiple Filters</span>
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
+                <v-icon
+                    v-bind="props"
+                    size="small"
+                    class="ms-2"
+                    color="primary"
+                >
+                  mdi-information-outline
+                </v-icon>
+              </template>
+              <span>This filter is for projects with associated technologies</span>
+            </v-tooltip>
+          </div>
+
+          <VRow class="ma-0">
+            <VCol cols="12" sm="4" md="4" lg="4" v-if="isColumnVisible('commodity')">
+              <VCombobox
+                  v-model="selectedCommodity"
+                  :items="commodities"
+                  label="Commodity"
+                  multiple
+                  chips
+                  closable-chips
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  hide-details
+                  class="mb-3"
+              />
+            </VCol>
+            <VCol cols="12" sm="4" md="4" lg="4" v-if="isColumnVisible('industries')">
+              <VCombobox
+                  v-model="selectedIndustries"
+                  :items="industries"
+                  label="Industry"
+                  multiple
+                  chips
+                  closable-chips
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  hide-details
+                  class="mb-3"
+              />
+            </VCol>
+            <VCol cols="12" sm="4" md="4" lg="4" v-if="isColumnVisible('funding_agencies')">
+              <VCombobox
+                  v-model="selectedFundingAgencies"
+                  :items="agencies"
+                  label="Funding Agencies"
+                  multiple
+                  chips
+                  closable-chips
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  hide-details
+                  class="mb-3"
+              />
+            </VCol>
+            <VCol cols="12" sm="4" md="4" lg="4" v-if="isColumnVisible('affiliations')">
+              <VCombobox
+                  v-model="selectedAffiliations"
+                  :items="agencies"
+                  label="Affiliations"
+                  multiple
+                  chips
+                  closable-chips
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  hide-details
+                  class="mb-3"
+              />
+            </VCol>
+            <VCol cols="12" sm="4" md="4" lg="4" v-if="isColumnVisible('adaptors')">
+              <VCombobox
+                  v-model="selectedAdaptors"
+                  :items="adopters"
+                  label="Adopters"
+                  multiple
+                  chips
+                  closable-chips
+                  density="compact"
+                  variant="outlined"
+                  rounded="md"
+                  color="primary"
+                  base-color="gs60"
+                  hide-details
+                  class="mb-3"
+              />
+            </VCol>
+
+          </VRow>
+        </div>
+      </VRow>
     </template>
 
   </BaseDataTable>
