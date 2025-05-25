@@ -29,8 +29,7 @@ import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDia
 import {
   adopters,
   agencies,
-  commodities,
-  expertise, industries,
+  commodities, industries,
   readinessLevel,
   technologyCategories, technologyStatus,
   transferPlans
