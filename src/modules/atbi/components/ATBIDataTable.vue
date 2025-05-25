@@ -148,8 +148,16 @@ const downloadCSV = async () => {
         'UID': atbi.uuid || '',
         'Name': atbi.name || '',
         'Owners': atbi.ownerData && atbi.ownerData.length > 0
-          ? atbi.ownerData.map(owner => `${"first_name" in owner.data ? owner.data?.first_name : ''} ${"last_name" in owner.data && owner.data?.last_name || ''}`).join(', ')
-          : 'N/A',
+            ? atbi.ownerData
+                .map(owner => {
+                  if (!owner.data) return '';
+                  const firstName = 'first_name' in owner.data ? owner.data.first_name : '';
+                  const lastName = 'last_name' in owner.data ? owner.data.last_name : '';
+                  return `${firstName} ${lastName}`.trim();
+                })
+                .filter(name => name) // Remove empty strings
+                .join(', ')
+            : 'N/A',
         'Mobile': atbi.mobile || '',
         'Email': atbi.email || '',
         'Facebook': atbi.facebook || '',
@@ -214,8 +222,17 @@ const downloadVisibleCSV = () => {
         'UID': atbi.uuid || '',
         'Name': atbi.name || '',
         'Owners': atbi.ownerData && atbi.ownerData.length > 0
-            ? atbi.ownerData.map(owner => `${"first_name" in owner.data ? owner.data.first_name : ''} ${"last_name" in owner.data && owner.data.last_name || ''}`).join(', ')
+            ? atbi.ownerData
+                .map(owner => {
+                  if (!owner.data) return '';
+                  const firstName = 'first_name' in owner.data ? owner.data.first_name : '';
+                  const lastName = 'last_name' in owner.data ? owner.data.last_name : '';
+                  return `${firstName} ${lastName}`.trim();
+                })
+                .filter(name => name) // Remove empty strings
+                .join(', ')
             : 'N/A',
+
         'Mobile': atbi.mobile || '',
         'Email': atbi.email || '',
         'Facebook': atbi.facebook || '',
