@@ -705,7 +705,7 @@ const downloadCSV = async () => {
         'Adopters': repo.type === 'Project Repository' && repo.adaptors ? arrayToString(repo.adaptors as string[]) : 'N/A',
         'Patenting Status': repo.type === 'Project Repository' ? (repo.is_patentable ? 'Applicable for Patenting' : 'Not Applicable for Patenting') : 'N/A',
         'Priority Level': repo.type === 'Project Repository' && repo.priority_level ? repo.priority_level : 'N/A',
-        'Tags': repo.type === 'Project Repository' && repo.tags ? arrayToString(repo.tags as string[]) : 'N/A',
+        'Tags': repo.tags ? arrayToString(repo.tags as string[]) : 'N/A',
         // Commercialization fields if applicable
         'IP Type': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipType ? repo.commercialization.ipType : 'N/A',
         'IP Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipStatus ? repo.commercialization.ipStatus : 'N/A',
@@ -809,7 +809,7 @@ const downloadVisibleCSV = () => {
         'Adopters': repo.type === 'Project Repository' && repo.adaptors ? arrayToString(repo.adaptors as string[]) : 'N/A',
         'Patenting Status': repo.type === 'Project Repository' ? (repo.is_patentable ? 'Applicable for Patenting' : 'Not Applicable for Patenting') : 'N/A',
         'Priority Level': repo.type === 'Project Repository' && repo.priority_level ? repo.priority_level : 'N/A',
-        'Tags': repo.type === 'Project Repository' && repo.tags ? arrayToString(repo.tags as string[]) : 'N/A',
+        'Tags': repo.tags ? arrayToString(repo.tags as string[]) : 'N/A',
         // Commercialization fields if applicable
         'IP Type': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipType ? repo.commercialization.ipType : 'N/A',
         'IP Status': repo.type === 'Project Repository' && repo.transfer_plan === 'Commercialization' && repo.commercialization?.ipStatus ? repo.commercialization.ipStatus : 'N/A',
