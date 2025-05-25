@@ -34,7 +34,6 @@ import {
   technologyCategories, technologyStatus,
   transferPlans
 } from "../../../data/repository.inventory.fields.ts";
-import {Organization} from "../../../interfaces/organization.interface.ts";
 import Papa from "papaparse";
 
 const {userData} = useUserStore()
