@@ -109,6 +109,26 @@ export const usePostServices = () => {
     }
   };
 
+  const fetchAllPostsByUser = async (): Promise<Post[]> => {
+    try {
+      const userOrg = await server.get(`/v1/user/${userData.uid}/organizations`, {
+        headers: {
+          'Authorization': `Bearer ${userData.accessToken}`
+        }
+      });
+      const userOrgUids = userOrg.data.results.map((org: any) => org.organization.uid);
+      const res = await server.get('/posts/?page_size=100000000', {
+        headers: authorizationHeader
+      });
+      return (await Promise.all(res.data.results.map((post: any) => mapPostData(post))))
+          // @ts-ignore
+          .filter((post: Post) => userOrgUids.includes(post.organizationData.uid as string));
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
   const fetchPostByOrganization = async (id: string): Promise<Post[]> => {
     try {
       const res = await server.get(`/posts/?organization=${id}`, {
@@ -204,7 +224,8 @@ export const usePostServices = () => {
     fetchPostByOrganization,
     managePostStatus,
     fetchPostsByAdmin,
-    fetchTotalPosts
+    fetchTotalPosts,
+    fetchAllPostsByUser
   }
 
 }

@@ -7,6 +7,9 @@ import {usePostServices} from "../services/post.services.ts";
 import {onMounted, ref, watch, onUnmounted} from "vue";
 import {Post} from "../../../interfaces/post.interface.ts";
 import {useRouting} from "../../../core/composables/useRouting.ts";
+import {Organization} from "../../../interfaces/organization.interface.ts";
+import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
+import {useOrganizationServices} from "../../organization/services/organization.services.ts";
 
 const props = defineProps({
   forOrganization: {
@@ -15,13 +18,18 @@ const props = defineProps({
   },
 })
 const {route} = useRouting()
+const {organization} = useOrganizationStore();
+const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {scrollTop} = useScroll()
-const {fetchAllPosts, fetchPostByOrganization} = usePostServices()
+const {fetchAllPostsByUser, fetchPostByOrganization} = usePostServices()
 const searchQuery = ref('');
 const postData = ref<Post[]>([]);
 const searchedPosts = ref<Post[]>([]);
 const pageLoading = ref(false)
 
+const isSlugInOrgList = (organization: Organization | null | undefined, orgList: Organization[]) => {
+  return orgList.some(org => org.slug === organization?.slug);
+};
 const filterPostsBySearch = async (searchQuery: string, postData: Post[]) => {
   if(searchQuery) {
     //@ts-ignore
@@ -37,10 +45,19 @@ watch(() => searchQuery.value, async () => {
 
 onMounted(async () => {
   pageLoading.value = true
+  const allUserOrg = await fetchOrganizationIDsByUser();
+  await fetchOrganizationData(route.params.slug as string);
+  if(organization.value){
+    if( isSlugInOrgList(organization.value, allUserOrg)){
+      if ("is_member" in organization.value) {
+        organization.value.is_member = true;
+      }
+    }
+  }
   if(props.forOrganization) {
-    postData.value = await fetchPostByOrganization(route.params.slug as string);
+    postData.value = organization.value?.is_member! ? await fetchPostByOrganization(organization.value?.slug as string) : (await fetchPostByOrganization(organization.value?.slug as string)).filter((post => post.is_published));
   } else {
-    postData.value = await fetchAllPosts();
+    postData.value = await fetchAllPostsByUser();
   }
   searchedPosts.value = postData.value
   pageLoading.value = false

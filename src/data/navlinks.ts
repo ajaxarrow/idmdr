@@ -87,7 +87,7 @@ export const navLinks = [
       icon: PhUsers
     },
     {
-      name: 'Posts',
+      name: 'Posts, News & Updates',
       link: '/posts',
       icon: PhPen
     },

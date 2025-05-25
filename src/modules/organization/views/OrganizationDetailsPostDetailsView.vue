@@ -4,7 +4,7 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, ref} from "vue";
 import {
   PhArrowLeft, PhDotsThreeOutlineVertical, PhEye,
-  PhPencil, PhTrash, PhImages
+  PhPencil, PhTrash, PhImages, PhEyeSlash
 } from "@phosphor-icons/vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
@@ -15,11 +15,14 @@ import DeleteDialog from "../../../core/components/DeleteDialog.vue";
 import {usePostServices} from "../../posts/services/post.services.ts";
 import {Post} from "../../../interfaces/post.interface.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
+import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 
 const {route, router} = useRouting()
+const {userData} = useUserStore()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
-const {fetchPostbyID, deletePost} = usePostServices()
+const {fetchPostbyID, deletePost, managePostStatus} = usePostServices()
 
 const postActionMenu = ref(false);
 const path = ref('organizations')
@@ -45,12 +48,12 @@ const deletePostCallback = async () => {
   });
 }
 
-// const managePostStatusCallback = async (isPublished: boolean) => {
-//   showSnackbarMessage('Post Successfully Updated', Status.success)
-//   await managePostStatus(postData.value?.uid as string, isPublished);
-//   postData.value = await fetchPostbyID(route.params.post as string);
-//   postActionMenu.value = false
-// }
+const managePostStatusCallback = async (isPublished: boolean) => {
+  showSnackbarMessage('Post Successfully Updated', Status.success)
+  await managePostStatus(postData.value?.uid as string, isPublished);
+  postData.value = await fetchPostbyID(route.params.post as string);
+  postActionMenu.value = false
+}
 
 const getFirstPath = (url: string) => {
   return url.split('/').filter(Boolean)[0];
@@ -121,7 +124,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <VMenu v-if="organization?.is_member" v-model="postActionMenu" :close-on-content-click="false">
+          <VMenu v-if="organization?.is_member || userData.is_superuser" v-model="postActionMenu" :close-on-content-click="false">
             <template #activator="{ props }">
               <p class="action-button cursor-pointer d-flex align-center ga-2" v-bind="props">
                 Options
@@ -138,6 +141,18 @@ onMounted(async () => {
                   <PhEye/>
                   View Post in Public
                 </RouterLink>
+                <ConfirmationDialog
+                    v-if="userData.is_superuser"
+                    @callback="managePostStatusCallback(!postData.is_published)"
+                    :confirmContent="postData.is_published ? 'Unpublish' : 'Publish'"
+                    :content="postData.is_published ? 'Are you sure you want to unpublish this post?' : 'Are you sure you want to publish this post?'"
+                >
+                  <p class="cursor-pointer action-menu-item">
+                    <PhEyeSlash v-if="postData.is_published"/>
+                    <PhEye v-else/>
+                    {{postData.is_published ? 'Unpublish' : 'Publish'}}
+                  </p>
+                </ConfirmationDialog>
                 <RouterLink
                     :to="{ name: 'edit-post', params: { slug: postData?.uid } }"
                     class="cursor-pointer action-menu-item text-decoration-none text-black"
@@ -151,17 +166,6 @@ onMounted(async () => {
                     Delete
                   </p>
                 </DeleteDialog>
-<!--                <ConfirmationDialog-->
-<!--                    @callback="managePostStatusCallback(!postData.is_published)"-->
-<!--                    :confirmContent="postData.is_published ? 'Unpublish' : 'Publish'"-->
-<!--                    :content="postData.is_published ? 'Are you sure you want to unpublish this post?' : 'Are you sure you want to publish this post?'"-->
-<!--                >-->
-<!--                  <p class="cursor-pointer action-menu-item">-->
-<!--                    <PhEyeSlash v-if="postData.is_published"/>-->
-<!--                    <PhEye v-else/>-->
-<!--                    {{postData.is_published ? 'Unpublish' : 'Publish'}}-->
-<!--                  </p>-->
-<!--                </ConfirmationDialog>-->
               </div>
             </VSheet>
           </VMenu>
