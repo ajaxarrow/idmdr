@@ -848,6 +848,7 @@ export const useRepositoryServices = () => {
 
   const fetchRepositoryData = async (slug: string,  type: string = 'create', forPage: boolean = true): Promise<Repository | null> => {
     try{
+      console.log(forPage)
       if(forPage){
         isPageLoading.value = true;
       }

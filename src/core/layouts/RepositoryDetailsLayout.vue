@@ -16,8 +16,6 @@ import {AccessRequest} from "../../interfaces/access-request.interface.ts";
 import {useNotificationsServices} from "../../modules/user/services/notifications.services.ts";
 import {useRepositoryMemberServices} from "../../modules/repository/services/repository-member.services.ts";
 import {usePageLoadingStore} from "../stores/loading.store.ts";
-
-
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
 const {addNotification} = useNotificationsServices()
 const {fetchRepoMembers} = useRepositoryMemberServices()
@@ -206,7 +204,6 @@ onMounted(async () => {
 
 
 
-
 </script>
 
 <template>
@@ -221,14 +218,19 @@ onMounted(async () => {
       <div v-if="repository && isRepoAvailable" style="height: 100%" class="relative-container circle">
         <div class="pa-6 relative-container" style="z-index: 20;">
           <div class="d-flex">
+<!--            <RouterLink-->
+<!--                :to="{-->
+<!--          name: entityTitle == 'IP Technology' ? 'ip-technologies' : path == 'repositories' ?  'repositories' :  'my-repositories'-->
+<!--        }"-->
+<!--                class="text-decoration-none text-none">-->
             <RouterLink
                 :to="{
-          name: entityTitle == 'IP Technology' ? 'ip-technologies' : path == 'repositories' ?  'repositories' :  'my-repositories'
+          name: 'repositories'
         }"
                 class="text-decoration-none text-none">
               <p class="cursor-pointer back-button pa-2 d-flex align-center text-black">
                 <PhArrowLeft size="14" class="mr-1"/>
-                Back To {{path == 'repositories' ?  `${entityTitle} List` : `My ${entityTitle} List`}}
+                Back To All Project List
               </p>
             </RouterLink>
           </div>

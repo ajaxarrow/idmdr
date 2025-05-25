@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import RepositoryDetailsLayout from "../../../core/layouts/RepositoryDetailsLayout.vue";
 import {useRepositoryStore} from "../stores/repository.store.ts";
@@ -193,6 +193,10 @@ onMounted(async () => {
     isMember.value = true;
   }
   await setSnackbarMessage()
+})
+
+onUnmounted(() => {
+  // repository.value = null
 })
 
 </script>

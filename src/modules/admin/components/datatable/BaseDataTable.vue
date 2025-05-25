@@ -207,6 +207,7 @@ onMounted(() => {
 
             <!-- Filter button -->
             <div class="d-flex align-center">
+              <slot name="additional-toolbar-buttons"></slot>
               <VBtn
                   color="blue-grey-darken-1"
                   variant="tonal"

@@ -8,7 +8,7 @@ import {
   PhPencil,
   PhDotsThreeOutlineVertical,
   PhEye,
-  PhGear, PhMagnifyingGlass
+  PhGear, PhMagnifyingGlass, PhDownload, PhCaretDown
 } from "@phosphor-icons/vue";
 import {useScreenStore} from "../../../core/stores/screen-size.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
@@ -24,7 +24,7 @@ import {useVisibilityHelper} from "../../../core/composables/useVisibilityHelper
 import {useRouting} from "../../../core/composables/useRouting.ts";
 import ChangeVisibilityDialog from "../../../core/components/ChangeVisibilityDialog.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
-
+import Papa from 'papaparse';
 const {userData} = useUserStore()
 const { isSmall, isTablet } = useScreenStore();
 const {route} = useRouting();
@@ -363,6 +363,205 @@ const updateTotalCount = async () => {
   }
 
 };
+
+const downloadLoading = ref(false);
+const downloadCSV = async () => {
+  downloadLoading.value = true;
+
+  try {
+    // Fetch all organizations with current filters but without pagination
+    let rdc_rep = '';
+    let icc_rep = '';
+    let ttc_rep = '';
+    let scc_rep = '';
+    let all_reps = '';
+
+    if (selectedUsersOption.value.includes('All')) {
+      all_reps = selectedNames.value;
+    } else {
+      if (selectedUsersOption.value.includes('rdc_rep')) {
+        rdc_rep = selectedNames.value;
+      }
+      if (selectedUsersOption.value.includes('icc_rep')) {
+        icc_rep = selectedNames.value;
+      }
+      if (selectedUsersOption.value.includes('ttc_rep')) {
+        ttc_rep = selectedNames.value;
+      }
+      if (selectedUsersOption.value.includes('scc_rep')) {
+        scc_rep = selectedNames.value;
+      }
+    }
+
+    // Fetch all data for CSV export
+    const allData = await fetchAllOrganizations(
+        1, // page
+        10000, // large number to get all items
+        search.value,
+        selectedOrgAdminStatus.value,
+        selectedOrgStatus.value,
+        all_reps,
+        rdc_rep,
+        ttc_rep,
+        icc_rep,
+        scc_rep,
+        route.path === '/organizations' && props.isForUser && allType.value ? '1,4' : convertedVisibilities.value,
+        props.isForUser,
+        true,
+        route.path === '/organizations' && props.isForUser && allType.value ? 'or' : 'and'
+    );
+
+    // Transform data for CSV export
+    const csvData = allData.map((org: Organization) => {
+      // Helper function to format representative data
+      const formatReps = (repData: any[]) => {
+        if (!repData || repData.length === 0) return 'N/A';
+        return repData.map(rep => `${rep.data?.first_name || ''} ${rep.data?.last_name || ''}`.trim()).join(', ');
+      };
+
+      // Get status information
+      const statusInfo = getStatusInfo(org);
+
+      return {
+        'Title': org.name || '',
+        'Acronym': org.acronym || '',
+        'Address': org.address || '',
+        'Description': org.description ? org.description.replace(/<[^>]*>/g, '') : '', // Strip HTML tags
+        'Status': statusInfo.status,
+        'Is Active': org.is_active ? 'Yes' : 'No',
+        'Is Approved': org.is_approved ? 'Yes' : 'No',
+        'Visibility': getVisibilityLabel(org.visibility as number),
+        'Research & Development Rep': formatReps(org.rd_repData!),
+        'Information Communication Rep': formatReps(org.ic_repData!),
+        'Technology Transfer Rep': formatReps(org.tt_repData!),
+        'Science Communication Rep': formatReps(org.sc_repData!),
+        // 'Created Date': org.created_at ? new Date(org.created_at).toLocaleDateString() : '',
+        // 'Updated Date': org.updated_at ? new Date(org.updated_at).toLocaleDateString() : '',
+        'UID': org.uid || '',
+        'Slug': org.slug || ''
+      };
+    });
+
+    // Generate CSV content
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    // Create and download the file
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      // Generate filename with current date and filter info
+      const currentDate = new Date().toISOString().split('T')[0];
+      let filename = `cmis_${currentDate}`;
+
+      // Add filter info to filename if filters are applied
+      if (search.value) {
+        filename += `_search-${search.value.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      }
+      if (selectedOrgStatus.value !== '') {
+        filename += `_status-${selectedOrgStatus.value ? 'active' : 'inactive'}`;
+      }
+      if (selectedOrgAdminStatus.value !== '') {
+        filename += `_admin-${selectedOrgAdminStatus.value ? 'enabled' : 'disabled'}`;
+      }
+
+      link.setAttribute('download', `${filename}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  } finally {
+    downloadLoading.value = false;
+  }
+};
+const downloadVisibleCSV = () => {
+  downloadLoading.value = true;
+
+  try {
+    // Use current organizations data
+    const csvData = organizations.value.map((org: Organization) => {
+      const formatReps = (repData: any[]) => {
+        if (!repData || repData.length === 0) return 'N/A';
+        return repData.map(rep => `${rep.data?.first_name || ''} ${rep.data?.last_name || ''}`.trim()).join(', ');
+      };
+
+      const statusInfo = getStatusInfo(org);
+
+      return {
+        'Title': org.name || '',
+        'Acronym': org.acronym || '',
+        'Address': org.address || '',
+        'Description': org.description ? org.description.replace(/<[^>]*>/g, '') : '',
+        'Status': statusInfo.status,
+        'Is Active': org.is_active ? 'Yes' : 'No',
+        'Is Approved': org.is_approved ? 'Yes' : 'No',
+        'Visibility': getVisibilityLabel(org.visibility as number),
+        'Research & Development Rep': formatReps(org.rd_repData!),
+        'Information Communication Rep': formatReps(org.ic_repData!),
+        'Technology Transfer Rep': formatReps(org.tt_repData!),
+        'Science Communication Rep': formatReps(org.sc_repData!),
+        'UID': org.uid || '',
+        'Slug': org.slug || ''
+      };
+    });
+
+    const csv = Papa.unparse(csvData, {
+      header: true,
+      quotes: true,
+      quoteChar: '"',
+      escapeChar: '"',
+      delimiter: ',',
+      newline: '\r\n'
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+
+      const currentDate = new Date().toISOString().split('T')[0];
+      const filename = `cmis_page-${page.value}_${currentDate}.csv`;
+
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    showSnackbarMessage(`CSV file downloaded successfully (${csvData.length} records from current page)`, Status.success);
+
+  } catch (error) {
+    console.error('Failed to download CSV:', error);
+    showSnackbarMessage('Failed to download CSV file', Status.error);
+  } finally {
+    downloadLoading.value = false;
+  }
+};
+
+
+
 
 watch([itemsPerPage, selectedOrgStatus, selectedOrgAdminStatus, selectedUsers, selectedVisibilities, allType],
     async() => {
@@ -713,6 +912,57 @@ onMounted(async () => {
             </VCol>
           </VRow>
         </div>
+    </template>
+
+    <template #additional-toolbar-buttons>
+        <VMenu
+            location="bottom end"
+            transition="slide-y-transition"
+        >
+          <template #activator="{ props }">
+            <VBtn
+                v-bind="props"
+                variant="outlined"
+                color="primary"
+                height="45px"
+                rounded="lg"
+                class="satoshi-md me-2"
+                style="font-size: 14px !important"
+            >
+              <PhDownload size="16" class="mr-2" />
+              Export
+              <PhCaretDown size="12" class="ml-1" />
+            </VBtn>
+          </template>
+
+          <VCard class="rounded-lg" min-width="200" elevation="3">
+            <VList density="compact" nav>
+              <VListItem
+                  @click="downloadCSV"
+                  :disabled="loading || organizations.length === 0"
+                  class="cursor-pointer"
+              >
+                <template v-slot:prepend>
+                  <PhDownload class="mr-2" />
+                </template>
+                <VListItemTitle>Download All Data</VListItemTitle>
+                <VListItemSubtitle>Export all filtered results</VListItemSubtitle>
+              </VListItem>
+
+              <VListItem
+                  @click="downloadVisibleCSV"
+                  :disabled="loading || organizations.length === 0"
+                  class="cursor-pointer"
+              >
+                <template v-slot:prepend>
+                  <PhDownload class="mr-2" />
+                </template>
+                <VListItemTitle>Download Current Page</VListItemTitle>
+                <VListItemSubtitle>Export visible data only</VListItemSubtitle>
+              </VListItem>
+            </VList>
+          </VCard>
+        </VMenu>
     </template>
 
 
