@@ -12,11 +12,9 @@ const {clickProvince, clickedBoundary, resetToDefault} = useMapStore();
 const {fetchSectors, fetchSectorsByAdmin} = useSectorServices()
 
 onMounted(async() => {
-  console.log('calledaaa')
   if(userData.is_superuser) {
     await fetchSectorsByAdmin()
   } else {
-    console.log('called')
     await fetchSectors()
   }
 })

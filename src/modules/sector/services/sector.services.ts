@@ -149,7 +149,6 @@ export const useSectorServices = () => {
         const visibilityData = await fetchSectorsByVisibility([1]);
         data = visibilityData[0];
       }
-      console.log(data)
       allSectors.value = data;
       return data;
     } catch (e) {
