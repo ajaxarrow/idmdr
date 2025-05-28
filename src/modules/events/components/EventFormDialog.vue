@@ -289,32 +289,32 @@ onMounted(async()=> {
               </template>
             </VAutocomplete>
           </div>
-          <div class="mb-3">
-            <label class="dialog-label">Associated Project<span class="text-pink">*</span></label>
-            <VAutocomplete
-                v-model="eventData.repository"
-                placeholder="Select Repository"
-                class="my-2"
-                rounded="lg"
-                density="comfortable"
-                variant="outlined"
-                color="primary"
-                base-color="gs60"
-                :items="repositories"
-                :item-value="repository => `${repository.uid}`"
-                :item-title="repository => `${repository.title}`"
-            >
-              <template v-slot:item="{ props, item }">
-                <VListItem
-                    @click.stop
-                    v-bind="props"
-                    :prepend-avatar="item.raw.image as string"
-                    :subtitle="item.raw.owner_data?.username!"
-                    :title="`${item.raw.title}`"
-                ></VListItem>
-              </template>
-            </VAutocomplete>
-          </div>
+<!--          <div class="mb-3">-->
+<!--            <label class="dialog-label">Associated Project<span class="text-pink">*</span></label>-->
+<!--            <VAutocomplete-->
+<!--                v-model="eventData.repository"-->
+<!--                placeholder="Select Repository"-->
+<!--                class="my-2"-->
+<!--                rounded="lg"-->
+<!--                density="comfortable"-->
+<!--                variant="outlined"-->
+<!--                color="primary"-->
+<!--                base-color="gs60"-->
+<!--                :items="repositories"-->
+<!--                :item-value="repository => `${repository.uid}`"-->
+<!--                :item-title="repository => `${repository.title}`"-->
+<!--            >-->
+<!--              <template v-slot:item="{ props, item }">-->
+<!--                <VListItem-->
+<!--                    @click.stop-->
+<!--                    v-bind="props"-->
+<!--                    :prepend-avatar="item.raw.image as string"-->
+<!--                    :subtitle="item.raw.owner_data?.username!"-->
+<!--                    :title="`${item.raw.title}`"-->
+<!--                ></VListItem>-->
+<!--              </template>-->
+<!--            </VAutocomplete>-->
+<!--          </div>-->
           <div class="mb-5">
             <label class="dialog-label mb-2">Event Description</label>
             <QuillRichTextEditor

@@ -30,7 +30,6 @@ export const useUserManagementServices = () => {
                 headers: authorizationHeader
             });
             return res.data.results
-                .filter((user: any) => user.uid != userData.uid)
                 .map((user: any) => ({
                     uid: user.uid,
                     username: user.username ?? `${user.first_name} ${user.last_name}`,

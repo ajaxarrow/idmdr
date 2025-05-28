@@ -198,10 +198,10 @@ onMounted(() => {
                   <p class="text-subtitle text-gs20">Associated CMI</p>
                   <p class="text-subtitle">{{ event.organizationData?.name || 'Not specified' }} ({{ event.organizationData?.acronym || 'Not specified' }})</p>
                 </VCol>
-                <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">
-                  <p class="text-subtitle text-gs20">Associated Project</p>
-                  <p class="text-subtitle">{{ event.repositoryData?.title || 'Not specified' }}</p>
-                </VCol>
+<!--                <VCol cols="12" sm="12" md="6" xxl="6" xl="6" lg="6" class="pa-0 my-2">-->
+<!--                  <p class="text-subtitle text-gs20">Associated Project</p>-->
+<!--                  <p class="text-subtitle">{{ event.repositoryData?.title || 'Not specified' }}</p>-->
+<!--                </VCol>-->
               </VRow>
             </div>
 

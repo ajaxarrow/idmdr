@@ -9,6 +9,7 @@ import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue"
 
 import { Status } from "../../../interfaces/enums/status.enum.ts";
 import BaseDataTable from "../components/datatable/BaseDataTable.vue";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const { showSnackbarMessage } = useSnackbarStore();
 const { fetchAllUsers, fetchTotalUsers, manageUserStatus, manageAdminPrivileges } = useUserManagementServices();
@@ -21,7 +22,7 @@ const itemsPerPage = ref(5);
 const page = ref(1);
 const totalItems = ref(0);
 const users = ref<User[]>([]);
-
+const {userData} = useUserStore()
 
 
 const manageUserStatusCallback = async (id: string, value: boolean, isForAccount: boolean) => {
@@ -234,12 +235,13 @@ onMounted(async () => {
       <!-- Actions column slot -->
       <template #item.actions="{ item }">
         <VMenu
+            v-if="item.uid != userData.uid"
             location="bottom end"
             :close-on-content-click="false"
             transition="slide-y-transition"
         >
-          <template #activator="{ props }">
-            <VBtn icon variant="text" v-bind="props" density="comfortable">
+          <template #activator="{ props }" v-if="item.uid != userData.uid">
+            <VBtn  icon variant="text" v-bind="props" density="comfortable">
               <PhDotsThreeOutlineVertical weight="fill"/>
             </VBtn>
           </template>

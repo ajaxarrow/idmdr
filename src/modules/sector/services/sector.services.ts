@@ -149,6 +149,7 @@ export const useSectorServices = () => {
         const visibilityData = await fetchSectorsByVisibility([1]);
         data = visibilityData[0];
       }
+      console.log(data)
       allSectors.value = data;
       return data;
     } catch (e) {
@@ -175,7 +176,7 @@ export const useSectorServices = () => {
       const res = await server.get(`/v1/sector/?ordering=-updated_at&page_size=${pageSize}&visibility=${visibility}`, {
         headers: authorizationHeader
       });
-      return mapSectorData(res.data);
+      return mapSectorData(res.data.results);
     });
     return Promise.all(promises);
   };
@@ -187,7 +188,8 @@ export const useSectorServices = () => {
           'Authorization': `Bearer ${userData.accessToken}`
         }
       });
-      const rawData = res.data;
+      console.log(`/v1/sector/?ordering=-updated_at&page_size=${pageSize}&user=${userData.uid}`)
+      const rawData = res.data.results;
       const sectors: Sector[] = await mapSectorData(rawData);
 
       return [...sectors];
