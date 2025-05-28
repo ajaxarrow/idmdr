@@ -79,9 +79,9 @@ const getStatusInfo = (user: User) => {
 };
 
 const headers = computed(() => [
-  { title: 'Full Name', key: 'full_name', sortable: true, visible: true },
-  { title: 'Username', key: 'username', sortable: true, visible: false },
-  { title: 'Status', key: 'status', sortable: true, visible: true },
+  { title: 'Full Name', key: 'full_name', sortable: false, visible: true },
+  { title: 'Username', key: 'username', sortable: false, visible: false },
+  { title: 'Status', key: 'status', sortable: false, visible: true },
   { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);
 

@@ -56,7 +56,7 @@ const stripHtmlTags = (html: string | null | undefined): string => {
 
 const headers = computed(() => {
   return[
-    { title: 'Technology Assessment', key: 'technology_assessment', sortable: true, visible: true },
+    { title: 'Technology Assessment', key: 'technology_assessment', sortable: false, visible: true },
     { title: 'Images', key: 'image_data', sortable: false, visible: true },
     { title: 'Actions', key: 'actions', sortable: false, visible: true },
   ]

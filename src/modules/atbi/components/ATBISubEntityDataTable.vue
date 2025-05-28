@@ -61,10 +61,10 @@ const isPriceQuantityVisible = computed(() => {
 
 const headers = computed(() => {
   return[
-    { title: 'Name', key: 'name', sortable: true, visible: true },
-    { title: props.type === 'product' ? 'Price' : 'Booking Price', key: 'price', sortable: true, visible: isPriceQuantityVisible.value },
-    { title: props.type === 'product' ? 'Quantity' : 'Capacity', key: 'quantity', sortable: true, visible: isPriceQuantityVisible.value },
-    { title: 'Unit', key: 'unit', sortable: true, visible: props.type === 'product' },
+    { title: 'Name', key: 'name', sortable: false, visible: true },
+    { title: props.type === 'product' ? 'Price' : 'Booking Price', key: 'price', sortable: false, visible: isPriceQuantityVisible.value },
+    { title: props.type === 'product' ? 'Quantity' : 'Capacity', key: 'quantity', sortable: false, visible: isPriceQuantityVisible.value },
+    { title: 'Unit', key: 'unit', sortable: false, visible: props.type === 'product' },
     { title: 'Images', key: 'images', sortable: false, visible: true },
     { title: 'Actions', key: 'actions', sortable: false, visible: true },
   ]

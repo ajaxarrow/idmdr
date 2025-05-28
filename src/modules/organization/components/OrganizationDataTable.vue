@@ -177,8 +177,8 @@ const orgStatusOptions = [
 
 
 const headers = computed(() => [
-  { title: 'Title', key: 'title', sortable: true, visible: true },
-  { title: 'Status', key: 'status', sortable: true, visible: true },
+  { title: 'Title', key: 'title', sortable: false, visible: true },
+  { title: 'Status', key: 'status', sortable: false, visible: true },
   ...(route.path === '/organizations' && props.isForUser
       ? []
       : [{ title: 'Visibility', key: 'visibility', sortable: false, visible: true },]),

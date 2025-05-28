@@ -56,8 +56,8 @@ const expertiseOptions = [
 ];
 
 const headers = computed(() => [
-  { title: 'Name', key: 'name', sortable: true, visible: true },
-  { title: 'Expertise', key: 'expertise', sortable: true, visible: true },
+  { title: 'Name', key: 'name', sortable: false, visible: true },
+  { title: 'Expertise', key: 'expertise', sortable: false, visible: true },
   { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);
 

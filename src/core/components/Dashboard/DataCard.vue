@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import {useUserStore} from "../../stores/user.store.ts";
+
 const props = defineProps({
   data: {
     type: Object,
   }
 });
+const {userData} = useUserStore()
 </script>
 
 <template>
@@ -14,7 +17,7 @@ const props = defineProps({
         class="pa-4 card circle relative-container">
       <component :is="props.data?.icon" weight="bold" size="32" class="mt-7 mb-4"/>
       <p class="dashboard-card-num">{{props.data?.value}}</p>
-      <p class="dashboard-card-subtitle">Managed and Affiliated {{props.data?.name}}</p>
+      <p class="dashboard-card-subtitle"><span v-if="userData.is_superuser">Managed and Affiliated</span> {{props.data?.name}}</p>
     </VSheet>
   </div>
 </template>

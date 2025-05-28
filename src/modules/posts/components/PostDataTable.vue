@@ -73,8 +73,8 @@ const postStatusOptions = [
 ]
 
 const headers = computed(() => [
-  { title: 'Post', key: 'title', sortable: true, visible: true },
-  { title: 'Status', key: 'is_published', sortable: true, visible: true },
+  { title: 'Post', key: 'title', sortable: false, visible: true },
+  { title: 'Status', key: 'is_published', sortable: false, visible: true },
   { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);
 

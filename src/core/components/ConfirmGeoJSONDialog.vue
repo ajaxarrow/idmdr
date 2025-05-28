@@ -29,7 +29,7 @@ const handleCancel = () => {
           width="98%"
           class="submit-button"
       >
-        Yes, Proceed to Sector Tagging!
+        Yes, Proceed to Creating an Associated Area!
       </VBtnPrimaryAlt>
       <VBtnPrimaryAlt
           color="#01579B"

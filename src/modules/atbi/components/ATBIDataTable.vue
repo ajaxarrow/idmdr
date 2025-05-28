@@ -93,8 +93,8 @@ const deleteAtbiCallback = async (uuid: string) => {
 }
 
 const headers = computed(() => [
-  { title: 'Name', key: 'name', sortable: true, visible: true },
-  { title: 'Owners', key: 'owners', sortable: true, visible: true },
+  { title: 'Name', key: 'name', sortable: false, visible: true },
+  { title: 'Owners', key: 'owners', sortable: false, visible: true },
   { title: 'Contact Information', key: 'contact', sortable: false, visible: true },
   { title: 'Actions', key: 'actions', sortable: false, visible: true },
 ]);

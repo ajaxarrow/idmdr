@@ -269,19 +269,19 @@ const projectStatusOptions = [
 ]
 
 const headers = computed(() => [
-  { title: 'Project', key: 'title', sortable: true, visible: true },
-  { title: 'Status', key: 'status', sortable: true, visible: true },
+  { title: 'Project', key: 'title', sortable: false, visible: true },
+  { title: 'Status', key: 'status', sortable: false, visible: true },
   ...(route.path === '/repositories' || route.path == '/my-repositories' || route.name == 'organization-repositories' || route.name == 'my-organization-repositories'
-      ? [{ title: 'Type', key: 'type', sortable: true, visible: true },]
+      ? [{ title: 'Type', key: 'type', sortable: false, visible: true },]
       : []),
-  { title: 'State', key: 'state', sortable: true, visible: true },
-  { title: 'Technology Owners', key: 'tech_owner', sortable: true, visible: false },
-  { title: 'Technology Generator', key: 'tech_generator', sortable: true, visible: false },
-  { title: 'Collaborator', key: 'collaborator', sortable: true, visible: true },
-  { title: 'Lead', key: 'lead', sortable: true, visible: false },
-  { title: 'Priority', key: 'priority_level', sortable: true, visible: false },
-  { title: 'Start Date', key: 'start_date', sortable: true, visible: false },
-  { title: 'End Date', key: 'end_date', sortable: true, visible: false },
+  { title: 'State', key: 'state', sortable: false, visible: true },
+  { title: 'Technology Owners', key: 'tech_owner', sortable: false, visible: false },
+  { title: 'Technology Generator', key: 'tech_generator', sortable: false, visible: false },
+  { title: 'Collaborator', key: 'collaborator', sortable: false, visible: true },
+  { title: 'Lead', key: 'lead', sortable: false, visible: false },
+  { title: 'Priority', key: 'priority_level', sortable: false, visible: false },
+  { title: 'Start Date', key: 'start_date', sortable: false, visible: false },
+  { title: 'End Date', key: 'end_date', sortable: false, visible: false },
   ...((selectedType.value != 'Document Repository') ? [
       { title: 'Commodity', key: 'commodity', sortable: false, visible: false },
       { title: 'Industries', key: 'industries', sortable: false, visible: false },
@@ -1250,9 +1250,9 @@ onMounted(async () => {
           </VList>
         </VCard>
       </VMenu>
-      <RouterLink v-else :to="{ name: 'repository-data', params: { slug: item.slug }}" class="text-bs50 text-decoration-none">
-          <PhEye class="mr-2" size="16" />
-      </RouterLink>
+    <a v-else :href="`/repositories/${item.slug}`" target="_self" class="text-bs50 text-decoration-none">
+        <PhEye class="mr-2" size="16" />
+    </a>
     </template>
 
     <template #expanded-row="{ item }">

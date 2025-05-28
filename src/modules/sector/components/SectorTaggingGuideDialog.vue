@@ -28,7 +28,7 @@ const sectorTaggingDialog = ref<boolean>(false);
       </div>
 
       <p class="pa-4">
-        Hey! To draw a polygon directly on the map, click the square icon located on the top right side of the map. If you prefer not to draw here, you can go to the sector form instead.
+        Hey! To draw a polygon directly on the map, click the square icon located on the top right side of the map. If you prefer not to draw here, you can go to the create an associated area form instead.
       </p>
 
       <VDivider />
