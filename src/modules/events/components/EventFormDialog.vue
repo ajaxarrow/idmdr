@@ -2,7 +2,7 @@
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import {computed, onMounted, PropType, reactive, ref, watch} from "vue";
 import {FormType} from "../../../interfaces/enums/formtype.enum.ts";
-import {Organization, OrganizationEvent} from "../../../interfaces/organization.interface.ts";
+import {OrganizationEvent} from "../../../interfaces/organization.interface.ts";
 import {useEventsServices} from "../services/events.services.ts";
 import {Repository} from "../../../interfaces/repository.interface.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
