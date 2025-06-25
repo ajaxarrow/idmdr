@@ -8,6 +8,7 @@ import {Status} from "../../../interfaces/enums/status.enum.ts";
 import {useRepositoryServices} from "./repository.services.ts";
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
 import {useOrganizationExpertsServices} from "../../organization/services/organization-experts.services.ts";
+import {useCoreServices} from "../../../core/services/core.services.ts";
 
 export const useRepositoryMemberServices = () => {
   const { userData, user } = useUserStore();
@@ -22,6 +23,7 @@ export const useRepositoryMemberServices = () => {
   const {fetchRepositoryData} = useRepositoryServices()
   const {fetchUsers} = useOrganizationMembersServices();
   const {fetchAllExperts} = useOrganizationExpertsServices();
+  const {fetchContentType} = useCoreServices()
 
   const fetchCustomUsers = async (): Promise<CustomUserData[]> => {
     try {
@@ -104,7 +106,7 @@ export const useRepositoryMemberServices = () => {
       );
 
       const repo = await fetchRepositoryData(repoID, 'create', false)
-
+      const projectValue = await fetchContentType('repository')
       await addNotification({
         sender: userData.uid,
         receiver: member.user.uid,
@@ -112,7 +114,7 @@ export const useRepositoryMemberServices = () => {
         message: `Your membership in ${repo?.title} has been changed. Your access level has been changed to ${member.access_level}.`,
         type: 'Repository',
         object_id: repoID,
-        content_type: 9999,
+        content_type: projectValue,
         is_read: false,
         is_deleted: false
       })
@@ -136,7 +138,7 @@ export const useRepositoryMemberServices = () => {
       );
 
       const repo = await fetchRepositoryData(repoID, 'create', false)
-
+      const projectValue = await fetchContentType('repository')
       await addNotification({
         sender: userData.uid,
         receiver: member.user.uid,
@@ -144,7 +146,7 @@ export const useRepositoryMemberServices = () => {
         message: `Your membership in ${repo?.title} has been removed. You are no longer a member of this repository.`,
         type: 'Repository',
         object_id: repoID,
-        content_type: 9999,
+        content_type: projectValue,
         is_read: false,
         is_deleted: false
       })
@@ -166,7 +168,7 @@ export const useRepositoryMemberServices = () => {
     );
 
     const repo = await fetchRepositoryData(repoID, 'create', false)
-
+    const projectValue = await fetchContentType('repository')
     await addNotification({
       sender: userData.uid,
       receiver: member.user.uid,
@@ -174,7 +176,7 @@ export const useRepositoryMemberServices = () => {
       message: `You have been added to ${repo?.title} with ${member.access_level} access level`,
       type: 'Repository',
       object_id: repoID,
-      content_type: 9999,
+      content_type: projectValue,
       is_read: false,
       is_deleted: false
     })
@@ -194,7 +196,7 @@ export const useRepositoryMemberServices = () => {
     );
 
     const repo = await fetchRepositoryData(repoID, 'create', false)
-
+    const projectValue = await fetchContentType('repository')
     await addNotification({
       sender: userData.uid,
       receiver: member.user.uid,
@@ -202,7 +204,7 @@ export const useRepositoryMemberServices = () => {
       message: `You have been added to ${repo?.title} with ${member.access_level} access level`,
       type: 'Repository',
       object_id: repoID,
-      content_type: 9999,
+      content_type: projectValue,
       is_read: false,
       is_deleted: false
     })

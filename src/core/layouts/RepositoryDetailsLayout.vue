@@ -16,7 +16,9 @@ import {AccessRequest} from "../../interfaces/access-request.interface.ts";
 import {useNotificationsServices} from "../../modules/user/services/notifications.services.ts";
 import {useRepositoryMemberServices} from "../../modules/repository/services/repository-member.services.ts";
 import {usePageLoadingStore} from "../stores/loading.store.ts";
+import {useCoreServices} from "../services/core.services.ts";
 const {addAccessRequest, fetchAccessRequestsByRepositoryAndRequestor} = useAccessRequestServices();
+const {fetchContentType} = useCoreServices()
 const {addNotification} = useNotificationsServices()
 const {fetchRepoMembers} = useRepositoryMemberServices()
 const {fetchRepositoryIDsByUser} = useRepositoryServices();
@@ -111,10 +113,11 @@ const navigateTo = (linkName: string) => {
 }
 
 const addAccessRequestCallback = async () => {
+  const projectValue = await fetchContentType('repository')
   buttonLoading.value = true
   await addAccessRequest({
     requestor: userData.uid,
-    content_type: 9999,
+    content_type: projectValue,
     object_id: <string>route.params.slug,
     is_approved: false,
     is_reviewed: false
@@ -138,7 +141,7 @@ const addAccessRequestCallback = async () => {
       message: `${userData.username} has requested access to ${props.repository?.title}. Please review and manage the request.`,
       type: 'Access Request Pending',
       object_id: <string>route.params.slug,
-      content_type: 9999,
+      content_type: projectValue,
       is_read: false,
       is_deleted: false,
     });

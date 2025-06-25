@@ -8,7 +8,7 @@ import {useOrganizationStore} from "../stores/organization.store.ts";
 import {useObjectChecker} from "../../../core/composables/useObjectChecker.ts";
 import {useCustomUsersServices} from "../../repository/services/custom-users.services.ts";
 import {useOrganizationAttachmentServices} from "./organization-attachments.services.ts";
-import {usePageLoadingStore} from "../../../core/stores/loading.store.ts";
+// import {usePageLoadingStore} from "../../../core/stores/loading.store.ts";
 
 // const transformRepData = (rep: any) => ({
 //   full_name: rep?.full_name,
@@ -21,7 +21,7 @@ import {usePageLoadingStore} from "../../../core/stores/loading.store.ts";
 //   email: rep?.email,
 //   phone: rep?.phone,
 // });
-const {isPageLoading} = usePageLoadingStore()
+// const {isPageLoading} = usePageLoadingStore()
 const {mapCustomUsers} = useCustomUsersServices()
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
@@ -531,7 +531,7 @@ export const useOrganizationServices = () => {
   const fetchOrganizationData = async (slug: string, type: string = 'create', forPage: boolean = true): Promise<Organization | null> => {
     try{
       if(forPage) {
-        isPageLoading.value = true;
+        // isPageLoading.value = true;
       }
       const res = await server.get(`/v1/organization/${slug}/`, {
         headers: authorizationHeader
@@ -546,7 +546,7 @@ export const useOrganizationServices = () => {
       }
     } catch (e) {
       if(forPage){
-        isPageLoading.value = false;
+        // isPageLoading.value = false;
       }
       return null;
     }

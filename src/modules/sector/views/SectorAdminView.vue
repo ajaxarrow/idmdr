@@ -15,6 +15,10 @@ import BaseDataTable from "../../admin/components/datatable/BaseDataTable.vue";
 import {PhCaretDown, PhDotsThreeOutlineVertical, PhDownload, PhPencil, PhPlus, PhTrash,} from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import Papa from "papaparse";
+import {useCoreServices} from "../../../core/services/core.services.ts";
+
+
+const {fetchContentType} = useCoreServices()
 
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
@@ -46,11 +50,11 @@ const deleteSectorCallback = async (id: string) => {
   await loadSectors();
 }
 
-const typeOptions = [
+const typeOptions = ref([
   { title: 'All', value: 0 },
-  { title: 'CMI', value: 8888 },
-  { title: 'Project', value: 9999 },
-]
+  { title: 'CMI', value: 0 },
+  { title: 'Project', value: 0 }
+])
 
 const headers = computed(() => [
     { title: 'Title', key: 'name', sortable: false, visible: true },
@@ -314,6 +318,13 @@ watch([selectedEntity, search, selectedType, selectedTags], async () => {
 
 onMounted(async () => {
   loading.value = true;
+  const cmiValue = await fetchContentType('organization')
+  const projectValue = await fetchContentType('repository')
+  typeOptions.value = [
+    { title: 'All', value: 0 },
+    { title: 'CMI', value: cmiValue },
+    { title: 'Project', value: projectValue },
+  ]
   initTagsFromRoute();
   fetchTags();
   cmis.value =  [{ uid: '', name: 'All', acronym: '' }, ...(await fetchAllOrganizationsBasicData(1, 1000))];

@@ -6,6 +6,7 @@ import { Status } from "../../../interfaces/enums/status.enum.ts";
 import { useSnackbarStore } from "../../../core/stores/snackbar.store.ts";
 import {useNotificationsServices} from "../../user/services/notifications.services.ts";
 import {useOrganizationServices} from "./organization.services.ts";
+import {useCoreServices} from "../../../core/services/core.services.ts";
 
 export const useOrganizationMembersServices = () => {
   // Store access and helper constants
@@ -16,6 +17,7 @@ export const useOrganizationMembersServices = () => {
     : {};
   const {addNotification} = useNotificationsServices()
   const {fetchOrganizationData} = useOrganizationServices()
+  const {fetchContentType} = useCoreServices()
   const loading = ref(false);
 
 
@@ -126,7 +128,7 @@ export const useOrganizationMembersServices = () => {
       );
 
       const org = await fetchOrganizationData(orgID, 'create', false)
-
+      const cmiValue = await fetchContentType('organization')
       await addNotification({
         sender: userData.uid,
         receiver: member.user.uid,
@@ -134,7 +136,7 @@ export const useOrganizationMembersServices = () => {
         message: `Your membership in ${org?.name} has been changed. Your access level has been changed to ${member.access_level}.`,
         type: 'Organization',
         object_id: orgID,
-        content_type: 8888,
+        content_type: cmiValue,
         is_read: false,
         is_deleted: false
       })
@@ -158,7 +160,7 @@ export const useOrganizationMembersServices = () => {
       );
 
       const org = await fetchOrganizationData(orgID, 'create', false)
-
+      const cmiValue = await fetchContentType('organization')
       await addNotification({
         sender: userData.uid,
         receiver: member.user.uid,
@@ -166,7 +168,7 @@ export const useOrganizationMembersServices = () => {
         message: `Your membership in ${org?.name} has been removed. You are no longer a member of this organization.`,
         type: 'Organization',
         object_id: orgID,
-        content_type: 8888,
+        content_type: cmiValue,
         is_read: false,
         is_deleted: false
       })
@@ -189,7 +191,7 @@ export const useOrganizationMembersServices = () => {
     );
 
     const org = await fetchOrganizationData(orgID, 'create', false)
-
+    const cmiValue = await fetchContentType('organization')
     await addNotification({
       sender: userData.uid,
       receiver: member.user.uid,
@@ -197,7 +199,7 @@ export const useOrganizationMembersServices = () => {
       message: `You have been added to ${org?.name} with ${member.access_level} access level`,
       type: 'Organization',
       object_id: orgID,
-      content_type: 8888,
+      content_type: cmiValue,
       is_read: false,
       is_deleted: false
     })
@@ -217,7 +219,7 @@ export const useOrganizationMembersServices = () => {
     );
 
     const org = await fetchOrganizationData(orgID, 'create', false)
-
+    const cmiValue = await fetchContentType('organization')
     await addNotification({
       sender: userData.uid,
       receiver: member.user.uid,
@@ -225,7 +227,7 @@ export const useOrganizationMembersServices = () => {
       message: `You have been added to ${org?.name} with ${member.access_level} access level`,
       type: 'Organization',
       object_id: orgID,
-      content_type: 8888,
+      content_type: cmiValue,
       is_read: false,
       is_deleted: false
     })
