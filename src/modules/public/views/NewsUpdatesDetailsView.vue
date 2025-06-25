@@ -8,23 +8,15 @@ import { PhArrowLeft, PhCalendar, PhImage } from "@phosphor-icons/vue";
 import { Post } from "../../../interfaces/post.interface.ts";
 import { usePostServices } from "../../posts/services/post.services.ts";
 import NotFound from "../../../assets/images/404.svg";
+import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
 
 const post = ref<Post | null | undefined>(null);
 const { fetchPostbyID } = usePostServices();
+const {formatDateString, formatDate} = useDateHelper()
 const { route, router } = useRouting();
 const imagePreviewDialog = ref(false);
 const selectedImageIndex = ref(0);
 const loading = ref(false)
-
-const formatDateString = (dateString: string) => {
-  const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "2-digit"
-  };
-  return date.toLocaleDateString("en-US", options);
-};
 
 const openImagePreview = (index: number) => {
   selectedImageIndex.value = index;
@@ -67,10 +59,33 @@ onMounted(async () => {
               </div>
 
               <h1>{{ post?.title }}</h1>
+              <div class="d-flex align-center">
+                <VAvatar
+                    size="32"
+                    class="me-2"
+                >
+                  <VImg :src="post.user?.profile_picture as string ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'" alt="Project" />
+                </VAvatar>
+                <div>
+                  <p class="font-weight-medium mb-0">{{ post.user?.first_name ? post.user?.first_name : post.user?.username }} {{post.user?.last_name}} | {{post.organizationData?.name}}({{post.organizationData?.acronym}})</p>
+                </div>
+              </div>
+              <div class="date-info">
+                <p class="date-item">
+                  <PhCalendar :size="16"/>
+                  <span>Posted: {{ formatDateString(post?.created_at!) }}</span>
+                </p>
 
-              <p class="pt-4 d-flex align-center ga-1 text-gs60">
-                <PhCalendar :size="16"/> {{ formatDateString(post?.updated_at!) }}
-              </p>
+                <p class="date-item">
+                  <PhCalendar :size="16"/>
+                  <span>Updated: {{ formatDateString(post?.updated_at!) }}</span>
+                </p>
+
+                <p class="date-item">
+                  <PhCalendar :size="16"/>
+                  <span>Event Occurrence Date: {{ formatDate(post?.date!) }}</span>
+                </p>
+              </div>
             </div>
 
             <!-- Image Carousel -->
@@ -184,5 +199,21 @@ onMounted(async () => {
 .back-button:hover{
   border-radius: 8px;
   background-color: #f2f7fa;
+}
+.date-info {
+ margin-top: 1rem;
+ color: #666;
+ font-size: 0.9rem;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.date-item:last-child {
+  margin-bottom: 0;
 }
 </style>

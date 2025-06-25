@@ -10,6 +10,7 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
 import {useOrganizationStore} from "../../organization/stores/organization.store.ts";
 import {useOrganizationServices} from "../../organization/services/organization.services.ts";
+import {useUserStore} from "../../../core/stores/user.store.ts";
 
 const props = defineProps({
   forOrganization: {
@@ -17,6 +18,7 @@ const props = defineProps({
     default: false
   },
 })
+const {userData} = useUserStore()
 const {route} = useRouting()
 const {organization} = useOrganizationStore();
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
@@ -55,7 +57,7 @@ onMounted(async () => {
     }
   }
   if(props.forOrganization) {
-    postData.value = organization.value?.is_member! ? await fetchPostByOrganization(organization.value?.slug as string) : (await fetchPostByOrganization(organization.value?.slug as string)).filter((post => post.is_published));
+    postData.value = organization.value?.is_member! || userData.is_superuser ? await fetchPostByOrganization(organization.value?.slug as string) : (await fetchPostByOrganization(organization.value?.slug as string)).filter((post => post.is_published));
   } else {
     postData.value = await fetchAllPostsByUser();
   }

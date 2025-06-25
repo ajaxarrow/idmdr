@@ -65,16 +65,14 @@ export const useOrganizationMembersServices = () => {
       const res = await server.get(`/users/${uid}`, {
         headers: authorizationHeader,
       });
-
       return res.data.results
-        .filter((user: any) => user.username)
         .map((user: any) => ({
           uid: user.uid,
           username: user.username,
           first_name: user.first_name,
           last_name: user.last_name,
           email: user.email,
-          profile_picture: user.profile_picture,
+          profile_picture: user.profile_picture ? user.profile_picture : 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg',
         }))[0];
     } catch (e){
       console.log(e)
@@ -136,7 +134,7 @@ export const useOrganizationMembersServices = () => {
         message: `Your membership in ${org?.name} has been changed. Your access level has been changed to ${member.access_level}.`,
         type: 'Organization',
         object_id: orgID,
-        content_type: 14,
+        content_type: 8888,
         is_read: false,
         is_deleted: false
       })
@@ -168,7 +166,7 @@ export const useOrganizationMembersServices = () => {
         message: `Your membership in ${org?.name} has been removed. You are no longer a member of this organization.`,
         type: 'Organization',
         object_id: orgID,
-        content_type: 14,
+        content_type: 8888,
         is_read: false,
         is_deleted: false
       })
@@ -199,7 +197,7 @@ export const useOrganizationMembersServices = () => {
       message: `You have been added to ${org?.name} with ${member.access_level} access level`,
       type: 'Organization',
       object_id: orgID,
-      content_type: 14,
+      content_type: 8888,
       is_read: false,
       is_deleted: false
     })
@@ -227,7 +225,7 @@ export const useOrganizationMembersServices = () => {
       message: `You have been added to ${org?.name} with ${member.access_level} access level`,
       type: 'Organization',
       object_id: orgID,
-      content_type: 14,
+      content_type: 8888,
       is_read: false,
       is_deleted: false
     })

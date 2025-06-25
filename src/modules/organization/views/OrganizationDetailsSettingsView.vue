@@ -421,7 +421,7 @@ const manageOrgStatusCallback = async (isActive: boolean) => {
   overlayLoading.value = true
   await manageOrgStatus(route.params.slug as string, isActive)
   overlayLoading.value = false
-  showSnackbarMessage("Project Visibility Changed Successfully", Status.success)
+  showSnackbarMessage("CMI Status Changed Successfully", Status.success)
   organization!.value!.is_active = isActive!
 }
 

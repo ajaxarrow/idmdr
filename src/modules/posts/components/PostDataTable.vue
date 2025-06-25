@@ -20,6 +20,7 @@ import {
 } from "@phosphor-icons/vue";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
 import Papa from "papaparse";
+import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
 
 const { isSmall, isTablet } = useScreenStore();
 const {showSnackbarMessage} = useSnackbarStore()
@@ -35,6 +36,7 @@ const page = ref(1);
 const totalItems = ref(0);
 const selectedStatus = ref<string | boolean>('');
 const organizations = ref<any[]>([]);
+const {formatDate} = useDateHelper()
 
 const managePostStatusCallback = async(id: string, isPublished: boolean) => {
   await managePostStatus(id, isPublished);
@@ -151,9 +153,11 @@ const downloadCSV = async () => {
         'Title': post.title || '',
         'Description': post.description ? post.description.replace(/<[^>]*>/g, '') : '',
         'Status': post.is_published ? 'Published' : 'Unpublished',
-        'Posted By': post.organizationData?.name || '',
+        'Posted By (CMI)': post.organizationData?.name || '',
+        'Posted By (User)': `${post.user?.first_name || post.user?.username || 'Unknown User'} ${post.user?.last_name || ''}`,
         'Created Date': post.created_at ? new Date(post.created_at).toLocaleDateString() : '',
         'Updated Date': post.updated_at ? new Date(post.updated_at).toLocaleDateString() : '',
+        'Event Occurrence Date': post.date ? formatDate(post.date) : '',
         'UID': post.uid || '',
       };
     });
@@ -210,9 +214,11 @@ const downloadVisibleCSV = () => {
         'Title': post.title || '',
         'Description': post.description ? post.description.replace(/<[^>]*>/g, '') : '',
         'Status': post.is_published ? 'Published' : 'Unpublished',
-        'Posted By': post.organizationData?.name || '',
+        'Posted By (CMI)': post.organizationData?.name || '',
+        'Posted By (User)': `${post.user?.first_name || post.user?.username || 'Unknown User'} ${post.user?.last_name || ''}`,
         'Created Date': post.created_at ? new Date(post.created_at).toLocaleDateString() : '',
         'Updated Date': post.updated_at ? new Date(post.updated_at).toLocaleDateString() : '',
+        'Event Occurrence Date': post.date ? formatDate(post.date) : '',
         'UID': post.uid || '',
       };
     });

@@ -3,10 +3,12 @@ import {usePostImagesServices} from "./post-images.services.ts";
 import {ref} from "vue";
 import {server} from "../../../plugins/axios.ts";
 import {Post} from "../../../interfaces/post.interface.ts";
+import {useOrganizationMembersServices} from "../../organization/services/organization-members.services.ts";
 
 const { userData, user } = useUserStore();
 const authorizationHeader = user.value ? { Authorization: `Bearer ${userData.accessToken}` } : {}
 const {fetchPostImagesByPost, addPostImage} = usePostImagesServices();
+const {fetchUser} = useOrganizationMembersServices()
 
 export const usePostServices = () => {
   const loading = ref(false);
@@ -80,6 +82,9 @@ export const usePostServices = () => {
 
   const mapPostData = async (post: any): Promise<Post> => {
     const images = await fetchPostImagesByPost(post.uid);
+    const user = await fetchUser(post.created_by);
+    console.log(post.created_by)
+    console.log(user)
     return {
       uid: post.uid,
       title: post.title,
@@ -91,7 +96,17 @@ export const usePostServices = () => {
       is_published: post.is_published,
       organization: post.organization.uid,
       organizationData: post.organization,
-      images: images
+      images: images,
+      date: post.date,
+      created_by: post.created_by,
+      user: post.user ?  post.user : {
+        username: user?.username ?? '',
+        uid: user?.uid ?? '',
+        first_name: user?.first_name ?? '',
+        last_name: user?.last_name ?? '',
+        email: user?.email ?? '',
+        profile_picture: user?.profile_picture ?? ''
+      }
     };
   };
 

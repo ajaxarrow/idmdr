@@ -4,7 +4,7 @@ import {useRouting} from "../../../core/composables/useRouting.ts";
 import {onMounted, ref} from "vue";
 import {
   PhArrowLeft, PhDotsThreeOutlineVertical, PhEye,
-  PhPencil, PhTrash, PhImages, PhEyeSlash
+  PhPencil, PhTrash, PhImages, PhEyeSlash, PhCalendar
 } from "@phosphor-icons/vue";
 import {useOrganizationServices} from "../services/organization.services.ts";
 import {Organization} from "../../../interfaces/organization.interface.ts";
@@ -17,13 +17,14 @@ import {Post} from "../../../interfaces/post.interface.ts";
 import ImagePreviewOverlay from "../../../core/components/ImagePreviewOverlay.vue";
 import {useUserStore} from "../../../core/stores/user.store.ts";
 import ConfirmationDialog from "../../../core/components/ConfirmationDialog.vue";
+import {useDateHelper} from "../../../core/composables/useDateHelper.ts";
 
 const {route, router} = useRouting()
 const {userData} = useUserStore()
 const {showSnackbarMessage, setSnackbarMessage} = useSnackbarStore();
 const {fetchOrganizationData, fetchOrganizationIDsByUser} = useOrganizationServices();
 const {fetchPostbyID, deletePost, managePostStatus} = usePostServices()
-
+const {formatDateString, formatDate} = useDateHelper()
 const postActionMenu = ref(false);
 const path = ref('organizations')
 const postData = ref<Post | null | undefined>(null);
@@ -170,6 +171,33 @@ onMounted(async () => {
             </VSheet>
           </VMenu>
         </VRow>
+        <div class="d-flex align-center">
+          <VAvatar
+              size="32"
+              class="me-2"
+          >
+            <VImg :src="postData.user?.profile_picture as string ?? 'https://mighty.tools/mockmind-api/content/abstract/46.jpg'" alt="Project" />
+          </VAvatar>
+          <div>
+            <p class="font-weight-medium mb-0">{{ postData.user?.first_name ? postData.user?.first_name : postData.user?.username }} {{postData.user?.last_name}}</p>
+          </div>
+        </div>
+        <div class="date-info">
+          <p class="date-item">
+            <PhCalendar :size="16"/>
+            <span>Posted: {{ formatDateString(postData?.created_at!) }}</span>
+          </p>
+
+          <p class="date-item">
+            <PhCalendar :size="16"/>
+            <span>Updated: {{ formatDateString(postData?.updated_at!) }}</span>
+          </p>
+
+          <p class="date-item">
+            <PhCalendar :size="16"/>
+            <span>Event Occurrence Date: {{ formatDate(postData?.date!) }}</span>
+          </p>
+        </div>
       </div>
 
       <VDivider/>
@@ -334,5 +362,22 @@ onMounted(async () => {
 
 .action-menu-item:hover {
   background-color: #e0e3e3;
+}
+
+.date-info {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.date-item:last-child {
+  margin-bottom: 0;
 }
 </style>

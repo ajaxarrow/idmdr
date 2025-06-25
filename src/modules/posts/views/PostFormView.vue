@@ -26,6 +26,7 @@ const {deletePostImage} = usePostImagesServices();
 const formType = ref<FormType>(FormType.create);
 const path = ref('');
 const organizations = ref<Organization[]>([])
+const today = new Date().toISOString().split('T')[0];
 const postDataInitialState = reactive<Post>({
   uid: '',
   title: '',
@@ -34,7 +35,8 @@ const postDataInitialState = reactive<Post>({
   organization: '',
   is_draft: false,
   is_published: false,
-  images: []
+  images: [],
+  date: today,
 });
 
 const postImages = ref<PostImage[]>([]);
@@ -203,6 +205,19 @@ onMounted(async () => {
       <p class="mx-6 my-3 text-note">Required fields are marked with an asterisk (<span class="text-red">*</span>).</p>
       <VDivider/>
       <div class="pa-6">
+        <div class="mb-3">
+          <label class="input-label">Event Occurrence Date<span class="text-pink">*</span></label>
+          <VTextField
+              v-model="postData.date"
+              type="date"
+              class="my-2"
+              rounded="lg"
+              density="comfortable"
+              variant="outlined"
+              color="primary"
+              base-color="gs60"
+          />
+        </div>
         <div class="mb-3">
           <label class="input-label">Post Title<span class="text-pink">*</span></label>
           <VTextField

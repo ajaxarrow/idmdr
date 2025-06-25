@@ -1,5 +1,6 @@
 import {Organization} from "./organization.interface.ts";
 import {BaseImage} from "./image.interface.ts";
+import {User} from "./member.interface.ts";
 
 interface Post{
   uid?: string,
@@ -14,7 +15,9 @@ interface Post{
   created_at?: string,
   updated_at?: string,
   is_deleted?: boolean,
-  images?: PostImage[]
+  date?: string,
+  images?: PostImage[],
+  user?: User
 }
 
 interface PostImage extends BaseImage {
