@@ -399,7 +399,7 @@ export const useOrganizationServices = () => {
 
   const fetchOrganizationByUser = async () : Promise<Organization[]> => {
     try{
-      const res = await server.get(`/v1/user/${userData.uid}/organizations`, {
+      const res = await server.get(`/v1/user/${userData.uid}/organizations?page_size=1000`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }
@@ -417,7 +417,7 @@ export const useOrganizationServices = () => {
 
   const fetchOrganizationByAdmin = async () : Promise<Organization[]> => {
     try{
-      const res = await server.get(`/v1/organization`, {
+      const res = await server.get(`/v1/organization?page_size=10000`, {
         headers: {
           'Authorization': `Bearer ${userData.accessToken}`
         }

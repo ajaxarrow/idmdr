@@ -15,7 +15,7 @@ const {addEvent, updateEvent} = useEventsServices();
 const {fetchOrganizationByUser, fetchAllOrganizations} = useOrganizationServices();
 const {fetchRepositoriesByUser, fetchAllRepositories} = useRepositoryServices()
 const emits = defineEmits(['callback']);
-const organizations = ref<Organization[]>([])
+const organizations = ref<any[]>([])
 const repositories = ref<Repository[]>([])
 const action = computed(() => props.formType === FormType.edit ? 'Update' : 'Add');
 const props = defineProps({
@@ -131,9 +131,15 @@ const clearEventData = () => {
 }
 
 const fetchData = async () => {
-  organizations.value = userData.is_superuser ? await fetchAllOrganizations(1, 1000) :(await fetchOrganizationByUser()).filter(org => !org.is_deleted)
+  organizations.value = [
+    { uid: '', slug: '', name: '', acronym: '' },
+    ...(userData.is_superuser
+            ? await fetchAllOrganizations(1, 1000)
+            : (await fetchOrganizationByUser()).filter(org => !org.is_deleted)
+    )
+  ];
   repositories.value = userData.is_superuser ? await fetchAllRepositories(1, 1000) :(await fetchRepositoriesByUser()).filter(repo => !repo.is_deleted);
-  eventData.organization = organizations.value[0].uid;
+  // eventData.organization = organizations.value[0].uid;
   eventData.repository = repositories.value[0].uid;
   if(props.formType === FormType.edit) {
     if(props.event){
@@ -264,7 +270,7 @@ onMounted(async()=> {
             </div>
           </div>
           <div class="mb-2">
-            <label class="dialog-label">Associated Consortium Member Institution<span class="text-pink">*</span></label>
+            <label class="dialog-label">Associated Consortium Member Institution</label>
             <VAutocomplete
                 v-model="eventData.organization"
                 placeholder="Select Organization"
@@ -276,7 +282,7 @@ onMounted(async()=> {
                 base-color="gs60"
                 :items="organizations"
                 :item-value="organization => `${organization.uid}`"
-                :item-title="organization => `${organization.name} (${organization.acronym})`"
+                :item-title="organization => `${organization.name || 'No CMI Selected'}${organization.acronym ? ' (' + organization.acronym + ')' : ''}`"
             >
               <template v-slot:item="{ props, item }">
                 <VListItem
@@ -284,7 +290,7 @@ onMounted(async()=> {
                     v-bind="props"
                     :prepend-avatar="item.raw.image"
                     :subtitle="item.raw.email"
-                    :title="`${item.raw.name} (${item.raw.acronym})`"
+                    :title="`${item.raw.name || 'No CMI Selected'}${item.raw.acronym ? ' (' + item.raw.acronym + ')' : ''}`"
                 ></VListItem>
               </template>
             </VAutocomplete>
