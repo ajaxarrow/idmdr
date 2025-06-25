@@ -83,8 +83,6 @@ export const usePostServices = () => {
   const mapPostData = async (post: any): Promise<Post> => {
     const images = await fetchPostImagesByPost(post.uid);
     const user = await fetchUser(post.created_by);
-    console.log(post.created_by)
-    console.log(user)
     return {
       uid: post.uid,
       title: post.title,
